@@ -11,7 +11,7 @@
     "start": "node server-fixed.js",
     "dev": "node --watch server-fixed.js",
     "test": "node --test",
-    "check": "node --check server-fixed.js && node --check core.js && node --check providers.js && node --check visuals.js"
+    "check": "node --check server.js && node --check server-fixed.js && node --check core.js && node --check providers.js && node --check visuals.js"
   },
   "dependencies": {
     "express": "^5.1.0"
