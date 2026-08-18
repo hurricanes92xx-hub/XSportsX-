@@ -1,0 +1,94 @@
+[
+  {
+    "id": "collections.xsportsx.ufc",
+    "title": "🥊 UFC",
+    "showAllTab": true,
+    "viewMode": "FOLLOW_LAYOUT",
+    "pinToTop": true,
+    "focusGlowEnabled": true,
+    "folders": [
+      {
+        "id": "collections.xsportsx.ufc.command-center",
+        "title": "Fight Night Command Center",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "ufc-home", "type": "sport" }],
+        "coverEmoji": "🥊",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif"
+      },
+      {
+        "id": "collections.xsportsx.ufc.cards",
+        "title": "Fight Cards",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "ufc", "type": "sport" }],
+        "coverEmoji": "🔥",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif"
+      },
+      {
+        "id": "collections.xsportsx.ufc.rankings",
+        "title": "Rankings",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "ufc-rankings", "type": "sport" }],
+        "coverEmoji": "🏆",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif"
+      },
+      {
+        "id": "collections.xsportsx.ufc.fighters",
+        "title": "Fighters",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "ufc-fighters", "type": "sport" }],
+        "coverEmoji": "👊",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif"
+      }
+    ],
+    "coverEmoji": "🥊",
+    "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif",
+    "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ufc.gif"
+  },
+  {
+    "id": "collections.xsportsx.ncaaf",
+    "title": "🏈 NCAA FOOTBALL",
+    "showAllTab": true,
+    "viewMode": "FOLLOW_LAYOUT",
+    "pinToTop": true,
+    "focusGlowEnabled": true,
+    "folders": [
+      {
+        "id": "collections.xsportsx.ncaaf.command-center",
+        "title": "Football Command Center",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "ncaaf", "type": "sport" }],
+        "coverEmoji": "🏈",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif"
+      },
+      {
+        "id": "collections.xsportsx.ncaaf.cfp",
+        "title": "CFP Watch",
+        "tileShape": "LANDSCAPE",
+        "hideTitle": false,
+        "focusGifEnabled": true,
+        "catalogSources": [{ "addonId": "com.xsportsx.live", "catalogId": "cfp-watch", "type": "sport" }],
+        "coverEmoji": "🏆",
+        "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif",
+        "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif"
+      }
+    ],
+    "coverEmoji": "🏈",
+    "coverImageUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif",
+    "focusGifUrl": "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/ncaaf.gif"
+  }
+]
