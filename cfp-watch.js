@@ -1,8 +1,10 @@
 import { fetchJson, normalizeName, similarity } from "./core.js";
 
 const RANKINGS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings";
-const cache = { value: null, expires: 0, promise: null };
-const TTL = 6 * 60 * 60_000;
+const cache = { value: null, expires: 0, fetchedAt: 0, promise: null };
+// Rankings can change weekly during the season. Refresh hourly so Nuvio cards
+// pick up changes automatically without hammering the upstream service.
+const TTL = 60 * 60_000;
 
 function teamNames(team = {}) {
   return [team.name, team.shortName, team.abbreviation, team.displayName, team.location].filter(Boolean).map(normalizeName);
@@ -28,12 +30,21 @@ export async function getCollegeRankings() {
     try {
       const data = await fetchJson(RANKINGS_URL, {}, 8000);
       const value = parseRankings(data);
-      cache.value = value;
-      cache.expires = Date.now() + TTL;
-      return value;
+      if (value.length) {
+        cache.value = value;
+        cache.expires = Date.now() + TTL;
+        cache.fetchedAt = Date.now();
+      } else if (cache.value) {
+        // Never replace good rankings with an empty upstream response.
+        cache.expires = Date.now() + 5 * 60_000;
+      }
+      return cache.value || value;
     } finally { cache.promise = null; }
   })();
-  try { return await cache.promise; } catch { return cache.value || []; }
+  try { return await cache.promise; } catch {
+    // Fail open: existing NCAA events continue to work if rankings are down.
+    return cache.value || [];
+  }
 }
 
 function matchTeam(eventTeam, rankings) {
@@ -59,7 +70,7 @@ export async function enrichNcaafEvents(events) {
     const home = matchTeam(event.home, rankings);
     const away = matchTeam(event.away, rankings);
     const ranked = [home, away].filter(Boolean);
-    return { ...event, ranking: { home, away, ranked: ranked.length, rankedMatchup: Boolean(home && away) } };
+    return { ...event, ranking: { home, away, ranked: ranked.length, rankedMatchup: Boolean(home && away), rankingsUpdatedAt: cache.fetchedAt || null } };
   });
 }
 
@@ -72,8 +83,9 @@ export function cfpWatchMeta(event, gamePoster, gameOverview, scoreText, videoFo
   const h = r.home ? `#${r.home.rank} ${r.home.name}` : (event.home?.short || event.home?.name || "Home");
   const a = r.away ? `#${r.away.rank} ${r.away.name}` : (event.away?.short || event.away?.name || "Away");
   const badge = r.rankedMatchup ? "🏆 CFP WATCH • RANKED MATCHUP" : "🏆 CFP WATCH";
+  const movement = [r.home?.previousRank ? `#${r.home.previousRank}→#${r.home.rank}` : null, r.away?.previousRank ? `#${r.away.previousRank}→#${r.away.rank}` : null].filter(Boolean).join(" • ");
   const video = videoFor(event);
   video.title = `▶ WATCH • ${a} at ${h}${scoreText(event)}`;
-  video.overview = `${badge} • ${gameOverview(event)}`;
-  return { id:`sport:cfp-${event.eventId}`, type:"sport", name:`${badge} • ${a} at ${h}`, poster:gamePoster(event.eventId), background:gamePoster(event.eventId), description:`${event.state === "in" ? "🔴 LIVE • " : ""}${gameOverview(event)}${scoreText(event)}`, genres:["Sports","NCAA Football","CFP Watch",event.league].filter(Boolean), releaseInfo:event.start ? new Date(event.start).toLocaleString() : "", videos:[video], behaviorHints:{defaultVideoId:video.id} };
+  video.overview = `${badge}${movement ? ` • ${movement}` : ""} • ${gameOverview(event)}`;
+  return { id:`sport:cfp-${event.eventId}`, type:"sport", name:`${badge} • ${a} at ${h}`, poster:gamePoster(event.eventId), background:gamePoster(event.eventId), description:`${event.state === "in" ? "🔴 LIVE • " : ""}${movement ? `${movement} • ` : ""}${gameOverview(event)}${scoreText(event)}`, genres:["Sports","NCAA Football","CFP Watch",event.league].filter(Boolean), releaseInfo:event.start ? new Date(event.start).toLocaleString() : "", videos:[video], behaviorHints:{defaultVideoId:video.id} };
 }
