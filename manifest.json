@@ -1,8 +1,8 @@
 {
   "id": "com.xsportsx.live",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "name": "XSportsX",
-  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, sports news and league artwork.",
+  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, UFC Fight Night hub and league artwork.",
   "logo": "https://xsportsx.onrender.com/logo.svg",
   "background": "https://xsportsx.onrender.com/background.svg",
   "resources": [
@@ -15,6 +15,7 @@
   "behaviorHints": { "configurable": true, "configurationRequired": false },
   "catalogs": [
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
+    { "type": "sport", "id": "ufc", "name": "🥊 UFC • FIGHT NIGHT" },
     { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
     { "type": "sport", "id": "sports-news", "name": "📰 SPORTS NEWS • ENGLISH" },
     { "type": "sport", "id": "live-now", "name": "🔥 WHAT'S ON NOW • LIVE" },
