@@ -2,6 +2,7 @@ import express from "express";
 import { getEvents, streamsFor, newsStreamsForChannel, providerStatus } from "./providers.js";
 import { TTLCache } from "./core.js";
 import { leagueVisual, gameVisual } from "./visuals.js";
+import { enrichNcaafEvents, cfpWatchEvents, cfpWatchMeta } from "./cfp-watch.js";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -11,6 +12,7 @@ const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const cache = new TTLCache();
 const EVENT_REFRESH_MS = Number(process.env.EVENT_REFRESH_MS || 30000);
 const DEFAULT_TZ = process.env.DEFAULT_TIMEZONE || "UTC";
+const APP_VERSION = "3.9.4";
 let eventRefreshPromise = null;
 
 const LEAGUES = [
@@ -113,8 +115,10 @@ async function events() {
   if (cached) return cached;
   if (eventRefreshPromise) return eventRefreshPromise;
   eventRefreshPromise = (async () => {
-    try { return cache.set("events:active", await getEvents({days:2}), EVENT_REFRESH_MS); }
-    finally { eventRefreshPromise = null; }
+    try {
+      const raw = await getEvents({days:2});
+      return cache.set("events:active", await enrichNcaafEvents(raw), EVENT_REFRESH_MS);
+    } finally { eventRefreshPromise = null; }
   })();
   return eventRefreshPromise;
 }
@@ -137,7 +141,7 @@ function filterCatalog(all, id) {
 app.use(express.static("public"));
 app.get("/manifest.json", (_, res) => {
   const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), "manifest.json"), "utf8"));
-  manifest.version = "3.3.3";
+  manifest.version = APP_VERSION;
   manifest.logo = `${BASE_URL}/logo.svg`;
   manifest.background = `${BASE_URL}/background.svg`;
   res.set("Cache-Control", "public,max-age=300").json(manifest);
@@ -188,8 +192,11 @@ app.get("/catalog/sport/sports-news.json", async (_,res) => {
   }
 });
 app.get("/catalog/sport/:catalog.json", async (req,res) => {
-  try { res.json({metas:filterCatalog(await events(), req.params.catalog).map(eventMeta)}); }
-  catch { res.status(502).json({metas:[]}); }
+  try {
+    const all = await events();
+    if (req.params.catalog === "cfp-watch") return res.json({metas:cfpWatchEvents(all).map(e => cfpWatchMeta(e, gamePoster, gameOverview, scoreText, videoFor))});
+    res.json({metas:filterCatalog(all, req.params.catalog).map(eventMeta)});
+  } catch { res.status(502).json({metas:[]}); }
 });
 
 app.get("/meta/sport/:id.json", async (req,res) => {
@@ -203,6 +210,10 @@ app.get("/meta/sport/:id.json", async (req,res) => {
       return res.json({meta:newsChannelMeta(ch,streams.length > 0)});
     }
     const all = await events();
+    if (id.startsWith("cfp-")) {
+      const e = all.find(x => x.eventId === id.slice(4));
+      return e && cfpWatchEvents([e]).length ? res.json({meta:cfpWatchMeta(e, gamePoster, gameOverview, scoreText, videoFor)}) : res.status(404).json({meta:null});
+    }
     if (id.startsWith("game-")) {
       const e = all.find(x => x.eventId === id.slice(5));
       return e ? res.json({meta:gameCenterMeta(e)}) : res.status(404).json({meta:null});
@@ -234,7 +245,7 @@ app.get("/stream/sport/:id.json", async (req,res) => {
 });
 
 app.get("/sources/status", (_,res) => res.json(providerStatus()));
-app.get("/stats", (_,res) => res.json({version:"3.3.3",cache:cache.statsSummary(),providers:providerStatus()}));
-app.get("/health", (_,res) => res.json({ok:true,version:"3.3.3",uptime:process.uptime()}));
+app.get("/stats", (_,res) => res.json({version:APP_VERSION,cache:cache.statsSummary(),providers:providerStatus()}));
+app.get("/health", (_,res) => res.json({ok:true,version:APP_VERSION,uptime:process.uptime()}));
 
 app.listen(PORT, () => console.log(`XSportsX listening on ${PORT}`));
