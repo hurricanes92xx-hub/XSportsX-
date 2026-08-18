@@ -13,7 +13,7 @@ const CONFIGURED_TZ=process.env.DEFAULT_TIMEZONE||"UTC";
 let eventRefreshPromise=null;
 
 const LEAGUES=[
- ["nfl","NFL","NFL","football","nfl.gif"],["nba","NBA","NBA","basketball","nba.gif"],["nhl","NHL","NHL","hockey","nhl.gif"],["mlb","MLB","MLB","baseball","mlb.gif"],["ncaaf","NCAA Football","NCAA FB","football","ncaaf.gif"],["ncaab","NCAA Basketball","NCAA BB","basketball","ncaab.gif"],["wnba","WNBA","WNBA","basketball","wnba.gif"],["mls","MLS","MLS","soccer","mls.gif"],["premier-league","Premier League","EPL","soccer","premier-league.gif"],["la-liga","La Liga","LALIGA","soccer","la-liga.gif"],["f1","Formula 1","F1","racing","f1.gif"],["motogp","MotoGP","MotoGP","racing","motogp.gif"],["ufc","UFC","UFC","mma","ufc.gif"],["boxing","Boxing","BOX","boxing","boxing.gif"],["atp","ATP Tennis","ATP","tennis","atp.gif"],["wta","WTA Tennis","WTA","tennis","wta.gif"],["pga","PGA Golf","PGA","golf","pga.gif"],["rugby","Rugby","RUGBY","rugby","rugby.gif"],["cricket","Cricket","CRICKET","cricket","cricket.gif"],["pdc","Darts","PDC","darts","pdc.gif"],["afl","AFL","AFL","football","afl.gif"]
+ ["nfl","NFL","NFL","football","nfl.gif"],["nba","NBA","NBA","basketball","nba.gif"],["nhl","NHL","NHL","hockey","nhl.gif"],["mlb","MLB","MLB","baseball","mlb.gif"],["ncaaf","NCAA Football","NCAA FB","football","ncaaf.gif"],["ncaab","NCAA Basketball","NCAA BB","basketball","ncaab.gif"],["wnba","WNBA","WNBA","basketball","wnba.gif"],["mls","MLS","MLS","soccer","mls.gif"],["premier-league","Premier League","EPL","soccer","premier-league.gif"],["la-liga","La Liga","LALIGA","soccer","la-liga.gif"],["f1","Formula 1","F1","racing","f1.gif"],["motogp","MotoGP","MotoGP","racing","motogp.gif"],["ufc","UFC","UFC","mma","ufc.gif"],["boxing","Boxing","BOX","boxing","boxing.gif"],["atp","ATP Tennis","ATP","tennis","atp.gif"],["wta","WTA Tennis","WTA","tennis","wta.gif"],["pga","PGA Golf","PGA","golf","pga.gif"],["rugby","Rugby","RUGBY","rugby.gif"],["cricket","Cricket","CRICKET","cricket","cricket.gif"],["pdc","Darts","PDC","darts","pdc.gif"],["afl","AFL","AFL","football","afl.gif"]
 ].map(([id,name,short,sport,asset])=>({id,name,short,sport,asset}));
 const leagueMap=new Map(LEAGUES.map(x=>[x.id,x]));
 const FAVORITE_TEAMS=[
@@ -25,6 +25,34 @@ const FAVORITE_TEAMS=[
 ];
 const favoriteTeamMap=new Map(FAVORITE_TEAMS.map(x=>[x.id,x]));
 const PUBLIC_REPO_ASSET_BASE="https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/";
+
+// Sports-news channel catalog. These are channel identities, not pirated stream URLs.
+// Authorized stream URLs can be supplied through SPORTS_NEWS_STREAMS_JSON on Render.
+const SPORTS_NEWS_CHANNELS=[
+ {id:"espn",name:"ESPN",network:"ESPN",logo:"espn.gif",description:"ESPN sports news, analysis and live programming when available through an authorized source."},
+ {id:"nfl-network",name:"NFL Network",network:"NFL Network",logo:"nfl.gif",description:"NFL Network news, analysis and league programming when available through an authorized source."},
+ {id:"espn2",name:"ESPN2",network:"ESPN2",logo:"espn.gif",description:"ESPN2 sports coverage and analysis when available through an authorized source."},
+ {id:"cbs-sports-hq",name:"CBS Sports HQ",network:"CBS Sports",logo:"mlb.gif",description:"CBS Sports news and highlights when available through an authorized source."},
+ {id:"fox-sports",name:"FOX Sports",network:"FOX Sports",logo:"nfl.gif",description:"FOX Sports news and analysis when available through an authorized source."},
+ {id:"mlb-network",name:"MLB Network",network:"MLB Network",logo:"mlb.gif",description:"MLB Network baseball news and analysis when available through an authorized source."},
+ {id:"nba-tv",name:"NBA TV",network:"NBA TV",logo:"nba.gif",description:"NBA TV basketball news and analysis when available through an authorized source."},
+ {id:"nhl-network",name:"NHL Network",network:"NHL Network",logo:"nhl.gif",description:"NHL Network hockey news and analysis when available through an authorized source."}
+];
+const newsChannelMap=new Map(SPORTS_NEWS_CHANNELS.map(x=>[x.id,x]));
+
+function parseNewsStreams(){
+ try{const raw=process.env.SPORTS_NEWS_STREAMS_JSON;if(!raw)return{};const parsed=JSON.parse(raw);return parsed&&typeof parsed==="object"?parsed:{};}catch{return{};}
+}
+function newsChannelMeta(ch){
+ const configured=Boolean(parseNewsStreams()[ch.id]);
+ return {id:`sport:news-${ch.id}`,type:"sport",name:ch.name,poster:leaguePoster(ch.logo.replace(/\.gif$/,"")),background:leaguePoster(ch.logo.replace(/\.gif$/,"")),description:`${ch.description}${configured?" • Stream configured":" • Configure an authorized source to enable playback"}`,genres:["Sports","News",ch.network],behaviorHints:{}};
+}
+function newsChannelStreams(ch){
+ const configured=parseNewsStreams()[ch.id];
+ if(!configured)return[];
+ const list=Array.isArray(configured)?configured:[configured];
+ return list.filter(x=>typeof x==="string").map((url,i)=>({name:`${ch.name} • Authorized Source ${i+1}`,title:`${ch.name} • Live`,url,type:url.includes(".m3u8")?"application/x-mpegURL":"video/mp4",behaviorHints:{notWebReady:false}}));
+}
 function teamPoster(id){return `${BASE_URL}/teams/${encodeURIComponent(id)}.gif`;}
 function leaguePoster(id){return `${BASE_URL}/leagues/${encodeURIComponent(id)}.gif`;}
 function favoriteTeamMatches(teamConfig,all){return all.filter(e=>{if(e.sport!==teamConfig.sport)return false;const names=[e.home?.name,e.home?.short,e.away?.name,e.away?.short].filter(Boolean).map(x=>String(x).toLowerCase());return teamConfig.aliases.some(alias=>names.some(n=>n===alias.toLowerCase()||n.includes(alias.toLowerCase())));});}
@@ -37,28 +65,17 @@ function leagueEventsMeta(league,all){const matches=all.filter(e=>e.sport===leag
 async function events(){const cached=cache.get("events:active");if(cached)return cached;if(eventRefreshPromise)return eventRefreshPromise;eventRefreshPromise=(async()=>{try{return cache.set("events:active",await getEvents({days:2}),eventRefreshMs);}finally{eventRefreshPromise=null;}})();return eventRefreshPromise;}
 function filterCatalog(all,id){const now=Date.now();if(id==="live-now")return all.filter(e=>e.state==="in");if(id==="starting-soon")return all.filter(e=>{const t=new Date(e.start||0).getTime();return t>now&&t<=now+120*60_000;});if(id==="upcoming")return all.filter(e=>new Date(e.start||0).getTime()>now);if(id==="favorites")return all;const favorite=favoriteTeamMap.get(id);if(favorite)return favoriteTeamMatches(favorite,all);if(id==="today"){const fmt=new Intl.DateTimeFormat("en-US",{timeZone:CONFIGURED_TZ,year:"numeric",month:"2-digit",day:"2-digit"});return all.filter(e=>fmt.format(new Date(e.start||0))===fmt.format(new Date()));}return all.filter(e=>e.sport===id||String(e.league).toLowerCase()===id.toLowerCase());}
 app.use(express.static("public"));
-app.get("/manifest.json",(_,res)=>{const manifest=JSON.parse(fs.readFileSync(path.join(process.cwd(),"manifest.json"),"utf8"));manifest.version="3.0.0";manifest.logo=`${BASE_URL}/logo.svg`;manifest.background=`${BASE_URL}/background.svg`;res.set("Cache-Control","public,max-age=300").json(manifest);});
-
-// Proxy the repository artwork through the addon host so Nuvio/Stremio clients
-// always receive a normal HTTPS image with the correct content type. The source
-// assets remain public in the repository and are cached by the addon server.
-async function servePublicGif(req,res){
-  const filename=req.params.file;
-  if(!/^[a-z0-9-]+\.gif$/i.test(filename))return res.status(400).end();
-  const key=`asset:${filename}`,cached=cache.get(key);
-  if(cached){res.set("Cache-Control","public,max-age=86400").type("gif").send(cached);return;}
-  try{const r=await fetch(`${PUBLIC_REPO_ASSET_BASE}${encodeURIComponent(filename)}`);if(!r.ok)return res.status(404).end();const data=Buffer.from(await r.arrayBuffer());cache.set(key,data,86400000);res.set("Cache-Control","public,max-age=86400").type("gif").send(data);}catch{res.status(502).end();}
-}
-app.get("/leagues/:file",servePublicGif);
-app.get("/teams/:file",servePublicGif);
-
+app.get("/manifest.json",(_,res)=>{const manifest=JSON.parse(fs.readFileSync(path.join(process.cwd(),"manifest.json"),"utf8"));manifest.version="3.1.0";manifest.logo=`${BASE_URL}/logo.svg`;manifest.background=`${BASE_URL}/background.svg`;res.set("Cache-Control","public,max-age=300").json(manifest);});
+async function servePublicGif(req,res){const filename=req.params.file;if(!/^[a-z0-9-]+\.gif$/i.test(filename))return res.status(400).end();const key=`asset:${filename}`,cached=cache.get(key);if(cached){res.set("Cache-Control","public,max-age=86400").type("gif").send(cached);return;}try{const r=await fetch(`${PUBLIC_REPO_ASSET_BASE}${encodeURIComponent(filename)}`);if(!r.ok)return res.status(404).end();const data=Buffer.from(await r.arrayBuffer());cache.set(key,data,86400000);res.set("Cache-Control","public,max-age=86400").type("gif").send(data);}catch{res.status(502).end();}}
+app.get("/leagues/:file",servePublicGif);app.get("/teams/:file",servePublicGif);
 app.get("/catalog/sport/sports-leagues.json",async(_,res)=>{try{const all=await events();res.json({metas:LEAGUES.map(league=>leagueEventsMeta(league,all))});}catch{res.status(502).json({metas:[]});}});
 app.get("/catalog/sport/favorite-teams.json",async(_,res)=>{try{const all=await events();res.json({metas:FAVORITE_TEAMS.map(team=>favoriteTeamMeta(team,all))});}catch{res.status(502).json({metas:[]});}});
+app.get("/catalog/sport/sports-news.json",(_,res)=>res.json({metas:SPORTS_NEWS_CHANNELS.map(newsChannelMeta)}));
 app.get("/catalog/sport/:catalog.json",async(req,res)=>{try{res.json({metas:filterCatalog(await events(),req.params.catalog).map(meta)});}catch{res.status(502).json({metas:[]});}});
-app.get("/meta/sport/:id.json",async(req,res)=>{const id=req.params.id.replace(/^sport:/,"");if(id.startsWith("league-")){const league=leagueMap.get(id.replace(/^league-/ ,""));if(!league)return res.status(404).json({meta:null});return res.json({meta:leagueEventsMeta(league,await events())});}if(id.startsWith("team-")){const team=favoriteTeamMap.get(id.replace(/^team-/ ,""));if(!team)return res.status(404).json({meta:null});return res.json({meta:favoriteTeamMeta(team,await events())});}const e=(await events()).find(x=>x.eventId===id);if(!e)return res.status(404).json({meta:null});res.json({meta:meta(e)});});
-app.get("/stream/sport/:id.json",async(req,res)=>{const id=req.params.id.replace(/^sport:/,"");const e=(await events()).find(x=>x.eventId===id);if(!e)return res.json({streams:[]});res.json({streams:await streamsFor(e)});});
-app.get("/sources/status",(_,res)=>res.json({...providerStatus(),security:{credentialsConfigured:Boolean(process.env.AUTHORIZED_XTREAM_SOURCES||process.env.AUTHORIZED_M3U_SOURCES),credentialsExposed:false}}));
-app.get("/stats",(_,res)=>res.json({name:"XSportsX",version:"3.0.0",cache:cache.statsSummary(),providers:providerStatus(),eventRefreshMs,uptime:process.uptime()}));
-app.get("/health",(_,res)=>res.json({ok:true,name:"XSportsX",version:"3.0.0",uptime:process.uptime(),cacheEntries:cache.size(),providers:providerStatus()}));
+app.get("/meta/sport/:id.json",async(req,res)=>{const id=req.params.id.replace(/^sport:/,"");if(id.startsWith("news-")){const ch=newsChannelMap.get(id.slice(5));if(!ch)return res.status(404).json({meta:null});return res.json({meta:newsChannelMeta(ch)});}if(id.startsWith("league-")){const league=leagueMap.get(id.replace(/^league-/ ,""));if(!league)return res.status(404).json({meta:null});return res.json({meta:leagueEventsMeta(league,await events())});}if(id.startsWith("team-")){const team=favoriteTeamMap.get(id.replace(/^team-/ ,""));if(!team)return res.status(404).json({meta:null});return res.json({meta:favoriteTeamMeta(team,await events())});}const e=(await events()).find(x=>x.eventId===id);if(!e)return res.status(404).json({meta:null});res.json({meta:meta(e)});});
+app.get("/stream/sport/:id.json",async(req,res)=>{const id=req.params.id.replace(/^sport:/,"");if(id.startsWith("news-")){const ch=newsChannelMap.get(id.slice(5));if(!ch)return res.json({streams:[]});return res.json({streams:newsChannelStreams(ch)});}const e=(await events()).find(x=>x.eventId===id);if(!e)return res.json({streams:[]});res.json({streams:await streamsFor(e)});});
+app.get("/sources/status",(_,res)=>res.json({...providerStatus(),security:{credentialsConfigured:Boolean(process.env.AUTHORIZED_XTREAM_SOURCES||process.env.AUTHORIZED_M3U_SOURCES),credentialsExposed:false},sportsNews:{channels:SPORTS_NEWS_CHANNELS.length,configured:Object.keys(parseNewsStreams()).length}}));
+app.get("/stats",(_,res)=>res.json({name:"XSportsX",version:"3.1.0",cache:cache.statsSummary(),providers:providerStatus(),eventRefreshMs,uptime:process.uptime()}));
+app.get("/health",(_,res)=>res.json({ok:true,name:"XSportsX",version:"3.1.0",uptime:process.uptime(),cacheEntries:cache.size(),providers:providerStatus()}));
 app.get("/poster/:id.svg",async(req,res)=>{const id=decodeURIComponent(req.params.id).replace(/-bg$/g,"");const e=(await events()).find(x=>x.eventId===id);const title=e?`${e.away.short||e.away.name}  VS  ${e.home.short||e.home.name}`:"SPORTSX",detail=e?(e.state==="in"?`● LIVE${scoreText(e)}`:new Date(e.start).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})):"LIVE SPORTS";res.set("Cache-Control",e?.state==="in"?"public,max-age=15":"public,max-age=300").type("image/svg+xml").send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><defs><linearGradient id="g"><stop stop-color="#030914"/><stop offset=".58" stop-color="#12345f"/><stop offset="1" stop-color="#061125"/></linearGradient><radialGradient id="r"><stop stop-color="#ff7430" stop-opacity=".65"/><stop offset="1" stop-color="#ff7430" stop-opacity="0"/></radialGradient></defs><rect width="800" height="450" fill="url(#g)"/><circle cx="90" cy="50" r="240" fill="url(#r)"/><path d="M0 360 Q220 220 410 345 T800 260 V450 H0Z" fill="#02050b" opacity=".6"/><text x="38" y="55" fill="#9fb7d8" font-family="Arial" font-size="20" font-weight="700">SPORTSX</text>${e?.state==="in"?`<rect x="650" y="28" width="110" height="34" rx="17" fill="#e43d3d"/><text x="705" y="51" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="700">● LIVE</text>`:""}${e?.away.logo?`<image href="${esc(e.away.logo)}" x="135" y="100" width="170" height="170" preserveAspectRatio="xMidYMid meet"/>`:""}${e?.home.logo?`<image href="${esc(e.home.logo)}" x="495" y="100" width="170" height="170" preserveAspectRatio="xMidYMid meet"/>`:""}<text x="400" y="320" text-anchor="middle" fill="white" font-family="Arial" font-size="28" font-weight="800">${esc(title)}</text><text x="400" y="355" text-anchor="middle" fill="#a8bdd8" font-family="Arial" font-size="21">${esc(detail)}</text></svg>`);});
 app.listen(PORT,()=>console.log(`XSportsX ${BASE_URL}`));
