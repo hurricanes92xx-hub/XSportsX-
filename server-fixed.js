@@ -12,7 +12,7 @@ const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const cache = new TTLCache();
 const EVENT_REFRESH_MS = Number(process.env.EVENT_REFRESH_MS || 30000);
 const DEFAULT_TZ = process.env.DEFAULT_TIMEZONE || "UTC";
-const APP_VERSION = "3.9.4";
+const APP_VERSION = "3.9.7";
 let eventRefreshPromise = null;
 
 const LEAGUES = [
@@ -42,9 +42,12 @@ const SPORTS_NEWS_CHANNELS = [
 const newsChannelMap = new Map(SPORTS_NEWS_CHANNELS.map(x => [x.id, x]));
 const POPULAR_LEAGUES = new Set(["NFL","NBA","NHL","MLB","NCAAF","NCAAB","MLS","EPL","UFC","F1"]);
 const PUBLIC_REPO_ASSET_BASE = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/";
+const CDN_ASSET_BASE = "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/";
 
-const leaguePoster = id => `${BASE_URL}/leagues/${encodeURIComponent(id)}.gif`;
-const teamPoster = id => `${BASE_URL}/teams/${encodeURIComponent(id)}.gif`;
+// Use a public CDN directly for static posters. This avoids Nuvio/device-specific
+// failures fetching GIFs through the Render process and keeps cards independent of BASE_URL.
+const leaguePoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;
+const teamPoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;
 const leagueBackground = id => `${BASE_URL}/visuals/league/${encodeURIComponent(id)}.svg`;
 const gamePoster = id => `${BASE_URL}/visuals/game/${encodeURIComponent(id)}.svg`;
 
@@ -142,9 +145,9 @@ app.use(express.static("public"));
 app.get("/manifest.json", (_, res) => {
   const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), "manifest.json"), "utf8"));
   manifest.version = APP_VERSION;
-  manifest.logo = `${BASE_URL}/logo.svg`;
-  manifest.background = `${BASE_URL}/background.svg`;
-  res.set("Cache-Control", "public,max-age=300").json(manifest);
+  manifest.logo = `${CDN_ASSET_BASE}nfl.gif`;
+  manifest.background = `${CDN_ASSET_BASE}nfl.gif`;
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate").json(manifest);
 });
 
 async function servePublicGif(req, res) {
