@@ -1,13 +1,13 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "3.9.0",
+  "version": "3.9.5",
   "private": true,
   "type": "module",
   "description": "XSportsX — cinematic, multi-source live sports hub for Nuvio with premium UFC fight intelligence and NCAA Football network coverage.",
   "engines": { "node": "20.19.5" },
   "scripts": {
-    "start": "node gateway.js",
-    "dev": "node --watch gateway.js",
+    "start": "BASE_URL=https://xsportsx.onrender.com node gateway.js",
+    "dev": "BASE_URL=http://localhost:7000 node --watch gateway.js",
     "test": "node --test",
     "check": "node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
   },
