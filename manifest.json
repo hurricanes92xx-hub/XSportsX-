@@ -1,8 +1,8 @@
 {
   "id": "com.xsportsx.live",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "name": "XSportsX",
-  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, UFC Fight Night, official UFC events, rankings and fighter profiles.",
+  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, and a premium UFC Fight Night command center.",
   "logo": "https://xsportsx.onrender.com/logo.svg",
   "background": "https://xsportsx.onrender.com/background.svg",
   "resources": [
@@ -15,7 +15,8 @@
   "behaviorHints": { "configurable": true, "configurationRequired": false },
   "catalogs": [
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
-    { "type": "sport", "id": "ufc", "name": "🥊 UFC • FIGHT NIGHT" },
+    { "type": "sport", "id": "ufc-home", "name": "🥊 UFC • FIGHT NIGHT COMMAND CENTER" },
+    { "type": "sport", "id": "ufc", "name": "🔥 UFC • FIGHT CARDS" },
     { "type": "sport", "id": "ufc-rankings", "name": "🏆 UFC • RANKINGS" },
     { "type": "sport", "id": "ufc-fighters", "name": "👊 UFC • FIGHTERS" },
     { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
