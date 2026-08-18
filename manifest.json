@@ -1,6 +1,6 @@
 {
   "id": "com.xsportsx.live",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "name": "XSportsX",
   "description": "XSportsX — futuristic, collection-first live sports hub for Nuvio.",
   "logo": "https://xsportsx.onrender.com/logo.svg",
@@ -16,6 +16,7 @@
   "catalogs": [
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
     { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
+    { "type": "sport", "id": "sports-news", "name": "📰 SPORTS NEWS CHANNELS" },
     { "type": "sport", "id": "live-now", "name": "🔴 LIVE NOW" },
     { "type": "sport", "id": "starting-soon", "name": "STARTING SOON" },
     { "type": "sport", "id": "today", "name": "📅 TODAY" }
