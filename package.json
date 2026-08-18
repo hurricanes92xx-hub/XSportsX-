@@ -1,14 +1,17 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "3.0.0",
+  "version": "3.3.1",
   "private": true,
   "type": "module",
-  "description": "XSportsX — futuristic, multi-source live sports hub for Nuvio.",
+  "description": "XSportsX — cinematic, multi-source live sports hub for Nuvio.",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "node --test",
-    "check": "node --check server.js && node --check core.js && node --check providers.js"
+    "check": "node --check server.js && node --check core.js && node --check providers.js && node --check visuals.js"
   },
   "dependencies": {
     "express": "^5.1.0"
