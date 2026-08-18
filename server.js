@@ -25,8 +25,8 @@ const FAVORITE_TEAMS=[
 ];
 const favoriteTeamMap=new Map(FAVORITE_TEAMS.map(x=>[x.id,x]));
 const PUBLIC_REPO_ASSET_BASE="https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/";
-function teamPoster(id){return `${PUBLIC_REPO_ASSET_BASE}${id}.gif`;}
-function leaguePoster(id){return `${PUBLIC_REPO_ASSET_BASE}${encodeURIComponent(leagueMap.get(id)?.asset||"nfl.gif")}`;}
+function teamPoster(id){return `${BASE_URL}/teams/${encodeURIComponent(id)}.gif`;}
+function leaguePoster(id){return `${BASE_URL}/leagues/${encodeURIComponent(id)}.gif`;}
 function favoriteTeamMatches(teamConfig,all){return all.filter(e=>{if(e.sport!==teamConfig.sport)return false;const names=[e.home?.name,e.home?.short,e.away?.name,e.away?.short].filter(Boolean).map(x=>String(x).toLowerCase());return teamConfig.aliases.some(alias=>names.some(n=>n===alias.toLowerCase()||n.includes(alias.toLowerCase())));});}
 function scoreText(e){if(e?.home?.score==null||e?.away?.score==null)return "";return ` • ${e.away.short||e.away.name} ${e.away.score} — ${e.home.score} ${e.home.short||e.home.name}`;}
 function favoriteTeamMeta(teamConfig,all){const matches=favoriteTeamMatches(teamConfig,all),videos=matches.slice(0,100).map(e=>({id:e.id,title:`${e.state==="in"?"🔴 LIVE • ":""}${e.title}${scoreText(e)}`,released:e.start,thumbnail:poster(e.eventId),overview:`${e.detail||e.league}${e.venue?` • ${e.venue}`:""}`})),live=matches.filter(e=>e.state==="in").length;return{id:`sport:team-${teamConfig.id}`,type:"sport",name:teamConfig.name,poster:teamPoster(teamConfig.id),background:teamPoster(teamConfig.id),description:`${live?`${live} LIVE NOW • `:""}${matches.length} upcoming/recent event${matches.length===1?"":"s"}`,genres:["Sports","Favorite Teams",teamConfig.sport],videos,behaviorHints:{defaultVideoId:videos[0]?.id}};}
@@ -38,6 +38,20 @@ async function events(){const cached=cache.get("events:active");if(cached)return
 function filterCatalog(all,id){const now=Date.now();if(id==="live-now")return all.filter(e=>e.state==="in");if(id==="starting-soon")return all.filter(e=>{const t=new Date(e.start||0).getTime();return t>now&&t<=now+120*60_000;});if(id==="upcoming")return all.filter(e=>new Date(e.start||0).getTime()>now);if(id==="favorites")return all;const favorite=favoriteTeamMap.get(id);if(favorite)return favoriteTeamMatches(favorite,all);if(id==="today"){const fmt=new Intl.DateTimeFormat("en-US",{timeZone:CONFIGURED_TZ,year:"numeric",month:"2-digit",day:"2-digit"});return all.filter(e=>fmt.format(new Date(e.start||0))===fmt.format(new Date()));}return all.filter(e=>e.sport===id||String(e.league).toLowerCase()===id.toLowerCase());}
 app.use(express.static("public"));
 app.get("/manifest.json",(_,res)=>{const manifest=JSON.parse(fs.readFileSync(path.join(process.cwd(),"manifest.json"),"utf8"));manifest.version="3.0.0";manifest.logo=`${BASE_URL}/logo.svg`;manifest.background=`${BASE_URL}/background.svg`;res.set("Cache-Control","public,max-age=300").json(manifest);});
+
+// Proxy the repository artwork through the addon host so Nuvio/Stremio clients
+// always receive a normal HTTPS image with the correct content type. The source
+// assets remain public in the repository and are cached by the addon server.
+async function servePublicGif(req,res){
+  const filename=req.params.file;
+  if(!/^[a-z0-9-]+\.gif$/i.test(filename))return res.status(400).end();
+  const key=`asset:${filename}`,cached=cache.get(key);
+  if(cached){res.set("Cache-Control","public,max-age=86400").type("gif").send(cached);return;}
+  try{const r=await fetch(`${PUBLIC_REPO_ASSET_BASE}${encodeURIComponent(filename)}`);if(!r.ok)return res.status(404).end();const data=Buffer.from(await r.arrayBuffer());cache.set(key,data,86400000);res.set("Cache-Control","public,max-age=86400").type("gif").send(data);}catch{res.status(502).end();}
+}
+app.get("/leagues/:file",servePublicGif);
+app.get("/teams/:file",servePublicGif);
+
 app.get("/catalog/sport/sports-leagues.json",async(_,res)=>{try{const all=await events();res.json({metas:LEAGUES.map(league=>leagueEventsMeta(league,all))});}catch{res.status(502).json({metas:[]});}});
 app.get("/catalog/sport/favorite-teams.json",async(_,res)=>{try{const all=await events();res.json({metas:FAVORITE_TEAMS.map(team=>favoriteTeamMeta(team,all))});}catch{res.status(502).json({metas:[]});}});
 app.get("/catalog/sport/:catalog.json",async(req,res)=>{try{res.json({metas:filterCatalog(await events(),req.params.catalog).map(meta)});}catch{res.status(502).json({metas:[]});}});
