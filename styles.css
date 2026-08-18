@@ -1,0 +1,9 @@
+:root{font-family:Inter,system-ui,sans-serif;color:#eef5ff;background:#030914}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 10%,#12345a 0,#030914 42%,#02060d 100%);min-height:100vh}
+.shell{max-width:1200px;margin:auto;padding:28px 32px}header{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:28px;letter-spacing:2px;font-weight:800}.brand b{color:#ff7430}.pill{border:1px solid #244367;padding:8px 13px;border-radius:999px;color:#8fa8c8;font-size:12px}
+.hero{min-height:65vh;display:flex;align-items:center;position:relative;overflow:hidden}.hero>div:first-child{max-width:600px;z-index:1}
+.eyebrow{color:#ff7430;font-size:13px;font-weight:800;letter-spacing:3px}h1{font-size:clamp(55px,9vw,110px);line-height:.88;margin:18px 0}h1 span{color:#8ea8c8}
+p{font-size:19px;color:#9fb3cf;line-height:1.6}.button{display:inline-block;margin-top:20px;background:#ff7430;color:white;text-decoration:none;padding:13px 18px;border-radius:10px;font-weight:800}
+.orb{position:absolute;right:-80px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,#ff743055,#123a6800 65%);filter:blur(3px)}
+.section-title{color:#8fa8c8;letter-spacing:2px;font-size:12px;font-weight:800}pre{background:#071326;border:1px solid #183354;border-radius:16px;padding:18px;color:#a9c0dd;overflow:auto}
