@@ -1,8 +1,8 @@
 {
   "id": "com.xsportsx.live",
-  "version": "3.9.3",
+  "version": "3.9.4",
   "name": "XSportsX",
-  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, premium UFC Fight Intelligence, and an auto-updating NCAA Football Command Center with live AP ranking enrichment and broadcast network information.",
+  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, premium UFC Fight Intelligence, and an auto-updating NCAA Football Command Center with live AP ranking enrichment, broadcast network information, and CFP Watch.",
   "logo": "https://xsportsx.onrender.com/logo.svg",
   "background": "https://xsportsx.onrender.com/background.svg",
   "resources": [
@@ -16,6 +16,7 @@
   "catalogs": [
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
     { "type": "sport", "id": "ncaaf", "name": "🏈 NCAA FOOTBALL • COMMAND CENTER" },
+    { "type": "sport", "id": "cfp-watch", "name": "🏆 NCAA FOOTBALL • CFP WATCH" },
     { "type": "sport", "id": "ufc-home", "name": "🥊 UFC • FIGHT NIGHT COMMAND CENTER" },
     { "type": "sport", "id": "ufc", "name": "🔥 UFC • FIGHT CARDS" },
     { "type": "sport", "id": "ufc-rankings", "name": "🏆 UFC • RANKINGS" },
