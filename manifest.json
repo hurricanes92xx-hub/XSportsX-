@@ -1,10 +1,10 @@
 {
   "id": "com.xsportsx.live",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "name": "XSportsX",
   "description": "XSportsX — futuristic, collection-first live sports hub for Nuvio.",
-  "logo": "https://YOUR_HOST/logo.svg",
-  "background": "https://YOUR_HOST/background.svg",
+  "logo": "https://xsportsx.onrender.com/logo.svg",
+  "background": "https://xsportsx.onrender.com/background.svg",
   "resources": [
     { "name": "catalog", "types": ["sport"], "idPrefixes": ["sport:"] },
     { "name": "meta", "types": ["sport"], "idPrefixes": ["sport:"] },
@@ -17,6 +17,7 @@
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
     { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
     { "type": "sport", "id": "live-now", "name": "🔴 LIVE NOW" },
-    { "type": "sport", "id": "starting-soon", "name": "STARTING SOON" }
+    { "type": "sport", "id": "starting-soon", "name": "STARTING SOON" },
+    { "type": "sport", "id": "today", "name": "📅 TODAY" }
   ]
 }
