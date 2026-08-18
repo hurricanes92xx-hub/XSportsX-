@@ -1,11 +1,11 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "private": true,
   "type": "module",
   "description": "XSportsX — cinematic, multi-source live sports hub for Nuvio.",
   "engines": {
-    "node": ">=20"
+    "node": "20.19.5"
   },
   "scripts": {
     "start": "node server.js",
