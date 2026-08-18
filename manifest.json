@@ -14,11 +14,10 @@
   "idPrefixes": ["sport:"],
   "behaviorHints": { "configurable": true, "configurationRequired": false },
   "catalogs": [
-    { "type": "sport", "id": "whats-on-now", "name": "🔥 WHAT'S ON NOW" },
     { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
     { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
     { "type": "sport", "id": "sports-news", "name": "📰 SPORTS NEWS • ENGLISH" },
-    { "type": "sport", "id": "live-now", "name": "🔴 LIVE NOW" },
+    { "type": "sport", "id": "live-now", "name": "🔥 WHAT'S ON NOW • LIVE" },
     { "type": "sport", "id": "starting-soon", "name": "⏰ STARTING SOON" },
     { "type": "sport", "id": "today", "name": "📅 TODAY" }
   ]
