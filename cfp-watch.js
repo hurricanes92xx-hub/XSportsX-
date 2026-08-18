@@ -1,9 +1,8 @@
 import { fetchJson, normalizeName, similarity } from "./core.js";
 
+// ESPN college-football rankings are the source of truth for NCAA ranking metadata.
 const RANKINGS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings";
 const cache = { value: null, expires: 0, fetchedAt: 0, promise: null };
-// Rankings can change weekly during the season. Refresh hourly so Nuvio cards
-// pick up changes automatically without hammering the upstream service.
 const TTL = 60 * 60_000;
 
 function teamNames(team = {}) {
@@ -15,9 +14,17 @@ function parseRankings(data) {
   for (const group of data?.rankings || []) {
     for (const entry of group?.ranks || []) {
       const team = entry?.team || {};
-      const rank = Number(entry?.current || entry?.rank);
+      const rank = Number(entry?.current ?? entry?.rank);
       if (!Number.isFinite(rank)) continue;
-      out.push({ rank, previousRank: Number(entry?.previous) || null, points: Number(entry?.points) || null, firstPlaceVotes: Number(entry?.firstPlaceVotes) || null, names: teamNames(team), name: team.displayName || team.name || team.shortName || "", abbreviation: team.abbreviation || "" });
+      out.push({
+        rank,
+        previousRank: Number(entry?.previous) || null,
+        points: Number(entry?.points) || null,
+        firstPlaceVotes: Number(entry?.firstPlaceVotes) || null,
+        names: teamNames(team),
+        name: team.displayName || team.name || team.shortName || "",
+        abbreviation: team.abbreviation || ""
+      });
     }
   }
   return out.sort((a,b) => a.rank - b.rank);
@@ -35,16 +42,15 @@ export async function getCollegeRankings() {
         cache.expires = Date.now() + TTL;
         cache.fetchedAt = Date.now();
       } else if (cache.value) {
-        // Never replace good rankings with an empty upstream response.
         cache.expires = Date.now() + 5 * 60_000;
       }
       return cache.value || value;
-    } finally { cache.promise = null; }
+    } finally {
+      cache.promise = null;
+    }
   })();
-  try { return await cache.promise; } catch {
-    // Fail open: existing NCAA events continue to work if rankings are down.
-    return cache.value || [];
-  }
+  try { return await cache.promise; }
+  catch { return cache.value || []; }
 }
 
 function matchTeam(eventTeam, rankings) {
@@ -70,7 +76,17 @@ export async function enrichNcaafEvents(events) {
     const home = matchTeam(event.home, rankings);
     const away = matchTeam(event.away, rankings);
     const ranked = [home, away].filter(Boolean);
-    return { ...event, ranking: { home, away, ranked: ranked.length, rankedMatchup: Boolean(home && away), rankingsUpdatedAt: cache.fetchedAt || null } };
+    return {
+      ...event,
+      ranking: {
+        source: "ESPN",
+        home,
+        away,
+        ranked: ranked.length,
+        rankedMatchup: Boolean(home && away),
+        rankingsUpdatedAt: cache.fetchedAt || null
+      }
+    };
   });
 }
 
@@ -87,5 +103,16 @@ export function cfpWatchMeta(event, gamePoster, gameOverview, scoreText, videoFo
   const video = videoFor(event);
   video.title = `▶ WATCH • ${a} at ${h}${scoreText(event)}`;
   video.overview = `${badge}${movement ? ` • ${movement}` : ""} • ${gameOverview(event)}`;
-  return { id:`sport:cfp-${event.eventId}`, type:"sport", name:`${badge} • ${a} at ${h}`, poster:gamePoster(event.eventId), background:gamePoster(event.eventId), description:`${event.state === "in" ? "🔴 LIVE • " : ""}${movement ? `${movement} • ` : ""}${gameOverview(event)}${scoreText(event)}`, genres:["Sports","NCAA Football","CFP Watch",event.league].filter(Boolean), releaseInfo:event.start ? new Date(event.start).toLocaleString() : "", videos:[video], behaviorHints:{defaultVideoId:video.id} };
+  return {
+    id:`sport:cfp-${event.eventId}`,
+    type:"sport",
+    name:`${badge} • ${a} at ${h}`,
+    poster:gamePoster(event.eventId),
+    background:gamePoster(event.eventId),
+    description:`${event.state === "in" ? "🔴 LIVE • " : ""}${movement ? `${movement} • ` : ""}${gameOverview(event)}${scoreText(event)}`,
+    genres:["Sports","NCAA Football","CFP Watch",event.league].filter(Boolean),
+    releaseInfo:event.start ? new Date(event.start).toLocaleString() : "",
+    videos:[video],
+    behaviorHints:{defaultVideoId:video.id}
+  };
 }
