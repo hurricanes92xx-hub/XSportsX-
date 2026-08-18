@@ -1,6 +1,7 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
 import { getUfcData, ufcSections, getUfcOfficialRankings, getUfcOfficialAthletes } from "./ufc-data.js";
+import { buildFightIntelligence } from "./ufc-intelligence.js";
 
 const PORT = Number(process.env.PORT || 7000);
 const BACKEND_PORT = Number(process.env.XSPORTSX_BACKEND_PORT || 7001);
@@ -28,13 +29,15 @@ async function ufcCatalog() {
   const out = [];
   for (const detail of data) {
     const source = findBackendEvent(detail, metas), sections = ufcSections(detail), fights = detail.fights || [];
+    const enrichedFights = await Promise.all(fights.map(f => buildFightIntelligence(f)));
     const main = sections.mainCard || [];
-    const mainEvent = main.find(f => f.mainEvent) || main[0];
-    const coMain = main.find(f => f.coMain) || main[1];
-    const videos = fights.map((fight, index) => {
+    const mainEvent = enrichedFights.find(f => f.mainEvent) || enrichedFights[0];
+    const coMain = enrichedFights.find(f => f.coMain) || enrichedFights[1];
+    const videos = enrichedFights.map((fight, index) => {
       const label = fight.mainEvent ? "🔥 MAIN EVENT" : fight.coMain ? "⚡ CO-MAIN EVENT" : fight.title ? "🏆 TITLE FIGHT" : fight.bout || "FIGHT";
       const a = fight.fighter1?.name || "Fighter 1", b = fight.fighter2?.name || "Fighter 2";
-      return { id: fightId(detail.id, index), title: `${label} • ${a} vs ${b}`, released: detail.date, thumbnail: fight.fighter1?.image || fight.fighter2?.image || detail.image || source?.poster, overview: `${fight.rounds || 3} ROUNDS • ${fight.bout || "UFC"}${fight.fighter1?.record || fight.fighter2?.record ? ` • ${fight.fighter1?.record || ""} vs ${fight.fighter2?.record || ""}` : ""}${fight.result ? ` • ${fight.result}` : ""}` };
+      const c = fight.comparison || {};
+      return { id: fightId(detail.id, index), title: `${label} • ${a} vs ${b}`, released: detail.date, thumbnail: fight.fighter1?.image || fight.fighter2?.image || detail.image || source?.poster, overview: `${fight.rounds || 3} ROUNDS • ${fight.bout || "UFC"}${fight.fighter1?.record || fight.fighter2?.record ? ` • ${fight.fighter1?.record || ""} vs ${fight.fighter2?.record || ""}` : ""}${fight.result ? ` • ${fight.result}` : ""}`, faceOff: { left: fight.fighter1, right: fight.fighter2, records: c.records || [], ranks: c.ranks || [], weightClass: c.weightClass || fight.bout || "UFC", titleFight: Boolean(c.titleFight), rounds: Number(c.rounds || fight.rounds || 3), watchLabel: "▶ WATCH FIGHT" } };
     });
     if (!videos.length && source) videos.push(...(source.videos || []));
     out.push({ id: `sport:ufc-event-${detail.id}`, type: "sport", name: `🥊 ${detail.name}`, poster: detail.image || source?.poster, background: detail.image || source?.background, description: `🥊 UFC FIGHT NIGHT • ${detail.date || ""}${detail.venue ? ` • ${detail.venue}` : ""}${detail.city ? ` • ${detail.city}` : ""}\n\n🔥 MAIN EVENT: ${mainEvent?.fighter1?.name || "TBA"} vs ${mainEvent?.fighter2?.name || "TBA"}\n⚡ CO-MAIN: ${coMain?.fighter1?.name || "TBA"} vs ${coMain?.fighter2?.name || "TBA"}\n\n🔥 MAIN CARD: ${main.length} • PRELIMS: ${sections.prelims.length}\n\n🔗 Official UFC event: ${detail.officialUrl}`, genres: ["Sports", "UFC", "MMA", "Fight Night"], releaseInfo: detail.date ? new Date(detail.date).toLocaleString() : "", videos, behaviorHints: { defaultVideoId: videos[0]?.id } });
@@ -76,7 +79,7 @@ async function handleUfc(req, res) {
   if (url.pathname === "/catalog/sport/ufc-fighters.json") return json(res, { metas: await ufcFightersCatalog() });
   if (url.pathname.startsWith("/meta/sport/ufc-home")) { const meta = (await ufcHomeCatalog())[0]; return meta ? json(res, { meta }) : json(res, { meta: null }, 404); }
   if (url.pathname.startsWith("/meta/sport/ufc-event-")) { const id = decodeURIComponent(url.pathname.split("/meta/sport/")[1].replace(/\.json$/, "")); const meta = (await ufcCatalog()).find(x => x.id === id); return meta ? json(res, { meta }) : json(res, { meta: null }, 404); }
-  if (url.pathname.startsWith("/meta/sport/ufc-fight-")) { const id = decodeURIComponent(url.pathname.split("/meta/sport/")[1].replace(/\.json$/, "")); const parsed = parseFightId(id); const event = parsed ? (await ufcCatalog()).find(x => x.id === `sport:ufc-event-${parsed.eventId}`) : null; const video = parsed && event?.videos?.[parsed.index]; return video ? json(res, { meta: { id, type: "sport", name: video.title, poster: video.thumbnail, background: event.background, description: video.overview, genres: ["Sports", "UFC", "Fight"], videos: [video], behaviorHints: { defaultVideoId: video.id } } }) : json(res, { meta: null }, 404); }
+  if (url.pathname.startsWith("/meta/sport/ufc-fight-")) { const id = decodeURIComponent(url.pathname.split("/meta/sport/")[1].replace(/\.json$/, "")); const parsed = parseFightId(id); const event = parsed ? (await ufcCatalog()).find(x => x.id === `sport:ufc-event-${parsed.eventId}`) : null; const video = parsed && event?.videos?.[parsed.index]; return video ? json(res, { meta: { id, type: "sport", name: video.title, poster: video.thumbnail, background: event.background, description: video.overview, genres: ["Sports", "UFC", "Fight"], videos: [video], faceOff: video.faceOff, behaviorHints: { defaultVideoId: video.id } } }) : json(res, { meta: null }, 404); }
   if (url.pathname.startsWith("/stream/sport/ufc-fight-")) { const id = decodeURIComponent(url.pathname.split("/stream/sport/")[1].replace(/\.json$/, "")); const parsed = parseFightId(id); if (!parsed) return json(res, { streams: [] }, 404); const event = (await ufcCatalog()).find(x => x.id === `sport:ufc-event-${parsed.eventId}`); const streams = event?.id ? await backendJson(`/stream/sport/${encodeURIComponent(event.id.replace(/^sport:/, ""))}.json`).catch(() => ({ streams: [] })) : { streams: [] }; return json(res, { streams: Array.isArray(streams.streams) ? streams.streams : [] }); }
   if (url.pathname.startsWith("/stream/sport/ufc-event-")) {
     const id = decodeURIComponent(url.pathname.split("/stream/sport/")[1].replace(/\.json$/, ""));
