@@ -1,9 +1,9 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "private": true,
   "type": "module",
-  "description": "XSportsX — cinematic, multi-source live sports hub for Nuvio with a premium UFC fight intelligence experience.",
+  "description": "XSportsX — cinematic, multi-source live sports hub for Nuvio with premium UFC fight intelligence and NCAA Football network coverage.",
   "engines": { "node": "20.19.5" },
   "scripts": {
     "start": "node gateway.js",
