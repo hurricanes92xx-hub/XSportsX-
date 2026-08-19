@@ -1,5 +1,6 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
+import { buildM3U, buildXMLTV, pickPlayableStream } from "./nuvio-live-tv.js";
 
 const PORT = Number(process.env.PORT || 7000);
 const GATEWAY_PORT = Number(process.env.XSPORTSX_GATEWAY_PORT || 7002);
@@ -91,6 +92,37 @@ function send(res, status, value) {
   res.end(JSON.stringify(value));
 }
 
+function sendText(res, status, contentType, body, cache = "no-store") {
+  res.writeHead(status, {
+    "content-type": contentType,
+    "cache-control": cache,
+    "access-control-allow-origin": "*",
+    "x-xsportsx-version": VERSION,
+    "x-xsportsx-addon-id": manifest.id
+  });
+  res.end(body);
+}
+
+async function resolvePlayable(req, res, rawId) {
+  const id = decodeURIComponent(rawId || "");
+  const backendId = id.replace(/^sport:/, "");
+  try {
+    const payload = await gateway(`/stream/sport/${encodeURIComponent(backendId)}.json`);
+    const stream = pickPlayableStream(payload);
+    const url = stream?.url || stream?.streamUrl;
+    if (!url) return send(res, 404, { error: "No direct authorized stream URL is available for this event." });
+    res.writeHead(302, {
+      location: url,
+      "cache-control": "no-store",
+      "access-control-allow-origin": "*",
+      "x-xsportsx-version": VERSION
+    });
+    res.end();
+  } catch (error) {
+    send(res, 502, { error: "stream resolution failed", detail: String(error?.message || error) });
+  }
+}
+
 const child = spawn(process.execPath, ["gateway.js"], {
   env: { ...process.env, PORT: String(GATEWAY_PORT), XSPORTSX_BACKEND_PORT: String(BACKEND_PORT) },
   stdio: "inherit"
@@ -100,9 +132,20 @@ child.on("exit", code => { if (code && code !== 0) process.exitCode = code; });
 async function proxy(req, res) {
   const original = req.url || "/";
   const path = original.split("?")[0];
+
   if (path === "/manifest.json" || path === "/manifest-4.2.0.json") return send(res, 200, manifest);
-  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel" });
+  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel", liveTv: true });
   if (path === "/catalog/channel/sports-epg.json") return send(res, 200, await sportsEpgCatalog());
+
+  if (path === "/live-tv.m3u" || path === "/sports.m3u") {
+    const { metas } = await sportsEpgCatalog();
+    return sendText(res, 200, "application/x-mpegURL; charset=utf-8", buildM3U(metas, BASE));
+  }
+  if (path === "/epg.xml" || path === "/sports.xml" || path === "/live-tv.xml") {
+    const { metas } = await sportsEpgCatalog();
+    return sendText(res, 200, "application/xml; charset=utf-8", buildXMLTV(metas));
+  }
+  if (path.startsWith("/play/")) return resolvePlayable(req, res, path.slice("/play/".length));
 
   const translated = original
     .replace(/^\/catalog\/channel\//, "/catalog/sport/")
@@ -125,7 +168,13 @@ async function proxy(req, res) {
         return send(res, upstream.status, payload);
       } catch {}
     }
-    res.writeHead(upstream.status, { "content-type": contentType, "cache-control": "no-store", "access-control-allow-origin": "*" });
+    res.writeHead(upstream.status, {
+      "content-type": contentType,
+      "cache-control": "no-store",
+      "access-control-allow-origin": "*",
+      "x-xsportsx-version": VERSION,
+      "x-xsportsx-addon-id": manifest.id
+    });
     res.end(body);
   } catch (error) {
     send(res, 502, { error: "gateway unavailable", detail: String(error?.message || error) });
