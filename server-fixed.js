@@ -15,7 +15,7 @@ const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const cache = new TTLCache();
 const EVENT_REFRESH_MS = Number(process.env.EVENT_REFRESH_MS || 30000);
 const DEFAULT_TZ = process.env.DEFAULT_TIMEZONE || "UTC";
-const APP_VERSION = "3.9.7";
+const APP_VERSION = "4.2.0";
 let eventRefreshPromise = null;
 
 const LEAGUES = [
@@ -196,65 +196,44 @@ app.get("/catalog/sport/sports-news.json", async (_,res) => {
   try {
     const streams = await Promise.all(SPORTS_NEWS_CHANNELS.map(c => newsStreamsForChannel(c.id)));
     res.json({metas:[sportsNewsHeaderMeta(), ...SPORTS_NEWS_CHANNELS.map((c,i) => newsChannelMeta(c, streams[i].length > 0))]});
-  } catch {
-    res.json({metas:[sportsNewsHeaderMeta(), ...SPORTS_NEWS_CHANNELS.map(c => newsChannelMeta(c,false))]});
-  }
+  } catch { res.json({metas:[sportsNewsHeaderMeta(), ...SPORTS_NEWS_CHANNELS.map(c => newsChannelMeta(c, false))]}); }
 });
-app.get("/catalog/sport/:catalog.json", async (req,res) => {
+
+app.get("/catalog/sport/:id.json", async (req,res) => {
   try {
+    const id = String(req.params.id || "").replace(/\.json$/, "");
     const all = await events();
-    if (req.params.catalog === "cfp-watch") return res.json({metas:cfpWatchEvents(all).map(e => cfpWatchMeta(e, gamePoster, gameOverview, scoreText, videoFor))});
-    res.json({metas:filterCatalog(all, req.params.catalog).map(eventMeta)});
+    const selected = filterCatalog(all,id);
+    if (id === "cfp-watch") return res.json({metas:cfpWatchEvents(all).map(e => cfpWatchMeta(e,gamePoster,gameOverview,scoreText,videoFor))});
+    if (id === "sports-leagues") return res.json({metas:LEAGUES.map(l => leagueEventsMeta(l,all))});
+    if (id === "favorite-teams") return res.json({metas:FAVORITE_TEAMS.map(t => favoriteTeamMeta(t,all))});
+    if (id === "sports-news") return res.json({metas:[sportsNewsHeaderMeta(), ...SPORTS_NEWS_CHANNELS.map(c => newsChannelMeta(c,false))]});
+    if (leagueMap.has(id)) return res.json({metas:selected.map(eventMeta)});
+    if (favoriteTeamMap.has(id)) return res.json({metas:selected.map(eventMeta)});
+    return res.json({metas:selected.map(eventMeta)});
   } catch { res.status(502).json({metas:[]}); }
 });
 
 app.get("/meta/sport/:id.json", async (req,res) => {
-  const id = req.params.id.replace(/^sport:/, "");
   try {
-    if (id === "news-header") return res.json({meta:sportsNewsHeaderMeta()});
-    if (id.startsWith("news-")) {
-      const ch = newsChannelMap.get(id.slice(5));
-      if (!ch) return res.status(404).json({meta:null});
-      const streams = await newsStreamsForChannel(ch.id);
-      return res.json({meta:newsChannelMeta(ch,streams.length > 0)});
-    }
+    const id = decodeURIComponent(String(req.params.id || "").replace(/\.json$/, ""));
     const all = await events();
-    if (id.startsWith("cfp-")) {
-      const e = all.find(x => x.eventId === id.slice(4));
-      return e && cfpWatchEvents([e]).length ? res.json({meta:cfpWatchMeta(e, gamePoster, gameOverview, scoreText, videoFor)}) : res.status(404).json({meta:null});
-    }
-    if (id.startsWith("game-")) {
-      const e = all.find(x => x.eventId === id.slice(5));
-      return e ? res.json({meta:gameCenterMeta(e)}) : res.status(404).json({meta:null});
-    }
-    if (id.startsWith("league-")) {
-      const league = leagueMap.get(id.slice(7));
-      return league ? res.json({meta:leagueEventsMeta(league,all)}) : res.status(404).json({meta:null});
-    }
-    if (id.startsWith("team-")) {
-      const team = favoriteTeamMap.get(id.slice(5));
-      return team ? res.json({meta:favoriteTeamMeta(team,all)}) : res.status(404).json({meta:null});
-    }
-    const e = all.find(x => x.eventId === id);
-    return e ? res.json({meta:gameCenterMeta(e)}) : res.status(404).json({meta:null});
-  } catch { return res.status(502).json({meta:null}); }
+    if (id === "sports-leagues") return res.json({meta:{id:"sport:sports-leagues",type:"sport",name:"🏆 SPORTS LEAGUES",poster:leaguePoster("nfl"),background:leagueBackground("nfl"),description:"All major sports leagues",genres:["Sports","Leagues"],videos:LEAGUES.map(l=>({id:`sport:league-${l.id}`,title:l.name,thumbnail:leaguePoster(l.id),overview:leagueEventsMeta(l,all).description}))}});
+    if (id === "favorite-teams") return res.json({meta:{id:"sport:favorite-teams",type:"sport",name:"⭐ FAVORITE TEAMS",poster:teamPoster("miami-hurricanes-football"),background:teamPoster("miami-hurricanes-football"),description:"Favorite team event collections",genres:["Sports","Favorite Teams"],videos:FAVORITE_TEAMS.map(t=>({id:`sport:team-${t.id}`,title:t.name,thumbnail:teamPoster(t.id),overview:favoriteTeamMeta(t,all).description}))}});
+    const event = all.find(e => e.id === id || `sport:game-${e.eventId}` === id || `sport:cfp-${e.eventId}` === id);
+    if (event) return res.json({meta:eventMeta(event)});
+    res.status(404).json({meta:null});
+  } catch { res.status(502).json({meta:null}); }
 });
 
 app.get("/stream/sport/:id.json", async (req,res) => {
-  const id = req.params.id.replace(/^sport:/, "");
   try {
-    if (id === "news-header") return res.json({streams:[]});
-    if (id.startsWith("news-")) {
-      const ch = newsChannelMap.get(id.slice(5));
-      return res.json({streams:ch ? await newsStreamsForChannel(ch.id) : []});
-    }
-    const e = (await events()).find(x => x.eventId === (id.startsWith("game-") ? id.slice(5) : id));
-    return e ? res.json({streams:await streamsFor(e)}) : res.json({streams:[]});
-  } catch { return res.json({streams:[]}); }
+    const id = decodeURIComponent(String(req.params.id || "").replace(/\.json$/, ""));
+    if (id.startsWith("sport:")) return res.json({streams:await streamsFor(id.replace(/^sport:/,""))});
+    return res.json({streams:await streamsFor(id)});
+  } catch { res.json({streams:[]}); }
 });
 
-app.get("/sources/status", (_,res) => res.json(providerStatus()));
-app.get("/stats", (_,res) => res.json({version:APP_VERSION,cache:cache.statsSummary(),providers:providerStatus()}));
-app.get("/health", (_,res) => res.json({ok:true,version:APP_VERSION,uptime:process.uptime()}));
+app.get("/provider-status.json", (_,res) => res.json(providerStatus()));
 
-app.listen(PORT, () => console.log(`XSportsX listening on ${PORT}`));
+app.listen(PORT, "0.0.0.0", () => console.log(`XSportsX backend ${APP_VERSION} listening on ${PORT}`));
