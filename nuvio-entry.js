@@ -4,7 +4,7 @@ import { spawn } from "node:child_process";
 const PORT = Number(process.env.PORT || 7000);
 const INTERNAL = Number(process.env.XSPORTSX_PUBLIC_INTERNAL_PORT || 7005);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.1.0";
+const VERSION = "4.1.1";
 const POSTER = "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png";
 
 const manifest = {
@@ -29,10 +29,12 @@ function send(res, status, value) {
   const body = JSON.stringify(value);
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
-    "cache-control": "no-store, max-age=0, must-revalidate",
+    "cache-control": "no-store, no-cache, max-age=0, must-revalidate",
     "pragma": "no-cache",
     "expires": "0",
-    "access-control-allow-origin": "*"
+    "access-control-allow-origin": "*",
+    "x-xsportsx-version": VERSION,
+    "x-xsportsx-addon-id": manifest.id
   });
   res.end(body);
 }
@@ -57,7 +59,7 @@ async function proxy(req, res) {
   const original = req.url || "/";
   const path = original.split("?")[0];
 
-  if (path === "/manifest.json" || path === "/manifest-4.1.0.json") return send(res, 200, manifest);
+  if (path === "/manifest.json" || path === "/manifest-4.1.0.json" || path === "/manifest-4.1.1.json") return send(res, 200, manifest);
   if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel" });
 
   const translated = original
@@ -77,7 +79,7 @@ async function proxy(req, res) {
       try { return send(res, upstream.status, rewritePayload(JSON.parse(buf.toString("utf8")))); }
       catch {}
     }
-    res.writeHead(upstream.status, { "content-type": contentType, "cache-control": "no-store", "access-control-allow-origin": "*" });
+    res.writeHead(upstream.status, { "content-type": contentType, "cache-control": "no-store, no-cache, max-age=0", "access-control-allow-origin": "*", "x-xsportsx-version": VERSION });
     res.end(buf);
   } catch (err) {
     send(res, 502, { error: "upstream unavailable", detail: String(err?.message || err) });
