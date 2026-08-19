@@ -6,8 +6,8 @@
   "description": "XSportsX — ultimate sports command center with unified sports EPG, live and upcoming games, broadcast networks, UFC, NCAA Football, conference network coverage, Xtream-compatible access, and dynamic sports artwork.",
   "engines": { "node": ">=20.19.5" },
   "scripts": {
-    "start": "node production-entry.js",
-    "dev": "BASE_URL=http://localhost:7000 node --watch production-entry.js",
+    "start": "node render-entry.js",
+    "dev": "BASE_URL=http://localhost:7000 node --watch render-entry.js",
     "test": "node --test",
     "check": "node --check production-entry.js && node --check render-entry.js && node --check xtream-api.js && node --check nuvio-live-tv.js && node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
   },
