@@ -1,9 +1,9 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "private": true,
   "type": "module",
-  "description": "XSportsX — unified sports EPG for Nuvio with live games, broadcast network metadata, UFC, NCAA Football, and conference network coverage.",
+  "description": "XSportsX — unified sports EPG and Live TV source for Nuvio with live games, broadcast network metadata, UFC, NCAA Football, and conference network coverage.",
   "engines": { "node": ">=20.19.5" },
   "scripts": {
     "start": "node render-entry.js",
