@@ -1,15 +1,15 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": true,
   "type": "module",
   "description": "XSportsX — unified sports EPG for Nuvio with live games, broadcast network metadata, UFC, NCAA Football, and conference network coverage.",
   "engines": { "node": ">=20.19.5" },
   "scripts": {
-    "start": "BASE_URL=https://xsportsx.onrender.com node render-entry.js",
-    "dev": "BASE_URL=http://localhost:7000 node --watch render-entry.js",
+    "start": "BASE_URL=https://xsportsx.onrender.com node nuvio-entry.js",
+    "dev": "BASE_URL=http://localhost:7000 node --watch nuvio-entry.js",
     "test": "node --test",
-    "check": "node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check render-entry.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
+    "check": "node --check nuvio-entry.js && node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check render-entry.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
   },
   "dependencies": { "express": "^5.1.0" }
 }
