@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT || 7000);
 const GATEWAY_PORT = Number(process.env.XSPORTSX_GATEWAY_PORT || 7002);
 const BACKEND_PORT = Number(process.env.XSPORTSX_BACKEND_PORT || 7001);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.3.0";
+const VERSION = "4.3.3";
 const ESPN = "https://a.espncdn.com/i/teamlogos/leagues/500/";
 const manifest = {
   id: "com.xsportsx.sports.epg",
@@ -204,7 +204,7 @@ child.on("exit", code => { if (code && code !== 0) process.exitCode = code; });
 
 async function proxy(req, res) {
   const original = req.url || "/", path = original.split("?")[0], url = new URL(original, BASE);
-  if (path === "/manifest.json" || path === "/manifest-4.3.0.json") return send(res, 200, manifest);
+  if (path === "/manifest.json" || path === "/manifest-4.3.3.json") return send(res, 200, manifest);
   if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel", liveTv: true, xtream: xtreamConfigured() });
   if (path === "/live-tv.json") return send(res, 200, { id: manifest.id, version: VERSION, name: manifest.liveTv.name, playlist: `${BASE}${manifest.liveTv.playlist}`, epg: `${BASE}${manifest.liveTv.epg}`, refreshSeconds: manifest.liveTv.refreshSeconds, catalog: `${BASE}/catalog/channel/sports-epg.json`, guide: `${BASE}/catalog/channel/sports-guide.json`, xtream: xtreamConfigured() ? { server: BASE, playerApi: `${BASE}/player_api.php`, playlist: `${BASE}/get.php`, epg: `${BASE}/xmltv.php` } : null });
   if (path === "/player_api.php") return xtreamPlayerApi(req, res, url);

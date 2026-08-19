@@ -3,7 +3,7 @@ import { buildM3U, buildXMLTV, pickPlayableStream } from "./nuvio-live-tv.js";
 const USERNAME = process.env.XTREAM_USERNAME || "";
 const PASSWORD = process.env.XTREAM_PASSWORD || "";
 const BASE_URL = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.2.1";
+const VERSION = "4.3.3";
 
 function authOk(username, password) {
   return Boolean(USERNAME && PASSWORD && username === USERNAME && password === PASSWORD);
@@ -55,7 +55,7 @@ export function xtreamUserInfo() {
   return {
     username: USERNAME,
     password: PASSWORD,
-    message: "XSportsX Sports EPG",
+    message: `XSportsX Sports EPG ${VERSION}`,
     auth: 1,
     status: "Active",
     exp_date: "0",

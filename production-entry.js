@@ -4,7 +4,7 @@ import { spawn } from "node:child_process";
 const PORT = Number(process.env.PORT || 7000);
 const UPSTREAM_PORT = Number(process.env.XSPORTSX_PRODUCTION_UPSTREAM_PORT || 7010);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.3.2";
+const VERSION = "4.3.3";
 const ADDON_ID = "com.xsportsx.sports.epg";
 
 const child = spawn(process.execPath, ["render-entry.js"], {
@@ -20,14 +20,15 @@ function send(res, status, body, type = "application/json; charset=utf-8") { res
 
 async function proxy(req, res) {
   const original = req.url || "/", path = original.split("?")[0];
-  if (path === "/manifest.json" || path === "/manifest-4.3.2.json") {
+  if (path === "/manifest.json" || path === "/manifest-4.3.3.json") {
     const upstream = await fetch(`http://127.0.0.1:${UPSTREAM_PORT}/manifest.json`);
     const manifest = await upstream.json();
     manifest.id = ADDON_ID;
     manifest.version = VERSION;
     manifest.name = "XSportsX Sports EPG";
     manifest.catalogs = [
-      { type: "channel", id: "sports-epg", name: "📺 SPORTS EPG • ALL GAMES & NETWORKS" }
+      { type: "channel", id: "sports-epg", name: "📺 SPORTS EPG • ALL GAMES & NETWORKS" },
+      { type: "channel", id: "sports-guide", name: "🗓️ SPORTS GUIDE • NOW & NEXT" }
     ];
     manifest.liveTv = {
       ...(manifest.liveTv || {}),
@@ -35,13 +36,13 @@ async function proxy(req, res) {
       name: "XSportsX Sports Live TV",
       playlist: `${BASE}/live-tv.m3u`,
       epg: `${BASE}/epg.xml`,
-      refreshSeconds: 60,
-      guide: `${BASE}/catalog/channel/sports-epg.json`
+      guide: `${BASE}/catalog/channel/sports-epg.json`,
+      refreshSeconds: 60
     };
     return send(res, 200, JSON.stringify(manifest));
   }
-  if (path === "/health") return send(res, 200, JSON.stringify({ ok: true, version: VERSION, addonId: ADDON_ID, type: "channel", liveTv: true, epg: true }));
-  if (path === "/live-tv.json") return send(res, 200, JSON.stringify({ id: ADDON_ID, version: VERSION, name: "XSportsX Sports Live TV", playlist: `${BASE}/live-tv.m3u`, epg: `${BASE}/epg.xml`, refreshSeconds: 60, catalog: `${BASE}/catalog/channel/sports-epg.json` }));
+  if (path === "/health") return send(res, 200, JSON.stringify({ ok: true, version: VERSION, addonId: ADDON_ID, type: "channel", liveTv: true, epg: true, catalogs: ["sports-epg", "sports-guide"] }));
+  if (path === "/live-tv.json") return send(res, 200, JSON.stringify({ id: ADDON_ID, version: VERSION, name: "XSportsX Sports Live TV", playlist: `${BASE}/live-tv.m3u`, epg: `${BASE}/epg.xml`, refreshSeconds: 60, catalog: `${BASE}/catalog/channel/sports-epg.json`, guide: `${BASE}/catalog/channel/sports-guide.json` }));
   if (path === "/nuvio.m3u") {
     const upstream = await fetch(`http://127.0.0.1:${UPSTREAM_PORT}/live-tv.m3u`);
     return send(res, upstream.status, await upstream.text(), "application/x-mpegURL; charset=utf-8");
