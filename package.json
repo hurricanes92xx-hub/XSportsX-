@@ -1,10 +1,10 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "3.9.8",
+  "version": "3.9.9",
   "private": true,
   "type": "module",
   "description": "XSportsX — unified sports EPG for Nuvio with live games, broadcast network metadata, UFC, NCAA Football, and conference network coverage.",
-  "engines": { "node": "20.19.5" },
+  "engines": { "node": ">=20.19.5" },
   "scripts": {
     "start": "BASE_URL=https://xsportsx.onrender.com node render-entry.js",
     "dev": "BASE_URL=http://localhost:7000 node --watch render-entry.js",
