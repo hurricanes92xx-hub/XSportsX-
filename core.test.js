@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { matchScore, rankStreams, similarity } from "../src/core.js";
+import { matchScore, rankStreams, similarity } from "./core.js";
 
 test("similarity finds overlapping team names", () => {
   assert(similarity("New York Yankees", "Yankees") > 0);
