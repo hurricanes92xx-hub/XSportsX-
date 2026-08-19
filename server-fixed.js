@@ -2,6 +2,7 @@ import express from "express";
 import { getEvents, streamsFor, newsStreamsForChannel, providerStatus } from "./providers.js";
 import { TTLCache } from "./core.js";
 import { leagueVisual, gameVisual } from "./visuals.js";
+import { artworkForEvent, artworkForLeague } from "./artwork.js";
 import { enrichNcaafEvents, cfpWatchEvents, cfpWatchMeta } from "./cfp-watch.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -46,8 +47,8 @@ const CDN_ASSET_BASE = "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-
 
 // Use a public CDN directly for static posters. This avoids Nuvio/device-specific
 // failures fetching GIFs through the Render process and keeps cards independent of BASE_URL.
-const leaguePoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;
-const teamPoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;
+const leaguePoster = id => artworkForLeague(id).poster;
+const teamPoster = id => artworkForLeague(id).poster;
 const leagueBackground = id => `${BASE_URL}/visuals/league/${encodeURIComponent(id)}.svg`;
 const gamePoster = id => `${BASE_URL}/visuals/game/${encodeURIComponent(id)}.svg`;
 
@@ -75,7 +76,8 @@ function gameOverview(e) {
 }
 function gameTitle(e) { return `${e?.state === "in" ? "🔴 LIVE • " : ""}${e?.title || "Sports Event"}${scoreText(e)}`; }
 function videoFor(e) {
-  return { id:`sport:game-${e.eventId}`, title:gameTitle(e), released:e.start, thumbnail:gamePoster(e.eventId), overview:gameOverview(e) };
+  const art = artworkForEvent(e);
+  return { id:`sport:game-${e.eventId}`, title:gameTitle(e), released:e.start, thumbnail:art.poster, overview:gameOverview(e) };
 }
 
 function sportsNewsHeaderMeta() {
@@ -99,13 +101,15 @@ function favoriteTeamMeta(team, all) {
   return { id:`sport:team-${team.id}`, type:"sport", name:team.name, poster:teamPoster(team.id), background:teamPoster(team.id), description:`${live ? `${live} LIVE NOW • ` : ""}${matches.length} event${matches.length === 1 ? "" : "s"}`, genres:["Sports","Favorite Teams",team.sport], videos, behaviorHints:{defaultVideoId:videos[0]?.id} };
 }
 function eventMeta(e) {
-  return { id:e.id, type:"sport", name:e.title, poster:gamePoster(e.eventId), background:gamePoster(e.eventId), description:`${e.state === "in" ? "🔴 LIVE • " : ""}${gameOverview(e)}${scoreText(e)}`, genres:["Sports",e.sport,e.league].filter(Boolean), releaseInfo:e.start ? new Date(e.start).toLocaleString() : "", videos:[videoFor(e)], behaviorHints:{defaultVideoId:e.id} };
+  const art = artworkForEvent(e);
+  return { id:e.id, type:"sport", name:e.title, poster:art.poster, background:art.background, logo:art.logo, posterShape:art.posterShape, description:`${e.state === "in" ? "🔴 LIVE • " : ""}${gameOverview(e)}${scoreText(e)}`, genres:["Sports",e.sport,e.league].filter(Boolean), releaseInfo:e.start ? new Date(e.start).toLocaleString() : "", videos:[videoFor(e)], behaviorHints:{defaultVideoId:e.id} };
 }
 function gameCenterMeta(e) {
   const video = videoFor(e);
+  const art = artworkForEvent(e);
   video.title = `▶ WATCH • ${e.title}${scoreText(e)}`;
   video.overview = `${e.state === "in" ? "LIVE NOW • " : ""}${gameOverview(e)}`;
-  return { id:`sport:game-${e.eventId}`, type:"sport", name:`🏟️ ${e.title}`, poster:gamePoster(e.eventId), background:gamePoster(e.eventId), description:`${e.state === "in" ? "🔴 LIVE • " : ""}${gameOverview(e)}${scoreText(e)}`, genres:["Sports","Game Center",e.sport,e.league].filter(Boolean), releaseInfo:e.start ? new Date(e.start).toLocaleString() : "", videos:[video], behaviorHints:{defaultVideoId:e.id} };
+  return { id:`sport:game-${e.eventId}`, type:"sport", name:`🏟️ ${e.title}`, poster:art.poster, background:art.background, logo:art.logo, posterShape:art.posterShape, description:`${e.state === "in" ? "🔴 LIVE • " : ""}${gameOverview(e)}${scoreText(e)}`, genres:["Sports","Game Center",e.sport,e.league].filter(Boolean), releaseInfo:e.start ? new Date(e.start).toLocaleString() : "", videos:[video], behaviorHints:{defaultVideoId:e.id} };
 }
 function leagueEventsMeta(league, all) {
   const matches = sortEvents(all.filter(e => e.sport === league.id || String(e.league || "").toLowerCase() === league.id.toLowerCase()));
