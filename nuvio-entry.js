@@ -4,14 +4,14 @@ import { spawn } from "node:child_process";
 const PORT = Number(process.env.PORT || 7000);
 const INTERNAL = Number(process.env.XSPORTSX_PUBLIC_INTERNAL_PORT || 7005);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.0.1";
+const VERSION = "4.1.0";
 const POSTER = "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png";
 
 const manifest = {
-  id: "com.xsportsx.live",
+  id: "com.xsportsx.sports.epg",
   version: VERSION,
-  name: "XSportsX",
-  description: "XSportsX — unified sports EPG with live and upcoming games, broadcast networks, UFC, NCAA Football and conference network coverage.",
+  name: "XSportsX Sports EPG",
+  description: "Unified sports EPG with live and upcoming games, broadcast networks, UFC, NCAA Football and conference network coverage.",
   logo: POSTER,
   background: POSTER,
   resources: [
@@ -25,28 +25,25 @@ const manifest = {
   behaviorHints: { configurable: false, configurationRequired: false }
 };
 
-function send(res, status, value, headers = {}) {
-  const body = typeof value === "string" ? value : JSON.stringify(value);
+function send(res, status, value) {
+  const body = JSON.stringify(value);
   res.writeHead(status, {
-    "content-type": typeof value === "string" ? "text/plain; charset=utf-8" : "application/json; charset=utf-8",
+    "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store, max-age=0, must-revalidate",
     "pragma": "no-cache",
     "expires": "0",
-    "access-control-allow-origin": "*",
-    ...headers
+    "access-control-allow-origin": "*"
   });
   res.end(body);
 }
 
 function rewritePayload(payload) {
   if (!payload || typeof payload !== "object") return payload;
-  const fix = (m) => {
-    if (!m || typeof m !== "object") return m;
-    return { ...m, type: "channel", posterShape: m.posterShape || "landscape" };
-  };
+  const fix = (m) => m && typeof m === "object"
+    ? { ...m, type: "channel", posterShape: m.posterShape || "landscape" }
+    : m;
   if (Array.isArray(payload.metas)) payload.metas = payload.metas.map(fix);
   if (payload.meta) payload.meta = fix(payload.meta);
-  if (Array.isArray(payload.streams)) payload.streams = payload.streams;
   return payload;
 }
 
@@ -59,11 +56,10 @@ child.on("exit", code => { if (code && code !== 0) process.exitCode = code; });
 async function proxy(req, res) {
   const original = req.url || "/";
   const path = original.split("?")[0];
-  if (path === "/manifest.json" || path === "/manifest-4.0.1.json") return send(res, 200, manifest);
-  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, manifest: "/manifest.json", type: "channel" });
 
-  // XSportsX internally uses the custom sport type. Present it to Nuvio as the
-  // standard Stremio/Nuvio live-TV channel type while preserving the IDs.
+  if (path === "/manifest.json" || path === "/manifest-4.1.0.json") return send(res, 200, manifest);
+  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel" });
+
   const translated = original
     .replace(/^\/catalog\/channel\//, "/catalog/sport/")
     .replace(/^\/meta\/channel\//, "/meta/sport/")
@@ -79,7 +75,7 @@ async function proxy(req, res) {
     const buf = Buffer.from(await upstream.arrayBuffer());
     if (contentType.includes("application/json")) {
       try { return send(res, upstream.status, rewritePayload(JSON.parse(buf.toString("utf8")))); }
-      catch { /* fall through */ }
+      catch {}
     }
     res.writeHead(upstream.status, { "content-type": contentType, "cache-control": "no-store", "access-control-allow-origin": "*" });
     res.end(buf);
@@ -89,5 +85,5 @@ async function proxy(req, res) {
 }
 
 http.createServer(proxy).listen(PORT, "0.0.0.0", () => {
-  console.log(`XSportsX Nuvio channel entrypoint ${VERSION} listening on ${PORT}; internal ${INTERNAL}`);
+  console.log(`XSportsX Sports EPG ${VERSION} (${manifest.id}) listening on ${PORT}`);
 });
