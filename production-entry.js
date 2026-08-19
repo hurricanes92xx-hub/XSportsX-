@@ -3,8 +3,9 @@ import http from "node:http";
 const PORT = Number(process.env.PORT || 7000);
 const UPSTREAM_PORT = Number(process.env.XSPORTSX_PRODUCTION_UPSTREAM_PORT || 7010);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.4.1";
-const ADDON_ID = "com.xsportsx.sports.epg.v441";
+const VERSION = "4.4.2";
+const ADDON_ID = "com.xsportsx.sports.epg.v442";
+const VERSION_PREFIX = "/v442";
 
 function headers(type = "application/json; charset=utf-8") {
   return { "content-type": type, "cache-control": "no-store, no-cache, max-age=0, must-revalidate", "pragma": "no-cache", "expires": "0", "access-control-allow-origin": "*", "x-xsportsx-version": VERSION, "x-xsportsx-addon-id": ADDON_ID };
@@ -73,7 +74,7 @@ function buildManifest() {
     types: ["channel"],
     idPrefixes: ["sport:"],
     behaviorHints: { configurable: false, configurationRequired: false },
-    liveTv: { enabled: true, name: "XSportsX Sports Live TV", playlist: `${BASE}/live-tv.m3u`, epg: `${BASE}/epg.xml`, guide: `${BASE}/catalog/channel/sports-command-center.json`, refreshSeconds: 60 },
+    liveTv: { enabled: true, name: "XSportsX Sports Live TV", playlist: `${BASE}${VERSION_PREFIX}/live-tv.m3u`, epg: `${BASE}${VERSION_PREFIX}/epg.xml`, guide: `${BASE}${VERSION_PREFIX}/catalog/channel/sports-command-center.json`, refreshSeconds: 60 },
     catalogs: [
       { type: "channel", id: "sports-command-center", name: "🏆 XSPORTSX • SPORTS COMMAND CENTER" },
       { type: "channel", id: "live-now", name: "🔴 LIVE NOW" },
@@ -92,10 +93,18 @@ function buildManifest() {
 }
 
 async function proxy(req, res) {
-  const original = req.url || "/", path = original.split("?")[0];
-  if (path === "/manifest.json" || path === "/manifest-4.4.0.json" || path === "/manifest-4.4.1.json") return send(res, 200, JSON.stringify(buildManifest()));
-  if (path === "/health") return send(res, 200, JSON.stringify({ ok: true, version: VERSION, addonId: ADDON_ID, type: "channel", liveTv: true, epg: true, commandCenter: true }));
-  if (path === "/live-tv.json") return send(res, 200, JSON.stringify({ id: ADDON_ID, version: VERSION, name: "XSportsX Sports Live TV", playlist: `${BASE}/live-tv.m3u`, epg: `${BASE}/epg.xml`, refreshSeconds: 60, catalog: `${BASE}/catalog/channel/sports-command-center.json`, guide: `${BASE}/catalog/channel/sports-command-center.json` }));
+  const original = req.url || "/";
+  const rawPath = original.split("?")[0];
+  const versioned = rawPath === VERSION_PREFIX || rawPath.startsWith(VERSION_PREFIX + "/");
+  const path = versioned ? rawPath.slice(VERSION_PREFIX.length) || "/" : rawPath;
+
+  // Nuvio normalizes a trailing /manifest.json to the addon base URL. The old
+  // addon used the root base URL, so Nuvio could keep its 4.3.3 cached record.
+  // /v442 is deliberately a different base URL and therefore a new cache key.
+  if (versioned && path === "/manifest.json") return send(res, 200, JSON.stringify(buildManifest()));
+  if (!versioned && (path === "/manifest.json" || path === "/manifest-4.4.0.json" || path === "/manifest-4.4.1.json")) return send(res, 200, JSON.stringify(buildManifest()));
+  if (path === "/health") return send(res, 200, JSON.stringify({ ok: true, version: VERSION, addonId: ADDON_ID, type: "channel", liveTv: true, epg: true, commandCenter: true, versionedBase: VERSION_PREFIX }));
+  if (path === "/live-tv.json") return send(res, 200, JSON.stringify({ id: ADDON_ID, version: VERSION, name: "XSportsX Sports Live TV", playlist: `${BASE}${VERSION_PREFIX}/live-tv.m3u`, epg: `${BASE}${VERSION_PREFIX}/epg.xml`, refreshSeconds: 60, catalog: `${BASE}${VERSION_PREFIX}/catalog/channel/sports-command-center.json`, guide: `${BASE}${VERSION_PREFIX}/catalog/channel/sports-command-center.json` }));
   if (path === "/nuvio.m3u") { const r = await upstream("/live-tv.m3u"); return send(res, r.status, await r.text(), "application/x-mpegURL; charset=utf-8"); }
   if (path === "/nuvio-epg.xml") { const r = await upstream("/epg.xml"); return send(res, r.status, await r.text(), "application/xml; charset=utf-8"); }
   if (path.startsWith("/catalog/channel/")) {
@@ -104,7 +113,8 @@ async function proxy(req, res) {
     if (id === "sports-command-center" || id === "sports-epg") return send(res, 200, JSON.stringify({ metas: commandCenterCatalog(source.metas || [], id === "sports-epg" ? "all" : "featured") }));
     if (["live-now","starting-soon","featured","nfl","ncaaf","nba","nhl","mlb","ufc","soccer"].includes(id)) return send(res, 200, JSON.stringify({ metas: commandCenterCatalog(source.metas || [], id) }));
   }
-  const upstreamResponse = await upstream(original, { method: req.method, headers: { ...req.headers, host: `127.0.0.1:${UPSTREAM_PORT}` }, body: req.method === "GET" || req.method === "HEAD" ? undefined : req });
+  const upstreamPath = versioned ? path + (original.includes("?") ? original.slice(original.indexOf("?")) : "") : original;
+  const upstreamResponse = await upstream(upstreamPath, { method: req.method, headers: { ...req.headers, host: `127.0.0.1:${UPSTREAM_PORT}` }, body: req.method === "GET" || req.method === "HEAD" ? undefined : req });
   const type = upstreamResponse.headers.get("content-type") || "application/octet-stream", body = Buffer.from(await upstreamResponse.arrayBuffer());
   res.writeHead(upstreamResponse.status, headers(type)); res.end(body);
 }
