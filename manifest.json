@@ -1,30 +1,19 @@
 {
-  "id": "com.xsportsx.live",
-  "version": "3.9.7",
-  "name": "XSportsX",
-  "description": "XSportsX — cinematic live sports hub for Nuvio with live scores, Game Center, IPTV matching, official free watch links, premium UFC Fight Intelligence, and an auto-updating NCAA Football Command Center with live ESPN ranking enrichment, broadcast network information, and CFP Watch.",
+  "id": "com.xsportsx.sports.epg",
+  "version": "4.1.1",
+  "name": "XSportsX Sports EPG",
+  "description": "Unified sports EPG with live and upcoming games, broadcast networks, UFC, NCAA Football, and conference network coverage.",
   "logo": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
   "background": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
   "resources": [
-    { "name": "catalog", "types": ["sport"], "idPrefixes": ["sport:"] },
-    { "name": "meta", "types": ["sport"], "idPrefixes": ["sport:"] },
-    { "name": "stream", "types": ["sport"], "idPrefixes": ["sport:"] }
+    { "name": "catalog", "types": ["channel"] },
+    { "name": "meta", "types": ["channel"], "idPrefixes": ["sport:"] },
+    { "name": "stream", "types": ["channel"], "idPrefixes": ["sport:"] }
   ],
-  "types": ["sport"],
+  "types": ["channel"],
   "idPrefixes": ["sport:"],
-  "behaviorHints": { "configurable": true, "configurationRequired": false },
+  "behaviorHints": { "configurable": false, "configurationRequired": false },
   "catalogs": [
-    { "type": "sport", "id": "sports-leagues", "name": "🏆 SPORTS LEAGUES" },
-    { "type": "sport", "id": "ncaaf", "name": "🏈 NCAA FOOTBALL • COMMAND CENTER" },
-    { "type": "sport", "id": "cfp-watch", "name": "🏆 NCAA FOOTBALL • CFP WATCH" },
-    { "type": "sport", "id": "ufc-home", "name": "🥊 UFC • FIGHT NIGHT COMMAND CENTER" },
-    { "type": "sport", "id": "ufc", "name": "🔥 UFC • FIGHT CARDS" },
-    { "type": "sport", "id": "ufc-rankings", "name": "🏆 UFC • RANKINGS" },
-    { "type": "sport", "id": "ufc-fighters", "name": "👊 UFC • FIGHTERS" },
-    { "type": "sport", "id": "favorite-teams", "name": "⭐ FAVORITE TEAMS" },
-    { "type": "sport", "id": "sports-news", "name": "📰 SPORTS NEWS • ENGLISH" },
-    { "type": "sport", "id": "live-now", "name": "🔥 WHAT'S ON NOW • LIVE" },
-    { "type": "sport", "id": "starting-soon", "name": "⏰ STARTING SOON" },
-    { "type": "sport", "id": "today", "name": "📅 TODAY" }
+    { "type": "channel", "id": "sports-epg", "name": "📺 SPORTS EPG • ALL GAMES & NETWORKS" }
   ]
 }
