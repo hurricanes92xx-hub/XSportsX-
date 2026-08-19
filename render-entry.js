@@ -1,6 +1,11 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
 import { buildM3U, buildXMLTV, pickPlayableStream } from "./nuvio-live-tv.js";
+import {
+  xtreamConfigured, xtreamAuth, xtreamCredentialsMatch, xtreamAccountResponse,
+  xtreamUnauthorizedResponse, xtreamCategories, xtreamStreams, xtreamIdMap,
+  xtreamM3U, xtreamXMLTV, resolveXtreamStream
+} from "./xtream-api.js";
 
 const PORT = Number(process.env.PORT || 7000);
 const GATEWAY_PORT = Number(process.env.XSPORTSX_GATEWAY_PORT || 7002);
@@ -72,9 +77,6 @@ function normalizeMeta(meta) {
 }
 
 async function sportsEpgCatalog() {
-  // Live TV should be event-driven, not dependent on a handful of specialty
-  // catalogs. Pull the complete rolling event horizon plus the two high-priority
-  // lanes so every league, UFC event, and NCAA event can reach the guide.
   const feeds = await Promise.all([
     gateway("/catalog/sport/upcoming.json").catch(() => ({ metas: [] })),
     gateway("/catalog/sport/live-now.json").catch(() => ({ metas: [] })),
@@ -137,6 +139,85 @@ async function resolvePlayable(req, res, rawId) {
   }
 }
 
+function xtreamGuard(reqUrl) {
+  const { username, password } = xtreamAuth(reqUrl);
+  return xtreamCredentialsMatch(username, password) ? { username, password } : null;
+}
+
+function xtreamAuthResponse(res) {
+  if (!xtreamConfigured()) return send(res, 503, { user_info: { auth: 0, status: "Not configured" }, server_info: {} });
+  return send(res, 200, xtreamAccountResponse());
+}
+
+async function xtreamPlayerApi(req, res, url) {
+  if (!xtreamConfigured()) return send(res, 503, { user_info: { auth: 0, status: "Not configured" }, server_info: {} });
+  const auth = xtreamGuard(url.toString());
+  if (!auth) return send(res, 401, xtreamUnauthorizedResponse().body);
+
+  const action = url.searchParams.get("action") || "";
+  const { metas } = await sportsEpgCatalog();
+  const streams = xtreamStreams(metas);
+  const categories = xtreamCategories(metas);
+
+  if (!action) return send(res, 200, xtreamAccountResponse());
+  if (action === "get_live_categories") return send(res, 200, categories);
+  if (action === "get_live_streams") {
+    const categoryId = url.searchParams.get("category_id");
+    return send(res, 200, categoryId ? streams.filter(s => String(s.category_id) === String(categoryId)) : streams);
+  }
+  if (action === "get_short_epg" || action === "get_simple_data_table") {
+    const streamId = String(url.searchParams.get("stream_id") || "");
+    const map = xtreamIdMap(metas);
+    const meta = map.get(streamId);
+    if (!meta) return send(res, 200, { epg_listings: [] });
+    const raw = meta?.videos?.[0]?.released || meta?.released || meta?.date || meta?.releaseInfo;
+    const start = raw && Number.isFinite(Date.parse(raw)) ? new Date(raw) : new Date();
+    const stop = new Date(start.getTime() + 3 * 60 * 60 * 1000);
+    const startTimestamp = Math.floor(start.getTime() / 1000);
+    const stopTimestamp = Math.floor(stop.getTime() / 1000);
+    const listing = {
+      id: streamId,
+      epg_id: streamId,
+      title: String(meta.name || "Sports Event"),
+      lang: "en",
+      start: start.toISOString().slice(0, 19).replace("T", " "),
+      end: stop.toISOString().slice(0, 19).replace("T", " "),
+      description: String(meta.description || "Live sports event"),
+      channel_id: String(meta.id),
+      start_timestamp: startTimestamp,
+      stop_timestamp: stopTimestamp,
+      now_playing: startTimestamp <= Math.floor(Date.now() / 1000) && Math.floor(Date.now() / 1000) < stopTimestamp ? 1 : 0,
+      has_archive: 0
+    };
+    return send(res, 200, { epg_listings: [listing] });
+  }
+  if (action === "get_account_info") return send(res, 200, xtreamAccountResponse().user_info);
+  if (action === "get_server_info") return send(res, 200, xtreamAccountResponse().server_info);
+  if (action === "get_vod_categories" || action === "get_vod_streams" || action === "get_series_categories" || action === "get_series") return send(res, 200, []);
+  return send(res, 200, []);
+}
+
+async function xtreamLiveRoute(req, res, url) {
+  if (!xtreamConfigured()) return send(res, 503, { error: "Xtream compatibility is not configured on this deployment." });
+  const parts = url.pathname.split("/").filter(Boolean);
+  if (parts.length < 4) return send(res, 404, { error: "Invalid Xtream live stream path." });
+  const [, username, password, filename] = parts;
+  if (!xtreamCredentialsMatch(decodeURIComponent(username), decodeURIComponent(password))) return send(res, 401, { error: "Unauthorized" });
+  const streamId = filename.replace(/\.(?:ts|m3u8)$/i, "");
+  const { metas } = await sportsEpgCatalog();
+  const meta = xtreamIdMap(metas).get(streamId);
+  if (!meta) return send(res, 404, { error: "Stream not found" });
+  try {
+    const stream = await resolveXtreamStream(meta, gateway);
+    const target = stream?.url || stream?.streamUrl;
+    if (!target) return send(res, 404, { error: "No authorized stream is currently available." });
+    res.writeHead(302, { location: target, "cache-control": "no-store", "access-control-allow-origin": "*", "x-xsportsx-version": VERSION });
+    res.end();
+  } catch (error) {
+    send(res, 502, { error: "stream resolution failed", detail: String(error?.message || error) });
+  }
+}
+
 const child = spawn(process.execPath, ["gateway.js"], {
   env: { ...process.env, PORT: String(GATEWAY_PORT), XSPORTSX_BACKEND_PORT: String(BACKEND_PORT) },
   stdio: "inherit"
@@ -146,9 +227,10 @@ child.on("exit", code => { if (code && code !== 0) process.exitCode = code; });
 async function proxy(req, res) {
   const original = req.url || "/";
   const path = original.split("?")[0];
+  const url = new URL(original, BASE);
 
   if (path === "/manifest.json" || path === "/manifest-4.2.1.json") return send(res, 200, manifest);
-  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel", liveTv: true });
+  if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel", liveTv: true, xtream: xtreamConfigured() });
   if (path === "/live-tv.json") return send(res, 200, {
     id: manifest.id,
     version: VERSION,
@@ -156,10 +238,29 @@ async function proxy(req, res) {
     playlist: `${BASE}${manifest.liveTv.playlist}`,
     epg: `${BASE}${manifest.liveTv.epg}`,
     refreshSeconds: manifest.liveTv.refreshSeconds,
-    catalog: `${BASE}/catalog/channel/sports-epg.json`
+    catalog: `${BASE}/catalog/channel/sports-epg.json`,
+    xtream: xtreamConfigured() ? { server: BASE, playerApi: `${BASE}/player_api.php`, playlist: `${BASE}/get.php`, epg: `${BASE}/xmltv.php` } : null
   });
-  if (path === "/catalog/channel/sports-epg.json") return send(res, 200, await sportsEpgCatalog());
 
+  // Xtream Codes-compatible API. Credentials are configured only through
+  // Render environment variables; they are never hard-coded into the repo.
+  if (path === "/player_api.php") return xtreamPlayerApi(req, res, url);
+  if (path === "/xmltv.php") {
+    if (!xtreamConfigured()) return sendText(res, 503, "application/xml; charset=utf-8", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><tv><error>Xtream compatibility is not configured.</error></tv>");
+    if (!xtreamGuard(url.toString())) return sendText(res, 401, "application/xml; charset=utf-8", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><tv><error>Unauthorized</error></tv>");
+    const { metas } = await sportsEpgCatalog();
+    return sendText(res, 200, "application/xml; charset=utf-8", xtreamXMLTV(metas));
+  }
+  if (path === "/get.php") {
+    if (!xtreamConfigured()) return sendText(res, 503, "text/plain; charset=utf-8", "Xtream compatibility is not configured.");
+    if (!xtreamGuard(url.toString())) return sendText(res, 401, "text/plain; charset=utf-8", "Unauthorized");
+    const { metas } = await sportsEpgCatalog();
+    const output = url.searchParams.get("output") === "m3u8" ? "m3u8" : "ts";
+    return sendText(res, 200, "application/x-mpegURL; charset=utf-8", xtreamM3U(metas, output));
+  }
+  if (path.startsWith("/live/")) return xtreamLiveRoute(req, res, url);
+
+  if (path === "/catalog/channel/sports-epg.json") return send(res, 200, await sportsEpgCatalog());
   if (path === "/live-tv.m3u" || path === "/sports.m3u") {
     const { metas } = await sportsEpgCatalog();
     return sendText(res, 200, "application/x-mpegURL; charset=utf-8", buildM3U(metas, BASE));
