@@ -5,14 +5,14 @@ function xml(value = "") {
 }
 function safeId(value) { return encodeURIComponent(String(value || "sport:event")); }
 function startTime(meta) {
-  const raw = meta?.released || meta?.releaseInfo || meta?.date;
+  const raw = meta?.videos?.[0]?.released || meta?.released || meta?.date || meta?.releaseInfo;
   const parsed = raw ? Date.parse(raw) : NaN;
   return Number.isFinite(parsed) ? new Date(parsed) : new Date();
 }
 function stamp(date) {
-  const d = new Date(date);
-  const iso = new Date(d.getTime() + d.getTimezoneOffset() * 60000).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "");
-  return `${iso}${XMLTV_TZ}`;
+  // XMLTV timestamps are expressed as local time plus an explicit offset. We
+  // publish UTC, so never apply the server's local offset before appending +0000.
+  return new Date(date).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "") + XMLTV_TZ;
 }
 function networkFor(meta) {
   const text = [meta?.name, meta?.description, ...(meta?.genres || [])].join(" ").toLowerCase();
