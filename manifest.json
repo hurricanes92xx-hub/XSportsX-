@@ -1,8 +1,8 @@
 {
   "id": "com.xsportsx.sports.epg",
-  "version": "4.2.1",
+  "version": "4.3.3",
   "name": "XSportsX Sports EPG",
-  "description": "Unified sports EPG and Live TV source with live and upcoming games, broadcast networks, UFC, NCAA Football, and conference network coverage.",
+  "description": "Unified sports EPG and Live TV source with live and upcoming games, broadcast networks, UFC Command Center, NCAA Football rankings, conference networks, Xtream-compatible access, and a dedicated Sports Guide.",
   "logo": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
   "background": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
   "resources": [
@@ -18,10 +18,12 @@
     "name": "XSportsX Sports Live TV",
     "playlist": "/live-tv.m3u",
     "epg": "/epg.xml",
+    "guide": "/catalog/channel/sports-epg.json",
     "refreshSeconds": 60,
     "groups": ["Sports / ESPN", "Sports / NFL Network", "Sports / NHL Network", "Sports / MLB Network", "Sports / NBA TV", "Sports / ACC Network", "Sports / Big Ten Network", "Sports / SEC Network", "Sports / Big 12 Now", "Sports / FOX Sports", "Sports / CBS Sports Network", "Sports / ABC", "Sports / CBS", "Sports / FOX", "Sports / NBC", "Sports / Sports"]
   },
   "catalogs": [
-    { "type": "channel", "id": "sports-epg", "name": "📺 SPORTS EPG • ALL GAMES & NETWORKS" }
+    { "type": "channel", "id": "sports-epg", "name": "📺 SPORTS EPG • ALL GAMES & NETWORKS" },
+    { "type": "channel", "id": "sports-guide", "name": "🗓️ SPORTS GUIDE • NOW & NEXT" }
   ]
 }
