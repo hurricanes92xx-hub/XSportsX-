@@ -3,11 +3,13 @@ import { getEvents, streamsFor, newsStreamsForChannel, providerStatus } from "./
 import { TTLCache } from "./core.js";
 import { leagueVisual, gameVisual } from "./visuals.js";
 import { artworkForEvent, artworkForLeague } from "./artwork.js";
+import { installNuvioArtwork } from "./nuvio-artwork-middleware.js";
 import { enrichNcaafEvents, cfpWatchEvents, cfpWatchMeta } from "./cfp-watch.js";
 import fs from "node:fs";
 import path from "node:path";
 
 const app = express();
+installNuvioArtwork(app);
 const PORT = Number(process.env.PORT || 7000);
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const cache = new TTLCache();
