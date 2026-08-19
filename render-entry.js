@@ -6,13 +6,13 @@ const PORT = Number(process.env.PORT || 7000);
 const GATEWAY_PORT = Number(process.env.XSPORTSX_GATEWAY_PORT || 7002);
 const BACKEND_PORT = Number(process.env.XSPORTSX_BACKEND_PORT || 7001);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "4.2.0";
+const VERSION = "4.2.1";
 const ESPN = "https://a.espncdn.com/i/teamlogos/leagues/500/";
 const manifest = {
   id: "com.xsportsx.sports.epg",
   version: VERSION,
   name: "XSportsX Sports EPG",
-  description: "Unified sports EPG with live and upcoming games, broadcast networks, UFC, NCAA Football, and conference network coverage.",
+  description: "Unified sports EPG and Live TV source with live and upcoming games, broadcast networks, UFC, NCAA Football, and conference network coverage.",
   logo: `${ESPN}nfl.png`,
   background: `${ESPN}nfl.png`,
   resources: [
@@ -23,6 +23,13 @@ const manifest = {
   types: ["channel"],
   idPrefixes: ["sport:"],
   behaviorHints: { configurable: false, configurationRequired: false },
+  liveTv: {
+    enabled: true,
+    name: "XSportsX Sports Live TV",
+    playlist: "/live-tv.m3u",
+    epg: "/epg.xml",
+    refreshSeconds: 60
+  },
   catalogs: [{ type: "channel", id: "sports-epg", name: "📺 SPORTS EPG • ALL GAMES & NETWORKS" }]
 };
 
@@ -65,18 +72,25 @@ function normalizeMeta(meta) {
 }
 
 async function sportsEpgCatalog() {
+  // Live TV should be event-driven, not dependent on a handful of specialty
+  // catalogs. Pull the complete rolling event horizon plus the two high-priority
+  // lanes so every league, UFC event, and NCAA event can reach the guide.
   const feeds = await Promise.all([
+    gateway("/catalog/sport/upcoming.json").catch(() => ({ metas: [] })),
     gateway("/catalog/sport/live-now.json").catch(() => ({ metas: [] })),
     gateway("/catalog/sport/starting-soon.json").catch(() => ({ metas: [] })),
-    gateway("/catalog/sport/today.json").catch(() => ({ metas: [] })),
-    gateway("/catalog/sport/ufc-home.json").catch(() => ({ metas: [] })),
-    gateway("/catalog/sport/ncaaf.json").catch(() => ({ metas: [] }))
+    gateway("/catalog/sport/cfp-watch.json").catch(() => ({ metas: [] }))
   ]);
   const byId = new Map();
   for (const feed of feeds) for (const meta of feed.metas || []) if (meta?.id) byId.set(meta.id, normalizeMeta(meta));
   const metas = [...byId.values()];
-  metas.sort((a, b) => String(a.name || "").includes("LIVE") ? -1 : String(b.name || "").includes("LIVE") ? 1 : 0);
-  return { metas: metas.slice(0, 250) };
+  metas.sort((a, b) => {
+    const al = String(a.name || "").includes("LIVE");
+    const bl = String(b.name || "").includes("LIVE");
+    if (al !== bl) return al ? -1 : 1;
+    return String(a.name || "").localeCompare(String(b.name || ""));
+  });
+  return { metas: metas.slice(0, 500) };
 }
 
 function send(res, status, value) {
@@ -133,8 +147,17 @@ async function proxy(req, res) {
   const original = req.url || "/";
   const path = original.split("?")[0];
 
-  if (path === "/manifest.json" || path === "/manifest-4.2.0.json") return send(res, 200, manifest);
+  if (path === "/manifest.json" || path === "/manifest-4.2.1.json") return send(res, 200, manifest);
   if (path === "/health") return send(res, 200, { ok: true, version: VERSION, addonId: manifest.id, type: "channel", liveTv: true });
+  if (path === "/live-tv.json") return send(res, 200, {
+    id: manifest.id,
+    version: VERSION,
+    name: manifest.liveTv.name,
+    playlist: `${BASE}${manifest.liveTv.playlist}`,
+    epg: `${BASE}${manifest.liveTv.epg}`,
+    refreshSeconds: manifest.liveTv.refreshSeconds,
+    catalog: `${BASE}/catalog/channel/sports-epg.json`
+  });
   if (path === "/catalog/channel/sports-epg.json") return send(res, 200, await sportsEpgCatalog());
 
   if (path === "/live-tv.m3u" || path === "/sports.m3u") {
