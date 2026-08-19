@@ -9,7 +9,7 @@
     "start": "node render-entry.js",
     "dev": "BASE_URL=http://localhost:7000 node --watch render-entry.js",
     "test": "node --test",
-    "check": "node --check render-entry.js && node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
+    "check": "node --check render-entry.js && node --check nuvio-live-tv.js && node --check server.js && node --check server-fixed.js && node --check gateway.js && node --check core.js && node --check providers.js && node --check providers-core.js && node --check free-sources.js && node --check ufc-data.js && node --check ufc-intelligence.js && node --check visuals.js"
   },
   "dependencies": { "express": "^5.1.0" }
 }
