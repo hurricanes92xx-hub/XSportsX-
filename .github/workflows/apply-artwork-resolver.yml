@@ -1,0 +1,48 @@
+name: Apply Nuvio artwork resolver
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-artwork:
+    if: !contains(github.event.head_commit.message, '[artwork-resolver]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch server artwork paths
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('server-fixed.js')
+          s = p.read_text()
+          if 'from "./artwork.js"' not in s:
+              s = s.replace('import { leagueVisual, gameVisual } from "./visuals.js";', 'import { leagueVisual, gameVisual } from "./visuals.js";\nimport { publicAsset, artworkForEvent, artworkForLeague } from "./artwork.js";')
+          s = s.replace('const leaguePoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;', 'const leaguePoster = id => artworkForLeague(id).poster;')
+          s = s.replace('const teamPoster = id => `${CDN_ASSET_BASE}${encodeURIComponent(id)}.gif`;', 'const teamPoster = id => artworkForLeague(id).poster;')
+          s = s.replace('const gamePoster = id => `${BASE_URL}/visuals/game/${encodeURIComponent(id)}.svg`;', 'const gamePoster = id => artworkForEvent(id).poster;')
+          s = s.replace('thumbnail:gamePoster(e.eventId)', 'thumbnail:artworkForEvent(e).poster')
+          s = s.replace('poster:gamePoster(e.eventId), background:gamePoster(e.eventId)', 'poster:artworkForEvent(e).poster, background:artworkForEvent(e).background')
+          s = s.replace('poster:gamePoster(e.eventId), background:gamePoster(e.eventId)', 'poster:artworkForEvent(e).poster, background:artworkForEvent(e).background')
+          p.write_text(s)
+          PY
+
+      - name: Verify artwork resolver is wired
+        run: |
+          grep -q 'from "./artwork.js"' server-fixed.js
+          grep -q 'artworkForEvent(e)' server-fixed.js
+          node --check server-fixed.js
+
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add server-fixed.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'Apply Nuvio artwork resolver [artwork-resolver]'
+          git push
