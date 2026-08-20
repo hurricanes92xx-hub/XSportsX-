@@ -1,0 +1,81 @@
+name: Fix league isolation and sports news
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-league-news-v460.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply robust league and news fix
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('command-center.js')
+          s = p.read_text()
+          s = s.replace('const VERSION="4.5.9";', 'const VERSION="4.6.0";')
+          s = s.replace('const ADDON_ID="com.xsportsx.sports.epg.v459";', 'const ADDON_ID="com.xsportsx.sports.epg.v460";')
+          old = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
+          new = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);const eventSport=String(m?.sport||m?.eventSport||m?.league||"").toLowerCase();return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,eventSport,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
+          if old in s: s=s.replace(old,new)
+          start=s.find('function isLeague(')
+          end=s.find('function filterSports(',start)
+          if start>=0 and end>start:
+              classifier="""function isLeague(m,mode){
+          const eventSport=String(m?.eventSport||"").toLowerCase();
+          const t=text(m);
+          const g=(m.genres||[]).map(x=>String(x).toLowerCase());
+          const has=(...xs)=>xs.some(x=>t.includes(x)||g.includes(x));
+          const football=/jets|steelers|commanders|jaguars|cowboys|dolphins|giants|eagles|chiefs|chargers|raiders|broncos|ravens|browns|bengals|bills|patriots|texans|colts|titans|packers|lions|bears|vikings|buccaneers|falcons|panthers|saints|49ers|seahawks|cardinals|rams/i;
+          const hockey=/maple leafs|canadiens|bruins|sabres|red wings|panthers|lightning|senators|capitals|penguins|flyers|hurricanes|rangers|islanders|devils|blue jackets|blackhawks|avalanche|stars|wild|predators|blues|jets|flames|oilers|canucks|kraken|sharks|ducks|kings|golden knights|utah hockey/i;
+          const baseball=/yankees|red sox|orioles|rays|blue jays|guardians|tigers|royals|twins|white sox|astros|angels|athletics|mariners|braves|mets|phillies|marlins|nationals|cubs|reds|brewers|pirates|cardinals|dodgers|padres|giants|rockies|diamondbacks/i;
+          const basketball=/celtics|nets|knicks|76ers|raptors|cavaliers|bucks|bulls|pacers|pistons|hawks|hornets|heat|magic|wizards|nuggets|timberwolves|thunder|trail blazers|jazz|warriors|clippers|lakers|kings|suns|spurs|rockets|grizzlies|pelicans|mavericks/i;
+          if(eventSport){
+            if(mode==="ncaaf") return eventSport==="ncaaf" || eventSport==="college-football";
+            if(mode==="nba") return eventSport==="nba";
+            if(mode==="nfl") return eventSport==="nfl";
+            if(mode==="nhl") return eventSport==="nhl";
+            if(mode==="mlb") return eventSport==="mlb";
+            if(mode==="soccer") return ["soccer","mls","premier-league","la-liga"].includes(eventSport);
+            if(mode==="ufc") return eventSport==="ufc" || eventSport==="mma";
+          }
+          if(mode==="nfl") return has("nfl") || (football.test(t) && !hockey.test(t) && !baseball.test(t));
+          if(mode==="ncaaf") return has("ncaa football","college football","ncaaf","cfb");
+          if(mode==="nba") return has("nba","basketball") || basketball.test(t);
+          if(mode==="nhl") return has("nhl","hockey") || (hockey.test(t) && !football.test(t) && !baseball.test(t));
+          if(mode==="mlb") return has("mlb","baseball") || (baseball.test(t) && !football.test(t));
+          if(mode==="soccer") return has("soccer","premier league","mls","la liga");
+          if(mode==="ufc") return has("ufc","mma","fight night","weight class");
+          return false;
+          }
+          """
+              s=s[:start]+classifier+s[end:]
+          st=s.find('function isSportsNewsChannel(s,cat){')
+          en=s.find('async function loadXtream(',st)
+          if st>=0 and en>st:
+              news="""function isSportsNewsChannel(s,cat){
+          const v=`${s?.name||""} ${cat||""} ${s?.group||""}`.toLowerCase().replace(/[^a-z0-9]+/g," ");
+          const exact=NEWS_NETWORKS.some(([needle])=>v.includes(String(needle).toLowerCase()));
+          const aliases=/\\bespn(?:2|u| news| deportes)?\\b|\\bnfl network\\b|\\bmlb network\\b|\\bnba tv\\b|\\bnhl network\\b|\\bcbs sports(?: network| hq)?\\b|\\bfox sports(?: 1| 2)?\\b|\\bfs1\\b|\\bfs2\\b|\\bacc network\\b|\\bsec network\\b|\\bbig ten network\\b|\\bgolf channel\\b|\\btnt sports\\b|\\bnbc sports\\b|\\bbein sports\\b|\\bsportsnet\\b|\\btennis channel\\b/.test(v);
+          const category=/sports?|sports news|sports network|live sports|national sports/.test(v);
+          return exact||aliases||category;
+          }
+          """
+              s=s[:st]+news+s[en:]
+          p.write_text(s)
+      - name: Syntax check
+        run: node --check command-center.js
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add command-center.js
+          if git diff --cached --quiet; then echo 'No changes needed'; exit 0; fi
+          git commit -m 'fix: harden league isolation and restore sports news'
+          git push
