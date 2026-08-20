@@ -36,21 +36,39 @@ async function leagueCatalog(id){const key=`league:${id}`,hit=cache.get(key);if(
 async function allSports(){const key="all:sports",hit=cache.get(key);if(hit&&Date.now()-hit.at<30000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=Promise.all(Object.keys(LEAGUES).map(leagueCatalog)).then(x=>x.flat()).finally(()=>inFlight.delete(key));inFlight.set(key,job);const value=await job;cache.set(key,{at:Date.now(),value});return value;}
 async function xtreamData(c){
 if(!c)return{metas:[],news:[],newsGroups:[],categories:[]};
-const key=`data:${c.server}|${c.username}`;const hit=xtreamCache.get(key),now=Date.now();
-if(hit&&now-hit.at<300000)return hit.value;if(inFlight.has(key))return inFlight.get(key);
+const key=`data:${c.server}|${c.username}`;
+const hit=xtreamCache.get(key),now=Date.now();
+if(hit&&now-hit.at<300000)return hit.value;
+if(inFlight.has(key))return inFlight.get(key);
 const job=(async()=>{
- const [cats,streams]=await Promise.all([xtream(c,"get_live_categories").catch(()=>null),xtream(c,"get_live_streams").catch(()=>null)]);
- if(!Array.isArray(streams)||!streams.length)return hit?.value||{metas:[],news:[],newsGroups:[],categories:Array.isArray(cats)?cats.map(x=>x.category_name||"Live TV"):[]};
- const cm=new Map((Array.isArray(cats)?cats:[]).map(x=>[String(x.category_id),x.category_name||"Live TV"]));
- const metas=streams.map(s=>{const cat=cm.get(String(s.category_id))||"Live TV";const ext=String(s.container_extension||"ts").replace(/[^a-z0-9]/gi,"")||"ts";return{id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamId:String(s.stream_id),streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}};});
- const scored=metas.map((m,i)=>({meta:m,source:streams[i],category:cm.get(String(streams[i]?.category_id))||"Live TV",score:newsScore(streams[i]?.name||m.name,cm.get(String(streams[i]?.category_id))||"Live TV")}));
- const news=scored.filter(x=>x.score>=70).map(x=>x.meta);
- const newsGroups=Object.entries(NEWS_GROUPS).map(([group])=>{const channels=scored.filter(x=>newsGroupFor(x.source?.name,x.category)===group);if(!channels.length)return null;return{id:`news:${newsSlug(group)}`,type:"channel",name:group,poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group};}).filter(Boolean);
- const value={metas,news,newsGroups,categories:[...cm.values()]};xtreamCache.set(key,{at:Date.now(),value});return value;
-})().catch(()=>hit?.value||{metas:[],news:[],newsGroups:[],categories:[]}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}
-function teamTerms(t={}){const name=String(t.displayName||t.name||'').toLowerCase(),ab=String(t.abbreviation||'').toLowerCase();const words=name.replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(x=>x.length>=3&&!['the','club','city','state','team'].includes(x));const out=new Set([name,ab,...words]);if(name.includes('st louis')){out.add('st louis');out.add('stl');out.add('cardinals');}if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}return[...out].filter(Boolean);}
-function teamTokens(t={}){return[...new Set(teamTerms(t).flatMap(x=>norm(x).split(' ').filter(w=>w.length>=3)))];}
-function tokenOverlap(a,b){const aa=new Set(norm(a).split(' ').filter(x=>x.length>=3)),bb=new Set(norm(b).split(' ').filter(x=>x.length>=3));if(!aa.size||!bb.size)return 0;let n=0;for(const x of aa)if(bb.has(x))n++;return n/Math.max(aa.size,bb.size);}
+  const [cats,streams]=await Promise.all([
+    xtream(c,"get_live_categories").catch(()=>null),
+    xtream(c,"get_live_streams").catch(()=>null)
+  ]);
+  if(!Array.isArray(streams)||!streams.length){
+    if(hit?.value)return hit.value;
+    return {metas:[],news:[],newsGroups:[],categories:Array.isArray(cats)?cats.map(x=>x.category_name||"Live TV"):[]};
+  }
+  const cm=new Map((Array.isArray(cats)?cats:[]).map(x=>[String(x.category_id),x.category_name||"Live TV"]));
+  const metas=streams.map(s=>{
+    const cat=cm.get(String(s.category_id))||"Live TV";
+    const ext=String(s.container_extension||"ts").replace(/[^a-z0-9]/gi,"")||"ts";
+    return {id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}};
+  });
+  const scored=metas.map((m,i)=>({meta:m,source:streams[i],category:cm.get(String(streams[i]?.category_id))||"Live TV",score:newsScore(streams[i]?.name||m.name,cm.get(String(streams[i]?.category_id))||"Live TV")}));
+  const news=scored.filter(x=>x.score>=70).map(x=>x.meta);
+  const newsGroups=Object.entries(NEWS_GROUPS).map(([group])=>{
+    const channels=scored.filter(x=>newsGroupFor(x.source?.name,x.category)===group);
+    if(!channels.length)return null;
+    return {id:`news:${newsSlug(group)}`,type:"channel",name:group,poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group};
+  }).filter(Boolean);
+  const value={metas,news,newsGroups,categories:[...cm.values()]};
+  xtreamCache.set(key,{at:Date.now(),value});
+  return value;
+})().catch(()=>hit?.value||{metas:[],news:[],newsGroups:[],categories:[]}).finally(()=>inFlight.delete(key));
+inFlight.set(key,job);
+return job;
+}
 function matchEventChannel(ch,e){const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;for(const x of aa)if(x&&text.includes(norm(x)))as=Math.max(as,x.length>=5?55:35);for(const x of hh)if(x&&text.includes(norm(x)))hs=Math.max(hs,x.length>=5?55:35);for(const b of e?.broadcast||[])if(norm(b)&&text.includes(norm(b)))return 100;if(as>=55&&hs>=55)return 100;if(as>=35&&hs>=35)return 80;if(as>=55||hs>=55)return 65;if(as>=35||hs>=35)return 45;return 0;}
 function decodeXtreamText(v){const raw=String(v??'').trim();if(!raw)return '';const compact=raw.replace(/\s+/g,'');if(!/^[A-Za-z0-9+/]+={0,2}$/.test(compact)||compact.length<8||compact.length%4===1)return raw;try{const decoded=Buffer.from(compact,'base64').toString('utf8').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,' ').trim();if(decoded&&/[A-Za-z]{2,}/.test(decoded))return decoded;}catch{}return raw;}
 function epgTextScore(list,meta){const away=teamTokens(meta.event?.away||{}),home=teamTokens(meta.event?.home||{}),title=norm(`${meta.name||''}`);let best=0,bestItem=null;for(const x of(Array.isArray(list)?list:[])){const text=norm(`${decodeXtreamText(x.title||"")} ${decodeXtreamText(x.description||"")}`);let a=0,h=0;for(const t of away)if(t&&text.includes(t))a=Math.max(a,t.length>=5?55:35);for(const t of home)if(t&&text.includes(t))h=Math.max(h,t.length>=5?55:35);let score=0;if(a>=55&&h>=55)score=100;else if(a>=35&&h>=35)score=85;else if(a>=55||h>=55)score=60;else score=Math.round(tokenOverlap(title,text)*70);if(x.now_playing===1||x.now_playing==='1')score+=12;const ts=Number(x.start_timestamp||0)*1000,es=Date.parse(meta.event?.start||'');if(ts&&es&&!Number.isNaN(es)){const delta=Math.abs(ts-es);if(delta<=2*3600000)score+=10;else if(delta<=6*3600000)score+=5;}if(score>best){best=score;bestItem=x;}}return{score:Math.min(100,best),item:bestItem};}
