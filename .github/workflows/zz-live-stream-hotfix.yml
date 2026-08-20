@@ -65,12 +65,19 @@ jobs:
           }
           '''
           s=s[:start]+replacement+s[end:]
+          marker='if(id==="ufc"||id==="ufc-v2"){const events=await leagueCatalog("ufc");'
+          if marker in s:
+              a=s.index(marker)
+              b=s.index('return json(res,{metas},200,30);',a)+len('return json(res,{metas},200,30);')
+              s=s[:a]+'if(id==="ufc"||id==="ufc-v2"){return json(res,{metas:await ufcCatalog()},200,30);}'+s[b:]
           p.write_text(s)
           PY
+      - name: Validate
+        run: node --check sports-router.js
       - name: Commit hotfix
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add sports-router.js
-          git diff --cached --quiet || git commit -m 'fix: improve live event channel matching and UFC streams'
+          git diff --cached --quiet || git commit -m 'fix: improve live event matching and UFC catalog'
           git push
