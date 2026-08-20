@@ -4,8 +4,9 @@ import { spawn } from "node:child_process";
 
 const PUBLIC_PORT=Number(process.env.PORT||7000);
 const INTERNAL_PORT=Number(process.env.XSPORTSX_INTERNAL_PORT||7099);
-const PREFIX="v516";
-const COMPAT_PREFIXES=["v516","v516","v516","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"];
+const PREFIX="v520";
+const VERSION="5.0.21";
+const COMPAT_PREFIXES=["v520","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"];
 const BASE="http://127.0.0.1:"+INTERNAL_PORT;
 const PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";
 const CONFIG_SECRET=process.env.XSPORTSX_CONFIG_SECRET||"xsportsx-v520-stable-config-key";
@@ -24,16 +25,16 @@ function encryptConfig(v){
   const data=Buffer.concat([c.update(JSON.stringify(v),"utf8"),c.final()]);
   return Buffer.concat([iv,c.getAuthTag(),data]).toString("base64url");
 }
-function page(){return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>XSportsX 5.0.20</title></head><body style="margin:0;background:#08090c;color:#fff;font:16px system-ui;display:grid;place-items:center;min-height:100vh"><main style="width:min(520px,92vw);background:#12151b;padding:28px;border-radius:18px"><h1>🏆 XSportsX 5.0.20</h1><p>Configure your authorized Xtream account.</p><form method="post" action="/${PREFIX}/configure"><label>Server URL</label><input name="server" required><label>Username</label><input name="username" required><label>Password</label><input name="password" type="password" required><button style="width:100%;padding:14px;margin-top:20px">GENERATE NUVIO MANIFEST</button></form></main></body></html>`}
-function ready(url){return `<!doctype html><html><body style="background:#08090c;color:#fff;font:16px system-ui;padding:30px"><h1>XSportsX 5.0.20 Ready</h1><p>Manifest URL:</p><input style="width:100%;padding:14px;box-sizing:border-box" readonly value="${url.replace(/"/g,"&quot;")}"><p><a href="${url}">Open manifest</a></p></body></html>`}
+function page(){return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>XSportsX 5.0.21</title></head><body style="margin:0;background:#08090c;color:#fff;font:16px system-ui;display:grid;place-items:center;min-height:100vh"><main style="width:min(520px,92vw);background:#12151b;padding:28px;border-radius:18px"><h1>🏆 XSportsX 5.0.21</h1><p>Configure your authorized Xtream account.</p><form method="post" action="/${PREFIX}/configure"><label>Server URL</label><input name="server" required><label>Username</label><input name="username" required><label>Password</label><input name="password" type="password" required><button style="width:100%;padding:14px;margin-top:20px">GENERATE NUVIO MANIFEST</button></form></main></body></html>`}
+function ready(url){return `<!doctype html><html><body style="background:#08090c;color:#fff;font:16px system-ui;padding:30px"><h1>XSportsX 5.0.21 Ready</h1><p>Manifest URL:</p><input style="width:100%;padding:14px;box-sizing:border-box" readonly value="${url.replace(/"/g,"&quot;")}"><p><a href="${url}">Open manifest</a></p></body></html>`}
 async function configure(req,res){
-  if(req.method==="GET"){res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-xsportsx-version":"5.0.20"});return res.end(page())}
+  if(req.method==="GET"){res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-xsportsx-version":VERSION});return res.end(page())}
   if(req.method!=="POST"){res.writeHead(405,{allow:"GET, POST"});return res.end()}
   let body="";for await(const c of req)body+=c;
   const f=new URLSearchParams(body),server=String(f.get("server")||"").trim().replace(/\/+$/,""),username=String(f.get("username")||"").trim(),password=String(f.get("password")||"");
   if(!/^https?:\/\//i.test(server)||!username||!password){res.writeHead(400);return res.end("Invalid Xtream configuration")}
   const token=encryptConfig({server,username,password}),url=`${PUBLIC_BASE}/${PREFIX}/${token}/manifest.json`;
-  res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-xsportsx-version":"5.0.20"});res.end(ready(url));
+  res.writeHead(200,{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-xsportsx-version":VERSION});res.end(ready(url));
 }
 function proxyPath(raw){
   const u=new URL(raw,"http://localhost"),parts=u.pathname.split("/").filter(Boolean),i=parts.findIndex(x=>COMPAT_PREFIXES.includes(x));
@@ -48,14 +49,14 @@ function proxyPath(raw){
 const server=http.createServer(async(req,res)=>{
   try{
     const requestPath=new URL(req.url||"/","http://localhost").pathname;
-    if(requestPath==="/health"||requestPath==="/v516/health"){
-      res.writeHead(200,{"content-type":"application/json","cache-control":"no-store","x-xsportsx-version":"5.0.20"});
-      return res.end(JSON.stringify({ok:true,version:"5.0.20",service:"xsportsx"}));
+    if(requestPath==="/health"||COMPAT_PREFIXES.some(p=>requestPath===`/${p}/health`)){
+      res.writeHead(200,{"content-type":"application/json","cache-control":"no-store","x-xsportsx-version":VERSION});
+      return res.end(JSON.stringify({ok:true,version:VERSION,service:"xsportsx"}));
     }
-    if(requestPath==="/v516/configure"||requestPath==="/configure")return configure(req,res);
+    if(requestPath==="/configure"||COMPAT_PREFIXES.some(p=>requestPath===`/${p}/configure`))return configure(req,res);
     const p=proxyPath(req.url||"/"),target=new URL(p.path+p.query,BASE);
     const up=http.request(target,{method:req.method,headers:{...req.headers,host:`127.0.0.1:${INTERNAL_PORT}`,connection:"keep-alive"}},ur=>{
-      const h={...ur.headers,"x-xsportsx-proxy":"v520","x-xsportsx-version":"5.0.20"};
+      const h={...ur.headers,"x-xsportsx-proxy":"v520","x-xsportsx-version":VERSION};
       res.writeHead(ur.statusCode||502,h);ur.pipe(res);
     });
     up.on("error",e=>{if(!res.headersSent)res.writeHead(502,{"content-type":"application/json"});res.end(JSON.stringify({error:"XSportsX upstream unavailable",detail:String(e.message||e)}))});
@@ -63,4 +64,4 @@ const server=http.createServer(async(req,res)=>{
   }catch(e){if(!res.headersSent)res.writeHead(502,{"content-type":"application/json"});res.end(JSON.stringify({error:String(e.message||e)}))}
 });
 server.keepAliveTimeout=120000;server.headersTimeout=125000;server.requestTimeout=120000;
-server.listen(PUBLIC_PORT,"0.0.0.0",()=>console.log(`XSportsX proxy v5.0.20 listening on ${PUBLIC_PORT}; router ${INTERNAL_PORT}`));
+server.listen(PUBLIC_PORT,"0.0.0.0",()=>console.log(`XSportsX proxy ${VERSION} listening on ${PUBLIC_PORT}; router ${INTERNAL_PORT}`));
