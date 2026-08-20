@@ -4,9 +4,9 @@ import { spawn } from "node:child_process";
 
 const PUBLIC_PORT=Number(process.env.PORT||7000);
 const INTERNAL_PORT=7099;
-const PUBLIC_PREFIX="v528";
+const PUBLIC_PREFIX="v527";
 const BACKEND_PREFIX="v523";
-const VERSION="5.0.31";
+const VERSION="5.0.32";
 const BASE=(process.env.BASE_URL||"https://xsportsx.onrender.com").replace(/\/$/,"");
 const SECRET=process.env.XSPORTSX_CONFIG_SECRET||"xsportsx-v520-stable-config-key";
 const KEY=crypto.createHash("sha256").update(SECRET).digest();
@@ -21,7 +21,7 @@ const json=(res,b,status=200,maxAge=0)=>{res.writeHead(status,{"content-type":"a
 const catalogs=[
  ["sports-command-center","🏆 XSPORTSX • SPORTS COMMAND CENTER"],["live-now","🔴 LIVE NOW"],["starting-soon","⏰ STARTING SOON"],["sports-news-v2","📰 SPORTS NEWS NETWORKS"],["nfl","🏈 NFL"],["ncaaf","🏈 NCAA FOOTBALL"],["nba","🏀 NBA"],["nhl","🏒 NHL"],["mlb","⚾ MLB"],["ufc-v2","🥊 UFC COMMAND CENTER"],["soccer","⚽ SOCCER"],["iptv-live","📡 MY IPTV • LIVE TV"]
 ];
-const baseManifest={id:"com.xsportsx.sports.epg.v531",version:VERSION,name:"XSportsX Sports Command Center",description:"Fast sports EPG with live sports and authorized Xtream source resolution.",resources:[{name:"catalog",types:["channel"]},{name:"meta",types:["channel"]},{name:"stream",types:["channel"]}],types:["channel"],idPrefixes:["sport:","xtream:","news:","live:"],catalogs:catalogs.map(([id,name])=>({type:"channel",id,name,extra:[]})),behaviorHints:{configurable:true,configurationRequired:true}};
+const baseManifest={id:"com.xsportsx.sports.epg.v532",version:VERSION,name:"XSportsX Sports Command Center",description:"Fast sports EPG with live sports and authorized Xtream source resolution.",resources:[{name:"catalog",types:["channel"]},{name:"meta",types:["channel"]},{name:"stream",types:["channel"]}],types:["channel"],idPrefixes:["sport:","xtream:","news:","live:"],catalogs:catalogs.map(([id,name])=>({type:"channel",id,name,extra:[]})),behaviorHints:{configurable:true,configurationRequired:true}};
 const manifest=configured=>configured?{...baseManifest,behaviorHints:{configurable:false,configurationRequired:false}}:{...baseManifest,config:[{key:"server",type:"text",title:"Xtream Server URL",required:true},{key:"username",type:"text",title:"Xtream Username",required:true},{key:"password",type:"password",title:"Xtream Password",required:true}]};
 
 function fallbackCatalog(id){
