@@ -3,8 +3,8 @@ import crypto from "node:crypto";
 
 const PORT = Number(process.env.PORT || 7099);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "5.0.15";
-const ADDON_ID = "com.xsportsx.sports.epg.v515";
+const VERSION = "5.0.12";
+const ADDON_ID = "com.xsportsx.sports.epg.v512";
 const PREFIX = "/v515";
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || crypto.randomBytes(32).toString("hex");
 const KEY = crypto.createHash("sha256").update(SECRET).digest();
