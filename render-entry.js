@@ -1,4 +1,4 @@
 // Render/Nuvio production gateway.
-// v526 owns the public listener and proxies catalog/meta/stream requests
-// to the stable backend while generating absolute Nuvio manifest URLs.
-await import("./render-entry-v526.js");
+// v527 provides the Xtream login/configuration flow and proxies requests
+// to the stable sports-router backend.
+await import("./render-entry-v527.js");
