@@ -1,0 +1,85 @@
+name: XSportsX v514 performance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/perf-v514.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Optimize source resolution
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('sports-router.js')
+          s=p.read_text()
+
+          # New cache namespace/version; keep existing behavior compatible.
+          s=re.sub(r'const VERSION = "[^"]+";', 'const VERSION = "5.0.14";', s, count=1)
+          s=re.sub(r'const ADDON_ID = "[^"]+";', 'const ADDON_ID = "com.xsportsx.sports.epg.v514";', s, count=1)
+          s=re.sub(r'const PREFIX = "/v[0-9]+";', 'const PREFIX = "/v514";', s, count=1)
+
+          # Source resolution should never wait for a second provider inventory
+          # request. Xtream data is already deduplicated/cached; this adds a
+          # background warm-up from catalog requests so the first click is hot.
+          if 'function warmXtream' not in s:
+              anchor='async function xtreamData(c){'
+              s=s.replace(anchor, 'function warmXtream(c){if(c)xtreamData(c).catch(()=>{});}\n'+anchor, 1)
+
+          # Replace event source resolver with a cache-first implementation.
+          pattern=r'async function streamsForEvent\(c,meta\)\{.*?\n\}'
+          replacement='''async function streamsForEvent(c,meta){
+            if(!c||!meta?.event)return[];
+            const d=await xtreamData(c);
+            const channels=d.metas||[];
+            if(meta.event.league==="ufc"){
+              return channels.filter(m=>/\\b(ufc|ultimate fighting championship|fight pass|ufc fight|paramount plus|paramount\\+|cbs sports)\\b/i.test(`${m.name} ${m.xtream?.category||""}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));
+            }
+            const matches=channels.map(m=>({m,score:matchEventChannel(m,meta.event)})).filter(x=>x.score>=40).sort((a,b)=>b.score-a.score).slice(0,8);
+            return matches.map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • match ${x.score}%`,score:x.score}));
+          }'''
+          s2,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n: s=s2
+
+          # Warm Xtream immediately when a configured catalog request arrives.
+          # This runs asynchronously and does not add latency to the catalog response.
+          if 'warmXtream(c);' not in s:
+              marker='const c=configFrom(req.url);'
+              if marker in s:
+                  s=s.replace(marker, marker+'\n    warmXtream(c);', 1)
+
+          p.write_text(s)
+
+          p=Path('render-proxy.js')
+          s=p.read_text()
+          s=re.sub(r'PREFIX="v[0-9]+"', 'PREFIX="v514"', s, count=1)
+          # Add v514 at the front of the compatibility list without duplicating it.
+          m=re.search(r'COMPAT_PREFIXES=\[(.*?)\]',s,re.S)
+          if m:
+              vals=[x.strip().strip('"') for x in m.group(1).split(',') if x.strip()]
+              vals=['v514']+[x for x in vals if x!='v514']
+              s=s[:m.start(1)]+','.join('"'+x+'"' for x in vals)+s[m.end(1):]
+          p.write_text(s)
+          PY
+      - name: Validate
+        run: |
+          node --check sports-router.js
+          node --check render-proxy.js
+          grep -q 'v514' sports-router.js
+          grep -q 'v514' render-proxy.js
+          grep -q 'warmXtream' sports-router.js
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sports-router.js render-proxy.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'perf: warm Xtream cache and speed source resolution'
+          git push
