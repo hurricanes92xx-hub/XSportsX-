@@ -69,17 +69,6 @@ const job=(async()=>{
 inFlight.set(key,job);
 return job;
 }
-function teamTerms(t={}){
-const name=String(t.displayName||t.name||'').toLowerCase();
-const ab=String(t.abbreviation||'').toLowerCase();
-const words=name.replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(x=>x.length>=3&&!['the','club','city','state','team'].includes(x));
-const out=new Set([name,ab,...words]);
-if(name.includes('st louis')){out.add('st louis');out.add('stl');out.add('cardinals');}
-if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}
-return [...out].filter(Boolean);
-}
-function teamTokens(t={}){return [...new Set(teamTerms(t).flatMap(x=>norm(x).split(' ').filter(w=>w.length>=3)))];}
-function tokenOverlap(a,b){const aa=new Set(norm(a).split(' ').filter(x=>x.length>=3)),bb=new Set(norm(b).split(' ').filter(x=>x.length>=3));if(!aa.size||!bb.size)return 0;let n=0;for(const x of aa)if(bb.has(x))n++;return n/Math.max(aa.size,bb.size);}
 function matchEventChannel(ch,e){
 const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};
 const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;
