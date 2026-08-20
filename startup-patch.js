@@ -30,7 +30,7 @@ async function streamsForEvent(c,meta){
   if(!c||!meta?.event)return[];
   const k=\`universal-match:\${c.server}|\${c.username}|\${meta.id}\`,cached=matchCache.get(k);if(cached&&Date.now()-cached.at<30000)return cached.value;
   const d=await xtreamData(c),all=Array.isArray(d.metas)?d.metas:[],rows=[],seen=new Set(),event=meta.event;
-  const addOne=(m,s,e)=>{if(!m?.xtream?.streamUrl||seen.has(m.id)||s<45)return;seen.add(m.id);add(rows,seen,m,Math.min(100,Math.round(s)),e)};
+  const addOne=(m,s,e)=>{if(!m?.xtream?.streamUrl||seen.has(m.id)||s<45)return;add(rows,seen,m,Math.min(100,Math.round(s)),e)};
   // 1) Cheap scan of EVERY channel name/category. No sports-category filter.
   for(const m of all){const t=norm(\`\${m.name} \${m.xtream?.category||''}\`);let s=0;for(const x of [...teamTokens(event.home||{}),...teamTokens(event.away||{})])if(x&&t.includes(x))s+=x.length>=5?52:32;for(const b of (event.broadcast||[]))if(norm(b)&&t.includes(norm(b)))s=100;if(meta.league==='ufc'&&/\\b(ufc|mma|fight|ppv|combat)\\b/i.test(t))s+=40;if(s>=45)addOne(m,s,null)}
   // 2) Provider-wide XMLTV. This catches games carried on ordinary channel names.
