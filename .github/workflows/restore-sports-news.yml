@@ -1,0 +1,41 @@
+name: Restore Sports News Catalog
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    if: ${{ !contains(github.event.head_commit.message, 'restore sports news catalog') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore and version Sports News
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('command-center.js')
+          s = p.read_text()
+          s = s.replace('const VERSION="4.5.8";', 'const VERSION="4.5.9";')
+          s = s.replace('const ADDON_ID="com.xsportsx.sports.epg.v458";', 'const ADDON_ID="com.xsportsx.sports.epg.v459";')
+          s = s.replace('const PREFIX="/v458";', 'const PREFIX="/v459";')
+          # Keep the existing Xtream-derived Sports News catalog and make sure
+          # the route remains explicit for Nuvio catalog requests.
+          needle='if(path==="/catalog/channel/iptv-live.json"||path==="/catalog/channel/sports-news.json")'
+          if needle not in s:
+              raise SystemExit('Sports News route missing; refusing to overwrite command-center.js')
+          p.write_text(s)
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add command-center.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: restore sports news catalog'
+          git push
