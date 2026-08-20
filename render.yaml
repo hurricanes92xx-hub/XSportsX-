@@ -6,7 +6,7 @@ services:
     autoDeploy: true
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /v516/health
+    healthCheckPath: /v520/health
     envVars:
       - key: NODE_VERSION
         value: "20.19.5"
