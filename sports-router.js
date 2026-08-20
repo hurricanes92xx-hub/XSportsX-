@@ -69,15 +69,6 @@ const job=(async()=>{
 inFlight.set(key,job);
 return job;
 }
-function teamTerms(t={}){
-const name=String(t.displayName||t.name||'').toLowerCase();
-const ab=String(t.abbreviation||'').toLowerCase();
-const words=name.replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(x=>x.length>=3&&!['the','club','city','state','team'].includes(x));
-const out=new Set([name,ab,...words]);
-if(name.includes('st louis')){out.add('st louis');out.add('stl');out.add('cardinals');}
-if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}
-return [...out].filter(Boolean);
-}
 function matchEventChannel(ch,e){
 const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};
 const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;
@@ -110,6 +101,19 @@ async function ufcCatalog(){
     if(metas.length)return metas.slice(0,50);
   } catch {}
   return [{id:"sport:ufc-command-center",type:"channel",name:"UFC Events & PPV",poster:`${BASE}${PREFIX}/assets/ufc.svg`,background:`${BASE}${PREFIX}/assets/ufc.svg`,description:"🥊 UFC Fight Night • PPV • UFC-related events",releaseInfo:new Date().toISOString(),genres:["Sports","UFC","MMA"],sportSource:"ufc",eventSport:"ufc",league:"ufc",eventId:"ufc-command-center",event:{id:"ufc-command-center",league:"ufc",start:"",state:"pre",home:{name:"UFC",short:"UFC"},away:{name:"UFC Events",short:"UFC"}}}];
+}
+async function resolveEventMeta(id){
+const cached=await resolveEventMeta(id);
+if(cached)return cached;
+const raw=String(id||"").replace(/^sport:/,"");
+for(const league of Object.keys(LEAGUES)){
+  try{
+    const rows=await leagueCatalog(league);
+    const found=rows.find(m=>String(m.eventId)===raw||String(m.event?.id)===raw||String(m.id)===id);
+    if(found)return found;
+  }catch{}
+}
+return null;
 }
 function manifest(){const catalogs=[["sports-command-center","🏆 XSPORTSX • SPORTS COMMAND CENTER"],["live-now","🔴 LIVE NOW"],["starting-soon","⏰ STARTING SOON"],["sports-news-v2","📰 SPORTS NEWS NETWORKS"],["nfl","🏈 NFL"],["ncaaf","🏈 NCAA FOOTBALL"],["nba","🏀 NBA"],["nhl","🏒 NHL"],["mlb","⚾ MLB"],["ufc-v2","🥊 UFC COMMAND CENTER"],["soccer","⚽ SOCCER"],["iptv-live","📡 MY IPTV • LIVE TV"]];return{id:ADDON_ID,version:VERSION,name:"XSportsX Sports Command Center",description:"Fast sports EPG with authorized Xtream live TV, sports news and UFC events.",config:[{key:"server",type:"text",title:"Xtream Server URL"},{key:"username",type:"text",title:"Xtream Username"},{key:"password",type:"password",title:"Xtream Password"}],behaviorHints:{configurable:true,configurationRequired:false,configurationURL:`${BASE}/${PREFIX}/configure`},resources:[{name:"catalog",types:["channel"]},{name:"meta",types:["channel"],idPrefixes:["sport:","xtream:","news:"]},{name:"stream",types:["channel"],idPrefixes:["sport:","xtream:","news:"]}],types:["channel"],catalogs:catalogs.map(([id,name])=>({type:"channel",id,name,showInHome:true}))};}
 function configurePage(){return `<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>XSportsX</title></head><body style="margin:0;background:#08090c;color:#fff;font:16px system-ui;display:grid;place-items:center;min-height:100vh"><main style="width:min(520px,92vw);background:#12151b;padding:28px;border-radius:18px"><h1>🏆 XSportsX 5.0.22</h1><p>Enter your authorized Xtream credentials.</p><form method="post" action="${PREFIX}/configure"><label>Server URL</label><input name="server" required style="width:100%;box-sizing:border-box;padding:13px"><label>Username</label><input name="username" required style="width:100%;box-sizing:border-box;padding:13px"><label>Password</label><input name="password" type="password" required style="width:100%;box-sizing:border-box;padding:13px"><button style="width:100%;padding:14px;margin-top:20px">GENERATE NUVIO MANIFEST</button></form></main></body></html>`;}
