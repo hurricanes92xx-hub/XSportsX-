@@ -1,0 +1,79 @@
+name: Repair XSportsX v513
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-v513.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch router and Render proxy
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('sports-router.js')
+          s=p.read_text()
+          s=s.replace('const VERSION = "5.0.12";', 'const VERSION = "5.0.13";')
+          s=s.replace('const ADDON_ID = "com.xsportsx.sports.epg.v512";', 'const ADDON_ID = "com.xsportsx.sports.epg.v513";')
+          s=s.replace('const PREFIX = "/v512";', 'const PREFIX = "/v513";')
+
+          # UFC must be its own fast catalog. Do not make the home catalog wait
+          # on the entire Xtream channel inventory just to display UFC events.
+          s=re.sub(r'async function ufcCatalog\(c\)\{.*?\n\}\n\nasync function allSports', '''async function ufcCatalog(c){
+            const events=await leagueCatalog("ufc").catch(()=>[]);
+            if(events.length)return events;
+            return [{id:"sport:ufc-command-center",type:"channel",name:"UFC Command Center",poster:`${BASE}${PREFIX}/assets/ufc.svg`,background:`${BASE}${PREFIX}/assets/ufc.svg`,description:"Upcoming UFC events and authorized UFC-related sources",releaseInfo:new Date().toISOString(),genres:["Sports","UFC","Scheduled"],sportSource:"ufc",eventSport:"ufc",league:"ufc",event:{id:"ufc-command-center",league:"ufc",start:new Date().toISOString(),state:"pre",home:{},away:{}}}];
+          }
+
+          async function allSports''', s, flags=re.S)
+
+          # Explicitly route the UFC catalog before the generic league handler.
+          marker='if(LEAGUES[id])return json(res,{metas:await leagueCatalog(id)},200,15);'
+          if marker in s:
+              s=s.replace(marker, 'if(id==="ufc")return json(res,{metas:await ufcCatalog(c)},200,15);'+marker)
+          elif 'if(id==="ufc")return json' not in s:
+              raise SystemExit('UFC catalog route marker not found')
+
+          # Never block the Sports News home catalog on a full provider pull.
+          # Known network cards are returned immediately; stream resolution still
+          # uses Xtream when the user opens a network.
+          news_marker='if(id==="sports-news")'
+          if news_marker in s:
+              start=s.index(news_marker)
+              # Replace only the branch body up to the next catalog branch.
+              nxt=s.find('if(id==="iptv-live")', start)
+              if nxt!=-1:
+                  s=s[:start]+'''if(id==="sports-news"){const groups=Object.keys(NEWS_GROUPS).map(group=>({id:`news:${newsSlug(group)}`,type:"channel",name:group,poster:newsLogo(group),background:newsLogo(group),description:"Sports network channels from your authorized Xtream provider",genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group}));return json(res,{metas:groups},200,30);}\n'''+s[nxt:]
+
+          p.write_text(s)
+
+          p=Path('render-proxy.js')
+          s=p.read_text()
+          s=s.replace('PREFIX="v510"', 'PREFIX="v513"')
+          s=s.replace('COMPAT_PREFIXES=["v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"]', 'COMPAT_PREFIXES=["v513","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"]')
+          s=s.replace('v510-compatible', 'v513-compatible')
+          s=s.replace('v510-compatible', 'v513-compatible')
+          s=s.replace('const PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";', 'const PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";')
+          p.write_text(s)
+          PY
+      - name: Validate
+        run: |
+          node --check sports-router.js
+          node --check render-proxy.js
+          grep -q 'v513' sports-router.js
+          grep -q 'v513' render-proxy.js
+      - name: Commit repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sports-router.js render-proxy.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: restore UFC and speed up XSportsX catalogs'
+          git push
