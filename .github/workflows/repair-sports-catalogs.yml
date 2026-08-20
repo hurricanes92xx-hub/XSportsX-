@@ -2,9 +2,6 @@ name: Repair sports catalogs
 on:
   push:
     branches: [main]
-    paths:
-      - 'command-center.js'
-      - 'render-proxy.js'
   workflow_dispatch:
 permissions:
   contents: write
