@@ -1,5 +1,6 @@
 FORCE DEPLOY THIS COMMIT ON RENDER.
-XSportsX canonical release: 5.0.16.
-Canonical configuration: https://xsportsx.onrender.com/v516/configure
-Router, proxy, package.json, and VERSION_LOCK must all report 5.0.16/v516.
-Do not serve the legacy 5.0.12 build.
+XSportsX canonical release: 5.0.23 / v523.
+Canonical configuration: https://xsportsx.onrender.com/v523/configure
+Nuvio install manifest: generate the tokenized /v523/<token>/manifest.json URL from the configuration page.
+The public manifest endpoint is served directly by render-proxy.js and no longer depends on the internal router starting successfully.
+Do not serve legacy 5.0.12/5.0.16 builds.
