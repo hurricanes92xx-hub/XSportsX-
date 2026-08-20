@@ -69,20 +69,39 @@ const job=(async()=>{
 inFlight.set(key,job);
 return job;
 }
-function matchEventChannel(ch,e){const t=norm(`${ch.name} ${ch.xtream?.category||""}`),a=norm(e?.away?.name),h=norm(e?.home?.name),as=norm(e?.away?.short),hs=norm(e?.home?.short);let score=0;for(const x of[a,h])if(x&&t.includes(x))score+=45;for(const x of[as,hs])if(x&&x.length>=3&&t.includes(x))score+=15;return Math.min(score,100);}
-async function streamsForEvent(c,meta){if(!c||!meta?.event)return[];const cacheKey=`match:${c.server}|${c.username}|${meta.id}`,hit=sourceMatchCache.get(cacheKey);if(hit&&Date.now()-hit.at<300000)return hit.value;const d=await xtreamData(c);let value=[];if(meta.event.league==="ufc")value=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||""}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));else value=d.metas.map(m=>({m,score:matchEventChannel(m,meta.event)})).filter(x=>x.score>=40).sort((a,b)=>b.score-a.score).slice(0,8).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • match ${x.score}%`,score:x.score}));sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;}
-async function resolveEventMeta(id){
-const cached=await resolveEventMeta(id);
-if(cached)return cached;
-const raw=String(id||"").replace(/^sport:/,"");
-for(const league of Object.keys(LEAGUES)){
-  try{
-    const rows=await leagueCatalog(league);
-    const found=rows.find(m=>String(m.eventId)===raw||String(m.event?.id)===raw||String(m.id)===id);
-    if(found)return found;
-  }catch{}
+function teamTerms(t={}){
+const name=String(t.displayName||t.name||'').toLowerCase();
+const ab=String(t.abbreviation||'').toLowerCase();
+const words=name.replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(x=>x.length>=3&&!['the','club','city','state','team'].includes(x));
+const out=new Set([name,ab,...words]);
+if(name.includes('st louis')){out.add('st louis');out.add('stl');out.add('cardinals');}
+if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}
+return [...out].filter(Boolean);
 }
-return null;
+function matchEventChannel(ch,e){
+const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};
+const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;
+for(const x of aa)if(x&&text.includes(norm(x)))as=Math.max(as,x.length>=5?55:35);
+for(const x of hh)if(x&&text.includes(norm(x)))hs=Math.max(hs,x.length>=5?55:35);
+for(const b of e?.broadcast||[])if(norm(b)&&text.includes(norm(b)))return 100;
+if(as>=55&&hs>=55)return 100;
+if(as>=35&&hs>=35)return 80;
+if(as>=55||hs>=55)return 65;
+if(as>=35||hs>=35)return 45;
+return 0;
+}
+async function streamsForEvent(c,meta){
+if(!c||!meta?.event)return[];
+const cacheKey=`match:${c.server}|${c.username}|${meta.id}`,hit=sourceMatchCache.get(cacheKey);
+if(hit&&Date.now()-hit.at<60000)return hit.value;
+const d=await xtreamData(c);let value=[];
+if(meta.event.league==='ufc'){
+  value=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|ufc network|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||''}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));
+}else{
+  const e={away:meta.event.away,home:meta.event.home,broadcast:meta.event.broadcast||[]};
+  value=d.metas.map(m=>({m,score:matchEventChannel(m,e)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,12).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • event match ${x.score}%`,score:x.score}));
+}
+sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;
 }
 async function ufcCatalog(){
   try {
