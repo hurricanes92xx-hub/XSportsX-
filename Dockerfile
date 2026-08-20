@@ -6,4 +6,4 @@ COPY . .
 ENV NODE_ENV=production
 ENV PORT=7000
 EXPOSE 7000
-CMD ["node", "render-proxy.js"]
+CMD ["node", "production-bootstrap.js"]
