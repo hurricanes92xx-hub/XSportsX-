@@ -1,6 +1,6 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "5.0.25",
+  "version": "5.0.26",
   "private": true,
   "type": "module",
   "description": "XSportsX — fast league-isolated sports command center with Xtream sports-news and live streams.",
@@ -9,7 +9,7 @@
     "start": "node render-entry.js",
     "dev": "BASE_URL=http://localhost:7000 node --watch render-entry.js",
     "test": "node --test",
-    "check": "node --check render-proxy.js"
+    "check": "node --check render-entry.js && node --check render-entry-v526.js && node --check render-proxy.js"
   },
   "dependencies": { "express": "^5.1.0" }
 }
