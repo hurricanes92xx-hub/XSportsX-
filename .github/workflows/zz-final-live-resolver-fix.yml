@@ -18,12 +18,10 @@ jobs:
           p=Path('sports-router.js')
           s=p.read_text()
 
-          # Fix an undefined helper that caused xtreamData() to throw after get_live_streams.
           marker='function newsLogo(group,channelPoster){return channelPoster||LOGO_FALLBACKS[group]||`${BASE}/${PREFIX}/assets/news/${slug(group)}.svg`;}'
           if marker in s and 'function newsSlug(' not in s:
               s=s.replace(marker, marker+'\nfunction newsSlug(v){return slug(v);}', 1)
 
-          # Fix accidental infinite recursion in resolveEventMeta().
           old='''async function resolveEventMeta(id){
           const cached=await resolveEventMeta(id);
           if(cached)return cached;'''
@@ -33,7 +31,6 @@ jobs:
           if old in s:
               s=s.replace(old,new,1)
 
-          # Xtream providers commonly base64 encode EPG title/description fields.
           if 'function decodeXtreamText(' not in s:
               needle='function epgTextScore(list,meta){'
               helper=r'''function decodeXtreamText(v){
@@ -52,7 +49,6 @@ jobs:
 
           s=s.replace('const text=norm(`${x.title||""} ${x.description||""}`);', 'const text=norm(`${decodeXtreamText(x.title||"")} ${decodeXtreamText(x.description||"")}`);', 1)
 
-          # If short EPG is empty, fall back to the full/simple EPG endpoint.
           old_epg='''try{const u=xtreamApi(c,'get_short_epg');u.searchParams.set('stream_id',String(streamId));u.searchParams.set('limit','6');const v=await getJson(u.toString(),4500);const rows=v?.epg_listings||v?.epgListings||[];epgCache.set(key,{at:Date.now(),value:rows});return rows;}catch{return hit?.value||[];}'''
           new_epg='''try{const u=xtreamApi(c,'get_short_epg');u.searchParams.set('stream_id',String(streamId));u.searchParams.set('limit','10');const v=await getJson(u.toString(),4500);let rows=v?.epg_listings||v?.epgListings||[];if(!Array.isArray(rows)||!rows.length){const f=xtreamApi(c,'get_simple_data_table');f.searchParams.set('stream_id',String(streamId));const fv=await getJson(f.toString(),4500);rows=fv?.epg_listings||fv?.epgListings||[];}epgCache.set(key,{at:Date.now(),value:Array.isArray(rows)?rows:[]});return Array.isArray(rows)?rows:[];}catch{return hit?.value||[];}'''
           if old_epg in s:
