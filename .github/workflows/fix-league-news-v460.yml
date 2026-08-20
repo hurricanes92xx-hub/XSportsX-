@@ -1,4 +1,4 @@
-name: Fix league isolation and sports news
+name: Deep fix league isolation and sports news
 on:
   push:
     branches: [main]
@@ -12,70 +12,98 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply robust league and news fix
+      - name: Replace contaminated league aggregator with direct league feeds
         shell: python
         run: |
           from pathlib import Path
+          import re
           p = Path('command-center.js')
           s = p.read_text()
-          s = s.replace('const VERSION="4.5.9";', 'const VERSION="4.6.0";')
-          s = s.replace('const ADDON_ID="com.xsportsx.sports.epg.v459";', 'const ADDON_ID="com.xsportsx.sports.epg.v460";')
-          old = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
-          new = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);const eventSport=String(m?.sport||m?.eventSport||m?.league||"").toLowerCase();return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,eventSport,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
-          if old in s: s=s.replace(old,new)
-          start=s.find('function isLeague(')
-          end=s.find('function filterSports(',start)
-          if start>=0 and end>start:
-              classifier="""function isLeague(m,mode){
-          const eventSport=String(m?.eventSport||"").toLowerCase();
-          const t=text(m);
-          const g=(m.genres||[]).map(x=>String(x).toLowerCase());
-          const has=(...xs)=>xs.some(x=>t.includes(x)||g.includes(x));
-          const football=/jets|steelers|commanders|jaguars|cowboys|dolphins|giants|eagles|chiefs|chargers|raiders|broncos|ravens|browns|bengals|bills|patriots|texans|colts|titans|packers|lions|bears|vikings|buccaneers|falcons|panthers|saints|49ers|seahawks|cardinals|rams/i;
-          const hockey=/maple leafs|canadiens|bruins|sabres|red wings|panthers|lightning|senators|capitals|penguins|flyers|hurricanes|rangers|islanders|devils|blue jackets|blackhawks|avalanche|stars|wild|predators|blues|jets|flames|oilers|canucks|kraken|sharks|ducks|kings|golden knights|utah hockey/i;
-          const baseball=/yankees|red sox|orioles|rays|blue jays|guardians|tigers|royals|twins|white sox|astros|angels|athletics|mariners|braves|mets|phillies|marlins|nationals|cubs|reds|brewers|pirates|cardinals|dodgers|padres|giants|rockies|diamondbacks/i;
-          const basketball=/celtics|nets|knicks|76ers|raptors|cavaliers|bucks|bulls|pacers|pistons|hawks|hornets|heat|magic|wizards|nuggets|timberwolves|thunder|trail blazers|jazz|warriors|clippers|lakers|kings|suns|spurs|rockets|grizzlies|pelicans|mavericks/i;
-          if(eventSport){
-            if(mode==="ncaaf") return eventSport==="ncaaf" || eventSport==="college-football";
-            if(mode==="nba") return eventSport==="nba";
-            if(mode==="nfl") return eventSport==="nfl";
-            if(mode==="nhl") return eventSport==="nhl";
-            if(mode==="mlb") return eventSport==="mlb";
-            if(mode==="soccer") return ["soccer","mls","premier-league","la-liga"].includes(eventSport);
-            if(mode==="ufc") return eventSport==="ufc" || eventSport==="mma";
+          s = s.replace('const VERSION="4.6.0";', 'const VERSION="4.7.0";')
+          s = s.replace('const ADDON_ID="com.xsportsx.sports.epg.v460";', 'const ADDON_ID="com.xsportsx.sports.epg.v470";')
+          s = re.sub(r'const leagues=\[.*?\];', 'const leagues=[["nfl","NFL","football","nfl"],["ncaaf","NCAA Football","football","college-football"],["nba","NBA","basketball","nba"],["nhl","NHL","hockey","nhl"],["mlb","MLB","baseball","mlb"],["soccer","Soccer","soccer","eng.1"],["mls","MLS","soccer","usa.1"],["premier-league","Premier League","soccer","eng.1"],["la-liga","La Liga","soccer","esp.1"]];', s, count=1, flags=re.S)
+
+          start=s.find('async function loadSports(){')
+          end=s.find('function isLeague(', start)
+          if start<0 or end<0: raise SystemExit('loadSports/isLeague anchors not found')
+          replacement=r'''async function loadSports(){
+          const now=Date.now();
+          if(now-sportCache.at<15000&&sportCache.metas.length)return sportCache.metas;
+          const out=[];const seen=new Set();
+          const add=(m)=>{if(!m?.id||seen.has(m.id))return;seen.add(m.id);out.push(m);};
+          // Major leagues bypass the old local catalogs completely. Each event gets its
+          // immutable league identity directly from the corresponding ESPN scoreboard.
+          for(const [id,name,sport,espn] of leagues){
+            try{
+              const d=await getJson(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${espn}/scoreboard?limit=100`);
+              for(const ev of Array.isArray(d?.events)?d.events:[]){
+                const c=ev?.competitions?.[0],teams=c?.competitors||[];
+                const home=teams.find(x=>x.homeAway==="home")?.team||teams[0]?.team||{};
+                const away=teams.find(x=>x.homeAway==="away")?.team||teams[1]?.team||{};
+                if(!home?.displayName&&!away?.displayName)continue;
+                const state=c?.status?.type?.state||"pre",detail=c?.status?.type?.shortDetail||c?.status?.type?.detail||"Scheduled";
+                const logo=home?.logo||home?.logos?.[0]?.href||away?.logo||away?.logos?.[0]?.href||undefined;
+                const idValue=`sport:${String(ev.id)}`;
+                add({id:idValue,type:"channel",name:`${away.displayName||"TBD"} vs ${home.displayName||"TBD"}`,poster:logo,background:logo,description:`${name}\n${detail}\n${ev.date||c?.date||""}`,releaseInfo:ev.date||c?.date||"",genres:["Sports",name,state==="in"?"LIVE":"Scheduled",id.toUpperCase()],sportSource:id,eventSport:id,league:id,eventId:String(ev.id),source:"espn-direct",behaviorHints:{isLive:state==="in",defaultVideoId:idValue}});
+              }
+            }catch(e){console.warn(`Direct ESPN ${id} feed failed: ${e?.message||e}`);}
           }
-          if(mode==="nfl") return has("nfl") || (football.test(t) && !hockey.test(t) && !baseball.test(t));
-          if(mode==="ncaaf") return has("ncaa football","college football","ncaaf","cfb");
-          if(mode==="nba") return has("nba","basketball") || basketball.test(t);
-          if(mode==="nhl") return has("nhl","hockey") || (hockey.test(t) && !football.test(t) && !baseball.test(t));
-          if(mode==="mlb") return has("mlb","baseball") || (baseball.test(t) && !football.test(t));
-          if(mode==="soccer") return has("soccer","premier league","mls","la liga");
-          if(mode==="ufc") return has("ufc","mma","fight night","weight class");
+          // UFC keeps its specialized gateway for fight/ranking metadata.
+          try{const d=await getJson(`http://127.0.0.1:${UPSTREAM_PORT}/catalog/sport/ufc.json`);for(const m of Array.isArray(d?.metas)?d.metas:[])add(normalize({...m,eventSport:"ufc",league:"ufc"},"ufc"));}catch{}
+          sportCache={at:now,metas:out};return out;
+          }
+          '''
+          s=s[:start]+replacement+s[end:]
+
+          start=s.find('function isLeague(');end=s.find('function filterSports(',start)
+          if start<0 or end<0: raise SystemExit('isLeague/filterSports anchors not found')
+          classifier=r'''function isLeague(m,mode){
+          const direct=String(m?.eventSport||m?.sportSource||m?.league||"").toLowerCase();
+          if(mode==="nfl")return direct==="nfl";
+          if(mode==="ncaaf")return direct==="ncaaf";
+          if(mode==="nba")return direct==="nba";
+          if(mode==="nhl")return direct==="nhl";
+          if(mode==="mlb")return direct==="mlb";
+          if(mode==="soccer")return ["soccer","mls","premier-league","la-liga"].includes(direct);
+          if(mode==="ufc")return direct==="ufc";
+          const t=text(m);
+          if(mode==="nfl")return /\bnfl\b/.test(t);
+          if(mode==="ncaaf")return /ncaa football|college football|ncaaf/.test(t);
+          if(mode==="nba")return /\bnba\b/.test(t);
+          if(mode==="nhl")return /\bnhl\b|\bhockey\b/.test(t);
+          if(mode==="mlb")return /\bmlb\b|\bbaseball\b/.test(t);
+          if(mode==="soccer")return /\bsoccer\b|premier league|la liga|\bmls\b/.test(t);
+          if(mode==="ufc")return /\bufc\b|\bmma\b/.test(t);
           return false;
           }
-          """
-              s=s[:start]+classifier+s[end:]
-          st=s.find('function isSportsNewsChannel(s,cat){')
-          en=s.find('async function loadXtream(',st)
-          if st>=0 and en>st:
-              news="""function isSportsNewsChannel(s,cat){
-          const v=`${s?.name||""} ${cat||""} ${s?.group||""}`.toLowerCase().replace(/[^a-z0-9]+/g," ");
-          const exact=NEWS_NETWORKS.some(([needle])=>v.includes(String(needle).toLowerCase()));
-          const aliases=/\\bespn(?:2|u| news| deportes)?\\b|\\bnfl network\\b|\\bmlb network\\b|\\bnba tv\\b|\\bnhl network\\b|\\bcbs sports(?: network| hq)?\\b|\\bfox sports(?: 1| 2)?\\b|\\bfs1\\b|\\bfs2\\b|\\bacc network\\b|\\bsec network\\b|\\bbig ten network\\b|\\bgolf channel\\b|\\btnt sports\\b|\\bnbc sports\\b|\\bbein sports\\b|\\bsportsnet\\b|\\btennis channel\\b/.test(v);
-          const category=/sports?|sports news|sports network|live sports|national sports/.test(v);
-          return exact||aliases||category;
+          '''
+          s=s[:start]+classifier+s[end:]
+
+          st=s.find('function isSportsNewsChannel(s,cat){');en=s.find('async function loadXtream(',st)
+          if st<0 or en<0: raise SystemExit('sports news anchors not found')
+          news=r'''function isSportsNewsChannel(s,cat){
+          const v=`${s?.name||""} ${cat||""} ${s?.group||""}`.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+          const strong=/\bespn(?:2|u|news|deportes)?\b|\bespn\s*(?:hd|usa|us)\b|\bnfl\s*network\b|\bmlb\s*network\b|\bnba\s*tv\b|\bnhl\s*network\b|\bcbs\s*sports(?:\s*network|\s*hq)?\b|\bfox\s*sports(?:\s*[12])?\b|\bfs[12]\b|\bacc\s*network\b|\bsec\s*network\b|\bbig\s*ten\s*network\b|\bgolf\s*channel\b|\btnt\s*sports\b|\bnbc\s*sports\b|\bbein\s*sports\b|\bsportsnet\b|\btennis\s*channel\b/.test(v);
+          const category=/\bsports?\b|sports news|sports network|live sports|national sports/.test(v);
+          return strong||category;
           }
-          """
-              s=s[:st]+news+s[en:]
+          '''
+          s=s[:st]+news+s[en:]
+
+          marker='if(path.startsWith("/catalog/channel/"))'
+          stream_route='''if(path.startsWith("/stream/channel/sport:")){try{const id=decodeURIComponent(path.slice(path.indexOf("sport:")).replace(/\\.json$/,"")),eventId=id.replace(/^sport:/,"");const r=await fetch(`http://127.0.0.1:${UPSTREAM_PORT}/stream/sport/${encodeURIComponent(eventId)}.json`);const body=await r.json().catch(()=>({streams:[]}));return json(res,{streams:Array.isArray(body?.streams)?body.streams:[]},r.ok?200:502);}catch(e){return json(res,{streams:[],error:String(e?.message||e)},502)}}
+'''
+          if marker not in s: raise SystemExit('catalog route marker not found')
+          s=s.replace(marker,stream_route+marker,1)
           p.write_text(s)
-      - name: Syntax check
-        run: node --check command-center.js
-      - name: Commit
+      - name: Validate every runtime entrypoint
+        run: npm run check
+      - name: Commit repaired runtime
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add command-center.js
           if git diff --cached --quiet; then echo 'No changes needed'; exit 0; fi
-          git commit -m 'fix: harden league isolation and restore sports news'
+          git commit -m 'fix: isolate league feeds and restore sports news'
           git push
