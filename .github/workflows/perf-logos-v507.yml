@@ -1,0 +1,73 @@
+name: Performance and section logo fix
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/perf-logos-v507.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch router
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('sports-router.js')
+          s=p.read_text()
+          s=s.replace('const VERSION = "5.0.6";','const VERSION = "5.0.7";')
+          s=s.replace('const ADDON_ID = "com.xsportsx.sports.epg.v506";','const ADDON_ID = "com.xsportsx.sports.epg.v507";')
+          s=s.replace('const PREFIX = "/v506";','const PREFIX = "/v507";')
+          s=s.replace('const cache=new Map(),eventCache=new Map(),xtreamCache=new Map();','const cache=new Map(),eventCache=new Map(),xtreamCache=new Map(),inFlight=new Map();\nfunction newsSlug(group){return group.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}\nfunction newsLogo(group){return `${BASE}${PREFIX}/assets/news/${newsSlug(group)}.svg`;}')
+          old='async function leagueCatalog(id){const now=Date.now(),key=`league:${id}`,hit=cache.get(key);if(hit&&now-hit.at<15000)return hit.value;const d=await getJson(leagueUrl(id));const metas=(d.events||[]).map(e=>eventMeta(e,id)).filter(Boolean).sort((a,b)=>new Date(a.releaseInfo||0)-new Date(b.releaseInfo||0));cache.set(key,{at:now,value:metas});return metas;}'
+          new='async function leagueCatalog(id){const now=Date.now(),key=`league:${id}`,hit=cache.get(key);if(hit&&now-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(leagueUrl(id)).then(d=>{const metas=(d.events||[]).map(e=>eventMeta(e,id)).filter(Boolean).sort((a,b)=>new Date(a.releaseInfo||0)-new Date(b.releaseInfo||0));cache.set(key,{at:Date.now(),value:metas});return metas;}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}'
+          if old not in s: raise SystemExit('leagueCatalog pattern not found')
+          s=s.replace(old,new)
+          old='async function allSports(){return(await Promise.all(Object.keys(LEAGUES).map(id=>leagueCatalog(id).catch(()=>[])))).flat();}'
+          new='async function allSports(){const key="all:sports",hit=cache.get(key),now=Date.now();if(hit&&now-hit.at<30000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=Promise.all(Object.keys(LEAGUES).map(id=>leagueCatalog(id).catch(()=>[]))).then(rows=>rows.flat()).then(value=>{cache.set(key,{at:Date.now(),value});return value;}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}'
+          if old not in s: raise SystemExit('allSports pattern not found')
+          s=s.replace(old,new)
+          s=s.replace('if(hit&&Date.now()-hit.at<30000)return hit.value;const v=await getJson(xtreamApi(c,action));','if(hit&&Date.now()-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(xtreamApi(c,action)).then(v=>{xtreamCache.set(key,{at:Date.now(),value:v});return v;}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;')
+          old='const key=`data:${c.server}|${c.username}`,hit=xtreamCache.get(key);if(hit&&Date.now()-hit.at<30000)return hit.value;'
+          new='const key=`data:${c.server}|${c.username}`,hit=xtreamCache.get(key);if(hit&&Date.now()-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);'
+          if old not in s: raise SystemExit('xtreamData cache pattern not found')
+          s=s.replace(old,new)
+          old='const value={metas,news,newsGroups,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,groups:newsGroups.map(x=>x.name),matchedNames:news.slice(0,30).map(x=>x.name)}};xtreamCache.set(key,{at:Date.now(),value});return value;}'
+          new='const value={metas,news,newsGroups,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,groups:newsGroups.map(x=>x.name),matchedNames:news.slice(0,30).map(x=>x.name)}};xtreamCache.set(key,{at:Date.now(),value});return value;}'
+          # keep result caching; in-flight is handled by wrapping the whole function below
+          start=s.find('async function xtreamData(c){')
+          if start<0: raise SystemExit('xtreamData start not found')
+          # Replace the beginning so the existing body becomes a promise-returning job.
+          prefix='async function xtreamData(c){if(!c)return{metas:[],news:[],newsGroups:[],categories:[],newsDiagnostics:{}};'
+          if prefix not in s: raise SystemExit('xtreamData prefix not found')
+          # We already inserted an inFlight check above; append a finally cleanup by wrapping only if needed.
+          # Simpler: use a dedicated data key and return existing cache; duplicate calls are acceptable after the 60s cache.
+          # Add logo URLs to grouped news cards.
+          s=s.replace('poster:first.poster,background:first.background,description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`','poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`')
+          marker='const server=http.createServer(async(req,res)=>{try{'
+          asset='const server=http.createServer(async(req,res)=>{try{if(pathnamePlaceholder){}'
+          # Insert route after path is parsed, avoiding a full handler rewrite.
+          s=s.replace('const u=new URL(req.url||"/","http://localhost"),path=u.pathname,c=configFrom(req.url||"/");','const u=new URL(req.url||"/","http://localhost"),path=u.pathname,c=configFrom(req.url||"/");if(path.startsWith("/assets/news/")&&path.endsWith(".svg")){const slug=path.slice("/assets/news/".length,-4);const title=slug.replace(/-/g," ").replace(/\\b\\w/g,x=>x.toUpperCase());const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><rect width="640" height="360" rx="28" fill="#11151b"/><rect x="28" y="28" width="584" height="304" rx="22" fill="#1a202a" stroke="#555" stroke-width="3"/><circle cx="110" cy="110" r="54" fill="#e21d2d"/><path d="M82 110h56M110 82v56" stroke="#fff" stroke-width="12" stroke-linecap="round"/><text x="190" y="125" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="700">${title}</text><text x="190" y="170" fill="#aeb6c2" font-family="Arial,sans-serif" font-size="22">SPORTS NEWS</text></svg>`;res.writeHead(200,{"content-type":"image/svg+xml","cache-control":"public,max-age=86400"});return res.end(svg);}');
+          s=s.replace('if(path==="/manifest.json")return json(res,manifest(),200,60);','if(path==="/manifest.json")return json(res,manifest(),200,300);')
+          p.write_text(s)
+          q=Path('render-proxy.js')
+          r=q.read_text()
+          r=r.replace('PREFIX="v506",COMPAT_PREFIXES=["v506","v505","v504","v503","v502","v501","v500"]','PREFIX="v507",COMPAT_PREFIXES=["v507","v506","v505","v504","v503","v502","v501","v500"]')
+          r=r.replace('v506-compatible','v507-compatible')
+          q.write_text(r)
+      - name: Validate
+        run: |
+          node --check sports-router.js
+          node --check render-proxy.js
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sports-router.js render-proxy.js
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'perf: speed up source loading and fix section logos'
+          git push
