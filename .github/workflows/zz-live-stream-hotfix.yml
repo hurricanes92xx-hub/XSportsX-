@@ -38,6 +38,8 @@ jobs:
           if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}
           return [...out].filter(Boolean);
           }
+          function teamTokens(t={}){return [...new Set(teamTerms(t).flatMap(x=>norm(x).split(' ').filter(w=>w.length>=3)))];}
+          function tokenOverlap(a,b){const aa=new Set(norm(a).split(' ').filter(x=>x.length>=3)),bb=new Set(norm(b).split(' ').filter(x=>x.length>=3));if(!aa.size||!bb.size)return 0;let n=0;for(const x of aa)if(bb.has(x))n++;return n/Math.max(aa.size,bb.size);}
           function matchEventChannel(ch,e){
           const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};
           const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;
@@ -50,18 +52,41 @@ jobs:
           if(as>=35||hs>=35)return 45;
           return 0;
           }
+          function epgTextScore(list,meta){
+          const away=teamTokens(meta.event?.away||{}),home=teamTokens(meta.event?.home||{}),title=norm(`${meta.name||''}`);let best=0,bestItem=null;
+          for(const x of (Array.isArray(list)?list:[])){
+            const text=norm(`${x.title||''} ${x.description||''}`);let a=0,h=0;
+            for(const t of away)if(t&&text.includes(t))a=Math.max(a,t.length>=5?55:35);
+            for(const t of home)if(t&&text.includes(t))h=Math.max(h,t.length>=5?55:35);
+            let score=0;
+            if(a>=55&&h>=55)score=100;else if(a>=35&&h>=35)score=85;else if(a>=55||h>=55)score=60;else score=Math.round(tokenOverlap(title,text)*70);
+            if(x.now_playing===1||x.now_playing==='1')score+=12;
+            const ts=Number(x.start_timestamp||0)*1000, es=Date.parse(meta.event?.start||'');
+            if(ts&&es&&!Number.isNaN(es)){const delta=Math.abs(ts-es);if(delta<=2*3600000)score+=10;else if(delta<=6*3600000)score+=5;}
+            if(score>best){best=score;bestItem=x;}
+          }
+          return {score:Math.min(100,best),item:bestItem};
+          }
+          const epgCache=new Map();
+          async function getShortEpg(c,streamId){
+          const key=`epg:${c.server}|${c.username}|${streamId}`,hit=epgCache.get(key);
+          if(hit&&Date.now()-hit.at<60000)return hit.value;
+          try{const u=xtreamApi(c,'get_short_epg');u.searchParams.set('stream_id',String(streamId));u.searchParams.set('limit','6');const v=await getJson(u.toString(),4500);const rows=v?.epg_listings||v?.epgListings||[];epgCache.set(key,{at:Date.now(),value:rows});return rows;}catch{return hit?.value||[];}
+          }
           async function streamsForEvent(c,meta){
           if(!c||!meta?.event)return[];
           const cacheKey=`match:${c.server}|${c.username}|${meta.id}`,hit=sourceMatchCache.get(cacheKey);
           if(hit&&Date.now()-hit.at<60000)return hit.value;
-          const d=await xtreamData(c);let value=[];
-          if(meta.event.league==='ufc'){
-            value=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|ufc network|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||''}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));
-          }else{
-            const e={away:meta.event.away,home:meta.event.home,broadcast:meta.event.broadcast||[]};
-            value=d.metas.map(m=>({m,score:matchEventChannel(m,e)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,12).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • event match ${x.score}%`,score:x.score}));
-          }
-          sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;
+          const d=await xtreamData(c);let direct=[];
+          if(meta.event.league==='ufc')direct=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|ufc network|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||''}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category,score:100}));
+          else{const e={away:meta.event.away,home:meta.event.home,broadcast:meta.event.broadcast||[]};direct=d.metas.map(m=>({m,score:matchEventChannel(m,e)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,12).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • direct match ${x.score}%`,score:x.score}));}
+          if(direct.length){sourceMatchCache.set(cacheKey,{at:Date.now(),value:direct});return direct;}
+          const sportRe=/\b(sport|sports|espn|fox sports|fs1|fs2|tnt|nba|mlb|nhl|nfl|ncaaf|sec network|acc network|big ten|bally|msg|regional sports|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports)\b/i;
+          const candidates=d.metas.filter(m=>sportRe.test(`${m.name} ${m.xtream?.category||''}`));
+          const pool=(candidates.length?candidates:d.metas).slice(0,180);
+          const found=[];let idx=0;const worker=async()=>{while(idx<pool.length){const m=pool[idx++],streamId=String(m.id||'').replace(/^xtream:/,'');if(!streamId)continue;const epg=await getShortEpg(c,streamId),hitScore=epgTextScore(epg,meta);if(hitScore.score>=55)found.push({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:`${m.xtream?.category||'Live TV'} • EPG match ${hitScore.score}%${hitScore.item?.title?` • ${hitScore.item.title}`:''}`,score:hitScore.score});}};
+          await Promise.all(Array.from({length:Math.min(10,pool.length)},worker));
+          found.sort((a,b)=>b.score-a.score);const value=found.slice(0,12);sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;
           }
           '''
           s=s[:start]+replacement+s[end:]
@@ -79,5 +104,5 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add sports-router.js
-          git diff --cached --quiet || git commit -m 'fix: improve live event matching and UFC catalog'
+          git diff --cached --quiet || git commit -m 'fix: use Xtream EPG to resolve live game channels'
           git push
