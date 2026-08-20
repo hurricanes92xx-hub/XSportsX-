@@ -1,2 +1,2 @@
-// Render/Nuvio entrypoint. The command-center gateway owns the public manifest and catalog contract.
-await import("./command-center.js");
+// Render/Nuvio entrypoint. The front gateway adds optional Xtream streams without exposing credentials.
+await import("./xtream-front.js");
