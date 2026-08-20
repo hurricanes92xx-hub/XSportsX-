@@ -33,9 +33,56 @@ function eventMeta(ev,league){const [name,,,icon]=LEAGUES[league]||[league,"",""
 function leagueUrl(id){const [,sport,espn]=LEAGUES[id];return `https://site.api.espn.com/apis/site/v2/sports/${sport}/${espn}/scoreboard?limit=100`;}
 async function leagueCatalog(id){const key=`league:${id}`,hit=cache.get(key);if(hit&&Date.now()-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(leagueUrl(id)).then(d=>{const metas=(d.events||[]).map(e=>eventMeta(e,id)).filter(Boolean).sort((a,b)=>new Date(a.releaseInfo||0)-new Date(b.releaseInfo||0));cache.set(key,{at:Date.now(),value:metas});return metas;}).catch(()=>hit?.value||[]).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}
 async function allSports(){const key="all:sports",hit=cache.get(key);if(hit&&Date.now()-hit.at<30000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=Promise.all(Object.keys(LEAGUES).map(leagueCatalog)).then(x=>x.flat()).finally(()=>inFlight.delete(key));inFlight.set(key,job);const value=await job;cache.set(key,{at:Date.now(),value});return value;}
-async function xtreamData(c){if(!c)return{metas:[],news:[],newsGroups:[],categories:[]};const key=`data:${c.server}|${c.username}`,hit=xtreamCache.get(key);if(hit&&Date.now()-hit.at<300000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=(async()=>{const [cats,streams]=await Promise.all([xtream(c,"get_live_categories"),xtream(c,"get_live_streams")]),catList=Array.isArray(cats)?cats:[],streamList=Array.isArray(streams)?streams:[],cm=new Map(catList.map(x=>[String(x.category_id),x.category_name||"Live TV"])),metas=streamList.map(s=>{const cat=cm.get(String(s.category_id))||s.category_name||s.category||"Live TV",ext=String(s.container_extension||"ts").replace(/[^a-z0-9]/gi,"")||"ts";return{id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}};}),scored=metas.map(m=>({meta:m,category:m.xtream.category,score:newsScore(m.name,m.xtream.category)})),news=scored.filter(x=>x.score>=75).map(x=>x.meta),newsGroups=[];for(const [group] of Object.entries(NEWS_GROUPS)){const channels=scored.filter(x=>newsGroupFor(x.meta.name,x.category)===group).map(x=>x.meta),icon=channels.find(x=>x.poster)?.poster||newsLogo(group);newsGroups.push({id:`news:${slug(group)}`,type:"channel",name:group,poster:icon,background:icon,description:channels.length?`${channels.length} ${group} channel${channels.length===1?"":"s"} from Xtream`:`${group} — no matching Xtream channel yet`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group,available:channels.length});}const allIcon=news.find(m=>m.poster)?.poster||newsLogo("ESPN");newsGroups.push({id:"news:sports-news",type:"channel",name:"Sports News",poster:allIcon,background:allIcon,description:`${news.length} sports/news channels from Xtream`,genres:["Sports News","News"],behaviorHints:{isLive:true},newsGroup:"__ALL_SPORTS_NEWS__",available:news.length});const value={metas,news,newsGroups,categories:[...cm.values()]};xtreamCache.set(key,{at:Date.now(),value});return value;})().catch(()=>hit?.value||{metas:[],news:[],newsGroups:[],categories:[]}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}
+async function xtreamData(c){
+if(!c)return{metas:[],news:[],newsGroups:[],categories:[]};
+const key=`data:${c.server}|${c.username}`;
+const hit=xtreamCache.get(key),now=Date.now();
+if(hit&&now-hit.at<300000)return hit.value;
+if(inFlight.has(key))return inFlight.get(key);
+const job=(async()=>{
+  const [cats,streams]=await Promise.all([
+    xtream(c,"get_live_categories").catch(()=>null),
+    xtream(c,"get_live_streams").catch(()=>null)
+  ]);
+  if(!Array.isArray(streams)||!streams.length){
+    if(hit?.value)return hit.value;
+    return {metas:[],news:[],newsGroups:[],categories:Array.isArray(cats)?cats.map(x=>x.category_name||"Live TV"):[]};
+  }
+  const cm=new Map((Array.isArray(cats)?cats:[]).map(x=>[String(x.category_id),x.category_name||"Live TV"]));
+  const metas=streams.map(s=>{
+    const cat=cm.get(String(s.category_id))||"Live TV";
+    const ext=String(s.container_extension||"ts").replace(/[^a-z0-9]/gi,"")||"ts";
+    return {id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}};
+  });
+  const scored=metas.map((m,i)=>({meta:m,source:streams[i],category:cm.get(String(streams[i]?.category_id))||"Live TV",score:newsScore(streams[i]?.name||m.name,cm.get(String(streams[i]?.category_id))||"Live TV")}));
+  const news=scored.filter(x=>x.score>=70).map(x=>x.meta);
+  const newsGroups=Object.entries(NEWS_GROUPS).map(([group])=>{
+    const channels=scored.filter(x=>newsGroupFor(x.source?.name,x.category)===group);
+    if(!channels.length)return null;
+    return {id:`news:${newsSlug(group)}`,type:"channel",name:group,poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group};
+  }).filter(Boolean);
+  const value={metas,news,newsGroups,categories:[...cm.values()]};
+  xtreamCache.set(key,{at:Date.now(),value});
+  return value;
+})().catch(()=>hit?.value||{metas:[],news:[],newsGroups:[],categories:[]}).finally(()=>inFlight.delete(key));
+inFlight.set(key,job);
+return job;
+}
 function matchEventChannel(ch,e){const t=norm(`${ch.name} ${ch.xtream?.category||""}`),a=norm(e?.away?.name),h=norm(e?.home?.name),as=norm(e?.away?.short),hs=norm(e?.home?.short);let score=0;for(const x of[a,h])if(x&&t.includes(x))score+=45;for(const x of[as,hs])if(x&&x.length>=3&&t.includes(x))score+=15;return Math.min(score,100);}
 async function streamsForEvent(c,meta){if(!c||!meta?.event)return[];const cacheKey=`match:${c.server}|${c.username}|${meta.id}`,hit=sourceMatchCache.get(cacheKey);if(hit&&Date.now()-hit.at<300000)return hit.value;const d=await xtreamData(c);let value=[];if(meta.event.league==="ufc")value=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||""}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));else value=d.metas.map(m=>({m,score:matchEventChannel(m,meta.event)})).filter(x=>x.score>=40).sort((a,b)=>b.score-a.score).slice(0,8).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • match ${x.score}%`,score:x.score}));sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;}
+async function resolveEventMeta(id){
+const cached=await resolveEventMeta(id);
+if(cached)return cached;
+const raw=String(id||"").replace(/^sport:/,"");
+for(const league of Object.keys(LEAGUES)){
+  try{
+    const rows=await leagueCatalog(league);
+    const found=rows.find(m=>String(m.eventId)===raw||String(m.event?.id)===raw||String(m.id)===id);
+    if(found)return found;
+  }catch{}
+}
+return null;
+}
 function manifest(){const catalogs=[["sports-command-center","🏆 XSPORTSX • SPORTS COMMAND CENTER"],["live-now","🔴 LIVE NOW"],["starting-soon","⏰ STARTING SOON"],["sports-news-v2","📰 SPORTS NEWS NETWORKS"],["nfl","🏈 NFL"],["ncaaf","🏈 NCAA FOOTBALL"],["nba","🏀 NBA"],["nhl","🏒 NHL"],["mlb","⚾ MLB"],["ufc-v2","🥊 UFC COMMAND CENTER"],["soccer","⚽ SOCCER"],["iptv-live","📡 MY IPTV • LIVE TV"]];return{id:ADDON_ID,version:VERSION,name:"XSportsX Sports Command Center",description:"Fast sports EPG with authorized Xtream live TV, sports news and UFC events.",config:[{key:"server",type:"text",title:"Xtream Server URL"},{key:"username",type:"text",title:"Xtream Username"},{key:"password",type:"password",title:"Xtream Password"}],behaviorHints:{configurable:true,configurationRequired:false,configurationURL:`${BASE}/${PREFIX}/configure`},resources:[{name:"catalog",types:["channel"]},{name:"meta",types:["channel"],idPrefixes:["sport:","xtream:","news:"]},{name:"stream",types:["channel"],idPrefixes:["sport:","xtream:","news:"]}],types:["channel"],catalogs:catalogs.map(([id,name])=>({type:"channel",id,name,showInHome:true}))};}
 function configurePage(){return `<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>XSportsX</title></head><body style="margin:0;background:#08090c;color:#fff;font:16px system-ui;display:grid;place-items:center;min-height:100vh"><main style="width:min(520px,92vw);background:#12151b;padding:28px;border-radius:18px"><h1>🏆 XSportsX 5.0.22</h1><p>Enter your authorized Xtream credentials.</p><form method="post" action="${PREFIX}/configure"><label>Server URL</label><input name="server" required style="width:100%;box-sizing:border-box;padding:13px"><label>Username</label><input name="username" required style="width:100%;box-sizing:border-box;padding:13px"><label>Password</label><input name="password" type="password" required style="width:100%;box-sizing:border-box;padding:13px"><button style="width:100%;padding:14px;margin-top:20px">GENERATE NUVIO MANIFEST</button></form></main></body></html>`;}
 function readyPage(url){return `<!doctype html><html><body style="background:#08090c;color:#fff;font:16px system-ui;padding:30px"><h1>✅ XSportsX 5.0.22 Ready</h1><p>Copy this manifest into Nuvio.</p><input style="width:100%;padding:14px" readonly value="${url.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}"><p><a href="${url}">Open manifest</a></p></body></html>`;}
