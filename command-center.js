@@ -6,8 +6,8 @@ const PORT=Number(process.env.PORT||7000);
 const UPSTREAM_PORT=Number(process.env.XSPORTSX_GATEWAY_PORT||7002);
 const BACKEND_PORT=Number(process.env.XSPORTSX_BACKEND_PORT||7001);
 const BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";
-const VERSION="4.5.9";
-const ADDON_ID="com.xsportsx.sports.epg.v459";
+const VERSION="4.6.0";
+const ADDON_ID="com.xsportsx.sports.epg.v460";
 const PREFIX="/v458";
 
 // Never put raw Xtream credentials in URLs. Set XSPORTSX_CONFIG_SECRET in Render
@@ -26,10 +26,36 @@ const xtreamCache=new Map();
 
 function json(res,body,status=200){res.writeHead(status,{"content-type":"application/json; charset=utf-8","cache-control":"no-store","access-control-allow-origin":"*","x-xsportsx-version":VERSION,"x-xsportsx-addon-id":ADDON_ID});res.end(JSON.stringify(body));}
 function text(m){return `${m.name||""} ${m.description||""} ${(m.genres||[]).join(" ")}`.toLowerCase();}
-function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}
+function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);const eventSport=String(m?.sport||m?.eventSport||m?.league||"").toLowerCase();return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,eventSport,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}
 async function getJson(url){const r=await fetch(url);if(!r.ok)throw new Error(String(r.status));return r.json();}
 async function loadSports(){const now=Date.now();if(now-sportCache.at<30000&&sportCache.metas.length)return sportCache.metas;const out=[];for(const [id,name,sport,espn] of leagues){try{const d=await getJson(`http://127.0.0.1:${UPSTREAM_PORT}/catalog/sport/${id}.json`);if(Array.isArray(d?.metas)&&d.metas.length){out.push(...d.metas.map(x=>normalize(x,id)));continue;}}catch{}try{const d=await getJson(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${espn}/scoreboard?limit=100`);for(const ev of d.events||[]){const c=ev.competitions?.[0],teams=c?.competitors||[],home=teams.find(x=>x.homeAway==="home")?.team||teams[0]?.team||{},away=teams.find(x=>x.homeAway==="away")?.team||teams[1]?.team||{},state=c?.status?.type?.state,detail=c?.status?.type?.shortDetail||c?.status?.type?.detail||"Scheduled",logo=home.logo||away.logo;out.push(normalize({id:`sport:espn-${id}-${ev.id}`,name:`${away.displayName||"TBD"} vs ${home.displayName||"TBD"}`,poster:logo,background:logo,description:`${name}\n${detail}\n${ev.date||""}`,releaseInfo:ev.date||"",genres:["Sports",name,state==="in"?"LIVE":"Scheduled"]},id));}}catch{}}sportCache={at:now,metas:[...new Map(out.map(x=>[x.id,x])).values()]};return sportCache.metas;}
-function isLeague(m,mode){const source=String(m?.sportSource||"").toLowerCase();const t=text(m);const g=(m.genres||[]).map(x=>String(x).toLowerCase());const has=(...xs)=>xs.some(x=>t.includes(x)||g.includes(x));const nflTeams=/chiefs|chargers|raiders|broncos|cowboys|giants|jets|eagles|commanders|ravens|steelers|browns|bengals|bills|dolphins|patriots|texans|colts|jaguars|titans|packers|lions|bears|vikings|buccaneers|falcons|panthers|saints|49ers|seahawks|cardinals|rams/i;const nhlTeams=/maple leafs|canadiens|bruins|sabres|red wings|panthers|lightning|senators|capitals|penguins|flyers|hurricanes|rangers|islanders|devils|blue jackets|blackhawks|avalanche|stars|wild|predators|blues|jets|flames|oilers|canucks|kraken|sharks|ducks|kings|golden knights|utah hockey/i;const mlbTeams=/yankees|red sox|orioles|rays|blue jays|guardians|tigers|royals|twins|white sox|astros|angels|athletics|mariners|braves|mets|phillies|marlins|nationals|cubs|reds|brewers|pirates|cardinals|dodgers|padres|giants|rockies|diamondbacks/i;if(mode==="nfl")return source==="nfl"||has("nfl")||nflTeams.test(t);if(mode==="ncaaf")return source==="ncaaf"||has("ncaa football","college football","ncaaf","cfb");if(mode==="nba")return source==="nba"||(has("nba")&&!has("wnba"));if(mode==="nhl")return source==="nhl"||has("nhl","hockey")||nhlTeams.test(t);if(mode==="mlb")return source==="mlb"||has("mlb","baseball")||mlbTeams.test(t);if(mode==="soccer")return ["soccer","mls","premier-league","la-liga"].includes(source)||has("soccer","premier league","mls","la liga");if(mode==="ufc")return(source==="ufc"||has("ufc","mma","fight night","weight class"))&&!nflTeams.test(t)&&!nhlTeams.test(t)&&!mlbTeams.test(t);return false;}
+function isLeague(m,mode){
+const eventSport=String(m?.eventSport||"").toLowerCase();
+const t=text(m);
+const g=(m.genres||[]).map(x=>String(x).toLowerCase());
+const has=(...xs)=>xs.some(x=>t.includes(x)||g.includes(x));
+const football=/jets|steelers|commanders|jaguars|cowboys|dolphins|giants|eagles|chiefs|chargers|raiders|broncos|ravens|browns|bengals|bills|patriots|texans|colts|titans|packers|lions|bears|vikings|buccaneers|falcons|panthers|saints|49ers|seahawks|cardinals|rams/i;
+const hockey=/maple leafs|canadiens|bruins|sabres|red wings|panthers|lightning|senators|capitals|penguins|flyers|hurricanes|rangers|islanders|devils|blue jackets|blackhawks|avalanche|stars|wild|predators|blues|jets|flames|oilers|canucks|kraken|sharks|ducks|kings|golden knights|utah hockey/i;
+const baseball=/yankees|red sox|orioles|rays|blue jays|guardians|tigers|royals|twins|white sox|astros|angels|athletics|mariners|braves|mets|phillies|marlins|nationals|cubs|reds|brewers|pirates|cardinals|dodgers|padres|giants|rockies|diamondbacks/i;
+const basketball=/celtics|nets|knicks|76ers|raptors|cavaliers|bucks|bulls|pacers|pistons|hawks|hornets|heat|magic|wizards|nuggets|timberwolves|thunder|trail blazers|jazz|warriors|clippers|lakers|kings|suns|spurs|rockets|grizzlies|pelicans|mavericks/i;
+if(eventSport){
+  if(mode==="ncaaf") return eventSport==="ncaaf" || eventSport==="college-football";
+  if(mode==="nba") return eventSport==="nba";
+  if(mode==="nfl") return eventSport==="nfl";
+  if(mode==="nhl") return eventSport==="nhl";
+  if(mode==="mlb") return eventSport==="mlb";
+  if(mode==="soccer") return ["soccer","mls","premier-league","la-liga"].includes(eventSport);
+  if(mode==="ufc") return eventSport==="ufc" || eventSport==="mma";
+}
+if(mode==="nfl") return has("nfl") || (football.test(t) && !hockey.test(t) && !baseball.test(t));
+if(mode==="ncaaf") return has("ncaa football","college football","ncaaf","cfb");
+if(mode==="nba") return has("nba","basketball") || basketball.test(t);
+if(mode==="nhl") return has("nhl","hockey") || (hockey.test(t) && !football.test(t) && !baseball.test(t));
+if(mode==="mlb") return has("mlb","baseball") || (baseball.test(t) && !football.test(t));
+if(mode==="soccer") return has("soccer","premier league","mls","la liga");
+if(mode==="ufc") return has("ufc","mma","fight night","weight class");
+return false;
+}
 function filterSports(ms,mode){if(mode==="all")return ms;if(["nfl","ncaaf","nba","nhl","mlb","soccer","ufc"].includes(mode))return ms.filter(x=>isLeague(x,mode));if(mode==="live-now")return ms.filter(x=>/(^|\W)live(\W|$)|🔴/.test(text(x)));if(mode==="starting-soon")return ms.filter(x=>/starting soon|⏰/.test(text(x)));if(mode==="featured")return ms.filter(x=>/(^|\W)live(\W|$)|🔴|starting soon|⏰|ranked|cfp|title|playoff|championship|rivalry|ufc/.test(text(x)));return ms;}
 
 function encryptConfig(value){const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv("aes-256-gcm",CONFIG_KEY,iv);const ciphertext=Buffer.concat([cipher.update(JSON.stringify(value),"utf8"),cipher.final()]);return Buffer.concat([iv,cipher.getAuthTag(),ciphertext]).toString("base64url");}
@@ -39,7 +65,13 @@ function routePath(u){const parts=u.pathname.split("/").filter(Boolean),p=parts.
 function configManifestUrl(c){return `${BASE}${PREFIX}/${encryptConfig(c)}/manifest.json`;}
 function xtreamApi(c,action=""){const u=new URL(`${c.server}/player_api.php`);u.searchParams.set("username",c.username);u.searchParams.set("password",c.password);if(action)u.searchParams.set("action",action);return u;}
 async function xtreamFetch(c,action=""){const r=await fetch(xtreamApi(c,action),{headers:{"user-agent":`XSportsX/${VERSION}`}});if(!r.ok)throw new Error(`Xtream HTTP ${r.status}`);return r.json();}
-function isSportsNewsChannel(s,cat){const v=`${s.name||""} ${cat||""}`.toLowerCase();return NEWS_NETWORKS.some(([needle])=>v.includes(needle.toLowerCase()))||/espn|accn|secn|btn|nfl network|mlb network|nba tv|nhl network|cbs sports|fs1|fs2|fox sports|golf channel|tnt sports|nbc sports|bein sports|sportsnet|tennis channel/.test(v);}
+function isSportsNewsChannel(s,cat){
+const v=`${s?.name||""} ${cat||""} ${s?.group||""}`.toLowerCase().replace(/[^a-z0-9]+/g," ");
+const exact=NEWS_NETWORKS.some(([needle])=>v.includes(String(needle).toLowerCase()));
+const aliases=/\bespn(?:2|u| news| deportes)?\b|\bnfl network\b|\bmlb network\b|\bnba tv\b|\bnhl network\b|\bcbs sports(?: network| hq)?\b|\bfox sports(?: 1| 2)?\b|\bfs1\b|\bfs2\b|\bacc network\b|\bsec network\b|\bbig ten network\b|\bgolf channel\b|\btnt sports\b|\bnbc sports\b|\bbein sports\b|\bsportsnet\b|\btennis channel\b/.test(v);
+const category=/sports?|sports news|sports network|live sports|national sports/.test(v);
+return exact||aliases||category;
+}
 async function loadXtream(c){if(!c)return{configured:false,metas:[],error:"Xtream credentials are not configured."};const key=`${c.server}|${c.username}|${c.password}`,hit=xtreamCache.get(key);if(hit&&Date.now()-hit.at<30000)return hit.value;const info=await xtreamFetch(c);if(info?.user_info?.auth!==1)throw new Error(`Xtream authentication failed: ${info?.user_info?.status||"invalid credentials"}`);const [cats,streams]=await Promise.all([xtreamFetch(c,"get_live_categories"),xtreamFetch(c,"get_live_streams")]);const cm=new Map((Array.isArray(cats)?cats:[]).map(x=>[String(x.category_id),x.category_name||"Live TV"]));const metas=(Array.isArray(streams)?streams:[]).map(s=>{const cat=cm.get(String(s.category_id))||"Live TV",ext=String(s.container_extension||"m3u8").replace(/[^a-z0-9]/gi,"")||"m3u8";return{id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}${s.epg_channel_id?`\nEPG: ${s.epg_channel_id}`:""}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}}});const news=metas.filter((m,i)=>isSportsNewsChannel(streams[i],m.xtream.category));const value={configured:true,metas,user:{status:info.user_info.status,expires:info.user_info.exp_date||null,maxConnections:info.user_info.max_connections||null},categories:[...cm.values()],sportsNews:news};xtreamCache.set(key,{at:Date.now(),value});return value;}
 function manifest(){const catalogs=[["sports-command-center","🏆 XSPORTSX • SPORTS COMMAND CENTER"],["live-now","🔴 LIVE NOW"],["starting-soon","⏰ STARTING SOON"],["featured","⭐ FEATURED"],["sports-news","📰 SPORTS NEWS NETWORKS"],["sports-epg","📺 ALL SPORTS • EPG"],["nfl","🏈 NFL"],["ncaaf","🏈 NCAA FOOTBALL"],["nba","🏀 NBA"],["nhl","🏒 NHL"],["mlb","⚾ MLB"],["ufc","🥊 UFC COMMAND CENTER"],["soccer","⚽ SOCCER"],["iptv-live","📡 MY IPTV • LIVE TV"]];return{id:ADDON_ID,version:VERSION,name:"XSportsX Sports Command Center",description:"Sports command center, sports news networks and Xtream IPTV Live TV.",config:[{key:"server",type:"text",title:"Xtream Server URL",required:false},{key:"username",type:"text",title:"Xtream Username",required:false},{key:"password",type:"password",title:"Xtream Password",required:false}],behaviorHints:{configurable:true,configurationRequired:false,configurationURL:`${BASE}${PREFIX}/configure`},resources:[{name:"catalog",types:["channel"]},{name:"meta",types:["channel"],idPrefixes:["sport:","xtream:"]},{name:"stream",types:["channel"],idPrefixes:["sport:","xtream:"]}],types:["channel"],idPrefixes:["sport:","xtream:"],catalogs:catalogs.map(([id,name])=>({type:"channel",id,name,showInHome:true}))};}
 function esc(s){return String(s||"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
