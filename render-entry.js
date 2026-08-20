@@ -1,4 +1,3 @@
 // Render/Nuvio production gateway.
-// v527 provides the Xtream login/configuration flow and proxies requests
-// to the stable sports-router backend.
-await import("./render-entry-v527.js");
+// v528 preserves the Xtream login flow and restores catalog fallback protection.
+await import("./render-entry-v528.js");
