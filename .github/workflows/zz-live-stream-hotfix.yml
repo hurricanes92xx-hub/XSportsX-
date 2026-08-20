@@ -1,0 +1,76 @@
+name: Hotfix live sports streams
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch event matching and UFC
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('sports-router.js')
+          s=p.read_text()
+          old='''async function resolveEventMeta(id){
+          const cached=await resolveEventMeta(id);
+          if(cached)return cached;
+          const raw=String(id||"").replace(/^sport:/,"");'''
+          new='''async function resolveEventMeta(id){
+          const raw=String(id||"").replace(/^sport:/,"");
+          const cached=eventCache.get(`sport:${raw}`);
+          if(cached)return cached;'''
+          if old in s:
+              s=s.replace(old,new,1)
+          start=s.index('function matchEventChannel(')
+          end=s.index('async function ufcCatalog()',start)
+          replacement=r'''function teamTerms(t={}){
+          const name=String(t.displayName||t.name||'').toLowerCase();
+          const ab=String(t.abbreviation||'').toLowerCase();
+          const words=name.replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(x=>x.length>=3&&!['the','club','city','state','team'].includes(x));
+          const out=new Set([name,ab,...words]);
+          if(name.includes('st louis')){out.add('st louis');out.add('stl');out.add('cardinals');}
+          if(name.includes('cincinnati')){out.add('cincinnati');out.add('cin');out.add('reds');}
+          return [...out].filter(Boolean);
+          }
+          function matchEventChannel(ch,e){
+          const text=norm(`${ch.name||''} ${ch.xtream?.category||''}`),a=e?.away||{},h=e?.home||{};
+          const aa=teamTerms(a),hh=teamTerms(h);let as=0,hs=0;
+          for(const x of aa)if(x&&text.includes(norm(x)))as=Math.max(as,x.length>=5?55:35);
+          for(const x of hh)if(x&&text.includes(norm(x)))hs=Math.max(hs,x.length>=5?55:35);
+          for(const b of e?.broadcast||[])if(norm(b)&&text.includes(norm(b)))return 100;
+          if(as>=55&&hs>=55)return 100;
+          if(as>=35&&hs>=35)return 80;
+          if(as>=55||hs>=55)return 65;
+          if(as>=35||hs>=35)return 45;
+          return 0;
+          }
+          async function streamsForEvent(c,meta){
+          if(!c||!meta?.event)return[];
+          const cacheKey=`match:${c.server}|${c.username}|${meta.id}`,hit=sourceMatchCache.get(cacheKey);
+          if(hit&&Date.now()-hit.at<60000)return hit.value;
+          const d=await xtreamData(c);let value=[];
+          if(meta.event.league==='ufc'){
+            value=d.metas.filter(m=>/\b(ufc|ultimate fighting championship|fight pass|ufc fight|ufc network|paramount plus|paramount\+|cbs sports)\b/i.test(`${m.name} ${m.xtream?.category||''}`)).slice(0,20).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));
+          }else{
+            const e={away:meta.event.away,home:meta.event.home,broadcast:meta.event.broadcast||[]};
+            value=d.metas.map(m=>({m,score:matchEventChannel(m,e)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,12).map(x=>({name:`▶ ${x.m.name}`,url:x.m.xtream.streamUrl,title:x.m.name,description:`${x.m.xtream.category} • event match ${x.score}%`,score:x.score}));
+          }
+          sourceMatchCache.set(cacheKey,{at:Date.now(),value});return value;
+          }
+          '''
+          s=s[:start]+replacement+s[end:]
+          p.write_text(s)
+          PY
+      - name: Commit hotfix
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sports-router.js
+          git diff --cached --quiet || git commit -m 'fix: improve live event channel matching and UFC streams'
+          git push
