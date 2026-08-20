@@ -1,0 +1,57 @@
+name: XSportsX v516 meta/news repair
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair router and Render proxy
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('sports-router.js')
+          s = p.read_text()
+          s = s.replace('const VERSION = "5.0.15";', 'const VERSION = "5.0.16";')
+          s = s.replace('const ADDON_ID = "com.xsportsx.sports.epg.v515";', 'const ADDON_ID = "com.xsportsx.sports.epg.v516";')
+          s = s.replace('const PREFIX = "/v515";', 'const PREFIX = "/v516";')
+          s = s.replace('const NEWS_NETWORKS=["ESPN",', 'const NEWS_NETWORKS=["ESPN+","ESPN",')
+
+          old = 'return json(res,{meta:eventCache.get(id)||null},eventCache.has(id)?200:404)}'
+          new = 'if(!eventCache.has(id)&&id.startsWith("sport:")){const all=await allSports();const found=all.find(x=>x.id===id);if(found)eventCache.set(id,found)}return json(res,{meta:eventCache.get(id)||null},eventCache.has(id)?200:404)}'
+          if old in s:
+              s=s.replace(old,new,1)
+
+          old = 'const m=eventCache.get(id);return json(res,{streams:await streamsForEvent(c,m)})}'
+          new = 'let m=eventCache.get(id);if(!m&&id.startsWith("sport:")){const all=await allSports();m=all.find(x=>x.id===id);if(m)eventCache.set(id,m)}return json(res,{streams:await streamsForEvent(c,m)})}'
+          if old in s:
+              s=s.replace(old,new,1)
+
+          p.write_text(s)
+
+          p = Path('render-proxy.js')
+          s = p.read_text()
+          s = s.replace('PREFIX="v515"', 'PREFIX="v516"')
+          s = s.replace('"v515","v514"', '"v516","v515","v514"')
+          s = s.replace('x-xsportsx-proxy":"v515"', 'x-xsportsx-proxy":"v516"')
+          s = s.replace('proxy v515 listening', 'proxy v516 listening')
+          s = s.replace('canonical XSportsX v515 configuration endpoint', 'canonical XSportsX v516 configuration endpoint')
+          p.write_text(s)
+      - name: Syntax check
+        run: |
+          node --check sports-router.js
+          node --check render-proxy.js
+      - name: Commit repair
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sports-router.js render-proxy.js
+          if git diff --cached --quiet; then echo 'No changes'; exit 0; fi
+          git commit -m 'fix: repair event meta routes and restore news in v5.0.16'
+          git push
