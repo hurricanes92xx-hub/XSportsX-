@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 const PUBLIC_PORT=Number(process.env.PORT||7000);
 const INTERNAL_PORT=Number(process.env.XSPORTSX_INTERNAL_PORT||7099);
 const PREFIX="v516";
-const COMPAT_PREFIXES=["v516","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"];
+const COMPAT_PREFIXES=["v516","v516","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"];
 const BASE="http://127.0.0.1:"+INTERNAL_PORT;
 const PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";
 const CONFIG_SECRET=process.env.XSPORTSX_CONFIG_SECRET||"xsportsx-v520-stable-config-key";
