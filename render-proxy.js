@@ -13,6 +13,10 @@ const child=spawn(process.execPath,["command-center.js"],{
 child.on("error",e=>console.error("XSportsX internal server failed:",e));
 child.on("exit",code=>{console.error(`XSportsX internal server exited: ${code}`);process.exit(code||1);});
 
+function decodePart(value){
+  try{return decodeURIComponent(value);}catch{return value;}
+}
+
 function proxyPath(original){
   const u=new URL(original,"http://localhost");
   const parts=u.pathname.split("/").filter(Boolean);
@@ -21,8 +25,8 @@ function proxyPath(original){
   const rest=parts.slice(i+1);
   if(!rest.length)return {path:"/manifest.json",query:""};
   if(rest[0]==="configure"||rest[0]==="manifest.json"||rest[0]==="health")return {path:"/"+rest[0],query:u.search};
-  const token=rest[0];
-  const resource=rest.slice(1);
+  const token=decodePart(rest[0]);
+  const resource=rest.slice(1).map(decodePart);
   const q=new URLSearchParams(u.search);
   q.set("config",token);
   return {path:"/"+resource.join("/"),query:q.toString()?"?"+q.toString():""};
