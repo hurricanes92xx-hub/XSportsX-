@@ -1,3 +1,4 @@
 // Render/Nuvio production gateway.
-// v528 preserves the Xtream login flow and restores catalog fallback protection.
+// Apply safe runtime fixes to the sports router before starting the gateway.
+await import("./startup-patch.js");
 await import("./render-entry-v528.js");
