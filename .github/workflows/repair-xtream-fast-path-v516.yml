@@ -1,0 +1,112 @@
+name: Repair Xtream fast path v516
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Repair Xtream event/news loading
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('sports-router.js')
+          s=p.read_text()
+          changed=False
+
+          # Config URLs carrying the encrypted credential token must warm Xtream immediately.
+          old='if(i>=0&&parts[i+1]&&!["manifest.json","configure","health"].includes(parts[i+1]))return decryptConfig(decodeURIComponent(parts[i+1]));'
+          new='if(i>=0&&parts[i+1]&&!["manifest.json","configure","health"].includes(parts[i+1])){const cfg=decryptConfig(decodeURIComponent(parts[i+1]));if(cfg)warmXtream(cfg);return cfg;}'
+          if old in s:
+              s=s.replace(old,new,1); changed=True
+
+          # Keep Xtream API responses warm longer so event clicks do not trigger a full IPTV refresh.
+          s=s.replace('if(hit&&Date.now()-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(xtreamApi(c,action))',
+                      'if(hit&&Date.now()-hit.at<300000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(xtreamApi(c,action))',1)
+
+          # Replace the entire Xtream dataset builder with stale-while-revalidate behavior.
+          start=s.find('async function xtreamData(c){')
+          end=s.find('function matchEventChannel',start)
+          if start>=0 and end>start:
+              fn='''async function xtreamData(c){
+          if(!c)return{metas:[],news:[],newsGroups:[],categories:[]};
+          const key=`data:${c.server}|${c.username}|${c.username}`;
+          const hit=xtreamCache.get(key),now=Date.now();
+          if(hit&&now-hit.at<300000)return hit.value;
+          if(inFlight.has(key))return inFlight.get(key);
+          const job=(async()=>{
+            const [cats,streams]=await Promise.all([
+              xtream(c,"get_live_categories").catch(()=>null),
+              xtream(c,"get_live_streams").catch(()=>null)
+            ]);
+            if(!Array.isArray(streams)||!streams.length){
+              if(hit?.value)return hit.value;
+              return {metas:[],news:[],newsGroups:[],categories:Array.isArray(cats)?cats.map(x=>x.category_name||"Live TV"):[]};
+            }
+            const cm=new Map((Array.isArray(cats)?cats:[]).map(x=>[String(x.category_id),x.category_name||"Live TV"]));
+            const metas=streams.map(s=>{
+              const cat=cm.get(String(s.category_id))||"Live TV";
+              const ext=String(s.container_extension||"ts").replace(/[^a-z0-9]/gi,"")||"ts";
+              return {id:`xtream:${s.stream_id}`,type:"channel",name:s.name||`Channel ${s.stream_id}`,poster:s.stream_icon||undefined,background:s.stream_icon||undefined,description:`📺 ${cat}`,genres:["IPTV","Live TV",cat],behaviorHints:{isLive:true},xtream:{streamUrl:`${c.server}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(s.stream_id)}.${ext}`,category:cat}};
+            });
+            const scored=metas.map((m,i)=>({meta:m,source:streams[i],category:cm.get(String(streams[i]?.category_id))||"Live TV",score:newsScore(streams[i]?.name||m.name,cm.get(String(streams[i]?.category_id))||"Live TV")}));
+            const news=scored.filter(x=>x.score>=70).map(x=>x.meta);
+            const newsGroups=Object.entries(NEWS_GROUPS).map(([group])=>{
+              const channels=scored.filter(x=>newsGroupFor(x.source?.name,x.category)===group);
+              if(!channels.length)return null;
+              return {id:`news:${newsSlug(group)}`,type:"channel",name:group,poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group};
+            }).filter(Boolean);
+            const value={metas,news,newsGroups,categories:[...cm.values()]};
+            xtreamCache.set(key,{at:Date.now(),value});
+            return value;
+          })().catch(()=>hit?.value||{metas:[],news:[],newsGroups:[],categories:[]}).finally(()=>inFlight.delete(key));
+          inFlight.set(key,job);
+          return job;
+          }
+          '''
+              s=s[:start]+fn+s[end:]
+              changed=True
+
+          # Resolve event metadata on demand if Nuvio asks before the event cache is populated.
+          if 'async function resolveEventMeta(id)' not in s:
+              helper='''async function resolveEventMeta(id){
+          const cached=eventCache.get(id);
+          if(cached)return cached;
+          const raw=String(id||"").replace(/^sport:/,"");
+          for(const league of Object.keys(LEAGUES)){
+            try{
+              const rows=await leagueCatalog(league);
+              const found=rows.find(m=>String(m.eventId)===raw||String(m.event?.id)===raw||String(m.id)===id);
+              if(found)return found;
+            }catch{}
+          }
+          return null;
+          }
+          '''
+              s=s.replace('function manifest(){',helper+'function manifest(){',1)
+              changed=True
+
+          # The existing request handler normally uses eventCache directly. Replace that lookup with the on-demand resolver.
+          s=s.replace('const meta=eventCache.get(id);','const meta=await resolveEventMeta(id);',1)
+
+          p.write_text(s)
+          print('changed=',changed)
+          PY
+          node --check sports-router.js
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sports-router.js
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix Xtream event metadata and news loading"
+          git push
