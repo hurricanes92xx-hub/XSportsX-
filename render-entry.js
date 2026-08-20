@@ -1,2 +1,3 @@
-// Render/Nuvio entrypoint. The command-center gateway owns the public manifest and catalog contract.
-await import("./command-center.js");
+// Render/Nuvio entrypoint. The proxy owns the public listener and forwards
+// personalized catalog/meta/stream requests to the command-center service.
+await import("./render-proxy.js");
