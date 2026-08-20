@@ -3,9 +3,9 @@ import crypto from "node:crypto";
 
 const PORT = Number(process.env.PORT || 7099);
 const BASE = process.env.BASE_URL || "https://xsportsx.onrender.com";
-const VERSION = "5.0.8";
-const ADDON_ID = "com.xsportsx.sports.epg.v508";
-const PREFIX = "/v508";
+const VERSION = "5.0.9";
+const ADDON_ID = "com.xsportsx.sports.epg.v509";
+const PREFIX = "/v509";
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || crypto.randomBytes(32).toString("hex");
 const KEY = crypto.createHash("sha256").update(SECRET).digest();
 const LEAGUES={nfl:["NFL","football","nfl","🏈"],ncaaf:["NCAA Football","football","college-football","🏈"],nba:["NBA","basketball","nba","🏀"],nhl:["NHL","hockey","nhl","🏒"],mlb:["MLB","baseball","mlb","⚾"],soccer:["Soccer","soccer","eng.1","⚽"],ufc:["UFC","mma","ufc","🥊"]};
@@ -24,7 +24,7 @@ function configFrom(url){const u=new URL(url,"http://localhost"),parts=u.pathnam
 async function getJson(url){const r=await fetch(url,{headers:{accept:"application/json","user-agent":`XSportsX/${VERSION}`}});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
 function leagueUrl(id){const [,sport,espn]=LEAGUES[id];return `https://site.api.espn.com/apis/site/v2/sports/${sport}/${espn}/scoreboard?limit=100`;}
 function team(t={}){return{id:String(t.id||""),name:t.displayName||t.name||"",short:t.abbreviation||"",logo:t.logo||t.logos?.[0]?.href||""};}
-function eventMeta(ev,league){const[name,,,icon]=LEAGUES[league],c=ev?.competitions?.[0],teams=c?.competitors||[],h=teams.find(x=>x.homeAway==="home")?.team||teams[0]?.team||{},a=teams.find(x=>x.homeAway==="away")?.team||teams[1]?.team||{};if(!h?.displayName&&!a?.displayName)return null;const state=c?.status?.type?.state||"pre",detail=c?.status?.type?.shortDetail||c?.status?.type?.detail||"Scheduled",start=ev.date||c?.date||"",id=`sport:${ev.id}`;const eventName=league==="ufc"?(ev.name||ev.shortName||`${a.displayName||"TBD"} vs ${h.displayName||"TBD"}`):`${a.displayName||"TBD"} vs ${h.displayName||"TBD"}`;const meta={id,type:"channel",name:eventName,poster:h.logo||h.logos?.[0]?.href||a.logo||a.logos?.[0]?.href||undefined,background:h.logo||a.logo||undefined,description:`${icon} ${name}\n${detail}\n${start}`,releaseInfo:start,genres:["Sports",name,state==="in"?"LIVE":"Scheduled"],sportSource:league,eventSport:league,league,eventId:String(ev.id),event:{id:String(ev.id),league,start,state,home:team(h),away:team(a),broadcast:(c?.broadcasts||[]).flatMap(x=>x.names||[])}};eventCache.set(id,meta);return meta;}
+function eventMeta(ev,league){const[name,,,icon]=LEAGUES[league],c=ev?.competitions?.[0],teams=c?.competitors||[],h=teams.find(x=>x.homeAway==="home")?.team||teams[0]?.team||{},a=teams.find(x=>x.homeAway==="away")?.team||teams[1]?.team||{};if(league!=="ufc"&&!h?.displayName&&!a?.displayName)return null;const state=c?.status?.type?.state||ev?.status?.type?.state||"pre",detail=c?.status?.type?.shortDetail||c?.status?.type?.detail||ev?.status?.type?.shortDetail||ev?.status?.type?.detail||"Scheduled",start=ev.date||c?.date||"",id=`sport:${ev.id}`;const eventName=league==="ufc"?(ev.name||ev.shortName||c?.name||"UFC Event"):`${a.displayName||"TBD"} vs ${h.displayName||"TBD"}`;const meta={id,type:"channel",name:eventName,poster:h.logo||h.logos?.[0]?.href||a.logo||a.logos?.[0]?.href||undefined,background:h.logo||a.logo||undefined,description:`${icon} ${name}\n${detail}\n${start}`,releaseInfo:start,genres:["Sports",name,state==="in"?"LIVE":"Scheduled"],sportSource:league,eventSport:league,league,eventId:String(ev.id),event:{id:String(ev.id),league,start,state,home:team(h),away:team(a),broadcast:(c?.broadcasts||[]).flatMap(x=>x.names||[])}};eventCache.set(id,meta);return meta;}
 async function leagueCatalog(id){const now=Date.now(),key=`league:${id}`,hit=cache.get(key);if(hit&&now-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);const job=getJson(leagueUrl(id)).then(d=>{const metas=(d.events||[]).map(e=>eventMeta(e,id)).filter(Boolean).sort((a,b)=>new Date(a.releaseInfo||0)-new Date(b.releaseInfo||0));cache.set(key,{at:Date.now(),value:metas});return metas;}).finally(()=>inFlight.delete(key));inFlight.set(key,job);return job;}
 async function ufcCatalog(c){
   const [events,xd]=await Promise.all([leagueCatalog("ufc").catch(()=>[]),c?xtreamData(c).catch(()=>({metas:[]})):{metas:[]}]);
