@@ -1,0 +1,75 @@
+name: Repair sports catalogs
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'command-center.js'
+      - 'render-proxy.js'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Repair league classification and news catalog
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('command-center.js')
+          s = p.read_text()
+          original = s
+          s = s.replace('const VERSION="4.5.8";', 'const VERSION="4.5.9";')
+          s = s.replace('const ADDON_ID="com.xsportsx.sports.epg.v458";', 'const ADDON_ID="com.xsportsx.sports.epg.v459";')
+          old_norm = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
+          new_norm = 'function normalize(m,league){const id=String(m.id||`sport:${league}-${Math.random().toString(36).slice(2)}`);return {...m,id:id.startsWith("sport:")?id:`sport:${id}`,type:"channel",sportSource:league,genres:[...new Set([...(m.genres||[]),"Sports",league.toUpperCase()])],posterShape:"landscape",behaviorHints:{...(m.behaviorHints||{})}};}'
+          if old_norm in s: s = s.replace(old_norm, new_norm)
+          start = s.find('function isLeague(')
+          end = s.find('function filterSports(', start)
+          if start >= 0 and end > start:
+              new_classifier = r'''function isLeague(m,mode){
+const source=String(m?.sportSource||"").toLowerCase();
+const t=text(m);
+const g=(m.genres||[]).map(x=>String(x).toLowerCase());
+const has=(...xs)=>xs.some(x=>t.includes(x)||g.includes(x));
+const nflTeams=/chiefs|chargers|raiders|broncos|cowboys|giants|jets|eagles|commanders|ravens|steelers|browns|bengals|bills|dolphins|patriots|texans|colts|jaguars|titans|packers|lions|bears|vikings|buccaneers|falcons|panthers|saints|49ers|seahawks|cardinals|rams/i;
+const nhlTeams=/maple leafs|canadiens|bruins|sabres|red wings|panthers|lightning|senators|capitals|penguins|flyers|hurricanes|rangers|islanders|devils|blue jackets|blackhawks|avalanche|stars|wild|predators|blues|jets|flames|oilers|canucks|kraken|sharks|ducks|kings|golden knights|utah hockey/i;
+const mlbTeams=/yankees|red sox|orioles|rays|blue jays|guardians|tigers|royals|twins|white sox|astros|angels|athletics|mariners|braves|mets|phillies|marlins|nationals|cubs|reds|brewers|pirates|cardinals|dodgers|padres|giants|rockies|diamondbacks/i;
+if(mode==="nfl") return source==="nfl" || has("nfl") || nflTeams.test(t);
+if(mode==="ncaaf") return source==="ncaaf" || has("ncaa football","college football","ncaaf","cfb");
+if(mode==="nba") return source==="nba" || (has("nba")&&!has("wnba"));
+if(mode==="nhl") return source==="nhl" || has("nhl","hockey") || nhlTeams.test(t);
+if(mode==="mlb") return source==="mlb" || has("mlb","baseball") || mlbTeams.test(t);
+if(mode==="soccer") return ["soccer","mls","premier-league","la-liga"].includes(source) || has("soccer","premier league","mls","la liga");
+if(mode==="ufc") return (source==="ufc" || has("ufc","mma","fight night","weight class")) && !nflTeams.test(t) && !nhlTeams.test(t) && !mlbTeams.test(t);
+return false;
+}
+'''
+              s = s[:start] + new_classifier + s[end:]
+          if 'path==="/catalog/channel/sports-news.json"' not in s:
+              marker='if(path.startsWith("/catalog/channel/"))'
+              idx=s.find(marker)
+              if idx>=0:
+                  route='''if(path==="/catalog/channel/sports-news.json"){try{const x=await loadXtream(c);return json(res,{metas:Array.isArray(x.sportsNews)?x.sportsNews:[],error:x.error||null});}catch(e){return json(res,{metas:[],error:String(e?.message||e)},401);}}\n'''
+                  s=s[:idx]+route+s[idx:]
+          if '["sports-news","📰 SPORTS NEWS NETWORKS"]' not in s:
+              needle='["featured","⭐ FEATURED"],'
+              if needle in s: s=s.replace(needle, needle+'["sports-news","📰 SPORTS NEWS NETWORKS"],', 1)
+          if s == original:
+              print('No changes needed')
+              raise SystemExit(0)
+          p.write_text(s)
+      - name: Syntax check
+        run: node --check command-center.js
+      - name: Commit repair
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add command-center.js
+          if git diff --cached --quiet; then echo 'No changes to commit'; exit 0; fi
+          git commit -m 'fix: isolate league catalogs and restore sports news'
+          git push
