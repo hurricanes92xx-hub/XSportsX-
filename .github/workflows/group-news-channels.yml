@@ -12,40 +12,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Group network variants behind one news entry
+      - name: Fix grouped news routing
         shell: python
         run: |
           from pathlib import Path
           p=Path('sports-router.js')
           s=p.read_text()
-          s=s.replace('const VERSION = "5.0.3";', 'const VERSION = "5.0.4";')
-          s=s.replace('const ADDON_ID = "com.xsportsx.sports.epg.v503";', 'const ADDON_ID = "com.xsportsx.sports.epg.v504";')
-          s=s.replace('const PREFIX = "/v503";', 'const PREFIX = "/v504";')
-          anchor='const NEWS_CATEGORY_RE=/\\b(sports?|sports news|sports network|live sports|espn|accn|secn|btn|college sports|national sports)\\b/i;'
-          insert='''const NEWS_GROUPS={\n            "ESPN":["espn2","espnu","espn news","espnews","espn deportes","espn"],\n            "ACC Network":["acc network","accn"],\n            "SEC Network":["sec network","secn"],\n            "Big Ten Network":["big ten network","btn"],\n            "NFL Network":["nfl network","nfln"],\n            "MLB Network":["mlb network","mlbn"],\n            "NBA TV":["nba tv","nbatv"],\n            "NHL Network":["nhl network","nhln"],\n            "CBS Sports":["cbs sports network","cbs sports","cbssn"],\n            "Fox Sports":["fox sports 1","fox sports 2","fox sports","fs1","fs2"],\n            "Golf Channel":["golf channel"],\n            "TNT Sports":["tnt sports","tnt"],\n            "NBC Sports":["nbc sports"],\n            "beIN Sports":["bein sports"],\n            "Sportsnet":["sportsnet"],\n            "Tennis Channel":["tennis channel"]\n          };\n          function newsGroupFor(name,category){\n            const v=norm(`${name||""} ${category||""}`);\n            for(const [group,aliases] of Object.entries(NEWS_GROUPS)){\n              if(aliases.some(a=>v.includes(norm(a)))) return group;\n            }\n            return null;\n          }\n          '''
-          if 'const NEWS_GROUPS=' not in s:
-            s=s.replace(anchor,anchor+'\n'+insert)
-          old='const news=scored.filter(x=>x.score>=70).map(x=>x.meta);const value={metas,news,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,matchedNames:news.slice(0,30).map(x=>x.name)}};'
-          new='''const news=scored.filter(x=>x.score>=70).map(x=>x.meta);\n          const newsGroups=Object.entries(NEWS_GROUPS).map(([group])=>{const channels=scored.filter(x=>x.score>=70&&newsGroupFor(x.source?.name,x.category)===group);if(!channels.length)return null;const first=channels[0].meta;return{id:`news:${group.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`,type:"channel",name:group,poster:first.poster,background:first.background,description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`,genres:["Sports News",group],behaviorHints:{isLive:true},newsGroup:group}}).filter(Boolean);\n          const value={metas,news,newsGroups,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,groups:newsGroups.map(x=>x.name),matchedNames:news.slice(0,30).map(x=>x.name)}};'''
-          if old not in s:
-            raise SystemExit('xtreamData target not found')
-          s=s.replace(old,new)
-          s=s.replace('return json(res,{metas:(await xtreamData(c)).news},200,15);','return json(res,{metas:(await xtreamData(c)).newsGroups},200,15);')
-          marker='if(id.startsWith("xtream:")){if(!c)return json(res,{meta:null},401);const d=await xtreamData(c),m=d.metas.find(x=>x.id===id)||null;return json(res,{meta:m},m?200:404);}const m=eventCache.get(id);'
-          replacement='''if(id.startsWith("news:")){if(!c)return json(res,{meta:null},401);const d=await xtreamData(c),m=d.newsGroups.find(x=>x.id===id)||null;return json(res,{meta:m},m?200:404);}if(id.startsWith("xtream:")){if(!c)return json(res,{meta:null},401);const d=await xtreamData(c),m=d.metas.find(x=>x.id===id)||null;return json(res,{meta:m},m?200:404);}const m=eventCache.get(id);'''
-          if marker not in s:
-            raise SystemExit('meta target not found')
-          s=s.replace(marker,replacement)
-          marker2='if(id.startsWith("xtream:")){if(!c)return json(res,{streams:[]},401);const d=await xtreamData(c),m=d.metas.find(x=>x.id===id);return json(res,{streams:m?.xtream?.streamUrl?[{name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name}]:[]});}const m=eventCache.get(id);'
-          replacement2='''if(id.startsWith("news:")){if(!c)return json(res,{streams:[]},401);const d=await xtreamData(c),group=d.newsGroups.find(x=>x.id===id);if(!group)return json(res,{streams:[]},404);const streams=d.metas.filter(m=>newsGroupFor(m.name,m.xtream?.category)===group.newsGroup).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));return json(res,{streams});}if(id.startsWith("xtream:")){if(!c)return json(res,{streams:[]},401);const d=await xtreamData(c),m=d.metas.find(x=>x.id===id);return json(res,{streams:m?.xtream?.streamUrl?[{name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name}]:[]});}const m=eventCache.get(id);'''
-          if marker2 not in s:
-            raise SystemExit('stream target not found')
-          s=s.replace(marker2,replacement2)
+          s=s.replace('idPrefixes:["sport:","xtream:"]','idPrefixes:["sport:","xtream:","news:"]')
+          marker='if(id.startsWith("xtream:")){if(!c)return json(res,{meta:null},401);'
+          replacement='if(id.startsWith("news:")){if(!c)return json(res,{meta:null},401);const d=await xtreamData(c),m=d.newsGroups.find(x=>x.id===id)||null;return json(res,{meta:m},m?200:404);}if(id.startsWith("xtream:")){if(!c)return json(res,{meta:null},401);'
+          if 'id.startsWith("news:")' not in s and marker in s:
+            s=s.replace(marker,replacement,1)
+          marker2='if(id.startsWith("xtream:")){if(!c)return json(res,{streams:[]},401);'
+          replacement2='if(id.startsWith("news:")){if(!c)return json(res,{streams:[]},401);const d=await xtreamData(c),group=d.newsGroups.find(x=>x.id===id);if(!group)return json(res,{streams:[]},404);const streams=d.metas.filter(m=>newsGroupFor(m.name,m.xtream?.category)===group.newsGroup).map(m=>({name:`▶ ${m.name}`,url:m.xtream.streamUrl,title:m.name,description:m.xtream.category}));return json(res,{streams});}if(id.startsWith("xtream:")){if(!c)return json(res,{streams:[]},401);'
+          if s.count('id.startsWith("news:")')<2 and marker2 in s:
+            s=s.replace(marker2,replacement2,1)
+          s=s.replace('idPrefixes:["sport:","xtream:"]','idPrefixes:["sport:","xtream:","news:"]')
+          s=s.replace('const VERSION = "5.0.4";','const VERSION = "5.0.5";')
+          s=s.replace('const ADDON_ID = "com.xsportsx.sports.epg.v504";','const ADDON_ID = "com.xsportsx.sports.epg.v505";')
+          s=s.replace('const PREFIX = "/v504";','const PREFIX = "/v505";')
           p.write_text(s)
-
           q=Path('render-proxy.js')
           r=q.read_text()
-          r=r.replace('PREFIX="v502",COMPAT_PREFIXES=["v502","v501","v500"]','PREFIX="v504",COMPAT_PREFIXES=["v504","v503","v502","v501","v500"]')
+          r=r.replace('PREFIX="v504",COMPAT_PREFIXES=["v504","v503","v502","v501","v500"]','PREFIX="v505",COMPAT_PREFIXES=["v505","v504","v503","v502","v501","v500"]')
           q.write_text(r)
       - name: Validate JavaScript
         run: |
@@ -57,5 +46,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add sports-router.js render-proxy.js
-          git commit -m 'feat: group sports news variants into network entries'
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'fix: resolve grouped sports news meta and streams'
           git push
