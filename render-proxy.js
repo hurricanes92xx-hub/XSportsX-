@@ -1,7 +1,7 @@
 import http from "node:http";
 import crypto from "node:crypto";
 import { spawn } from "node:child_process";
-const PUBLIC_PORT=Number(process.env.PORT||7000),INTERNAL_PORT=Number(process.env.XSPORTSX_INTERNAL_PORT||7099),PREFIX="v516",COMPAT_PREFIXES=["v516","v516","v516","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"],BASE="http://127.0.0.1:"+INTERNAL_PORT,PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";
+const PUBLIC_PORT=Number(process.env.PORT||7000),INTERNAL_PORT=Number(process.env.XSPORTSX_INTERNAL_PORT||7099),PREFIX="v516",COMPAT_PREFIXES=["v516","v516","v516","v516","v516","v515","v514","v512","v511","v510","v509","v508","v507","v506","v505","v504","v503","v502","v501","v500"],BASE="http://127.0.0.1:"+INTERNAL_PORT,PUBLIC_BASE=process.env.BASE_URL||"https://xsportsx.onrender.com";
 const CONFIG_SECRET=process.env.XSPORTSX_CONFIG_SECRET||crypto.randomBytes(32).toString("hex");
 const KEY=crypto.createHash("sha256").update(CONFIG_SECRET).digest();
 const child=spawn(process.execPath,["sports-router.js"],{env:{...process.env,PORT:String(INTERNAL_PORT),XSPORTSX_CONFIG_SECRET:CONFIG_SECRET},stdio:"inherit"});
