@@ -1,3 +1,4 @@
+# v507 performance patch trigger
 name: Performance and section logo fix
 on:
   push:
@@ -35,21 +36,7 @@ jobs:
           new='const key=`data:${c.server}|${c.username}`,hit=xtreamCache.get(key);if(hit&&Date.now()-hit.at<60000)return hit.value;if(inFlight.has(key))return inFlight.get(key);'
           if old not in s: raise SystemExit('xtreamData cache pattern not found')
           s=s.replace(old,new)
-          old='const value={metas,news,newsGroups,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,groups:newsGroups.map(x=>x.name),matchedNames:news.slice(0,30).map(x=>x.name)}};xtreamCache.set(key,{at:Date.now(),value});return value;}'
-          new='const value={metas,news,newsGroups,categories:[...cm.values()],newsDiagnostics:{totalStreams:streams.length,matched:news.length,groups:newsGroups.map(x=>x.name),matchedNames:news.slice(0,30).map(x=>x.name)}};xtreamCache.set(key,{at:Date.now(),value});return value;}'
-          # keep result caching; in-flight is handled by wrapping the whole function below
-          start=s.find('async function xtreamData(c){')
-          if start<0: raise SystemExit('xtreamData start not found')
-          # Replace the beginning so the existing body becomes a promise-returning job.
-          prefix='async function xtreamData(c){if(!c)return{metas:[],news:[],newsGroups:[],categories:[],newsDiagnostics:{}};'
-          if prefix not in s: raise SystemExit('xtreamData prefix not found')
-          # We already inserted an inFlight check above; append a finally cleanup by wrapping only if needed.
-          # Simpler: use a dedicated data key and return existing cache; duplicate calls are acceptable after the 60s cache.
-          # Add logo URLs to grouped news cards.
           s=s.replace('poster:first.poster,background:first.background,description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`','poster:newsLogo(group),background:newsLogo(group),description:`${channels.length} ${group} channel${channels.length===1?"":"s"} from your Xtream provider`')
-          marker='const server=http.createServer(async(req,res)=>{try{'
-          asset='const server=http.createServer(async(req,res)=>{try{if(pathnamePlaceholder){}'
-          # Insert route after path is parsed, avoiding a full handler rewrite.
           s=s.replace('const u=new URL(req.url||"/","http://localhost"),path=u.pathname,c=configFrom(req.url||"/");','const u=new URL(req.url||"/","http://localhost"),path=u.pathname,c=configFrom(req.url||"/");if(path.startsWith("/assets/news/")&&path.endsWith(".svg")){const slug=path.slice("/assets/news/".length,-4);const title=slug.replace(/-/g," ").replace(/\\b\\w/g,x=>x.toUpperCase());const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><rect width="640" height="360" rx="28" fill="#11151b"/><rect x="28" y="28" width="584" height="304" rx="22" fill="#1a202a" stroke="#555" stroke-width="3"/><circle cx="110" cy="110" r="54" fill="#e21d2d"/><path d="M82 110h56M110 82v56" stroke="#fff" stroke-width="12" stroke-linecap="round"/><text x="190" y="125" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="700">${title}</text><text x="190" y="170" fill="#aeb6c2" font-family="Arial,sans-serif" font-size="22">SPORTS NEWS</text></svg>`;res.writeHead(200,{"content-type":"image/svg+xml","cache-control":"public,max-age=86400"});return res.end(svg);}');
           s=s.replace('if(path==="/manifest.json")return json(res,manifest(),200,60);','if(path==="/manifest.json")return json(res,manifest(),200,300);')
           p.write_text(s)
