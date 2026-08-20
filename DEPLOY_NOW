@@ -1,1 +1,5 @@
-Deploy this commit on Render. Canonical version: 5.0.16. Canonical config: /v516/configure.
+FORCE DEPLOY THIS COMMIT ON RENDER.
+XSportsX canonical release: 5.0.16.
+Canonical configuration: https://xsportsx.onrender.com/v516/configure
+Router, proxy, package.json, and VERSION_LOCK must all report 5.0.16/v516.
+Do not serve the legacy 5.0.12 build.
