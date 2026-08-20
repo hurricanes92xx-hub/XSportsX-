@@ -13,6 +13,11 @@ source = source.replace('u.toString(),5000)', 'u.toString(),1800)');
 source = source.replace('f.toString(),5000)', 'f.toString(),1800)');
 source = source.replace('set("limit","20")', 'set("limit","10")');
 
+// Rename the original resolver before installing the universal resolver. The
+// router already defines streamsForEvent(); redeclaring it causes Node to exit
+// with status 1 during module loading.
+source = source.replace('async function streamsForEvent(c,meta){', 'async function streamsForEventLegacy(c,meta){');
+
 // Universal source resolver. Sports broadcasts can be carried on ordinary
 // entertainment, local, news, or numbered channels. Never filter the provider
 // inventory by channel/category name before checking the provider's EPG.
