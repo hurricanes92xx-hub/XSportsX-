@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: xsportsx
+    runtime: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /v516/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20.19.5"
