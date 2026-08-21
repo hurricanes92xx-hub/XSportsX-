@@ -6,12 +6,12 @@ let src = fs.readFileSync(file, 'utf8');
 const version = '20260821-5';
 
 const beforeUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png`}";
-const afterUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png?v=${version}`}";
+const afterUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png?v=20260821-5`}";
 
-if (!src.includes(beforeUrl) && !src.includes(`artwork/event/${encodeURIComponent(e.league)}`)) {
-  console.log('cache-bust: event artwork function already changed or unavailable');
-} else if (src.includes(beforeUrl)) {
+if (src.includes(beforeUrl)) {
   src = src.replace(beforeUrl, afterUrl);
+} else {
+  console.log('cache-bust: event artwork URL already versioned');
 }
 
 src = src.replace(
