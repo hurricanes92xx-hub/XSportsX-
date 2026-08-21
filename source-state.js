@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-const file = process.env.SOURCE_STATE_FILE || path.join(process.cwd(), 'data', 'xsportsx-source-state.json');
+const defaultFile = fs.existsSync('/var/data') ? '/var/data/xsportsx-source-state.json' : path.join(process.cwd(), 'data', 'xsportsx-source-state.json');
+const file = process.env.SOURCE_STATE_FILE || defaultFile;
 const mem = new Map();
 function keyFor(config) { return crypto.createHash('sha256').update(String(config || '')).digest('hex'); }
 function empty() { return { pending: [], approved: [], rejected: [] }; }
