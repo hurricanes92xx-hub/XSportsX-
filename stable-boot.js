@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { findPublicSportsSources, MIN_SOURCES } from './source-finder.js';
 
 const router = new URL('./sports-router.js', import.meta.url);
 let s = fs.readFileSync(router, 'utf8');
@@ -26,10 +27,24 @@ const resolver = String.raw`async function streamsForEvent(c,meta){
  for(const r of ranked)if(r.score>=45)add(r.m,r.score,null);
  for(const h of hits.sort((a,b)=>b.score-a.score).slice(0,48))add(h.m,h.score,h.p);
  if(!rows.length)for(const r of ranked.sort((a,b)=>b.score-a.score).slice(0,16))add(r.m,r.score,null);
+
+ // Public-web fallback: only allowlisted public sources are discovered and health-checked.
+ // This never searches for or accepts Xtream credentials.
+ if(rows.length<MIN_SOURCES){
+   try{
+     const found=await findPublicSportsSources(e);
+     for(const f of found){
+       if(!f?.url||seen.has(f.url))continue;
+       seen.add(f.url);
+       rows.push({name:'▶ Web Source',url:f.url,title:f.url,description:'Public web source • '+f.latencyMs+'ms',behaviorHints:{isLive:true},score:Math.max(45,Math.min(90,100-Math.round(f.latencyMs/50)))});
+       if(rows.length>=MIN_SOURCES)break;
+     }
+   }catch(err){console.warn('[XSportsX] public source discovery failed:',err?.message||err);}
+ }
  const value=rows.slice(0,48);matchCache.set(key,{at:Date.now(),value});return value;
 }`;
 
 s = s.slice(0,start) + resolver + '\n' + s.slice(next);
 fs.writeFileSync(router,s,'utf8');
-console.log('[XSportsX] Sportio-style resolver installed; catalogs/routes preserved.');
+console.log('[XSportsX] Sportio-style resolver + allowlisted public web source finder installed; catalogs/routes preserved.');
 await import('./render-entry-v528.js');
