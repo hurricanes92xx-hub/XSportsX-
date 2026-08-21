@@ -10,7 +10,7 @@ function stripTags(s){return decodeEntities(s).replace(/<br\s*\/?>(?=.)/gi,'\n')
 function tag(xml,name){const re=new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`,'i');const m=String(xml).match(re);return m?decodeEntities(m[1]):''}
 function decodeB64(value){const s=String(value||'').replace(/\s+/g,'');if(s.length<24||s.length%4===1||!/^[A-Za-z0-9+/=_-]+$/.test(s))return null;try{const out=Buffer.from(s.replace(/-/g,'+').replace(/_/g,'/'),'base64').toString('utf8');return out&&!/�/.test(out)?out:null}catch{return null}}
 function extractB64(text){const hits=[];for(const p of String(text||'').match(/[A-Za-z0-9+/_=-]{32,}/g)||[]){const d=decodeB64(p);if(d&&(d.includes('http://')||d.includes('https://')||d.includes('#EXTM3U')||d.includes('player_api.php')||d.includes('get.php')||d.toLowerCase().includes('stalker')))hits.push(d)}return hits}
-function urls(text){return[...new Set((String(text||'').match(/https?:\/\/[^\s"'<>]+/gi)||[]).map(x=>x.replace(/[\]\[),;]+$/g,''))]}
+function urls(text){return [...new Set((String(text||'').match(/https?:\/\/[^\s"'<>]+/gi)||[]).map(x=>x.replace(/[\]\[),;]+$/g,''))]}
 function isCredentialUrl(url){return/(?:[?&](?:username|password|user|pass)=|player_api\.php\?)/i.test(String(url))}
 function isIntermediate(url){try{const h=new URL(url).hostname.toLowerCase();return h==='reddit.com'||h.endsWith('.reddit.com')||h==='redd.it'||h.endsWith('.redd.it')||h==='paste.sh'||h.endsWith('.paste.sh')}catch{return true}}
 function looksLikeSource(url,context=''){if(!url||isCredentialUrl(url)||isIntermediate(url))return false;const s=`${context}\n${url}`.toLowerCase();return /(?:#extm3u|#extinf|\.(?:m3u8?|mpd)(?:$|[?#])|\/portal\.php(?:$|[?#])|\bplaylist\b|\bstream\b|\blive\b|\biptv\b|\bxtream\b)/i.test(s)}
