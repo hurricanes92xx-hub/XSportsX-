@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { findPublicSportsSources, MIN_SOURCES } from './source-finder.js';
+import { findPublicSportsSources, findConfiguredSources, MIN_SOURCES } from './source-finder.js';
 
 const router = new URL('./sports-router.js', import.meta.url);
 let s = fs.readFileSync(router, 'utf8');
@@ -8,9 +8,12 @@ if (start < 0) throw new Error('streamsForEvent not found');
 const next = s.indexOf('async function ', start + 24);
 if (next < 0) throw new Error('streamsForEvent boundary not found');
 
+// Preserve the normal XSportsX resolver while adding an optional operator-supplied
+// source URL. The URL is entered through the addon configuration screen and is
+// scanned for Base64/HTTP(S) sources only when the resolver needs a fallback.
 const resolver = String.raw`async function streamsForEvent(c,meta){
  if(!c||!meta?.event)return[];
- const key='sportio:'+c.server+'|'+c.username+'|'+meta.id;
+ const key='sportio:'+c.server+'|'+c.username+'|'+meta.id+'|'+(c.sourceUrl||'');
  const cached=matchCache.get(key);if(cached&&Date.now()-cached.at<30000)return cached.value;
  const d=await xtreamData(c),all=Array.isArray(d.metas)?d.metas:[],e=meta.event;
  const home=teamTokens(e.home||{}),away=teamTokens(e.away||{}),broadcast=(e.broadcast||[]).map(norm).filter(Boolean);
@@ -28,8 +31,21 @@ const resolver = String.raw`async function streamsForEvent(c,meta){
  for(const h of hits.sort((a,b)=>b.score-a.score).slice(0,48))add(h.m,h.score,h.p);
  if(!rows.length)for(const r of ranked.sort((a,b)=>b.score-a.score).slice(0,16))add(r.m,r.score,null);
 
- // Public-web fallback: only allowlisted public sources are discovered and health-checked.
- // This never searches for or accepts Xtream credentials.
+ // Optional configured source: scan the exact URL supplied by the operator,
+ // decode Base64 embedded in its response, extract links, and health-check them.
+ // No credentials are harvested and protected/private hosts are rejected by the scanner.
+ if(c.sourceUrl && rows.length<MIN_SOURCES){
+   try{
+     const found=await findConfiguredSources([c.sourceUrl],e);
+     for(const f of found){
+       if(!f?.url||seen.has(f.url))continue;
+       seen.add(f.url);
+       rows.push({name:'▶ Configured Web Source',url:f.url,title:f.url,description:'Configured source • '+f.latencyMs+'ms',behaviorHints:{isLive:true},score:Math.max(45,Math.min(90,100-Math.round(f.latencyMs/50)))});
+       if(rows.length>=MIN_SOURCES)break;
+     }
+   }catch(err){console.warn('[XSportsX] configured Base64 source failed:',err?.message||err);}
+ }
+
  if(rows.length<MIN_SOURCES){
    try{
      const found=await findPublicSportsSources(e);
@@ -45,6 +61,14 @@ const resolver = String.raw`async function streamsForEvent(c,meta){
 }`;
 
 s = s.slice(0,start) + resolver + '\n' + s.slice(next);
+
+// The normal config decoder historically retained only Xtream fields. Preserve
+// the optional sourceUrl field when the Nuvio configuration token contains it.
+s = s.replace(
+  "return v?.server&&v?.username&&v?.password?{server:String(v.server).replace(/\\/+$/,\"\"),username:String(v.username),password:String(v.password)}:null",
+  "return v?.server&&v?.username&&v?.password?{server:String(v.server).replace(/\\/+$/,\"\"),username:String(v.username),password:String(v.password),sourceUrl:v.sourceUrl?String(v.sourceUrl):\"\"}:null"
+);
+
 fs.writeFileSync(router,s,'utf8');
-console.log('[XSportsX] Sportio-style resolver + allowlisted public web source finder installed; catalogs/routes preserved.');
+console.log('[XSportsX] Sportio-style resolver + configured Base64 source URL + public source fallback installed.');
 await import('./render-entry-v528.js');
