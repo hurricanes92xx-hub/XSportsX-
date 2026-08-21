@@ -1,10 +1,10 @@
 {
   "name": "xsportsx-usportz",
-  "version": "1.0.0",
+  "version": "2.2.1",
   "private": true,
-  "description": "USportz live sports addon for Nuvio/Stremio with authorized Xtream IPTV matching.",
+  "description": "XSportsX live sports addon for Nuvio/Stremio with cinematic league catalogs and authorized Xtream IPTV matching.",
   "main": "server.js",
-  "scripts": { "start": "node -r ./compat-prefix.js server.js", "dev": "node -r ./compat-prefix.js --watch server.js" },
+  "scripts": { "start": "node -r ./compat-prefix.js server.js", "dev": "node --watch -r ./compat-prefix.js server.js" },
   "engines": { "node": ">=20" },
   "dependencies": { "axios": "^1.7.9", "express": "^4.21.2" },
   "license": "MIT"
