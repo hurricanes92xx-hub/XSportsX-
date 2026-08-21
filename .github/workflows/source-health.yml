@@ -70,12 +70,15 @@ jobs:
           NODE
 
       - name: Refresh authorized source registry
-        if: ${{ env.HAS_AUTHORIZED_FEEDS == 'true' }}
         env:
           AUTHORIZED_SOURCE_FEEDS: ${{ secrets.AUTHORIZED_SOURCE_FEEDS }}
           MIN_SOURCES: '5'
-          HAS_AUTHORIZED_FEEDS: ${{ secrets.AUTHORIZED_SOURCE_FEEDS != '' }}
-        run: node source-manager.js
+        run: |
+          if [ -n "$AUTHORIZED_SOURCE_FEEDS" ]; then
+            node source-manager.js
+          else
+            echo 'AUTHORIZED_SOURCE_FEEDS is not configured; skipping registry refresh.'
+          fi
 
       - name: Commit source state
         run: |
