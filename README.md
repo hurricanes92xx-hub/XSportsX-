@@ -94,6 +94,39 @@ OFFICIAL_WATCH_LINKS={"ESPN":"https://www.espn.com/watch/","NFL":"https://www.nf
 GET /health
 ```
 
+## Base64 Decoder + Link Health Tool
+
+XSportsX now includes an attachable utility at:
+
+```text
+GET /tools/base64
+POST /tools/base64/scan
+```
+
+The tool can:
+
+- Accept a site URL and scan its HTML/JavaScript/text for Base64 payloads.
+- Accept pasted Base64, HTML, JavaScript, JSON, or M3U text.
+- Decode standard and URL-safe Base64.
+- Detect nested Base64 up to three layers.
+- Extract HTTP(S) URLs from decoded content.
+- Health-check discovered links with latency and HTTP status.
+- Block localhost, private/reserved IPs, link-local addresses, multicast, and URLs containing embedded credentials.
+- Revalidate redirects before allowing a health check.
+- Apply payload, page, link-count, and timeout limits to keep the tool fast and bounded.
+
+Example API request:
+
+```json
+{
+  "site": "https://example.com/page",
+  "base64": "",
+  "health": true
+}
+```
+
+The scanner is intended for sources you are authorized to inspect. It does not attempt to bypass authentication, anti-bot controls, or protected provider access.
+
 ## Tests
 
 ```bash
@@ -104,7 +137,6 @@ npm run check
 ## Production architecture
 
 For a larger deployment, put XSportsX behind a reverse proxy and use a persistent cache such as Redis. The provider layer is deliberately separated from the Nuvio HTTP layer so new, permitted sports data/stream providers can be added without rewriting the addon.
-
 
 ## Upcoming matches
 
@@ -119,22 +151,21 @@ The addon refreshes the schedule cache automatically, so games added or reschedu
 
 ## About SportsZX sources
 
-I checked public references for SportsZX. The current public descriptions I could verify describe it primarily as a live-scores/fixtures app and say it does not itself host full-match streams. Public user discussions also mention SportsZX as a standalone sports app, but I could not verify a public, authoritative list of the underlying stream providers it uses. citeturn0search0turn0reddit36
+I checked public references for SportsZX. The current public descriptions I could verify describe it primarily as a live-scores/fixtures app and say it does not itself host full-match streams. Public user discussions also mention SportsZX as a standalone sports app, but I could not verify a public, authoritative list of the underlying stream providers it uses.
 
 XSportsX therefore does **not** copy private SportsZX endpoints, extract its proprietary provider credentials, or reverse-engineer/bypass its access controls.
 
 If you have a provider you are authorized to use, add it to `AUTHORIZED_M3U_SOURCES`, `AUTHORIZED_XTREAM_SOURCES`, or `AUTHORIZED_EVENT_STREAMS`. The provider abstraction is intentionally designed so additional permitted sources can be plugged in without changing the Nuvio API layer.
 
-
 ## v2.2 feature set
 
-XSportsX now benchmarks the public feature set of current Nuvio sports addons: broad sport coverage, multi-day fixtures, timezone-aware configuration, favorite-team planning, multi-source aggregation, caching, provider isolation, and source ranking. Current community examples advertise broad coverage across NBA/NFL/NHL/MLB/F1/UFC/ATP/WTA/rugby/golf/cricket/darts and more. citeturn1reddit14turn1search0
+XSportsX now benchmarks the public feature set of current Nuvio sports addons: broad sport coverage, multi-day fixtures, timezone-aware configuration, favorite-team planning, multi-source aggregation, caching, provider isolation, and source ranking.
 
 The XSportsX implementation intentionally does **not** copy private endpoints, credentials, anti-bot workarounds, or access-control bypass logic from another addon/provider. The provider engine is ready for sources you are authorized to use.
 
 ### Why we don't proxy protected streams
 
-Some community sports addons describe server-side reverse proxies that add provider-specific `Referer`/`Origin` headers or otherwise work around CDN restrictions. citeturn1search1turn1reddit21 XSportsX avoids reproducing those bypass mechanisms. It returns playable URLs supplied by authorized providers or official watch links instead.
+Some community sports addons describe server-side reverse proxies that add provider-specific `Referer`/`Origin` headers or otherwise work around CDN restrictions. XSportsX avoids reproducing those bypass mechanisms. It returns playable URLs supplied by authorized providers or official watch links instead.
 
 ### Configuration
 
@@ -145,7 +176,6 @@ http://YOUR_HOST:7000/configure
 ```
 
 The configuration UI lets you select sports, choose a timezone, and record favorite teams for the deployment. Provider credentials remain server-side in environment variables.
-
 
 ## Private provider configuration
 
