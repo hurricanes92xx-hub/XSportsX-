@@ -91,7 +91,8 @@ async function getSourceStateByToken(token){
 }
 `;
 
-  source = source.slice(0,start) + replacement + source.slice(end);
+  // Replace through the old function's closing brace, not before it.
+  source = source.slice(0,start) + replacement + source.slice(end + 1);
   fs.writeFileSync(target, source, "utf8");
   console.log("[XSportsX] source discovery patch applied");
 }
