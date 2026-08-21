@@ -4,8 +4,11 @@ const MIN_SOURCES = Number(process.env.MIN_SPORTS_SOURCES || 5);
 const FETCH_TIMEOUT_MS = Number(process.env.SOURCE_FETCH_TIMEOUT_MS || 7000);
 const HEALTH_TIMEOUT_MS = Number(process.env.SOURCE_HEALTH_TIMEOUT_MS || 5000);
 
-// Discover public/authorized sports pages and media endpoints. Credentialed or
-// account-login URLs are excluded; official sites can still be used as web sources.
+// Optional operator-supplied source pages. Put one or more public/authorized
+// HTTP(S) URLs in BASE64_SOURCE_URLS, separated by commas or newlines.
+const CONFIGURED_SOURCE_URLS = String(process.env.BASE64_SOURCE_URLS || process.env.XSPORTSX_SOURCE_URL || '')
+  .split(/[\n,]+/).map(x => x.trim()).filter(Boolean).slice(0, 20);
+
 const URL_RE = /https?:\/\/[^\s"'<>]+/gi;
 const MEDIA_RE = /\.(?:m3u8?|mpd|ts)(?:$|[?#])/i;
 const CREDENTIAL_RE = /(?:player_api\.php|get\.php|panel_api\.php|xmltv\.php).*?(?:username|password)=/i;
@@ -29,9 +32,10 @@ function usablePublicUrl(raw) {
 }
 
 function decodeBase64(value) {
-  const s = String(value || '').trim().replace(/\s+/g, '');
-  if (!s || !/^[A-Za-z0-9+/_=-]+$/.test(s)) return '';
-  try { return Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'); }
+  let s = String(value || '').trim().replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+  if (!s || !/^[A-Za-z0-9+/=_-]+$/.test(s)) return '';
+  s += '='.repeat((4 - s.length % 4) % 4);
+  try { return Buffer.from(s, 'base64').toString('utf8'); }
   catch { return ''; }
 }
 
@@ -55,6 +59,12 @@ async function fetchText(url, timeout = FETCH_TIMEOUT_MS) {
   } catch { return ''; } finally { clearTimeout(timer); }
 }
 
+async function configuredSources() {
+  if (!CONFIGURED_SOURCE_URLS.length) return [];
+  const texts = await Promise.all(CONFIGURED_SOURCE_URLS.map(u => fetchText(u)));
+  return texts.flatMap(t => extractUrls(t));
+}
+
 async function webSearch(query) {
   const q = encodeURIComponent(query);
   const html = await fetchText(`https://html.duckduckgo.com/html/?q=${q}`);
@@ -68,7 +78,7 @@ async function discoverSportsWeb(event = {}) {
     `${base} ESPN live`, `${base} FOX Sports live`, `${base} NBC Sports live`,
     `${base} CBS Sports live`, `${base} official stream`, `${base} where to watch`,
     `${base} live video`, `${base} highlights`, `${base} SportsCenter`,
-    `${base} UFC live` , `${base} MMA live`
+    `${base} UFC live`, `${base} MMA live`
   ];
   const found = new Set();
   for (const q of queries) for (const u of await webSearch(q)) found.add(u);
@@ -93,7 +103,9 @@ async function healthCheck(url) {
 }
 
 export async function findPublicSportsSources(event = {}) {
-  const discovered = new Set(await iptvOrgSports());
+  const discovered = new Set();
+  for (const u of await configuredSources()) discovered.add(u);
+  for (const u of await iptvOrgSports()) discovered.add(u);
   for (const u of await discoverSportsWeb(event)) discovered.add(u);
   const candidates = [...discovered].slice(0, 500);
   const checks = await Promise.all(candidates.map(healthCheck));
