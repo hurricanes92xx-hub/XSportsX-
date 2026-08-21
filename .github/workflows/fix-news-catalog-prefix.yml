@@ -1,0 +1,40 @@
+name: Fix News Catalog Prefix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, 'fix: restore news catalog prefix') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Align addon prefix and preserve news routes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('command-center.js')
+          s=p.read_text()
+          old='const PREFIX="/v458";'
+          new='const PREFIX="/v460";'
+          if old in s:
+              s=s.replace(old,new,1)
+          if 'sports-news.json' not in s:
+              raise SystemExit('sports-news route missing; refusing to modify command-center.js')
+          p.write_text(s)
+          PY
+      - name: Validate JavaScript
+        run: node --check command-center.js
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add command-center.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: restore news catalog prefix'
+          git push
