@@ -1,15 +1,11 @@
 {
-  "name": "xsportsx-nuvio",
-  "version": "5.0.45",
+  "name": "xsportsx-usportz",
+  "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "description": "XSportsX — sports command center for Nuvio with authorized source discovery and configurable Base64 source scanning.",
-  "engines": { "node": ">=20.19.5" },
-  "scripts": {
-    "start": "node stable-boot-monitor.js",
-    "dev": "BASE_URL=http://localhost:7000 node stable-boot-monitor.js",
-    "test": "node --test",
-    "check": "node --check stable-boot-monitor.js && node --check stable-boot.js && node --check render-entry-v528.js && node --check sports-router.js && node --check source-finder.js && node --check base64-link-tool.js && node --check reddit-authorized-monitor.js"
-  },
-  "dependencies": { "express": "^5.1.0" }
+  "description": "USportz live sports addon for Nuvio/Stremio with authorized Xtream IPTV matching.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "dev": "node --watch server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "axios": "^1.7.9", "express": "^4.21.2" },
+  "license": "MIT"
 }
