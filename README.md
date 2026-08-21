@@ -1,47 +1,31 @@
-# XSportsX
+# XSportsX / USportz
 
-**XSportsX** is a production-oriented live-sports addon for Nuvio/Stremio.
+XSportsX is now rebuilt around the USportz sports core: fast Nuvio-compatible live sports catalogs, cached public scoreboard metadata, authorized Xtream IPTV indexing, and event-to-channel matching.
 
-## Easy source URL setup
+## Render
 
-When configuring XSportsX in Nuvio/Stremio, use the optional **Base64 Source URL** field. Paste the public/authorized page, feed, M3U, JSON, or text URL that you want XSportsX to use as an additional source input.
+The Render service remains named `xsportsx`, uses the existing Node web-service model, auto-deploys from `main`, and health-checks `/health`. Xtream credentials remain Render environment secrets and are never committed here.
 
-When normal Xtream/event matching needs more sources, XSportsX fetches that URL, finds Base64 or direct HTTP(S) links, decodes Base64, health-checks discovered media links, and adds healthy results to the event source list.
+Required Render environment variables:
 
-For a deployment-wide source, Render can also set `BASE64_SOURCE_URLS`. Multiple URLs may be separated by commas or new lines. `XSPORTSX_SOURCE_URL` is accepted as a single-URL alias.
+- `XTREAM_BASE_URL`
+- `XTREAM_USERNAME`
+- `XTREAM_PASSWORD`
 
-The scanner is bounded and does not harvest credentials or bypass authentication/access controls.
+Optional tuning:
 
-## Base64 Decoder + Link Health Tool
+- `CACHE_TTL_SECONDS` (default `300`)
+- `SCOREBOARD_TTL_SECONDS` (default `60`)
+- `REQUEST_TIMEOUT_MS` (default `7000`)
 
-XSportsX includes `GET /tools/base64` and `POST /tools/base64/scan`.
+## Endpoints
 
-The browser tool accepts a site URL or pasted Base64/code. It supports URL-safe Base64, nested Base64 up to three layers, URL extraction, HTTP status/latency checks, and SSRF protections for private/reserved hosts and credential-bearing URLs.
+- `/manifest.json`
+- `/catalog/channel/{league}.json`
+- `/meta/channel/{id}.json`
+- `/stream/channel/{id}.json`
+- `/health`
+- `/api/xtream/status`
+- `/api/cache/refresh`
 
-## Sports coverage
-
-NFL, NBA, NHL, MLB, NCAA football, NCAA basketball, MLS, Premier League, UFC, Formula 1, and MotoGP, plus the existing XSportsX catalog and favorite-team collections.
-
-## Authorized sources
-
-XSportsX is designed for streams and accounts the operator is authorized to use. Keep private provider credentials in Render Environment Variables or a local `.env` file. Never commit credentials to GitHub.
-
-## Run
-
-```bash
-npm install
-npm start
-```
-
-Install the deployed `/manifest.json` URL in Nuvio/Stremio.
-
-## Health
-
-`GET /health`
-
-## Tests
-
-```bash
-npm test
-npm run check
-```
+The old XSportsX repair/workflow stack is intentionally removed so the project can be rebuilt cleanly from the USportz core.
