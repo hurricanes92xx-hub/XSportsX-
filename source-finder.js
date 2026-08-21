@@ -3,9 +3,6 @@ import { URL } from 'node:url';
 const MIN_SOURCES = Number(process.env.MIN_SPORTS_SOURCES || 5);
 const FETCH_TIMEOUT_MS = Number(process.env.SOURCE_FETCH_TIMEOUT_MS || 7000);
 const HEALTH_TIMEOUT_MS = Number(process.env.SOURCE_HEALTH_TIMEOUT_MS || 5000);
-
-// Optional operator-supplied source pages. Put one or more public/authorized
-// HTTP(S) URLs in BASE64_SOURCE_URLS, separated by commas or newlines.
 const CONFIGURED_SOURCE_URLS = String(process.env.BASE64_SOURCE_URLS || process.env.XSPORTSX_SOURCE_URL || '')
   .split(/[\n,]+/).map(x => x.trim()).filter(Boolean).slice(0, 20);
 
@@ -59,9 +56,10 @@ async function fetchText(url, timeout = FETCH_TIMEOUT_MS) {
   } catch { return ''; } finally { clearTimeout(timer); }
 }
 
-async function configuredSources() {
-  if (!CONFIGURED_SOURCE_URLS.length) return [];
-  const texts = await Promise.all(CONFIGURED_SOURCE_URLS.map(u => fetchText(u)));
+async function configuredSources(urls) {
+  const safe = (urls || []).map(String).filter(Boolean).slice(0, 20);
+  if (!safe.length) return [];
+  const texts = await Promise.all(safe.map(u => fetchText(u)));
   return texts.flatMap(t => extractUrls(t));
 }
 
@@ -102,9 +100,16 @@ async function healthCheck(url) {
   finally { clearTimeout(timer); }
 }
 
+export async function findConfiguredSources(urls = [], event = {}) {
+  const discovered = new Set(await configuredSources(urls));
+  const candidates = [...discovered].slice(0, 500);
+  const checks = await Promise.all(candidates.map(healthCheck));
+  return checks.filter(x => x.ok).sort((a, b) => a.latencyMs - b.latencyMs).slice(0, Math.max(MIN_SOURCES, 48));
+}
+
 export async function findPublicSportsSources(event = {}) {
-  const discovered = new Set();
-  for (const u of await configuredSources()) discovered.add(u);
+  const configured = await findConfiguredSources(CONFIGURED_SOURCE_URLS, event);
+  const discovered = new Set(configured.map(x => x.url));
   for (const u of await iptvOrgSports()) discovered.add(u);
   for (const u of await discoverSportsWeb(event)) discovered.add(u);
   const candidates = [...discovered].slice(0, 500);
