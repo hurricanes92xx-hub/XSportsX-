@@ -64,7 +64,7 @@ async function getSourceStateByToken(token){
         if(hasCred)diagnostics.credentialedRecords++;
         const safe=xsxSafeSourceUrl(raw);
         if(!safe)continue;
-        const item={url:safe,type,healthy:Boolean(c.healthy),status:c.status,latencyMs:c.latencyMs,details:hasCred?`IPTV ${type.toUpperCase()} record found • credentials protected`:`Discovered ${type.toUpperCase()} source`};
+        const item={url:safe,type,healthy:Boolean(c.healthy),status:c.status,latencyMs:c.latencyMs,details:hasCred?("IPTV "+type.toUpperCase()+" record found • credentials protected"):"Discovered "+type.toUpperCase()+" source"};
         if(state.approved.some(a=>a.url===safe)||state.rejected.includes(safe))continue;
         if(!state.pending.some(a=>a.url===safe))state.pending.push(item);
       }
