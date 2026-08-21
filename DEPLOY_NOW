@@ -1,6 +1,4 @@
 FORCE DEPLOY THIS COMMIT ON RENDER.
-XSportsX canonical release: 5.0.23 / v523.
-Canonical configuration: https://xsportsx.onrender.com/v523/configure
-Nuvio install manifest: generate the tokenized /v523/<token>/manifest.json URL from the configuration page.
-The public manifest endpoint is served directly by render-proxy.js and no longer depends on the internal router starting successfully.
-Do not serve legacy 5.0.12/5.0.16 builds.
+XSportsX Reddit source discovery hotfix: RSS now falls back to Reddit JSON, with improved user-agent handling.
+Existing configured tokens continue to work, including the configured IPTV_ZONENEW subreddit.
+Canonical release: v527.
