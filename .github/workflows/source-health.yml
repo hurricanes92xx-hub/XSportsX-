@@ -3,24 +3,80 @@ name: Source health
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '17 * * * *'
 
 permissions:
   contents: write
 
 jobs:
-  refresh:
+  health:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Refresh authorized sources
+
+      - name: Validate source modules
+        run: |
+          node --check source-finder.js
+          node --check event-coverage.js
+          node --check source-manager.js
+
+      - name: Discover and health-check public sports sources
+        env:
+          MIN_SPORTS_SOURCES: '5'
+          SOURCE_FETCH_TIMEOUT_MS: '7000'
+          SOURCE_HEALTH_TIMEOUT_MS: '5000'
+        run: |
+          node --input-type=module <<'NODE'
+          import { findPublicSportsSources } from './source-finder.js';
+          const events = [
+            {sport:'sports',name:'live sports'},
+            {sport:'UFC',name:'UFC live'},
+            {sport:'NFL',name:'NFL live'},
+            {sport:'NBA',name:'NBA live'},
+            {sport:'NHL',name:'NHL live'},
+            {sport:'MLB',name:'MLB live'}
+          ];
+          let total=0;
+          for (const event of events) {
+            const found=await findPublicSportsSources(event);
+            total += found.length;
+            console.log(JSON.stringify({event,healthy:found.length,fastest:found.slice(0,5)}));
+          }
+          console.log(`TOTAL_HEALTHY_SOURCES=${total}`);
+          if (total === 0) process.exit(1);
+          NODE
+
+      - name: Health-check official sports coverage
+        run: |
+          node --input-type=module <<'NODE'
+          import { officialCoverage } from './event-coverage.js';
+          const urls = officialCoverage({sport:'sports',name:'live sports'}).map(x=>x.url);
+          const results=[];
+          for (const url of urls) {
+            const started=Date.now();
+            try {
+              const r=await fetch(url,{redirect:'follow',signal:AbortSignal.timeout(7000)});
+              results.push({url,ok:r.ok,status:r.status,latencyMs:Date.now()-started});
+            } catch(e) {
+              results.push({url,ok:false,error:e?.name||'fetch_failed'});
+            }
+          }
+          console.log(JSON.stringify(results,null,2));
+          if (!results.some(x=>x.ok)) process.exit(1);
+          NODE
+
+      - name: Refresh authorized source registry
+        if: ${{ env.HAS_AUTHORIZED_FEEDS == 'true' }}
         env:
           AUTHORIZED_SOURCE_FEEDS: ${{ secrets.AUTHORIZED_SOURCE_FEEDS }}
           MIN_SOURCES: '5'
+          HAS_AUTHORIZED_FEEDS: ${{ secrets.AUTHORIZED_SOURCE_FEEDS != '' }}
         run: node source-manager.js
+
       - name: Commit source state
         run: |
           git config user.name 'github-actions[bot]'
