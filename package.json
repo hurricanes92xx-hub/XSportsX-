@@ -1,15 +1,15 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "5.0.36",
+  "version": "5.0.44",
   "private": true,
   "type": "module",
-  "description": "XSportsX — sports command center for Nuvio with ESPN-driven authorized IPTV source matching and configurable Base64 source scanning.",
+  "description": "XSportsX — sports command center for Nuvio with authorized source discovery and configurable Base64 source scanning.",
   "engines": { "node": ">=20.19.5" },
   "scripts": {
-    "start": "node stable-boot.js",
-    "dev": "BASE_URL=http://localhost:7000 node stable-boot.js",
+    "start": "node stable-boot-monitor.js",
+    "dev": "BASE_URL=http://localhost:7000 node stable-boot-monitor.js",
     "test": "node --test",
-    "check": "node --check stable-boot.js && node --check render-entry-v528.js && node --check sports-router.js && node --check source-finder.js && node --check base64-link-tool.js"
+    "check": "node --check stable-boot-monitor.js && node --check stable-boot.js && node --check render-entry-v528.js && node --check sports-router.js && node --check source-finder.js && node --check base64-link-tool.js && node --check reddit-authorized-monitor.js"
   },
   "dependencies": { "express": "^5.1.0" }
 }
