@@ -3,10 +3,10 @@ const path = require('node:path');
 
 const file = path.join(process.cwd(), 'server.js');
 let src = fs.readFileSync(file, 'utf8');
-const version = '20260821-5';
+const version = '20260821-6';
 
 const beforeUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png`}";
-const afterUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png?v=20260821-5`}";
+const afterUrl = "function eventArtworkUrl(req,e){return `${baseUrl(req)}/artwork/event/${encodeURIComponent(e.league)}/${encodeURIComponent(e.id)}.png?v=20260821-6`}";
 
 if (src.includes(beforeUrl)) {
   src = src.replace(beforeUrl, afterUrl);
