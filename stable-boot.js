@@ -8,6 +8,19 @@ if (start < 0) throw new Error('streamsForEvent not found');
 const nextCandidate = s.indexOf('async function ', start + 24);
 const next = nextCandidate < 0 ? s.length : nextCandidate;
 
+// The injected resolver lives inside sports-router.js, so make the source-finder
+// symbols available in that module before the resolver can execute.
+if (!s.includes("from './source-finder.js'")) {
+  s = "import { findPublicSportsSources, findConfiguredSources, MIN_SOURCES } from './source-finder.js';\n" + s;
+}
+
+// Fix the accidental self-recursion in the event-meta resolver. The existing
+// function already contains the real lookup loop immediately after this prefix.
+s = s.replace(
+  'async function resolveEventMeta(id){const h=await resolveEventMeta(id);if(h)return h;',
+  'async function resolveEventMeta(id){const h=null;'
+);
+
 const resolver = String.raw`async function streamsForEvent(c,meta){
  if(!c||!meta?.event)return[];
  const key='sportio:'+c.server+'|'+c.username+'|'+meta.id+'|'+(c.sourceUrl||'');
@@ -33,10 +46,12 @@ const resolver = String.raw`async function streamsForEvent(c,meta){
 }`;
 
 s = s.slice(0,start) + resolver + '\n' + s.slice(next);
+
 s = s.replace(
   "return v?.server&&v?.username&&v?.password?{server:String(v.server).replace(/\\/+$/,\"\"),username:String(v.username),password:String(v.password)}:null",
   "return v?.server&&v?.username&&v?.password?{server:String(v.server).replace(/\\/+$/,\"\"),username:String(v.username),password:String(v.password),sourceUrl:v.sourceUrl?String(v.sourceUrl):\"\"}:null"
 );
+
 fs.writeFileSync(router,s,'utf8');
-console.log('[XSportsX] Sportio-style resolver + configured Base64 source URL + public source fallback installed.');
+console.log('[XSportsX] Stable boot: resolver, source-finder imports, and event-meta recursion guard installed.');
 await import('./render-entry-v528.js');
