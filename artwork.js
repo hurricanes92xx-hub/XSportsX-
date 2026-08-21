@@ -1,3 +1,31 @@
-const THEMES={nfl:['NFL','#9b1c31','🏈'],ncaaf:['NCAA FOOTBALL','#2d65a8','🏈'],nba:['NBA','#2463a8','🏀'],wnba:['WNBA','#b61f3b','🏀'],ncaab:['NCAA BASKETBALL','#2d65a8','🏀'],mlb:['MLB','#b52a3d','⚾'],nhl:['NHL','#8b929b','🏒'],mls:['MLS','#3f7f5a','⚽'],epl:['PREMIER LEAGUE','#4f78a8','⚽'],ucl:['UEFA CHAMPIONS LEAGUE','#5368a8','⚽'],laliga:['LALIGA','#b23b3b','⚽'],seriea:['SERIE A','#3f7aa8','⚽'],bundesliga:['BUNDESLIGA','#b12631','⚽'],ligue1:['LIGUE 1','#416fa1','⚽'],ufc:['UFC','#a32121','🥊'],boxing:['BOXING','#a32121','🥊'],other:['OTHER SPORTS','#9a651f','🏆']};
-function artworkSvg(id){const [name,accent,icon]=THEMES[id]||THEMES.other;const safe=name.replace(/&/g,'&amp;').replace(/</g,'&lt;');return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 562" role="img" aria-label="XSportsX ${safe} artwork"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#05070a"/><stop offset=".55" stop-color="#11151b"/><stop offset="1" stop-color="#030405"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${accent}"/><stop offset="1" stop-color="#1b1e24"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="1000" height="562" fill="url(#bg)"/><path d="M610 0L1000 0 1000 562 480 562Z" fill="url(#accent)" opacity=".22"/><path d="M360 0L700 562M700 0L360 562" stroke="${accent}" stroke-width="70" opacity=".16"/><path d="M390 25L705 280 390 537M610 25L295 280 610 537" fill="none" stroke="#d9dde3" stroke-width="3" opacity=".22"/><text x="55" y="72" fill="#f5f6f8" font-family="Arial,sans-serif" font-size="34" font-weight="800" letter-spacing="7">XSPORTSX</text><text x="55" y="112" fill="#9da4ad" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">LIVE SPORTS COMMAND CENTER</text><text x="500" y="330" text-anchor="middle" fill="#fff" opacity=".95" font-size="112">${icon}</text><text x="500" y="410" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="58" font-weight="900" letter-spacing="4">${safe}</text><rect x="365" y="440" width="270" height="4" rx="2" fill="${accent}" filter="url(#glow)"/><text x="500" y="492" text-anchor="middle" fill="#b7bdc6" font-family="Arial,sans-serif" font-size="16" letter-spacing="5">LIVE IT • STREAM IT • XSPORTSX</text><text x="945" y="525" text-anchor="end" fill="#fff" opacity=".32" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">XSX</text></svg>`}
+const THEMES={
+  nfl:['NFL','#d71920','FOOTBALL','LIVE GAMES'],ncaaf:['NCAA FOOTBALL','#2d6cdf','COLLEGE FOOTBALL','LIVE GAMES'],
+  nba:['NBA','#e23b35','BASKETBALL','LIVE GAMES'],wnba:['WNBA','#f26a21','WOMEN’S BASKETBALL','LIVE GAMES'],ncaab:['NCAA BASKETBALL','#2d6cdf','COLLEGE BASKETBALL','LIVE GAMES'],
+  mlb:['MLB','#1976b8','BASEBALL','LIVE GAMES'],nhl:['NHL','#c5cbd3','ICE HOCKEY','LIVE GAMES'],mls:['MLS','#e04a32','SOCCER','LIVE GAMES'],
+  epl:['PREMIER LEAGUE','#7b4cc2','ENGLISH FOOTBALL','LIVE GAMES'],ucl:['CHAMPIONS LEAGUE','#3275d5','EUROPEAN FOOTBALL','LIVE GAMES'],
+  laliga:['LALIGA','#ef3d38','SPANISH FOOTBALL','LIVE GAMES'],seriea:['SERIE A','#2d83d5','ITALIAN FOOTBALL','LIVE GAMES'],
+  bundesliga:['BUNDESLIGA','#e3262e','GERMAN FOOTBALL','LIVE GAMES'],ligue1:['LIGUE 1','#b5ed00','FRENCH FOOTBALL','LIVE GAMES'],
+  ufc:['UFC','#ed171f','COMBAT SPORTS','LIVE FIGHTS'],boxing:['BOXING','#ed171f','COMBAT SPORTS','LIVE FIGHTS'],other:['OTHER SPORTS','#ff9b1a','LIVE SPORTS','LIVE NOW']
+};
+const esc=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function artworkSvg(id){
+ const [name,accent,sub,status]=THEMES[id]||THEMES.other; const n=esc(name),s=esc(sub),st=esc(status);
+ const isFight=id==='ufc'||id==='boxing';
+ const motif=isFight?`<g opacity=".34" fill="none" stroke="${accent}" stroke-width="7"><path d="M650 110l90 55-18 90-75-24-25-76z"/><path d="M770 210l75 42-18 85-78-25-22-74z"/><path d="M600 360l100-65 78 40-22 82-102 48z"/></g>`:`<g opacity=".28" fill="none" stroke="${accent}" stroke-width="5"><circle cx="790" cy="285" r="150"/><path d="M640 285h300M790 135v300M684 179l212 212M896 179L684 391"/></g>`;
+ return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 562"><defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020305"/><stop offset=".48" stop-color="#0c1118"/><stop offset="1" stop-color="#020305"/></linearGradient>
+ <linearGradient id="slash" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${accent}" stop-opacity=".9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="10"/></filter></defs>
+ <rect width="1000" height="562" fill="url(#bg)"/>
+ <path d="M-80 510L300 70 510 70 130 510Z" fill="${accent}" opacity=".11"/><path d="M430 0L1000 0 1000 562 700 562Z" fill="${accent}" opacity=".08"/>
+ <path d="M520 0L900 562" stroke="${accent}" stroke-width="52" opacity=".09"/><path d="M620 0L1000 430" stroke="#fff" stroke-width="2" opacity=".13"/>
+ ${motif}
+ <path d="M48 52h225" stroke="${accent}" stroke-width="4"/><text x="50" y="45" fill="#f4f5f7" font-family="Arial,sans-serif" font-size="28" font-style="italic" font-weight="900" letter-spacing="2"><tspan fill="${accent}">X</tspan>SPORTS<tspan fill="${accent}">X</tspan></text>
+ <text x="52" y="82" fill="#aab2bd" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="3">LIVE SPORTS • NO LIMITS</text>
+ <text x="55" y="350" fill="#fff" font-family="Arial,sans-serif" font-size="62" font-style="italic" font-weight="900" letter-spacing="1">${n}</text>
+ <text x="58" y="386" fill="${accent}" font-family="Arial,sans-serif" font-size="16" font-weight="800" letter-spacing="4">${s}</text>
+ <rect x="58" y="420" width="265" height="3" fill="url(#slash)"/><text x="58" y="458" fill="#eef1f4" font-family="Arial,sans-serif" font-size="15" font-weight="800" letter-spacing="4">${st}</text>
+ <text x="942" y="526" text-anchor="end" fill="#ffffff" opacity=".35" font-family="Arial,sans-serif" font-size="11" letter-spacing="3">XSX • COMMAND CENTER</text>
+ <path d="M0 540h1000" stroke="#fff" stroke-opacity=".08"/></svg>`;
+}
 module.exports={THEMES,artworkSvg};
