@@ -8,9 +8,10 @@ http.Server.prototype.emit = function (event, req, res) {
     let u = req.url;
     if (u === '/v527') u = '/';
     else if (u.startsWith('/v527/')) u = u.slice('/v527'.length);
-    // Cached manifests can request the legacy channel resource. Translate it
-    // to the canonical live-TV resource used by the current server.
     u = u.replace(/^\/(catalog|meta|stream)\/channel\//, '/$1/tv/');
+    // Versioned poster path: the server handler remains the canonical event
+    // renderer, but Nuvio sees a genuinely new URL after every card revision.
+    u = u.replace(/^\/artwork\/event-v7\//, '/artwork/event/');
     req.url = u;
   }
   return originalEmit.call(this, event, req, res);
