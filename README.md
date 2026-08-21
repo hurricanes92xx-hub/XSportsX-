@@ -4,6 +4,22 @@
 
 Nuvio addons use the standard Stremio addon protocol (`catalog`, `meta`, and `stream`) and run their server-side source logic remotely. XSportsX follows that architecture.
 
+## Easy source URL setup
+
+When installing/configuring XSportsX, use the optional **Base64 Source URL** field. Paste the public/authorized page, feed, M3U, JSON, or text URL that you want XSportsX to use as an additional source input.
+
+XSportsX will fetch that URL only when its normal event matching needs more sources, decode Base64 embedded in the response, extract HTTP(S) media links, health-check them, and add healthy results to the event's source list.
+
+You can also set a deployment-wide URL in Render:
+
+```env
+BASE64_SOURCE_URLS=https://example.com/my-source
+```
+
+Multiple URLs may be separated by commas or new lines. `XSPORTSX_SOURCE_URL` is accepted as a single-URL alias.
+
+The scanner does not harvest credentials or bypass authentication/access controls.
+
 ## What is included
 
 ### Sports coverage
@@ -43,12 +59,6 @@ Nuvio addons use the standard Stremio addon protocol (`catalog`, `meta`, and `st
 11. TTL caching to reduce provider load.
 12. Official watch-page fallback links.
 
-## Important source policy
-
-XSportsX is designed for streams and accounts the operator is authorized to use. It does not discover, guess, brute-force, harvest, or validate leaked IPTV credentials, nor does it include mechanisms intended to bypass provider access controls.
-
-The addon can ingest a playlist URL or Xtream account that you provide and are entitled to access.
-
 ## Run
 
 ```bash
@@ -57,57 +67,11 @@ cp .env.example .env
 npm start
 ```
 
-Then install:
+Then install the manifest from your deployed host.
 
-```text
-http://YOUR_HOST:7000/manifest.json
-```
+## Authorized sources
 
-For public deployment, use HTTPS.
-
-## Authorized M3U
-
-```env
-AUTHORIZED_M3U_SOURCES=[{"name":"My IPTV","url":"https://provider.example/playlist.m3u","priority":100,"minScore":35}]
-```
-
-## Authorized Xtream
-
-```env
-AUTHORIZED_XTREAM_SOURCES=[{"name":"My Provider","baseUrl":"https://provider.example","username":"USER","password":"PASS","priority":100}]
-```
-
-## Direct event source
-
-```env
-AUTHORIZED_EVENT_STREAMS=[{"name":"My Feed","eventId":"401234567","url":"https://example.com/live/event.m3u8","priority":200}]
-```
-
-## Official links
-
-```env
-OFFICIAL_WATCH_LINKS={"ESPN":"https://www.espn.com/watch/","NFL":"https://www.nfl.com/watch/"}
-```
-
-## Easy Base64 source URL
-
-When configuring the XSportsX addon, there is now an optional field:
-
-```text
-Base64 Source URL (optional)
-```
-
-Paste **one public/authorized HTTP(S) URL** into that field. XSportsX will use that URL as an additional source input when its normal event matching needs more sources. It fetches the page/feed, finds Base64 or direct HTTP(S) links, decodes Base64, health-checks discovered media links, and ranks the healthy results.
-
-You do not need to edit JavaScript or hard-code the URL.
-
-For a deployment-wide source instead of per-addon configuration, Render can also use:
-
-```env
-BASE64_SOURCE_URLS=https://example.com/my-source
-```
-
-Multiple URLs may be separated by commas or new lines. `XSPORTSX_SOURCE_URL` is also accepted as a single-URL alias.
+Keep private credentials in Render Environment Variables or a local `.env` file. Do not publish credentials in GitHub.
 
 ## Base64 Decoder + Link Health Tool
 
@@ -118,29 +82,7 @@ GET /tools/base64
 POST /tools/base64/scan
 ```
 
-The tool can:
-
-- Accept a site URL and scan its HTML/JavaScript/text for Base64 payloads.
-- Accept pasted Base64, HTML, JavaScript, JSON, or M3U text.
-- Decode standard and URL-safe Base64.
-- Detect nested Base64 up to three layers.
-- Extract HTTP(S) URLs from decoded content.
-- Health-check discovered links with latency and HTTP status.
-- Block localhost, private/reserved IPs, link-local addresses, multicast, and URLs containing embedded credentials.
-- Revalidate redirects before allowing a health check.
-- Apply payload, page, link-count, and timeout limits to keep the tool fast and bounded.
-
-Example API request:
-
-```json
-{
-  "site": "https://example.com/page",
-  "base64": "",
-  "health": true
-}
-```
-
-The scanner is intended for sources you are authorized to inspect. It does not attempt to bypass authentication, anti-bot controls, or protected provider access.
+It can accept a site URL or pasted Base64/code, decode standard and URL-safe Base64, inspect up to three nested layers, extract HTTP(S) links, and health-check discovered links. Private/reserved hosts and credential-bearing URLs are blocked.
 
 ## Health
 
@@ -157,69 +99,8 @@ npm run check
 
 ## Production architecture
 
-For a larger deployment, put XSportsX behind a reverse proxy and use a persistent cache such as Redis. The provider layer is deliberately separated from the Nuvio HTTP layer so new, permitted sports data/stream providers can be added without rewriting the addon.
+For a larger deployment, put XSportsX behind a reverse proxy and use a persistent cache such as Redis. The provider layer is separated from the Nuvio HTTP layer so permitted sources can be added without rewriting the addon API.
 
-## Upcoming matches
+## Favorite Teams
 
-XSportsX now loads up to **7 days of schedules** and exposes:
-
-- `TODAY`
-- `STARTING SOON` — next 2 hours
-- `UPCOMING — NEXT 7 DAYS`
-- league-specific upcoming rows
-
-The addon refreshes the schedule cache automatically, so games added or rescheduled by the metadata provider can appear without rebuilding the addon.
-
-## About SportsZX sources
-
-XSportsX does not copy private SportsZX endpoints, extract proprietary provider credentials, or reverse-engineer/bypass access controls.
-
-If you have a provider you are authorized to use, add it to the supported source configuration. The provider abstraction is intentionally designed so additional permitted sources can be plugged in without changing the Nuvio API layer.
-
-## v2.2 feature set
-
-XSportsX benchmarks the public feature set of current Nuvio sports addons: broad sport coverage, multi-day fixtures, timezone-aware configuration, favorite-team planning, multi-source aggregation, caching, provider isolation, and source ranking.
-
-The XSportsX implementation intentionally does **not** copy private endpoints, credentials, anti-bot workarounds, or access-control bypass logic from another addon/provider. The provider engine is ready for sources you are authorized to use.
-
-### Why we don't proxy protected streams
-
-XSportsX avoids reproducing provider-specific access-control bypass mechanisms. It returns playable URLs supplied by authorized providers or official watch links instead.
-
-### Configuration
-
-Open:
-
-```text
-http://YOUR_HOST:7000/configure
-```
-
-The configuration UI lets you select sports, choose a timezone, record favorite teams, and now enter the optional Base64 Source URL. Provider credentials remain server-side.
-
-## Private provider configuration
-
-Private provider credentials belong in Render Environment Variables or a local `.env` file and are not hard-coded into the application source. Private endpoint lists should likewise be supplied through deployment configuration.
-
-Do not publish the `.env` file or share the credentials. Rotate the provider password if the credentials have been exposed elsewhere.
-
-Before deploying, verify that the IPTV account and streams are authorized for your use.
-
-## v2.3 collection-first Nuvio home
-
-The Nuvio home presentation is collection-first instead of exposing every league as a separate event row.
-
-- Added a `🏆 SPORTS LEAGUES` home row with animated GIF league cards.
-- League cards open a collection meta containing that league's scheduled events.
-- Kept `🔴 LIVE NOW` and `STARTING SOON` as focused event rows.
-- Added animated league badge GIFs under `public/leagues/` for NFL, NBA, NHL, MLB, NCAA, WNBA, MLS, Premier League, La Liga, F1, MotoGP, UFC, Boxing, ATP, WTA, PGA, Rugby, Cricket, Darts, and AFL.
-
-## Favorite Teams collection
-
-The Nuvio home catalog includes `⭐ FAVORITE TEAMS` with these team collections:
-- Miami Hurricanes Football
-- Miami Hurricanes Basketball
-- Miami Dolphins
-- Miami Heat
-- Tampa Bay Lightning
-
-Each team card uses an animated GIF badge and opens a team-specific event collection filtered to the correct league/sport.
+The Nuvio home includes favorite-team collections for Miami Hurricanes Football, Miami Hurricanes Basketball, Miami Dolphins, Miami Heat, and Tampa Bay Lightning.
