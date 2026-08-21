@@ -1,15 +1,15 @@
 {
   "name": "xsportsx-nuvio",
-  "version": "5.0.36",
+  "version": "5.1.0",
   "private": true,
   "type": "module",
   "description": "XSportsX — sports command center for Nuvio with ESPN-driven authorized IPTV source matching.",
   "engines": { "node": ">=20.19.5" },
   "scripts": {
-    "start": "node stable-boot.js",
-    "dev": "BASE_URL=http://localhost:7000 node stable-boot.js",
+    "start": "node render-entry-v528.js",
+    "dev": "BASE_URL=http://localhost:7000 node --watch render-entry-v528.js",
     "test": "node --test",
-    "check": "node --check stable-boot.js && node --check render-entry-v528.js && node --check sports-router.js"
+    "check": "node --check render-entry-v528.js && node --check sports-router.js"
   },
   "dependencies": { "express": "^5.1.0" }
 }
