@@ -11,7 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '7.3.1';
+const BUILD_VERSION = '7.4.0';
 
 const SPORT_ALIASES = {
   nfl: ['nfl', 'football', 'american football'],
