@@ -5,7 +5,7 @@ services:
     plan: free
     autoDeploy: true
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node bootstrap.js
     healthCheckPath: /health
     envVars:
       - key: XTREAM_BASE_URL
