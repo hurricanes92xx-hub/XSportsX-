@@ -11,6 +11,6 @@ COPY . .
 
 EXPOSE 10000
 
-# Force the Render container through the public compatibility proxy.
-# This is required for Nuvio's /v527/<token>/manifest.json requests.
-ENTRYPOINT ["node", "render-proxy.js"]
+# Render is using the Dockerfile, so the container itself must own
+# the public Nuvio compatibility layer. Do not bypass bootstrap.js.
+ENTRYPOINT ["node", "bootstrap.js"]
