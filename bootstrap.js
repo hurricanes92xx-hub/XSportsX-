@@ -11,7 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '7.1.0';
+const BUILD_VERSION = '7.2.0';
 
 const SPORT_ALIASES = {
   nfl: ['nfl', 'football', 'american football'],
@@ -119,6 +119,11 @@ function filterPayload(body, token, path) {
   return body;
 }
 
+function setupPageHtml(body) {
+  const marker = `<div style="position:sticky;top:0;z-index:9999;margin:0 0 18px;padding:12px 16px;border:1px solid #ff2438;border-radius:14px;background:#0a101b;color:#fff;font:800 14px Inter,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)"><span style="color:#ff2438">XSportsX</span> 7.2.0 &nbsp;•&nbsp; PRIVATE SPORTS CONNECTION BUILDER &nbsp;•&nbsp; Xtream / M3U &nbsp;•&nbsp; League Selection &nbsp;•&nbsp; Device Sync</div>`;
+  return body.includes('</body>') ? body.replace('</body>', `${marker}</body>`) : body;
+}
+
 const proxy = http.createServer((req, res) => {
   try {
     const token = tokenFrom(req.url);
@@ -131,9 +136,14 @@ const proxy = http.createServer((req, res) => {
       headers: { ...req.headers, host: `127.0.0.1:${internalPort}` }
     }, response => {
       const ct = String(response.headers['content-type'] || '');
-      const filter = Boolean(token) && ct.includes('application/json') && (path === '/manifest.json' || path.startsWith('/catalog/'));
-      if (!filter) {
+      const jsonFilter = Boolean(token) && ct.includes('application/json') && (path === '/manifest.json' || path.startsWith('/catalog/'));
+      const setupFilter = path === '/configure' && ct.includes('text/html');
+      if (!jsonFilter && !setupFilter) {
         const h = { ...response.headers, 'x-xsportsx-build': BUILD_VERSION };
+        if (path === '/configure') {
+          h['cache-control'] = 'no-store, no-cache, must-revalidate, proxy-revalidate';
+          h['pragma'] = 'no-cache';
+        }
         res.writeHead(response.statusCode || 502, h);
         return response.pipe(res);
       }
@@ -142,6 +152,13 @@ const proxy = http.createServer((req, res) => {
       response.on('data', c => chunks.push(c));
       response.on('end', () => {
         try {
+          if (setupFilter) {
+            const out = Buffer.from(setupPageHtml(Buffer.concat(chunks).toString('utf8')));
+            const h = { ...response.headers, 'content-length': String(out.length), 'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate', 'pragma': 'no-cache', 'x-xsportsx-build': BUILD_VERSION };
+            delete h['transfer-encoding'];
+            res.writeHead(response.statusCode || 200, h);
+            return res.end(out);
+          }
           const body = filterPayload(JSON.parse(Buffer.concat(chunks).toString('utf8')), token, path);
           const out = Buffer.from(JSON.stringify(body));
           const selected = selectedSports(token);
