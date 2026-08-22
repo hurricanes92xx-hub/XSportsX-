@@ -42,7 +42,33 @@ function encryptConfig(c){const iv=crypto.randomBytes(12),cipher=crypto.createCi
 function decryptConfig(t){try{const [ivS,tagS,bodyS]=String(t||'').split('.');if(!ivS||!tagS||!bodyS)return null;const d=crypto.createDecipheriv('aes-256-gcm',KEY,Buffer.from(ivS,'base64url'));d.setAuthTag(Buffer.from(tagS,'base64url'));return JSON.parse(Buffer.concat([d.update(Buffer.from(bodyS,'base64url')),d.final()]).toString('utf8'));}catch{return null;}}
 function normalize(c){const x=c||{},source=String(x.source||'xtream').toLowerCase()==='m3u'?'m3u':'xtream',xt=x.xtream||{};return{source,xtream:{baseUrl:String(xt.baseUrl||'').replace(/\/$/,''),username:String(xt.username||''),password:String(xt.password||'')},m3uUrl:String(x.m3uUrl||'').trim(),epgUrl:String(x.epgUrl||'').trim(),sports:Array.isArray(x.sports)&&x.sports.length?x.sports:Object.keys(LEAGUES)};}
 function requestConfig(req){const parts=String(req.path||'/').split('/').filter(Boolean);let token='';if(parts[0]&&!['manifest.json','configure','health','xtream-health','artwork','catalog','meta','stream','qr'].includes(parts[0])&&!parts[0].endsWith('.json'))token=parts[0];return normalize(decryptConfig(token)||decryptConfig(req.query?.config)||null);}
-app.use((req,res,next)=>{let u=req.url;if(u.startsWith('/v527/')){u=u.slice(5);req.url=u||'/';}ctx.run(requestConfig(req),next);});
+
+// Normalize standard parameterized Stremio/Nuvio addon URLs before routing.
+// Both the normal manifest URL and /<token>/resource URLs are supported.
+app.use((req,res,next)=>{
+  try {
+    const u=new URL(req.url||'/', 'http://localhost');
+    let parts=u.pathname.split('/').filter(Boolean);
+    if(parts[0]==='v527') parts=parts.slice(1);
+    const resources=new Set(['manifest.json','catalog','meta','stream']);
+    const publicRoutes=new Set(['configure','health','xtream-health','artwork','qr']);
+    const resourceIndex=parts.findIndex(p=>resources.has(p)||p.startsWith('catalog')||p.startsWith('meta')||p.startsWith('stream'));
+    let token='';
+    if(resourceIndex>=0 && resourceIndex>0) {
+      token=parts[resourceIndex-1];
+      parts=parts.slice(resourceIndex);
+    } else if(resourceIndex<0 && parts.length===1 && !publicRoutes.has(parts[0]) && !parts[0].endsWith('.json')) {
+      token=parts[0];
+      parts=['manifest.json'];
+    }
+    if(token) u.searchParams.set('config',token);
+    u.pathname='/'+parts.join('/');
+    req.url=u.pathname+(u.search||'');
+    ctx.run(requestConfig(req),next);
+  } catch(e) {
+    next(e);
+  }
+});
 function config(){return ctx.getStore()||normalize({source:'xtream',xtream:{baseUrl:process.env.XTREAM_BASE_URL||'',username:process.env.XTREAM_USERNAME||'',password:process.env.XTREAM_PASSWORD||''}})}
 function baseUrl(req){return BASE||`${String(req.headers['x-forwarded-proto']||'https').split(',')[0]}://${req.headers.host||'localhost'}`}
 function xtreamApi(action,extra={}){const c=config().xtream,u=new URL(`${c.baseUrl}/player_api.php`);u.searchParams.set('username',c.username);u.searchParams.set('password',c.password);if(action)u.searchParams.set('action',action);for(const[k,v]of Object.entries(extra))u.searchParams.set(k,String(v));return u.toString();}
@@ -62,7 +88,7 @@ function eventPoster(req,e){return`${baseUrl(req)}/artwork/event/${encodeURIComp
 function metaForEvent(req,e){return{id:eventId(e),type:'tv',name:`${e.away.short||e.away.name} vs ${e.home.short||e.home.name}`,poster:eventPoster(req,e),background:eventPoster(req,e),posterShape:'landscape',description:`${e.leagueName} • ${e.detail}\n${e.start}`,releaseInfo:e.start||'',genres:['Sports',e.leagueName],sportSource:e.league,eventId:e.id,event:e,behaviorHints:{isPlayable:true}};}
 async function catalogEvents(id){const ev=await allEvents();if(id==='live-now')return ev.filter(e=>e.state==='in');if(id==='starting-soon')return ev.filter(e=>e.state==='pre').slice(0,80);if(id==='sports-command-center')return ev.slice(0,100);if(LEAGUES[id])return ev.filter(e=>e.league===id);return[];}
 function catalogs(){const out=[['sports-command-center','🏆 XSPORTSX • SPORTS COMMAND CENTER'],['live-now','🔴 LIVE NOW'],['starting-soon','⏰ STARTING SOON']];for(const [id,[name,, ,emoji]] of Object.entries(LEAGUES))out.push([id,`${emoji} ${name.toUpperCase()}`]);out.push(['iptv-live','📡 MY IPTV • SPORTS CHANNELS']);return out;}
-const manifestCatalogs=catalogs().map(([id,name])=>({type:'tv',id,name,extra:[],showInHome:true}));const manifest=base=>({id:'community.xsportsx',version:'6.0.0',name:'XSportsX',description:'Premium live sports for Nuvio using your own Xtream or M3U source.',resources:[{name:'catalog',types:['tv']},{name:'meta',types:['tv']},{name:'stream',types:['tv']}],types:['tv'],idPrefixes:['sport:','xtream:'],catalogs:manifestCatalogs,behaviorHints:{configurable:false,configurationRequired:false},logo:`${base}/artwork/other.svg`});
+const manifestCatalogs=catalogs().map(([id,name])=>({type:'tv',id,name,extra:[],showInHome:true}));const manifest=base=>({id:'community.xsportsx',version:'6.0.1',name:'XSportsX',description:'Premium live sports for Nuvio using your own Xtream or M3U source.',resources:[{name:'catalog',types:['tv']},{name:'meta',types:['tv']},{name:'stream',types:['tv']}],types:['tv'],idPrefixes:['sport:','xtream:'],catalogs:manifestCatalogs,behaviorHints:{configurable:false,configurationRequired:false},logo:`${base}/artwork/other.svg`});
 app.get('/manifest.json',(req,res)=>res.set('Cache-Control','public,max-age=60').json(manifest(baseUrl(req))));app.get('/catalog/tv/:id.json',async(req,res)=>{try{const id=req.params.id;if(id==='iptv-live'){const ch=(await providerChannels()).filter(isSportsChannel).slice(0,100);return res.json({metas:ch.map(c=>({id:`xtream:${c.streamId}`,type:'tv',name:c.name,poster:c.logo||`${baseUrl(req)}/artwork/other.svg`,background:c.logo||`${baseUrl(req)}/artwork/other.svg`,description:c.category,genres:['Sports','Live TV'],behaviorHints:{isPlayable:true}}))});}const ev=await catalogEvents(id);res.set('Cache-Control','public,max-age=30').json({metas:ev.map(e=>metaForEvent(req,e))});}catch(e){console.error(e);res.status(200).json({metas:[]});}});
 app.get('/meta/tv/:id.json',async(req,res)=>{try{const id=req.params.id;if(id.startsWith('sport:')){const [,league,eventId]=id.split(':');const e=await eventById(league,eventId);return e?res.json(metaForEvent(req,e)):res.status(404).json({error:'Event not found'});}if(id.startsWith('xtream:')){const sid=id.split(':')[1];const ch=(await providerChannels()).find(x=>x.streamId===sid);if(!ch)return res.status(404).json({error:'Channel not found'});return res.json({meta:{id,type:'tv',name:ch.name,poster:ch.logo||`${baseUrl(req)}/artwork/other.svg`,background:ch.logo||`${baseUrl(req)}/artwork/other.svg`,description:ch.category,behaviorHints:{isPlayable:true}}});}res.status(404).json({error:'Unknown meta'});}catch(e){res.status(404).json({error:e.message});}});
 function xtreamUrl(c,sid){return`${c.baseUrl}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(sid)}.ts`;}
@@ -72,5 +98,5 @@ function setupHtml(req){const b=baseUrl(req);return`<!doctype html><html><head><
 app.get('/configure',(req,res)=>res.type('html').send(setupHtml(req)));
 app.post('/configure',async(req,res)=>{try{const c=normalize(req.body);if(c.source==='xtream'){if(!c.xtream.baseUrl||!c.xtream.username||!c.xtream.password)return res.status(400).json({error:'Xtream server URL, username and password are required'});const h=await checkXtream(c.xtream,Math.max(REQUEST_TIMEOUT,10000));if(!h.connected||!h.authenticated)return res.status(400).json({error:`Xtream connection failed: ${h.error||h.accountStatus||'authentication failed'}`});}else if(!c.m3uUrl)return res.status(400).json({error:'M3U playlist URL is required'});const token=encryptConfig(c),manifestUrl=`${baseUrl(req)}/${token}/manifest.json`,qrUrl=`${baseUrl(req)}/qr?data=${encodeURIComponent(manifestUrl)}`;res.json({manifestUrl,qrUrl,source:c.source});}catch(e){res.status(400).json({error:e.message});}});
 app.get('/xtream-health',async(req,res)=>{try{const c=config();if(c.source!=='xtream')return res.json({connected:false,source:c.source,configured:true});res.json({...await checkXtream(c.xtream,Math.max(REQUEST_TIMEOUT,10000)),source:'xtream',checkedAt:new Date().toISOString()});}catch(e){res.status(500).json({connected:false,error:e.message});}});
-app.get('/health',(req,res)=>res.json({ok:true,name:'XSportsX',version:'6.0.0',time:new Date().toISOString()}));
+app.get('/health',(req,res)=>res.json({ok:true,name:'XSportsX',version:'6.0.1',time:new Date().toISOString()}));
 app.listen(PORT,'0.0.0.0',()=>console.log(`XSportsX listening on ${PORT}`));
