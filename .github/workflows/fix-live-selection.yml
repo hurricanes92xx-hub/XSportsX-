@@ -15,27 +15,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Patch live server
+      - name: Patch live server and bootstrap
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
+
           p = Path('server.js')
           s = p.read_text()
-
-          # Keep the actual server build in sync with the bootstrap build.
           for old in ('6.0.1', '7.2.0', '7.3.1'):
               s = s.replace(f"version:'{old}'", "version:'7.4.0'")
               s = s.replace(f"'X-XSportsX-Build':'{old}'", "'X-XSportsX-Build':'7.4.0'")
 
-          # Make aggregate catalogs obey the private connection's league selection.
           pattern = r"async function catalogEvents\(id\)\{.*?\}\nfunction catalogs\(\)"
           replacement = """async function catalogEvents(id){const c=config();const allowed=new Set(Array.isArray(c.sports)&&c.sports.length?c.sports:Object.keys(LEAGUES));const ev=(await allEvents()).filter(e=>allowed.has(e.league));if(id==='live-now')return ev.filter(e=>e.state==='in');if(id==='starting-soon')return ev.filter(e=>e.state==='pre').slice(0,80);if(id==='sports-command-center')return ev.slice(0,100);if(LEAGUES[id])return allowed.has(id)?ev.filter(e=>e.league===id):[];return[];}\nfunction catalogs()"""
           s2, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
           if n != 1:
               raise SystemExit('catalogEvents function not found; refusing partial patch')
           p.write_text(s2)
+
+          b = Path('bootstrap.js')
+          bs = b.read_text()
+          bs = re.sub(r"const BUILD_VERSION = '[^']+'", "const BUILD_VERSION = '7.4.0'", bs)
+          b.write_text(bs)
           PY
 
       - name: Commit live fix
@@ -43,10 +46,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add server.js
+          git add server.js bootstrap.js
           if git diff --cached --quiet; then
             echo "No server changes needed"
           else
-            git commit -m "Set XSportsX live build 7.4.0 and enforce league selection"
+            git commit -m "Set XSportsX build 7.4.0 and enforce league selection"
             git push
           fi
