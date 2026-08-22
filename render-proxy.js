@@ -27,7 +27,7 @@ function rewrite(path){
 
 function configuredManifest(res){
   const body=JSON.stringify({id:'community.xsportsx',version:'5.2.0',name:'XSportsX',description:'XSportsX live sports with configurable Xtream or M3U sources.',logo:'/artwork/other.svg',resources:['catalog','meta','stream'],types:['tv'],idPrefixes:['sport:','league:']});
-  res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store, max-age=0'});res.end(body);
+  res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store, max-age=0','x-xsportsx-route':'edge-manifest'});res.end(body);
 }
 
 const proxy=http.createServer((req,res)=>{
@@ -36,7 +36,10 @@ const proxy=http.createServer((req,res)=>{
   try{incoming=new URL(raw,'http://local')}catch{res.statusCode=400;return res.end('Bad request')}
   let parts=incoming.pathname.split('/').filter(Boolean);
   if(parts[0]==='v527')parts=parts.slice(1);
-  if(parts.length===2 && parts[1]==='manifest.json' && parts[0].length>20){
+  // Nuvio can normalize configured URLs in a few different ways. Any path
+  // ending in manifest.json is an addon manifest request, regardless of the
+  // token length or whether /v527 was retained.
+  if(parts.length>=1 && parts[parts.length-1]==='manifest.json'){
     return configuredManifest(res);
   }
   const path=rewrite(raw);
