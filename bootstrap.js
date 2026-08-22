@@ -11,6 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
+const BUILD_VERSION = '7.1.0';
 
 const SPORT_ALIASES = {
   nfl: ['nfl', 'football', 'american football'],
@@ -93,7 +94,7 @@ function filterPayload(body, token, path) {
   if (!body || typeof body !== 'object') return body;
 
   if (path === '/manifest.json') {
-    body.version = '7.0.0';
+    body.version = BUILD_VERSION;
     body.id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 12)}`;
     if (Array.isArray(body.catalogs) && selected) {
       body.catalogs = body.catalogs.filter(c =>
@@ -132,7 +133,8 @@ const proxy = http.createServer((req, res) => {
       const ct = String(response.headers['content-type'] || '');
       const filter = Boolean(token) && ct.includes('application/json') && (path === '/manifest.json' || path.startsWith('/catalog/'));
       if (!filter) {
-        res.writeHead(response.statusCode || 502, response.headers);
+        const h = { ...response.headers, 'x-xsportsx-build': BUILD_VERSION };
+        res.writeHead(response.statusCode || 502, h);
         return response.pipe(res);
       }
 
@@ -148,6 +150,8 @@ const proxy = http.createServer((req, res) => {
             ...response.headers,
             'content-length': String(out.length),
             'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'pragma': 'no-cache',
+            'x-xsportsx-build': BUILD_VERSION,
             'x-xsportsx-selected-leagues': selectedHeader,
             'x-xsportsx-configured': selected ? 'true' : 'false'
           };
@@ -168,4 +172,4 @@ const proxy = http.createServer((req, res) => {
   }
 });
 
-proxy.listen(publicPort, '0.0.0.0', () => console.log(`XSportsX bootstrap listening on ${publicPort}; app on ${internalPort}`));
+proxy.listen(publicPort, '0.0.0.0', () => console.log(`XSportsX bootstrap ${BUILD_VERSION} listening on ${publicPort}; app on ${internalPort}`));
