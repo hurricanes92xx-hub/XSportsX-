@@ -12,6 +12,25 @@ const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
 
+const SPORT_ALIASES = {
+  nfl: ['nfl', 'football', 'american football'],
+  ncaaf: ['ncaaf', 'ncaafb', 'ncaa football', 'college football', 'college-football'],
+  nba: ['nba'],
+  wnba: ['wnba'],
+  ncaab: ['ncaab', 'ncaamb', 'ncaa basketball', 'college basketball', 'mens-college-basketball'],
+  mlb: ['mlb'],
+  nhl: ['nhl'],
+  mls: ['mls'],
+  epl: ['epl', 'premier league', 'english premier league'],
+  ucl: ['ucl', 'uefa champions league', 'champions league'],
+  laliga: ['laliga', 'la liga'],
+  seriea: ['seriea', 'serie a'],
+  bundesliga: ['bundesliga'],
+  ligue1: ['ligue1', 'ligue 1'],
+  ufc: ['ufc', 'mma'],
+  boxing: ['boxing', 'box']
+};
+
 function decryptConfig(token) {
   try {
     const [ivS, tagS, bodyS] = String(token || '').split('.');
@@ -20,6 +39,14 @@ function decryptConfig(token) {
     d.setAuthTag(Buffer.from(tagS, 'base64url'));
     return JSON.parse(Buffer.concat([d.update(Buffer.from(bodyS, 'base64url')), d.final()]).toString('utf8'));
   } catch { return null; }
+}
+
+function canonicalSport(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  for (const [id, aliases] of Object.entries(SPORT_ALIASES)) {
+    if (aliases.includes(raw)) return id;
+  }
+  return raw;
 }
 
 function tokenFrom(raw) {
@@ -39,8 +66,7 @@ function rewrite(raw) {
   const i = parts.findIndex(p => RESOURCES.has(p) || p.startsWith('catalog') || p.startsWith('meta') || p.startsWith('stream'));
   if (i < 0) {
     if (parts.length === 1 && !PUBLIC.has(parts[0]) && !parts[0].endsWith('.json')) {
-      u.pathname = '/manifest.json';
-      u.searchParams.set('config', parts[0]);
+      u.pathname = '/manifest.json'; u.searchParams.set('config', parts[0]);
     }
     return u.pathname + (u.search || '');
   }
@@ -52,42 +78,40 @@ function rewrite(raw) {
 
 function selectedSports(token) {
   const c = decryptConfig(token);
-  const sports = Array.isArray(c?.sports) ? c.sports.filter(Boolean) : [];
-  return sports.length ? new Set(sports) : null;
+  if (!c) return null;
+  const raw = Array.isArray(c.sports) ? c.sports : [];
+  if (!raw.length) return new Set(Object.keys(SPORT_ALIASES));
+  return new Set(raw.map(canonicalSport).filter(Boolean));
 }
 
-function connectionId(token) {
-  return `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0,16)}`;
+function isSelected(selected, id) {
+  return !selected || selected.has(canonicalSport(id));
 }
 
 function filterPayload(body, token, path) {
   const selected = selectedSports(token);
-  if (!selected || !body || typeof body !== 'object') return body;
+  if (!body || typeof body !== 'object') return body;
 
   if (path === '/manifest.json') {
-    // A unique addon ID per private connection prevents Nuvio from reusing
-    // the old catalog definition belonging to another XSportsX connection.
-    body.id = connectionId(token);
-    body.version = '6.2.0';
-    body.name = 'XSportsX';
-    if (Array.isArray(body.catalogs)) {
+    body.version = '7.0.0';
+    body.id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 12)}`;
+    if (Array.isArray(body.catalogs) && selected) {
       body.catalogs = body.catalogs.filter(c =>
         c.id === 'sports-command-center' ||
         c.id === 'live-now' ||
         c.id === 'starting-soon' ||
         c.id === 'iptv-live' ||
-        selected.has(c.id)
+        isSelected(selected, c.id)
       );
     }
   }
 
-  // Enforce the same selection in Live Now, Starting Soon and Command Center
-  // so an old aggregate response cannot reintroduce unselected leagues.
-  if (Array.isArray(body.metas)) {
+  if (Array.isArray(body.metas) && selected) {
     body.metas = body.metas.filter(meta => {
       const id = String(meta?.id || '');
-      if (!id.startsWith('sport:')) return true;
-      return selected.has(id.split(':')[1]);
+      if (id.startsWith('sport:')) return isSelected(selected, id.split(':')[1]);
+      if (id.startsWith('xtream:')) return true;
+      return true;
     });
   }
 
@@ -106,10 +130,8 @@ const proxy = http.createServer((req, res) => {
       headers: { ...req.headers, host: `127.0.0.1:${internalPort}` }
     }, response => {
       const ct = String(response.headers['content-type'] || '');
-      const shouldFilter = Boolean(token) && ct.includes('application/json') &&
-        (path === '/manifest.json' || path.startsWith('/catalog/'));
-
-      if (!shouldFilter) {
+      const filter = Boolean(token) && ct.includes('application/json') && (path === '/manifest.json' || path.startsWith('/catalog/'));
+      if (!filter) {
         res.writeHead(response.statusCode || 502, response.headers);
         return response.pipe(res);
       }
@@ -118,18 +140,16 @@ const proxy = http.createServer((req, res) => {
       response.on('data', c => chunks.push(c));
       response.on('end', () => {
         try {
-          const body = filterPayload(
-            JSON.parse(Buffer.concat(chunks).toString('utf8')),
-            token,
-            path
-          );
+          const body = filterPayload(JSON.parse(Buffer.concat(chunks).toString('utf8')), token, path);
           const out = Buffer.from(JSON.stringify(body));
+          const selected = selectedSports(token);
+          const selectedHeader = selected ? [...selected].join(',') : 'configuration-unreadable';
           const h = {
             ...response.headers,
             'content-length': String(out.length),
             'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-            'pragma': 'no-cache',
-            'expires': '0'
+            'x-xsportsx-selected-leagues': selectedHeader,
+            'x-xsportsx-configured': selected ? 'true' : 'false'
           };
           delete h['transfer-encoding'];
           res.writeHead(response.statusCode || 502, h);
@@ -140,10 +160,7 @@ const proxy = http.createServer((req, res) => {
         }
       });
     });
-    upstream.on('error', e => {
-      res.statusCode = 502;
-      res.end(`XSportsX bootstrap error: ${e.message}`);
-    });
+    upstream.on('error', e => { res.statusCode = 502; res.end(`XSportsX bootstrap error: ${e.message}`); });
     req.pipe(upstream);
   } catch (e) {
     res.statusCode = 400;
@@ -151,6 +168,4 @@ const proxy = http.createServer((req, res) => {
   }
 });
 
-proxy.listen(publicPort, '0.0.0.0', () =>
-  console.log(`XSportsX bootstrap listening on ${publicPort}; app on ${internalPort}`)
-);
+proxy.listen(publicPort, '0.0.0.0', () => console.log(`XSportsX bootstrap listening on ${publicPort}; app on ${internalPort}`));
