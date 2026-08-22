@@ -11,25 +11,19 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '7.2.0';
+const BUILD_VERSION = '7.3.0';
 
 const SPORT_ALIASES = {
   nfl: ['nfl', 'football', 'american football'],
   ncaaf: ['ncaaf', 'ncaafb', 'ncaa football', 'college football', 'college-football'],
-  nba: ['nba'],
-  wnba: ['wnba'],
+  nba: ['nba'], wnba: ['wnba'],
   ncaab: ['ncaab', 'ncaamb', 'ncaa basketball', 'college basketball', 'mens-college-basketball'],
-  mlb: ['mlb'],
-  nhl: ['nhl'],
-  mls: ['mls'],
+  mlb: ['mlb'], nhl: ['nhl'], mls: ['mls'],
   epl: ['epl', 'premier league', 'english premier league'],
   ucl: ['ucl', 'uefa champions league', 'champions league'],
-  laliga: ['laliga', 'la liga'],
-  seriea: ['seriea', 'serie a'],
-  bundesliga: ['bundesliga'],
-  ligue1: ['ligue1', 'ligue 1'],
-  ufc: ['ufc', 'mma'],
-  boxing: ['boxing', 'box']
+  laliga: ['laliga', 'la liga'], seriea: ['seriea', 'serie a'],
+  bundesliga: ['bundesliga'], ligue1: ['ligue1', 'ligue 1'],
+  ufc: ['ufc', 'mma'], boxing: ['boxing', 'box']
 };
 
 function decryptConfig(token) {
@@ -44,9 +38,7 @@ function decryptConfig(token) {
 
 function canonicalSport(value) {
   const raw = String(value || '').trim().toLowerCase();
-  for (const [id, aliases] of Object.entries(SPORT_ALIASES)) {
-    if (aliases.includes(raw)) return id;
-  }
+  for (const [id, aliases] of Object.entries(SPORT_ALIASES)) if (aliases.includes(raw)) return id;
   return raw;
 }
 
@@ -67,7 +59,8 @@ function rewrite(raw) {
   const i = parts.findIndex(p => RESOURCES.has(p) || p.startsWith('catalog') || p.startsWith('meta') || p.startsWith('stream'));
   if (i < 0) {
     if (parts.length === 1 && !PUBLIC.has(parts[0]) && !parts[0].endsWith('.json')) {
-      u.pathname = '/manifest.json'; u.searchParams.set('config', parts[0]);
+      u.pathname = '/manifest.json';
+      u.searchParams.set('config', parts[0]);
     }
     return u.pathname + (u.search || '');
   }
@@ -95,15 +88,14 @@ function filterPayload(body, token, path) {
 
   if (path === '/manifest.json') {
     body.version = BUILD_VERSION;
-    body.id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 12)}`;
-    if (Array.isArray(body.catalogs) && selected) {
-      body.catalogs = body.catalogs.filter(c =>
-        c.id === 'sports-command-center' ||
-        c.id === 'live-now' ||
-        c.id === 'starting-soon' ||
-        c.id === 'iptv-live' ||
-        isSelected(selected, c.id)
-      );
+    body.id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 16)}`;
+    if (Array.isArray(body.catalogs)) {
+      // IMPORTANT: a private connection contains ONLY the leagues the user selected.
+      // Do not expose aggregate catalogs because they can reintroduce unselected sports.
+      body.catalogs = selected
+        ? body.catalogs.filter(c => isSelected(selected, c.id))
+        : [];
+      body.catalogs = body.catalogs.map(c => ({ ...c, showInHome: true }));
     }
   }
 
@@ -111,7 +103,6 @@ function filterPayload(body, token, path) {
     body.metas = body.metas.filter(meta => {
       const id = String(meta?.id || '');
       if (id.startsWith('sport:')) return isSelected(selected, id.split(':')[1]);
-      if (id.startsWith('xtream:')) return true;
       return true;
     });
   }
@@ -120,7 +111,7 @@ function filterPayload(body, token, path) {
 }
 
 function setupPageHtml(body) {
-  const marker = `<div style="position:sticky;top:0;z-index:9999;margin:0 0 18px;padding:12px 16px;border:1px solid #ff2438;border-radius:14px;background:#0a101b;color:#fff;font:800 14px Inter,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)"><span style="color:#ff2438">XSportsX</span> 7.2.0 &nbsp;•&nbsp; PRIVATE SPORTS CONNECTION BUILDER &nbsp;•&nbsp; Xtream / M3U &nbsp;•&nbsp; League Selection &nbsp;•&nbsp; Device Sync</div>`;
+  const marker = `<div style="position:sticky;top:0;z-index:9999;margin:0 0 18px;padding:12px 16px;border:1px solid #ff2438;border-radius:14px;background:#0a101b;color:#fff;font:800 14px Inter,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)"><span style="color:#ff2438">XSportsX</span> ${BUILD_VERSION} &nbsp;•&nbsp; PRIVATE SPORTS CONNECTION BUILDER &nbsp;•&nbsp; Xtream / M3U &nbsp;•&nbsp; League Selection &nbsp;•&nbsp; Device Sync</div>`;
   return body.includes('</body>') ? body.replace('</body>', `${marker}</body>`) : body;
 }
 
@@ -129,10 +120,7 @@ const proxy = http.createServer((req, res) => {
     const token = tokenFrom(req.url);
     const path = rewrite(req.url);
     const upstream = http.request({
-      hostname: '127.0.0.1',
-      port: internalPort,
-      path,
-      method: req.method,
+      hostname: '127.0.0.1', port: internalPort, path, method: req.method,
       headers: { ...req.headers, host: `127.0.0.1:${internalPort}` }
     }, response => {
       const ct = String(response.headers['content-type'] || '');
@@ -147,7 +135,6 @@ const proxy = http.createServer((req, res) => {
         res.writeHead(response.statusCode || 502, h);
         return response.pipe(res);
       }
-
       const chunks = [];
       response.on('data', c => chunks.push(c));
       response.on('end', () => {
@@ -155,38 +142,27 @@ const proxy = http.createServer((req, res) => {
           if (setupFilter) {
             const out = Buffer.from(setupPageHtml(Buffer.concat(chunks).toString('utf8')));
             const h = { ...response.headers, 'content-length': String(out.length), 'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate', 'pragma': 'no-cache', 'x-xsportsx-build': BUILD_VERSION };
-            delete h['transfer-encoding'];
-            res.writeHead(response.statusCode || 200, h);
-            return res.end(out);
+            delete h['transfer-encoding']; res.writeHead(response.statusCode || 200, h); return res.end(out);
           }
           const body = filterPayload(JSON.parse(Buffer.concat(chunks).toString('utf8')), token, path);
           const out = Buffer.from(JSON.stringify(body));
-          const selected = selectedSports(token);
           const selectedHeader = selected ? [...selected].join(',') : 'configuration-unreadable';
           const h = {
-            ...response.headers,
-            'content-length': String(out.length),
+            ...response.headers, 'content-length': String(out.length),
             'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-            'pragma': 'no-cache',
-            'x-xsportsx-build': BUILD_VERSION,
+            'pragma': 'no-cache', 'expires': '0', 'x-xsportsx-build': BUILD_VERSION,
             'x-xsportsx-selected-leagues': selectedHeader,
             'x-xsportsx-configured': selected ? 'true' : 'false'
           };
-          delete h['transfer-encoding'];
-          res.writeHead(response.statusCode || 502, h);
-          res.end(out);
+          delete h['transfer-encoding']; res.writeHead(response.statusCode || 502, h); res.end(out);
         } catch {
-          res.writeHead(response.statusCode || 502, response.headers);
-          res.end(Buffer.concat(chunks));
+          res.writeHead(response.statusCode || 502, response.headers); res.end(Buffer.concat(chunks));
         }
       });
     });
     upstream.on('error', e => { res.statusCode = 502; res.end(`XSportsX bootstrap error: ${e.message}`); });
     req.pipe(upstream);
-  } catch (e) {
-    res.statusCode = 400;
-    res.end(`XSportsX bootstrap request error: ${e.message}`);
-  }
+  } catch (e) { res.statusCode = 400; res.end(`XSportsX bootstrap request error: ${e.message}`); }
 });
 
 proxy.listen(publicPort, '0.0.0.0', () => console.log(`XSportsX bootstrap ${BUILD_VERSION} listening on ${publicPort}; app on ${internalPort}`));
