@@ -10,17 +10,32 @@ const PRIVATE_RESOURCES=new Set(['manifest.json','catalog','meta','stream']);
 
 function rewrite(path){
   const u=new URL(path,'http://local');
-  let parts=u.pathname.split('/').filter(Boolean);
-  if(parts[0]==='v527')parts=parts.slice(1);
+  const original=u.pathname.split('/').filter(Boolean);
+  let parts=[...original];
 
-  // A configured Nuvio addon is /<token>/<resource>. The token may be
-  // encrypted (three dot-separated segments) or a legacy opaque token.
-  // Only rewrite when the second segment is a real addon resource.
-  if(parts.length>=2 && !PUBLIC_ROUTES.has(parts[0]) && PRIVATE_RESOURCES.has(parts[1])){
-    const token=parts.shift();
-    u.pathname='/'+parts.join('/');
-    u.searchParams.set('config',token);
+  // Nuvio has used both forms in different compatibility paths:
+  //   /v527/<token>/manifest.json
+  //   /<token>/v527/manifest.json
+  // and the normal addon form:
+  //   /<token>/manifest.json
+  // Accept all three so the public Render endpoint is not sensitive to
+  // where Nuvio inserts its compatibility prefix.
+  if(parts[0]==='v527') parts.shift();
+
+  const resourceIndex=parts.findIndex((p)=>PRIVATE_RESOURCES.has(p));
+  if(resourceIndex>0){
+    const tokenIndex=parts.findIndex((p,i)=>i<resourceIndex && p!=='v527' && !PUBLIC_ROUTES.has(p));
+    if(tokenIndex>=0){
+      const token=parts[tokenIndex];
+      const resourceParts=parts.slice(resourceIndex);
+      u.pathname='/'+resourceParts.join('/');
+      u.searchParams.set('config',token);
+      return u.pathname+(u.search||'');
+    }
   }
+
+  // Also tolerate /v527/<resource> for public routes.
+  u.pathname='/'+parts.join('/');
   return u.pathname+(u.search||'');
 }
 
