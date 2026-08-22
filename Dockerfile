@@ -11,4 +11,6 @@ COPY . .
 
 EXPOSE 10000
 
-CMD ["npm", "start"]
+# Force the Render container through the public compatibility proxy.
+# This is required for Nuvio's /v527/<token>/manifest.json requests.
+ENTRYPOINT ["node", "render-proxy.js"]
