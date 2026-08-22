@@ -7,22 +7,41 @@ process.env.PORT = String(internalPort);
 require('./server.js');
 
 const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
+const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 
 function rewrite(raw) {
   const u = new URL(raw || '/', 'http://local');
-  const parts = u.pathname.split('/').filter(Boolean);
-  const resourceIndex = parts.findIndex((p) => RESOURCES.has(p) || p.startsWith('catalog') || p.startsWith('meta') || p.startsWith('stream'));
+  let parts = u.pathname.split('/').filter(Boolean);
+  if (!parts.length) return u.pathname + u.search;
 
-  if (resourceIndex < 0) return u.pathname + u.search;
+  // Nuvio compatibility requests can arrive as:
+  // /v527/<token>
+  // /v527/<token>/manifest.json
+  // /<token>/v527/manifest.json
+  // /<token>/manifest.json
+  // Treat a token-only compatibility request as a manifest request.
+  if (parts[0] === 'v527') parts = parts.slice(1);
 
-  const before = parts.slice(0, resourceIndex).filter((p) => p !== 'v527');
+  const resourceIndex = parts.findIndex((p) =>
+    RESOURCES.has(p) || p.startsWith('catalog') || p.startsWith('meta') || p.startsWith('stream')
+  );
+
+  if (resourceIndex < 0) {
+    if (parts.length === 1 && !PUBLIC.has(parts[0]) && !parts[0].endsWith('.json')) {
+      u.pathname = '/manifest.json';
+      u.searchParams.set('config', parts[0]);
+    }
+    return u.pathname + (u.search || '');
+  }
+
+  const before = parts.slice(0, resourceIndex);
   if (before.length) {
     const token = before[before.length - 1];
     const resource = '/' + parts.slice(resourceIndex).join('/');
     u.pathname = resource;
     u.searchParams.set('config', token);
-  } else if (parts[0] === 'v527') {
-    u.pathname = '/' + parts.slice(1).join('/');
+  } else {
+    u.pathname = '/' + parts.join('/');
   }
 
   return u.pathname + (u.search || '');
