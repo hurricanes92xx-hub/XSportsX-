@@ -17,11 +17,11 @@ const catalogs=[
   ['ufc','🥊 UFC'],['boxing','🥊 BOXING'],['iptv-live','📡 MY IPTV • LIVE TV']
 ];
 const baseManifest={
-  id:'community.xsportsx',version:'5.2.1',name:'XSportsX',
+  id:'community.xsportsx',version:'5.2.2',name:'XSportsX',
   description:'XSportsX live sports with cinematic matchup cards and configurable Xtream or M3U sources.',
-  resources:[{name:'catalog',types:['channel']},{name:'meta',types:['channel']},{name:'stream',types:['channel']}],
-  types:['channel'],idPrefixes:['sport:','league:','live:','xtream:'],
-  catalogs:catalogs.map(([id,name])=>({type:'channel',id,name,extra:[],showInHome:true})),
+  resources:[{name:'catalog',types:['tv']},{name:'meta',types:['tv']},{name:'stream',types:['tv']}],
+  types:['tv'],idPrefixes:['sport:','league:','live:','xtream:'],
+  catalogs:catalogs.map(([id,name])=>({type:'tv',id,name,extra:[],showInHome:true})),
   behaviorHints:{configurable:false,configurationRequired:false},logo:'/artwork/other.svg'
 };
 function rewrite(path){
@@ -35,7 +35,7 @@ function rewrite(path){
   return u.pathname+(u.search||'');
 }
 function configuredManifest(res){
-  res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store, max-age=0','access-control-allow-origin':'*','x-xsportsx-route':'edge-manifest','x-xsportsx-version':'5.2.1'});
+  res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store, max-age=0','access-control-allow-origin':'*','x-xsportsx-route':'edge-manifest','x-xsportsx-version':'5.2.2'});
   res.end(JSON.stringify(baseManifest));
 }
 const proxy=http.createServer((req,res)=>{
