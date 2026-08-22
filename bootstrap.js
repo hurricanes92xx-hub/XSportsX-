@@ -11,7 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '7.3.0';
+const BUILD_VERSION = '7.3.1';
 
 const SPORT_ALIASES = {
   nfl: ['nfl', 'football', 'american football'],
@@ -90,11 +90,10 @@ function filterPayload(body, token, path) {
     body.version = BUILD_VERSION;
     body.id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 16)}`;
     if (Array.isArray(body.catalogs)) {
-      // IMPORTANT: a private connection contains ONLY the leagues the user selected.
-      // Do not expose aggregate catalogs because they can reintroduce unselected sports.
-      body.catalogs = selected
-        ? body.catalogs.filter(c => isSelected(selected, c.id))
-        : [];
+      // A private connection contains ONLY the leagues selected in its token.
+      // Aggregate catalogs are deliberately removed because they can reintroduce
+      // events from leagues the user did not select.
+      body.catalogs = selected ? body.catalogs.filter(c => isSelected(selected, c.id)) : [];
       body.catalogs = body.catalogs.map(c => ({ ...c, showInHome: true }));
     }
   }
@@ -106,7 +105,6 @@ function filterPayload(body, token, path) {
       return true;
     });
   }
-
   return body;
 }
 
@@ -146,6 +144,7 @@ const proxy = http.createServer((req, res) => {
           }
           const body = filterPayload(JSON.parse(Buffer.concat(chunks).toString('utf8')), token, path);
           const out = Buffer.from(JSON.stringify(body));
+          const selected = selectedSports(token);
           const selectedHeader = selected ? [...selected].join(',') : 'configuration-unreadable';
           const h = {
             ...response.headers, 'content-length': String(out.length),
