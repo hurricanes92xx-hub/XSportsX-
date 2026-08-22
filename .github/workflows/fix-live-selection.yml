@@ -24,14 +24,12 @@ jobs:
           p = Path('server.js')
           s = p.read_text()
 
-          # Make the live server and manifest report the same build as bootstrap.
-          s = s.replace("version:'7.2.0'", "version:'7.3.1'")
-          s = s.replace("'X-XSportsX-Build':'7.2.0'", "'X-XSportsX-Build':'7.3.1'")
+          # Keep the actual server build in sync with the bootstrap build.
+          for old in ('6.0.1', '7.2.0', '7.3.1'):
+              s = s.replace(f"version:'{old}'", "version:'7.4.0'")
+              s = s.replace(f"'X-XSportsX-Build':'{old}'", "'X-XSportsX-Build':'7.4.0'")
 
-          # Replace catalogEvents so aggregate catalogs are also restricted to the
-          # private connection's selected leagues. Previously only individual league
-          # catalogs were checked, allowing Live Now/Starting Soon/Command Center
-          # to bring back events from unselected leagues.
+          # Make aggregate catalogs obey the private connection's league selection.
           pattern = r"async function catalogEvents\(id\)\{.*?\}\nfunction catalogs\(\)"
           replacement = """async function catalogEvents(id){const c=config();const allowed=new Set(Array.isArray(c.sports)&&c.sports.length?c.sports:Object.keys(LEAGUES));const ev=(await allEvents()).filter(e=>allowed.has(e.league));if(id==='live-now')return ev.filter(e=>e.state==='in');if(id==='starting-soon')return ev.filter(e=>e.state==='pre').slice(0,80);if(id==='sports-command-center')return ev.slice(0,100);if(LEAGUES[id])return allowed.has(id)?ev.filter(e=>e.league===id):[];return[];}\nfunction catalogs()"""
           s2, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
@@ -49,6 +47,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No server changes needed"
           else
-            git commit -m "Fix selected leagues in live server"
+            git commit -m "Set XSportsX live build 7.4.0 and enforce league selection"
             git push
           fi
