@@ -10,9 +10,14 @@ function rewrite(path){
   const u=new URL(path,'http://local');
   let parts=u.pathname.split('/').filter(Boolean);
   if(parts[0]==='v527')parts=parts.slice(1);
+
+  // Only strip a configured XSportsX token. Normal application routes such
+  // as /catalog/tv/... and /artwork/... must pass through untouched.
   if(parts.length>1){
-    const token=parts.shift();
-    if(token&&token!=='manifest.json'&&!token.endsWith('.json')){
+    const token=parts[0];
+    const looksSigned=token && token.length>20 && token.split('.').length===3;
+    if(looksSigned){
+      parts.shift();
       u.pathname='/'+parts.join('/');
       u.searchParams.set('config',token);
     }
@@ -23,7 +28,6 @@ function rewrite(path){
 const proxy=http.createServer((req,res)=>{
   try{
     const raw=req.url||'/';
-    const incoming=new URL(raw,'http://local');
     const path=rewrite(raw);
     const headers={...req.headers,host:req.headers.host||'localhost','x-forwarded-proto':req.headers['x-forwarded-proto']||'https'};
     const r=http.request({hostname:'127.0.0.1',port:internalPort,path,method:req.method,headers},up=>{
