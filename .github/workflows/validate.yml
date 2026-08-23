@@ -1,4 +1,4 @@
-name: Validate XSportsX
+name: Validate XSportsX 7.5
 
 on:
   push:
@@ -15,7 +15,18 @@ jobs:
         with:
           node-version: 20
       - run: npm install --ignore-scripts
-      - run: node --check server.js
-      - run: node --check render-proxy.js
-      - run: node --check artwork.js
-      - run: node --check compat-prefix.js
+      - name: Verify canonical 7.5 build
+        shell: bash
+        run: |
+          test "$(node -p "require('./package.json').version")" = "7.5.1"
+          grep -q "BUILD_VERSION = '7.5.0'" bootstrap.js
+          grep -q "version:'7.5.0'" server.js
+          ! grep -R -n -E '6\.0\.1|7\.2\.0|7\.3\.1|7\.4\.0' --exclude-dir=.git --exclude='package-lock.json' .
+      - name: Syntax check
+        run: |
+          node --check server.js
+          node --check render-proxy.js
+          node --check bootstrap.js
+          node --check compat-prefix.js
+          node --check artwork.js
+          node --check xtream-health.js
