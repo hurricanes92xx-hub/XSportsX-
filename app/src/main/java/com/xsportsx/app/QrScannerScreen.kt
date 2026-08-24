@@ -21,20 +21,24 @@ import kotlinx.coroutines.launch
 @Composable
 fun QrScannerScreen(pairingUrl: String, accountToken: String, onConnected: (String) -> Unit, onCancel: () -> Unit) {
     val context = LocalContext.current
+    val store = remember { DeviceSyncStore(context) }
     val scope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to scan") }
     var busy by remember { mutableStateOf(false) }
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
         val payload = result.contents ?: return@rememberLauncherForActivityResult
         val pairCode = payload.substringAfterLast('/').takeIf { it.isNotBlank() } ?: run { status = "Invalid XSportsX QR"; return@rememberLauncherForActivityResult }
-        busy = true; status = "Approving this TV…"
+        busy = true
         scope.launch {
             runCatching {
+                status = "Approving this TV…"
                 val approval = PairingClient.approve(pairingUrl, pairCode, accountToken)
-                status = "TV approved. Finishing connection…"
+                status = "Finishing secure connection…"
                 PairingClient.complete(pairingUrl, approval.sessionId, approval.deviceToken)
             }.onSuccess { deviceId ->
-                status = "TV connected"; onConnected(deviceId)
+                store.saveDeviceId(deviceId)
+                status = "TV connected"
+                onConnected(deviceId)
             }.onFailure { status = it.message ?: "Pairing failed" }
             busy = false
         }
