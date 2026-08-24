@@ -22,6 +22,15 @@ const bad = "return json(res,200,{ok:true,version:VERSION})}if(req.method==='GET
 const good = "return json(res,200,{ok:true,version:VERSION});if(req.method==='GET'&&u.pathname==='/artwork.svg')";
 if (source.includes(bad)) source = source.replace(bad, good);
 
+// Always expose the complete XSportsX sports catalog set. The previous
+// configuration stored only the selected sports in the encrypted token,
+// which caused Nuvio to receive only a subset of catalogs after reinstall.
+// Keep the user's credentials intact, but normalize the catalog selection to
+// every league defined by LEAGUES. This is intentionally done at decrypt time
+// so both manifest and catalog requests use the same complete set.
+const decryptFix = `function decrypt(t){try{const[a,b,c]=String(t||'').split('.');if(!a||!b||!c)return null;const d=crypto.createDecipheriv('aes-256-gcm',KEY,Buffer.from(a,'base64url'));d.setAuthTag(Buffer.from(b,'base64url'));const v=JSON.parse(Buffer.concat([d.update(Buffer.from(c,'base64url')),d.final()]).toString());if(v&&Array.isArray(v.sports)&&typeof LEAGUES!=='undefined')v.sports=LEAGUES.map(x=>x[0]);return v}catch{return null}}\nfunction normalizeXtream`;
+source = source.replace(/function decrypt\(t\)\{[\s\S]*?\}\nfunction normalizeXtream/, decryptFix);
+
 // The previous meta handler left the literal `event:` prefix in the lookup
 // key, so clicking a catalog item produced "Failed to load". Use the exact
 // event token after removing the prefix and support both old and new IDs.
@@ -44,8 +53,7 @@ if (source.includes(oldEspn)) source = source.replace(oldEspn, newEspn);
 // Filter null ESPN records before merge.
 source = source.replace("all.push(...await espn(id));const v=cacheSet(k,mergeEvents(all),20000);", "all.push(...(await espn(id)).filter(Boolean));const v=cacheSet(k,mergeEvents(all),20000);");
 
-// Robustly resolve both the new base64url IDs and the old IDs. The old code
-// compared `sourceId` to `event:<id>` and therefore returned null metadata.
+// Robustly resolve both the new base64url IDs and the old IDs.
 const oldMetaHandler = "if(parts[1]==='meta'&&parts[2]==='tv'&&parts[3]){const rid=parts[3].replace(/\\.json$/,'');const id=rid.split(':')[1]||c.sports[0];const ev=await schedules(id);const e=ev.find(x=>String(x.sourceId)===decodeURIComponent(rid.split(':').slice(2).join(':')));return json(res,200,{meta:e?eventMeta(id,e,u.origin):null})}";
 const newMetaHandler = "if(parts[1]==='meta'&&parts[2]==='tv'&&parts[3]){const rid=parts[3].replace(/\\.json$/,'');const bits=rid.split(':');const id=bits[1]||c.sports[0];if(!VALID.has(id))return json(res,200,{meta:null});let raw=bits.slice(2).join(':').replace(/^event:/,'');try{raw=Buffer.from(raw,'base64url').toString('utf8')}catch{}const ev=await schedules(id);const e=ev.find(x=>String(x.sourceId)===decodeURIComponent(raw)||eventKey(x)===decodeURIComponent(raw));return json(res,200,{meta:e?eventMeta(id,e,u.origin):null})}";
 if (source.includes(oldMetaHandler)) source = source.replace(oldMetaHandler, newMetaHandler);
