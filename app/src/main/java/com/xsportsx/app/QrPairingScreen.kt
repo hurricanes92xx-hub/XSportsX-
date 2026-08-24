@@ -27,14 +27,14 @@ fun QrPairingScreen(pairingUrl: String, onDone: () -> Unit) {
             Text("CONNECT THIS TV", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
             Text("Scan this code with your signed-in phone", color = Color(0xFF8C93A1), fontSize = 14.sp)
             Spacer(Modifier.height(28.dp))
-            Box(Modifier.size(260.dp).background(Color.White, RoundedCornerShape(24.dp)), contentAlignment = Alignment.Center) {
-                // QR rendering is supplied by the app's QR library from start.qrPayload.
-                Text(start?.pairCode ?: "LOADING", color = Color.Black, fontSize = 22.sp, fontWeight = FontWeight.Black)
+            Box(Modifier.size(280.dp).background(Color.White, RoundedCornerShape(24.dp)).padding(10.dp), contentAlignment = Alignment.Center) {
+                start?.let { QrImage(it.qrPayload, Modifier.fillMaxSize()) } ?: CircularProgressIndicator(color = Color(0xFFFF1744))
             }
             Spacer(Modifier.height(18.dp))
-            Text(start?.let { "Expires in ${it.expiresIn / 60}:${String.format("%02d", it.expiresIn % 60)}" } ?: "Creating secure pairing…", color = Color(0xFFFF536C), fontWeight = FontWeight.Bold)
+            Text(start?.let { "CODE ${it.pairCode}" } ?: "Creating secure pairing…", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(start?.let { "Expires in ${it.expiresIn / 60}:${String.format("%02d", it.expiresIn % 60)}" } ?: "", color = Color(0xFFFF536C), fontWeight = FontWeight.Bold)
             error?.let { Text(it, color = Color(0xFFFF536C), modifier = Modifier.padding(top = 12.dp)) }
-            Spacer(Modifier.height(22.dp))
+            Spacer(Modifier.height(18.dp))
             Text("Your Xtream/M3U credentials are never placed in the QR code.", color = Color(0xFF626976), fontSize = 11.sp)
             TextButton(onClick = onDone) { Text("CANCEL") }
         }
