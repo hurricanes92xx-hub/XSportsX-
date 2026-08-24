@@ -93,7 +93,7 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
 }
 
 @Composable
-private fun SourceTab(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun RowScope.SourceTab(label: String, selected: Boolean, onClick: () -> Unit) {
     Box(Modifier.weight(1f).clickable { onClick() }.background(if (selected) Color(0xFFFF1744) else Color.Transparent, RoundedCornerShape(12.dp)).padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
         Text(label, color = Color.White, fontWeight = FontWeight.Black, fontSize = 11.sp)
     }
@@ -113,21 +113,24 @@ private fun SourceField(label: String, value: String, onValue: (String) -> Unit,
 }
 
 private suspend fun testSource(config: SourceConfig): String = withContext(Dispatchers.IO) {
-    runCatching {
-        val endpoint = if (config.type == "M3U") {
-            config.m3uUrl.trim()
-        } else {
-            val base = config.server.trim().removeSuffix("/")
-            "$base/player_api.php?username=${java.net.URLEncoder.encode(config.username.trim(), "UTF-8")}&password=${java.net.URLEncoder.encode(config.password, "UTF-8")}"
+    try {
+        val target = if (config.type == "M3U") config.m3uUrl else {
+            val base = config.server.trimEnd('/')
+            "$base/player_api.php?username=${java.net.URLEncoder.encode(config.username, "UTF-8")}&password=${java.net.URLEncoder.encode(config.password, "UTF-8")}"
         }
-        require(endpoint.startsWith("https://")) { "Use an HTTPS source URL." }
-        val connection = URL(endpoint).openConnection() as HttpURLConnection
-        connection.connectTimeout = 8000
-        connection.readTimeout = 10000
-        connection.requestMethod = "GET"
-        connection.instanceFollowRedirects = true
-        val code = connection.responseCode
-        connection.disconnect()
-        if (code in 200..299) "Connected • source responded successfully" else "Source returned HTTP $code"
-    }.getOrElse { "Connection failed • ${it.message ?: "check the source details"}" }
+        val connection = (URL(target).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = 8000
+            readTimeout = 8000
+            instanceFollowRedirects = true
+        }
+        try {
+            val code = connection.responseCode
+            if (code in 200..299) "Connected • source responded" else "Source returned HTTP $code"
+        } finally {
+            connection.disconnect()
+        }
+    } catch (e: Exception) {
+        "Connection failed • ${e.message ?: "check source details"}"
+    }
 }
