@@ -24,8 +24,17 @@ jobs:
           java -version
           gradle --version
       - name: Clean and build debug APK
+        shell: bash
         run: |
-          gradle clean :app:assembleDebug --no-daemon --stacktrace --info --refresh-dependencies
+          set -o pipefail
+          gradle clean :app:assembleDebug --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
+      - name: Upload Gradle build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-gradle-build-log
+          path: gradle-build.log
+          if-no-files-found: ignore
       - name: Verify APK exists
         run: |
           test -s app/build/outputs/apk/debug/app-debug.apk
