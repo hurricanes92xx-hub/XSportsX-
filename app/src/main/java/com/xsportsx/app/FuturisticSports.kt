@@ -41,7 +41,12 @@ private val xNetworks = listOf(
 )
 
 @Composable
-fun FuturisticHome(onNetwork: (XNetwork) -> Unit = {}) {
+fun FuturisticHome(
+    onConnect: () -> Unit = {},
+    onNetwork: (XNetwork) -> Unit = {}
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val sourceConfigured = remember { SourceStore(context).load().isConfigured() }
     val pulse = rememberInfiniteTransition(label = "live")
     val alpha by pulse.animateFloat(.35f, 1f, infiniteRepeatable(tween(750), RepeatMode.Reverse), label = "pulse")
     val sports = listOf("NFL", "NBA", "NCAA", "MLB", "NHL", "UFC", "BOXING", "SOCCER")
@@ -53,15 +58,27 @@ fun FuturisticHome(onNetwork: (XNetwork) -> Unit = {}) {
                         Text("XSPORTS", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp)
                         Text("NEXT-GEN SPORTS COMMAND", color = Color(0xFF687180), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                     }
-                    Box(Modifier.clip(RoundedCornerShape(20.dp)).background(Color(0x2219FF72)).padding(horizontal = 12.dp, vertical = 7.dp)) {
+                    Box(
+                        Modifier.clip(RoundedCornerShape(20.dp))
+                            .background(if (sourceConfigured) Color(0x2219FF72) else Color(0x22FF1744))
+                            .clickable { onConnect() }
+                            .padding(horizontal = 12.dp, vertical = 7.dp)
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(Modifier.size(8.dp).alpha(alpha).clip(RoundedCornerShape(50)).background(Color(0xFF22FF7A)))
-                            Spacer(Modifier.width(7.dp)); Text("SOURCE READY", color = Color(0xFF74FFAA), fontSize = 9.sp, fontWeight = FontWeight.Black)
+                            Box(Modifier.size(8.dp).alpha(alpha).clip(RoundedCornerShape(50)).background(if (sourceConfigured) Color(0xFF22FF7A) else XRed))
+                            Spacer(Modifier.width(7.dp))
+                            Text(if (sourceConfigured) "SOURCE READY" else "CONNECT SOURCE", color = if (sourceConfigured) Color(0xFF74FFAA) else Color(0xFFFF7185), fontSize = 9.sp, fontWeight = FontWeight.Black)
                         }
                     }
                 }
                 Spacer(Modifier.height(18.dp))
-                Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF260812), Color(0xFF111827), Color(0xFF251108)))).padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp))
+                        .clickable { onConnect() }
+                        .background(Brush.horizontalGradient(listOf(Color(0xFF260812), Color(0xFF111827), Color(0xFF251108))))
+                        .padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(Modifier.clip(RoundedCornerShape(7.dp)).background(XRed).padding(horizontal = 9.dp, vertical = 5.dp)) { Text("LIVE", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black) }
@@ -69,14 +86,17 @@ fun FuturisticHome(onNetwork: (XNetwork) -> Unit = {}) {
                         }
                         Spacer(Modifier.height(10.dp))
                         Text("YOUR GAMES.\nONE COMMAND CENTER.", color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Black, lineHeight = 30.sp)
-                        Spacer(Modifier.height(7.dp)); Text("Only live events appear here when your connected source has a matching stream.", color = Color(0xFF9BA4B2), fontSize = 12.sp)
+                        Spacer(Modifier.height(7.dp))
+                        Text(if (sourceConfigured) "Source connected. Tap here to manage it or refresh your connection." else "Connect your authorized source to unlock live event matching and network streams.", color = Color(0xFF9BA4B2), fontSize = 12.sp)
+                        Spacer(Modifier.height(12.dp))
+                        Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).padding(horizontal = 14.dp, vertical = 8.dp)) { Text(if (sourceConfigured) "MANAGE SOURCE" else "CONNECT NOW →", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black) }
                     }
                     Text("◈", color = XRed, fontSize = 64.sp, fontWeight = FontWeight.Black)
                 }
                 Spacer(Modifier.height(18.dp))
                 Text("SPORTS", color = Color(0xFF707989), fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
                 Spacer(Modifier.height(9.dp))
-                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(9.dp)) { sports.forEach { SportPill(it) } }
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(9.dp)) { sports.forEach { SportPill(it) { if (!sourceConfigured) onConnect() } } }
                 Spacer(Modifier.height(20.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("NETWORKS", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
@@ -93,8 +113,8 @@ fun FuturisticHome(onNetwork: (XNetwork) -> Unit = {}) {
     }
 }
 
-@Composable private fun SportPill(name: String) {
-    Box(Modifier.clip(RoundedCornerShape(15.dp)).background(Panel2).padding(horizontal = 15.dp, vertical = 11.dp)) { Text(name, color = Color(0xFFDCE1E9), fontSize = 11.sp, fontWeight = FontWeight.Black) }
+@Composable private fun SportPill(name: String, onClick: () -> Unit) {
+    Box(Modifier.clip(RoundedCornerShape(15.dp)).background(Panel2).clickable { onClick() }.padding(horizontal = 15.dp, vertical = 11.dp)) { Text(name, color = Color(0xFFDCE1E9), fontSize = 11.sp, fontWeight = FontWeight.Black) }
 }
 
 @Composable private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
