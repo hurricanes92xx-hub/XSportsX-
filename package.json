@@ -1,12 +1,12 @@
 {
   "name": "xsportsx",
-  "version": "9.8.1",
+  "version": "9.8.2",
   "private": true,
   "description": "XSportsX multi-source sports addon for Nuvio/Stremio.",
-  "main": "boot981.js",
+  "main": "boot982.js",
   "scripts": {
-    "start": "node boot981.js",
-    "check": "node --check boot981.js"
+    "start": "node boot982.js",
+    "check": "node --check boot982.js"
   },
   "engines": { "node": ">=20" },
   "license": "MIT"
