@@ -5,46 +5,156 @@ const { URL } = require('url');
 const PORT = Number(process.env.PORT || 10000);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const VERSION = '1.0.1';
+const VERSION = '9.0.0';
 
 const LEAGUES = [
   ['nfl', 'NFL', '🏈'], ['ncaaf', 'NCAA Football', '🏈'],
-  ['nba', 'NBA', '🏀'], ['ncaab', 'NCAA Basketball', '🏀'],
-  ['mlb', 'MLB', '⚾'], ['nhl', 'NHL', '🏒'],
+  ['nba', 'NBA', '🏀'], ['wnba', 'WNBA', '🏀'],
+  ['ncaab', 'NCAA Basketball', '🏀'], ['mlb', 'MLB', '⚾'],
+  ['nhl', 'NHL', '🏒'], ['mls', 'MLS', '⚽'],
+  ['epl', 'Premier League', '⚽'], ['ucl', 'UEFA Champions League', '⚽'],
+  ['laliga', 'LaLiga', '⚽'], ['seriea', 'Serie A', '⚽'],
+  ['bundesliga', 'Bundesliga', '⚽'], ['ligue1', 'Ligue 1', '⚽'],
   ['ufc', 'UFC', '🥊'], ['boxing', 'Boxing', '🥊']
 ];
 const VALID = new Set(LEAGUES.map(([id]) => id));
 
+function headers(res, type='application/json; charset=utf-8') {
+  res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-methods', 'GET,POST,OPTIONS');
+  res.setHeader('access-control-allow-headers', 'content-type');
+  res.setHeader('x-xsportsx-version', VERSION);
+  res.setHeader('cache-control', 'no-store');
+  res.setHeader('content-type', type);
+}
 function json(res, status, body) {
   const text = JSON.stringify(body);
-  res.writeHead(status, {'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-xsportsx-version':VERSION,'content-length':Buffer.byteLength(text)});
+  headers(res);
+  res.statusCode = status;
+  res.setHeader('content-length', Buffer.byteLength(text));
   res.end(text);
 }
 function encrypt(value) {
-  const iv=crypto.randomBytes(12), cipher=crypto.createCipheriv('aes-256-gcm',KEY,iv);
-  const body=Buffer.concat([cipher.update(JSON.stringify(value),'utf8'),cipher.final()]);
-  return [iv,cipher.getAuthTag(),body].map(b=>b.toString('base64url')).join('.');
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv);
+  const body = Buffer.concat([cipher.update(JSON.stringify(value), 'utf8'), cipher.final()]);
+  return [iv, cipher.getAuthTag(), body].map(b => b.toString('base64url')).join('.');
 }
 function decrypt(token) {
-  try { const [iv,tag,body]=String(token||'').split('.'); if(!iv||!tag||!body)return null;
-    const decipher=crypto.createDecipheriv('aes-256-gcm',KEY,Buffer.from(iv,'base64url'));decipher.setAuthTag(Buffer.from(tag,'base64url'));
-    return JSON.parse(Buffer.concat([decipher.update(Buffer.from(body,'base64url')),decipher.final()]).toString('utf8'));
+  try {
+    const [iv, tag, body] = String(token || '').split('.');
+    if (!iv || !tag || !body) return null;
+    const decipher = crypto.createDecipheriv('aes-256-gcm', KEY, Buffer.from(iv, 'base64url'));
+    decipher.setAuthTag(Buffer.from(tag, 'base64url'));
+    return JSON.parse(Buffer.concat([
+      decipher.update(Buffer.from(body, 'base64url')), decipher.final()
+    ]).toString('utf8'));
   } catch { return null; }
 }
-function page(base) {
-  const groups=[['Football',['nfl','ncaaf']],['Basketball',['nba','ncaab']],['Baseball / Hockey',['mlb','nhl']],['Combat',['ufc','boxing']]];
-  const cards=groups.map(([title,ids])=>`<section class="group"><h2>${title}</h2>${ids.map(id=>{const l=LEAGUES.find(x=>x[0]===id);return `<button class="league" type="button" data-id="${id}" aria-pressed="false"><span>${l[2]}</span><strong>${l[1]}</strong></button>`;}).join('')}</section>`).join('');
-  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>XSportsX</title><style>*{box-sizing:border-box}body{margin:0;background:#070b12;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:720px;margin:auto;padding:20px}.hero,.panel{background:#0d1420;border:1px solid #25344a;border-radius:18px;padding:20px;margin-bottom:16px}.hero h1{margin:0 0 5px;font-size:32px}.muted{color:#91a0b5}.group{margin-top:18px}.league{width:100%;display:flex;align-items:center;gap:14px;text-align:left;padding:16px;margin:8px 0;border-radius:14px;border:1px solid #2a3a50;background:#121b29;color:#fff;font-size:17px;cursor:pointer;touch-action:manipulation}.league span{font-size:25px}.league[aria-pressed="true"]{border-color:#ff344b;background:#26131a}.league[aria-pressed="true"]:after{content:'✓';margin-left:auto;font-size:22px}.count{font-weight:700;margin:10px 0;color:#ff7380}.primary{width:100%;padding:16px;border:0;border-radius:14px;background:#e92840;color:white;font-size:17px;font-weight:800}.primary:disabled{opacity:.4}.result{word-break:break-all;margin-top:15px}.result a{color:#8fc8ff}.input{width:100%;padding:14px;margin:6px 0;background:#080e17;color:#fff;border:1px solid #304159;border-radius:10px}</style></head><body><main><div class="hero"><h1>XSportsX</h1><div class="muted">Simple sports setup • v${VERSION}</div></div><div class="panel"><h2>Choose your leagues</h2><div id="count" class="count">0 selected</div>${cards}</div><div class="panel"><h2>IPTV source</h2><input id="xtream" class="input" placeholder="Xtream server URL"><input id="user" class="input" placeholder="Username"><input id="pass" class="input" type="password" placeholder="Password"><button id="create" class="primary" disabled>Create connection</button><div id="result" class="result muted"></div></div></main><script>const buttons=[...document.querySelectorAll('.league')],count=document.getElementById('count'),create=document.getElementById('create');function refresh(){const n=buttons.filter(b=>b.getAttribute('aria-pressed')==='true').length;count.textContent=n+' selected';create.disabled=n===0}buttons.forEach(b=>b.addEventListener('click',()=>{b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));refresh()}));create.addEventListener('click',async()=>{const sports=buttons.filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.dataset.id),result=document.getElementById('result');result.textContent='Creating connection…';try{const r=await fetch('${base}/configure',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sports,source:'xtream',xtream:{baseUrl:document.getElementById('xtream').value.trim(),username:document.getElementById('user').value,password:document.getElementById('pass').value}})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to create connection');result.innerHTML='<b>Connection created.</b><br><br><a href="'+d.manifestUrl+'">'+d.manifestUrl+'</a>'}catch(e){result.textContent=e.message}});refresh();</script></body></html>`;
+function normalizeXtreamUrl(value) {
+  let s = String(value || '').trim();
+  if (!s) return '';
+  try {
+    const u = new URL(s);
+    u.search = '';
+    u.hash = '';
+    u.pathname = u.pathname.replace(/\/+$/, '').replace(/\/player_api\.php$/i, '');
+    return u.toString().replace(/\/$/, '');
+  } catch { return ''; }
 }
-function manifest(base,config){return{id:'community.xsportsx.'+crypto.createHash('sha256').update(JSON.stringify(config)).digest('hex').slice(0,16),version:VERSION,name:'XSportsX',description:'XSportsX sports addon using your own IPTV source.',types:['tv'],resources:[{name:'catalog',types:['tv'],idPrefixes:['sports:']},{name:'meta',types:['tv'],idPrefixes:['sports:']},{name:'stream',types:['tv'],idPrefixes:['sports:']}],catalogs:config.sports.map(id=>{const l=LEAGUES.find(x=>x[0]===id);return{type:'tv',id:`sports:${id}`,name:`${l[2]} ${l[1]}`};}),behaviorHints:{configurable:false,configurationRequired:false},logo:`${base}/artwork.svg`};}
-function artwork(res){const svg='<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="100%" height="100%" fill="#070b12"/><text x="50%" y="48%" text-anchor="middle" fill="white" font-family="Arial" font-size="64" font-weight="700">XSPORTSX</text><text x="50%" y="58%" text-anchor="middle" fill="#ff344b" font-family="Arial" font-size="28">LIVE SPORTS</text></svg>';res.writeHead(200,{'content-type':'image/svg+xml','cache-control':'public,max-age=86400'});res.end(svg);}
-function tokenFrom(pathname){const p=pathname.split('/').filter(Boolean);return p[0]==='manifest.json'?null:(p[0]||null);}
-const server=http.createServer((req,res)=>{const url=new URL(req.url||'/',`http://${req.headers.host||'localhost'}`),base=`${url.protocol}//${url.host}`;
-  if(req.method==='GET'&&(url.pathname==='/'||url.pathname==='/configure')){const body=page(base);res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-xsportsx-version':VERSION});return res.end(body);}
-  if(req.method==='GET'&&url.pathname==='/health')return json(res,200,{ok:true,version:VERSION});
-  if(req.method==='POST'&&url.pathname==='/configure'){let body='';req.on('data',c=>{body+=c;if(body.length>32768)req.destroy()});req.on('end',()=>{try{const input=JSON.parse(body),sports=[...new Set(Array.isArray(input.sports)?input.sports.map(String).filter(id=>VALID.has(id)):[])];if(!sports.length)return json(res,400,{error:'Select at least one league.'});const config={source:'xtream',sports,xtream:{baseUrl:String(input.xtream?.baseUrl||'').replace(/\/$/,''),username:String(input.xtream?.username||''),password:String(input.xtream?.password||'')}};return json(res,200,{version:VERSION,manifestUrl:`${base}/${encrypt(config)}/manifest.json`});}catch{return json(res,400,{error:'Invalid configuration.'})}});return;}
-  if(req.method==='GET'&&url.pathname==='/artwork.svg')return artwork(res);
-  const token=tokenFrom(url.pathname);if(req.method==='GET'&&token&&url.pathname.endsWith('/manifest.json')){const config=decrypt(token);if(!config||!Array.isArray(config.sports)||!config.sports.length)return json(res,404,{error:'Invalid configuration.'});return json(res,200,manifest(base,config));}
-  res.statusCode=404;res.end('Not found');
+function manifest(base, config) {
+  const digest = crypto.createHash('sha256').update(JSON.stringify({sports: config.sports})).digest('hex').slice(0, 16);
+  return {
+    id: `community.xsportsx.${digest}`,
+    version: VERSION,
+    name: 'XSportsX',
+    description: 'Live sports from your own Xtream or M3U source.',
+    types: ['tv'],
+    resources: [
+      { name: 'catalog', types: ['tv'] },
+      { name: 'meta', types: ['tv'], idPrefixes: ['sports:'] },
+      { name: 'stream', types: ['tv'], idPrefixes: ['sports:'] }
+    ],
+    catalogs: config.sports.map(id => {
+      const l = LEAGUES.find(x => x[0] === id);
+      return { type: 'tv', id: `sports:${id}`, name: `${l[2]} ${l[1]}`, extra: [] };
+    }),
+    behaviorHints: { configurable: false, configurationRequired: false },
+    logo: `${base}/artwork.svg`
+  };
+}
+function artwork(res) {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="100%" height="100%" fill="#070b12"/><text x="50%" y="48%" text-anchor="middle" fill="white" font-family="Arial" font-size="64" font-weight="700">XSPORTSX</text><text x="50%" y="58%" text-anchor="middle" fill="#ff344b" font-family="Arial" font-size="28">LIVE SPORTS</text></svg>';
+  headers(res, 'image/svg+xml');
+  res.setHeader('cache-control', 'public,max-age=86400');
+  res.end(svg);
+}
+function configPage(base) {
+  const cards = LEAGUES.map(([id, name, emoji]) => `<button class="league" type="button" data-id="${id}" aria-pressed="false"><span>${emoji}</span><strong>${name}</strong></button>`).join('');
+  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>XSportsX 9.0</title><style>*{box-sizing:border-box}body{margin:0;background:#070b12;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:720px;margin:auto;padding:20px}.hero,.panel{background:#0d1420;border:1px solid #25344a;border-radius:18px;padding:20px;margin-bottom:16px}.hero h1{margin:0 0 4px;font-size:32px}.muted{color:#91a0b5}.league{width:100%;display:flex;align-items:center;gap:14px;text-align:left;padding:15px;margin:7px 0;border-radius:14px;border:1px solid #2a3a50;background:#121b29;color:#fff;font-size:17px;cursor:pointer;touch-action:manipulation}.league span{font-size:24px}.league[aria-pressed="true"]{border-color:#ff344b;background:#26131a}.league[aria-pressed="true"]:after{content:'✓';margin-left:auto;font-size:22px}.count{font-weight:700;margin:10px 0;color:#ff7380}.primary{width:100%;padding:16px;border:0;border-radius:14px;background:#e92840;color:white;font-size:17px;font-weight:800}.primary:disabled{opacity:.4}.result{word-break:break-word;margin-top:15px}.result a{color:#8fc8ff}.input{width:100%;padding:14px;margin:6px 0;background:#080e17;color:#fff;border:1px solid #304159;border-radius:10px}.ok{color:#62e6a5}.err{color:#ff7180}</style></head><body><main><div class="hero"><h1>XSportsX</h1><div class="muted">Nuvio live sports engine • Build ${VERSION}</div></div><div class="panel"><h2>Choose leagues</h2><div id="count" class="count">0 selected</div>${cards}</div><div class="panel"><h2>Xtream source</h2><input id="xtream" class="input" placeholder="https://server.example.com"><input id="user" class="input" placeholder="Username" autocomplete="username"><input id="pass" class="input" type="password" placeholder="Password" autocomplete="current-password"><button id="create" class="primary" disabled>Create manifest</button><div id="result" class="result muted"></div></div></main><script>const buttons=[...document.querySelectorAll('.league')],count=document.getElementById('count'),create=document.getElementById('create'),result=document.getElementById('result');function refresh(){const n=buttons.filter(b=>b.getAttribute('aria-pressed')==='true').length;count.textContent=n+' selected';create.disabled=n===0}buttons.forEach(b=>b.addEventListener('click',()=>{b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));refresh()}));create.addEventListener('click',async()=>{const sports=buttons.filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.dataset.id);const xtream=document.getElementById('xtream').value.trim(),username=document.getElementById('user').value,password=document.getElementById('pass').value;result.className='result muted';result.textContent='Creating manifest…';try{const r=await fetch('${base}/configure',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({source:'xtream',sports,xtream:{baseUrl:xtream,username,password}})});const d=await r.json();if(!r.ok)throw Error(d.error||'Unable to create manifest');result.className='result ok';result.innerHTML='<b>Manifest ready.</b><br><br><a href="'+d.manifestUrl+'">Open manifest</a><br><br>'+d.manifestUrl}catch(e){result.className='result err';result.textContent=e.message}});refresh();</script></body></html>`;
+}
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', c => { body += c; if (body.length > 32768) reject(new Error('Request too large')); });
+    req.on('end', () => resolve(body));
+    req.on('error', reject);
+  });
+}
+function tokenFor(url) {
+  const parts = url.pathname.split('/').filter(Boolean);
+  const marker = parts.findIndex(p => p === 'manifest.json' || p === 'catalog' || p === 'meta' || p === 'stream');
+  if (marker > 0) return parts[marker - 1];
+  if (parts.length === 1 && parts[0] !== 'configure' && parts[0] !== 'health' && parts[0] !== 'artwork.svg') return parts[0];
+  return url.searchParams.get('config') || null;
+}
+function sendCatalog(res, config, catalogId) {
+  const id = String(catalogId || '').replace(/^sports:/, '');
+  if (!VALID.has(id) || !config.sports.includes(id)) return json(res, 200, { metas: [] });
+  return json(res, 200, { metas: [] });
+}
+
+const server = http.createServer(async (req, res) => {
+  headers(res);
+  if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
+  const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+  const base = `${url.protocol}//${url.host}`;
+
+  if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/configure')) {
+    headers(res, 'text/html; charset=utf-8');
+    return res.end(configPage(base));
+  }
+  if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: VERSION });
+  if (req.method === 'GET' && url.pathname === '/artwork.svg') return artwork(res);
+
+  if (req.method === 'POST' && url.pathname === '/configure') {
+    try {
+      const input = JSON.parse(await readBody(req));
+      const sports = [...new Set(Array.isArray(input.sports) ? input.sports.map(String).filter(id => VALID.has(id)) : [])];
+      if (!sports.length) return json(res, 400, { error: 'Select at least one league.' });
+      if (String(input.source || 'xtream').toLowerCase() === 'xtream') {
+        const baseUrl = normalizeXtreamUrl(input.xtream?.baseUrl);
+        const username = String(input.xtream?.username || '').trim();
+        const password = String(input.xtream?.password || '');
+        if (!baseUrl || !username || !password) return json(res, 400, { error: 'Enter the Xtream server URL, username, and password.' });
+        const config = { source: 'xtream', sports, xtream: { baseUrl, username, password } };
+        return json(res, 200, { version: VERSION, manifestUrl: `${base}/${encrypt(config)}/manifest.json` });
+      }
+      return json(res, 400, { error: 'Unsupported source.' });
+    } catch (e) { return json(res, 400, { error: e.message || 'Invalid configuration.' }); }
+  }
+
+  const token = tokenFor(url);
+  const config = decrypt(token);
+  if (!config || !Array.isArray(config.sports) || !config.sports.length) return json(res, 404, { error: 'Invalid or expired XSportsX configuration.' });
+
+  if (req.method === 'GET' && url.pathname.endsWith('/manifest.json')) return json(res, 200, manifest(base, config));
+  if (req.method === 'GET' && (url.pathname.includes('/catalog/'))) {
+    const parts = url.pathname.split('/').filter(Boolean), i = parts.indexOf('catalog');
+    return sendCatalog(res, config, parts[i + 2] || '');
+  }
+  if (req.method === 'GET' && (url.pathname.includes('/meta/') || url.pathname.includes('/stream/'))) return json(res, 200, { metas: [], streams: [] });
+  return json(res, 404, { error: 'Not found' });
 });
-server.listen(PORT,'0.0.0.0',()=>console.log(`XSportsX ${VERSION} listening on ${PORT}`));
+
+server.listen(PORT, '0.0.0.0', () => console.log(`XSportsX ${VERSION} listening on ${PORT}`));
