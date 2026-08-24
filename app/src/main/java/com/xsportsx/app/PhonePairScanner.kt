@@ -31,11 +31,13 @@ fun PhonePairScanner(pairingBaseUrl: String, accountToken: String, onConnected: 
         if (code.isBlank()) { status = "That isn't an XSportsX pairing code"; return@rememberLauncherForActivityResult }
         busy = true
         scope.launch {
-            runCatching { PairingClient.approve(pairingBaseUrl, code, accountToken) }
-                .onSuccess { deviceToken ->
-                    status = "TV approved — completing connection…"
-                    // The TV completes the session after receiving its one-time token.
-                    onConnected(deviceToken)
+            runCatching {
+                val approval = PairingClient.approve(pairingBaseUrl, code, accountToken)
+                PairingClient.complete(pairingBaseUrl, approval.sessionId, approval.deviceToken)
+            }
+                .onSuccess { deviceId ->
+                    status = "TV connected"
+                    onConnected(deviceId)
                 }
                 .onFailure { status = it.message ?: "Pairing failed or expired" }
             busy = false
