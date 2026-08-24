@@ -5,11 +5,10 @@ plugins {
 }
 
 android { namespace = "com.xsportsx.app"; compileSdk = 36
-    defaultConfig { applicationId = "com.xsportsx.app"; minSdk = 26; targetSdk = 36; versionCode = 1; versionName = "1.0.0" }
+    defaultConfig { applicationId = "com.xsportsx.app"; minSdk = 26; targetSdk = 36; versionCode = 2; versionName = "1.1.0" }
 }
 
 kotlin { jvmToolchain(17) }
-
 android { buildFeatures { compose = true } }
 
 dependencies {
@@ -22,5 +21,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.9.3")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2")
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.camera:camera-camera2:1.5.0")
+    implementation("androidx.camera:camera-lifecycle:1.5.0")
+    implementation("androidx.camera:camera-view:1.5.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
