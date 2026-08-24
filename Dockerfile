@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 10000
 
-CMD ["node", "app.js"]
+CMD ["node", "boot.js"]
