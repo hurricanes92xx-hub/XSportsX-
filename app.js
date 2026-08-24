@@ -5,7 +5,7 @@ const { URL } = require('url');
 const PORT = Number(process.env.PORT || 10000);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 
 const LEAGUES = [
   ['nfl', 'NFL', '🏈'], ['ncaaf', 'NCAA Football', '🏈'],
@@ -40,8 +40,8 @@ function manifest(base,config){return{id:'community.xsportsx.'+crypto.createHash
 function artwork(res){const svg='<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="100%" height="100%" fill="#070b12"/><text x="50%" y="48%" text-anchor="middle" fill="white" font-family="Arial" font-size="64" font-weight="700">XSPORTSX</text><text x="50%" y="58%" text-anchor="middle" fill="#ff344b" font-family="Arial" font-size="28">LIVE SPORTS</text></svg>';res.writeHead(200,{'content-type':'image/svg+xml','cache-control':'public,max-age=86400'});res.end(svg);}
 function tokenFrom(pathname){const p=pathname.split('/').filter(Boolean);return p[0]==='manifest.json'?null:(p[0]||null);}
 const server=http.createServer((req,res)=>{const url=new URL(req.url||'/',`http://${req.headers.host||'localhost'}`),base=`${url.protocol}//${url.host}`;
+  if(req.method==='GET'&&(url.pathname==='/'||url.pathname==='/configure')){const body=page(base);res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-xsportsx-version':VERSION});return res.end(body);}
   if(req.method==='GET'&&url.pathname==='/health')return json(res,200,{ok:true,version:VERSION});
-  if(req.method==='GET'&&url.pathname==='/configure'){const body=page(base);res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-xsportsx-version':VERSION});return res.end(body);}
   if(req.method==='POST'&&url.pathname==='/configure'){let body='';req.on('data',c=>{body+=c;if(body.length>32768)req.destroy()});req.on('end',()=>{try{const input=JSON.parse(body),sports=[...new Set(Array.isArray(input.sports)?input.sports.map(String).filter(id=>VALID.has(id)):[])];if(!sports.length)return json(res,400,{error:'Select at least one league.'});const config={source:'xtream',sports,xtream:{baseUrl:String(input.xtream?.baseUrl||'').replace(/\/$/,''),username:String(input.xtream?.username||''),password:String(input.xtream?.password||'')}};return json(res,200,{version:VERSION,manifestUrl:`${base}/${encrypt(config)}/manifest.json`});}catch{return json(res,400,{error:'Invalid configuration.'})}});return;}
   if(req.method==='GET'&&url.pathname==='/artwork.svg')return artwork(res);
   const token=tokenFrom(url.pathname);if(req.method==='GET'&&token&&url.pathname.endsWith('/manifest.json')){const config=decrypt(token);if(!config||!Array.isArray(config.sports)||!config.sports.length)return json(res,404,{error:'Invalid configuration.'});return json(res,200,manifest(base,config));}
