@@ -3,7 +3,6 @@ package com.xsportsx.app
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,32 +10,31 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Secure phone/TV pairing helper. The QR contains only a short-lived pairing URI. */
 object PairingClient {
     data class PairStart(val pairCode: String, val sessionId: String, val qrPayload: String, val expiresIn: Int)
+    data class Approval(val sessionId: String, val deviceToken: String)
+
+    private fun connection(url: String, method: String): HttpURLConnection =
+        (URL(url).openConnection() as HttpURLConnection).apply { requestMethod = method; connectTimeout = 8000; readTimeout = 8000 }
 
     suspend fun start(pairingBaseUrl: String): PairStart = withContext(Dispatchers.IO) {
-        val c = URL(pairingBaseUrl.trimEnd('/') + "/pair/start").openConnection() as HttpURLConnection
-        c.requestMethod = "GET"; c.connectTimeout = 8000; c.readTimeout = 8000
-        val text = c.inputStream.bufferedReader().use { it.readText() }
-        val j = JSONObject(text)
+        val c = connection(pairingBaseUrl.trimEnd('/') + "/pair/start", "GET")
+        val j = c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
         PairStart(j.getString("pairCode"), j.getString("sessionId"), j.getString("qrPayload"), j.getInt("expiresIn"))
     }
 
-    suspend fun approve(pairingBaseUrl: String, pairCode: String, accountToken: String): String = withContext(Dispatchers.IO) {
-        val c = URL(pairingBaseUrl.trimEnd('/') + "/pair/approve").openConnection() as HttpURLConnection
-        c.requestMethod = "POST"; c.doOutput = true; c.setRequestProperty("Content-Type", "application/json")
+    suspend fun approve(pairingBaseUrl: String, pairCode: String, accountToken: String): Approval = withContext(Dispatchers.IO) {
+        val c = connection(pairingBaseUrl.trimEnd('/') + "/pair/approve", "POST").apply { doOutput = true; setRequestProperty("Content-Type", "application/json") }
         c.outputStream.use { it.write(JSONObject().put("pairCode", pairCode).put("accountToken", accountToken).toString().toByteArray()) }
-        val text = c.inputStream.bufferedReader().use { it.readText() }
-        JSONObject(text).getString("deviceToken")
+        val j = c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
+        Approval(j.getString("sessionId"), j.getString("deviceToken"))
     }
 
     suspend fun complete(pairingBaseUrl: String, sessionId: String, deviceToken: String): String = withContext(Dispatchers.IO) {
-        val c = URL(pairingBaseUrl.trimEnd('/') + "/pair/complete").openConnection() as HttpURLConnection
-        c.requestMethod = "POST"; c.doOutput = true; c.setRequestProperty("Content-Type", "application/json")
+        val c = connection(pairingBaseUrl.trimEnd('/') + "/pair/complete", "POST").apply { doOutput = true; setRequestProperty("Content-Type", "application/json") }
         c.outputStream.use { it.write(JSONObject().put("sessionId", sessionId).put("deviceToken", deviceToken).toString().toByteArray()) }
-        val text = c.inputStream.bufferedReader().use { it.readText() }
-        JSONObject(text).getString("deviceId")
+        val j = c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
+        j.getString("deviceId")
     }
 
     fun openPairUri(context: Context, payload: String) {
