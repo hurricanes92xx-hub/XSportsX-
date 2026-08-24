@@ -14,11 +14,21 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Verify toolchain
+        run: |
+          java -version
+          gradle --version
       - name: Build debug APK
-        run: gradle :app:assembleDebug --no-daemon
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Verify APK exists
+        run: test -s app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
