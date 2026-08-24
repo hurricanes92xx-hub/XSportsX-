@@ -1,0 +1,84 @@
+name: XSportsX 9.9 hotfix
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply league, UFC and stream fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('server.js')
+          s = p.read_text()
+
+          # Never silently turn a missing/invalid private configuration into
+          # an all-leagues manifest. A private manifest must carry its exact
+          # league selection.
+          s, n = re.subn(
+              r"if\(!raw\.length\)return new Set\(Object\.keys\(LEAGUES\)\);",
+              "if(!raw.length)return new Set();",
+              s, count=1
+          )
+          if n != 1:
+              raise SystemExit('selection default pattern not found')
+
+          # Fetch only the leagues that the user selected. This removes the
+          # expensive all-16-league scoreboard fan-out on every catalog load.
+          old = "async function allEvents(){const keys=Object.keys(LEAGUES);return(await Promise.all(keys.map(leagueEvents))).flat().sort((a,b)=>new Date(a.start)-new Date(b.start));}"
+          new = "async function allEvents(keys=Object.keys(LEAGUES)){return(await Promise.all(keys.map(leagueEvents))).flat().sort((a,b)=>new Date(a.start)-new Date(b.start));}"
+          if old not in s:
+              raise SystemExit('allEvents pattern not found')
+          s = s.replace(old, new, 1)
+
+          old = "async function catalogEvents(id){const allowed=selectedLeagueSet(config());const ev=(await allEvents()).filter(e=>allowed.has(e.league));if(id==='live-now')return ev.filter(e=>e.state==='in');if(id==='starting-soon')return ev.filter(e=>e.state==='pre').slice(0,80);if(id==='sports-command-center')return ev.slice(0,100);if(LEAGUES[id])return allowed.has(id)?ev.filter(e=>e.league===id):[];return[];}"
+          new = "async function catalogEvents(id){const allowed=selectedLeagueSet(config());if(!allowed.size)return[];const keys=id==='sports-command-center'||id==='live-now'||id==='starting-soon'?[...allowed]:(LEAGUES[id]&&allowed.has(id)?[id]:[]);if(!keys.length)return[];const ev=(await allEvents(keys)).filter(e=>allowed.has(e.league));if(id==='live-now')return ev.filter(e=>e.state==='in');if(id==='starting-soon')return ev.filter(e=>e.state==='pre').slice(0,80);if(id==='sports-command-center')return ev.slice(0,100);if(LEAGUES[id])return ev.filter(e=>e.league===id);return[];}"
+          if old not in s:
+              raise SystemExit('catalogEvents pattern not found')
+          s = s.replace(old, new, 1)
+
+          # Give upcoming UFC cards enough look-ahead. The previous +4 day
+          # window could exclude a Saturday card when the test was Monday.
+          s = s.replace("t.setUTCDate(t.getUTCDate()+4);", "t.setUTCDate(t.getUTCDate()+14);", 1)
+
+          # Reduce scoreboard wait on a stream request. Stream resolution must
+          # fail fast rather than leave Nuvio on 'Finding streams...'.
+          s = s.replace("timeout:12000,headers:{'User-Agent':'XSportsX/5.0'", "timeout:5000,headers:{'User-Agent':'XSportsX/5.0'", 1)
+
+          p.write_text(s)
+
+          b = Path('bootstrap.js')
+          bs = b.read_text()
+          bs = bs.replace("const BUILD_VERSION='8.6.0'", "const BUILD_VERSION='9.9.0'", 1)
+          b.write_text(bs)
+          PY
+
+      - name: Validate
+        run: |
+          node --check server.js
+          node --check bootstrap.js
+
+      - name: Commit hotfix
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server.js bootstrap.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "fix: selected leagues, UFC lookahead and fast stream resolution"
+            git push
+          fi
