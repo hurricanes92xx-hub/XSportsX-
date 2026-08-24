@@ -11,7 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '8.0.0';
+const BUILD_VERSION = '8.1.0';
 
 const LEAGUES = {
   nfl:['NFL','🏈'], ncaaf:['NCAA Football','🏈'], nba:['NBA','🏀'], wnba:['WNBA','🏀'],
@@ -48,10 +48,8 @@ function canonical(v) {
 
 function selectedSports(token) {
   const c = decryptConfig(token);
-  if (!c) return null;
-  const raw = Array.isArray(c.sports) ? c.sports : [];
-  if (!raw.length) return new Set(Object.keys(LEAGUES));
-  return new Set(raw.map(canonical).filter(Boolean));
+  if (!c || !Array.isArray(c.sports) || !c.sports.length) return new Set();
+  return new Set(c.sports.map(canonical).filter(Boolean));
 }
 
 function tokenFrom(raw) {
@@ -84,13 +82,13 @@ function rewrite(raw) {
 
 function privateManifest(base, token) {
   const selected = selectedSports(token);
-  const catalogs = selected ? [...selected].filter(id => LEAGUES[id]).map(id => ({
+  const catalogs = [...selected].filter(id => LEAGUES[id]).map(id => ({
     type:'tv', id, name:`${LEAGUES[id][1]} ${LEAGUES[id][0].toUpperCase()}`, extra:[], showInHome:true
-  })) : [];
-  const id = `community.xsportsx.v8.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0,20)}`;
+  }));
+  const id = `community.xsportsx.v8.1.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0,20)}`;
   return {
     id, version:BUILD_VERSION, name:'XSportsX',
-    description:'XSportsX 8.0.0 premium live sports for Nuvio using your own Xtream or M3U source.',
+    description:'XSportsX 8.1.0 premium live sports for Nuvio using your own Xtream or M3U source.',
     resources:[{name:'catalog',types:['tv']},{name:'meta',types:['tv']},{name:'stream',types:['tv']}],
     types:['tv'], idPrefixes:['sport:','xtream:'], catalogs,
     behaviorHints:{configurable:false,configurationRequired:false}, logo:`${base}/artwork/other.svg`
@@ -98,7 +96,6 @@ function privateManifest(base, token) {
 }
 
 function setupPageHtml(body) {
-  body = body.replace(/XSportsX BUILD [^<\n]*? • LIVE/g, `XSportsX BUILD ${BUILD_VERSION} • LIVE`);
   const marker = `<div style="position:sticky;top:0;z-index:9999;margin:0 0 18px;padding:12px 16px;border:1px solid #ff2438;border-radius:14px;background:#0a101b;color:#fff;font:800 14px Inter,system-ui,sans-serif"><span style="color:#ff2438">XSportsX</span> ${BUILD_VERSION} • PRIVATE SPORTS CONNECTION BUILDER • Xtream / M3U • League Selection • Device Sync</div>`;
   return body.includes('</body>') ? body.replace('</body>', `${marker}</body>`) : body;
 }
@@ -112,12 +109,16 @@ const proxy = http.createServer((req, res) => {
 
     if (req.method === 'GET' && parsedPath === '/manifest.json' && token) {
       const selected = selectedSports(token);
+      if (!selected.size) {
+        res.writeHead(400, {'content-type':'application/json','cache-control':'no-store','x-xsportsx-build':BUILD_VERSION});
+        return res.end(JSON.stringify({error:'Invalid or empty private sports selection'}));
+      }
       const body = JSON.stringify(privateManifest(base, token));
       res.writeHead(200, {
         'content-type':'application/json; charset=utf-8', 'content-length':String(Buffer.byteLength(body)),
         'cache-control':'no-store, no-cache, must-revalidate, proxy-revalidate', 'pragma':'no-cache', 'expires':'0',
-        'x-xsportsx-build':BUILD_VERSION, 'x-xsportsx-configured':selected?'true':'false',
-        'x-xsportsx-selected-leagues':selected?[...selected].join(','):'configuration-unreadable'
+        'x-xsportsx-build':BUILD_VERSION, 'x-xsportsx-configured':'true',
+        'x-xsportsx-selected-leagues':[...selected].join(',')
       });
       return res.end(body);
     }
@@ -143,7 +144,7 @@ const proxy = http.createServer((req, res) => {
           }
           const selected=selectedSports(token);
           const id=(parsedPath.match(/^\/catalog\/tv\/([^./]+)\.json$/)||[])[1];
-          if(selected && id && LEAGUES[id] && !selected.has(id)){
+          if(selected && selected.size && id && LEAGUES[id] && !selected.has(id)){
             const out=Buffer.from(JSON.stringify({metas:[]}));
             res.writeHead(200,{'content-type':'application/json','content-length':String(out.length),'cache-control':'no-store','x-xsportsx-build':BUILD_VERSION,'x-xsportsx-selected-leagues':[...selected].join(',')});
             return res.end(out);
