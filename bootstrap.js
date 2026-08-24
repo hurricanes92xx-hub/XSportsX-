@@ -11,7 +11,7 @@ const RESOURCES = new Set(['manifest.json', 'catalog', 'meta', 'stream']);
 const PUBLIC = new Set(['configure', 'health', 'xtream-health', 'artwork', 'qr']);
 const SECRET = process.env.XSPORTSX_CONFIG_SECRET || 'change-this-xsportsx-secret-in-render';
 const KEY = crypto.createHash('sha256').update(SECRET).digest();
-const BUILD_VERSION = '7.6.1';
+const BUILD_VERSION = '8.0.0';
 
 const LEAGUES = {
   nfl:['NFL','🏈'], ncaaf:['NCAA Football','🏈'], nba:['NBA','🏀'], wnba:['WNBA','🏀'],
@@ -87,10 +87,10 @@ function privateManifest(base, token) {
   const catalogs = selected ? [...selected].filter(id => LEAGUES[id]).map(id => ({
     type:'tv', id, name:`${LEAGUES[id][1]} ${LEAGUES[id][0].toUpperCase()}`, extra:[], showInHome:true
   })) : [];
-  const id = `community.xsportsx.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0,20)}`;
+  const id = `community.xsportsx.v8.${crypto.createHash('sha256').update(String(token)).digest('hex').slice(0,20)}`;
   return {
     id, version:BUILD_VERSION, name:'XSportsX',
-    description:'Premium live sports for Nuvio using your own Xtream or M3U source.',
+    description:'XSportsX 8.0.0 premium live sports for Nuvio using your own Xtream or M3U source.',
     resources:[{name:'catalog',types:['tv']},{name:'meta',types:['tv']},{name:'stream',types:['tv']}],
     types:['tv'], idPrefixes:['sport:','xtream:'], catalogs,
     behaviorHints:{configurable:false,configurationRequired:false}, logo:`${base}/artwork/other.svg`
@@ -98,7 +98,7 @@ function privateManifest(base, token) {
 }
 
 function setupPageHtml(body) {
-  body = body.replace(/XSportsX BUILD 7\.2\.0 • LIVE/g, `XSportsX BUILD ${BUILD_VERSION} • LIVE`);
+  body = body.replace(/XSportsX BUILD [^<\n]*? • LIVE/g, `XSportsX BUILD ${BUILD_VERSION} • LIVE`);
   const marker = `<div style="position:sticky;top:0;z-index:9999;margin:0 0 18px;padding:12px 16px;border:1px solid #ff2438;border-radius:14px;background:#0a101b;color:#fff;font:800 14px Inter,system-ui,sans-serif"><span style="color:#ff2438">XSportsX</span> ${BUILD_VERSION} • PRIVATE SPORTS CONNECTION BUILDER • Xtream / M3U • League Selection • Device Sync</div>`;
   return body.includes('</body>') ? body.replace('</body>', `${marker}</body>`) : body;
 }
