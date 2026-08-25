@@ -1,0 +1,75 @@
+name: Apply Xtreme logo UI
+
+on:
+  push:
+    paths:
+      - 'app/src/main/java/com/xsportsx/app/XtremeLogo.kt'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout android-app
+        uses: actions/checkout@v4
+        with:
+          ref: android-app
+          fetch-depth: 0
+
+      - name: Install animated logo into shared UI
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('app/src/main/java/com/xsportsx/app/MainActivity.kt')
+          text = path.read_text()
+
+          old_side = '''        Box(Modifier.size(52.dp).clip(RoundedCornerShape(16.dp)).background(Brush.linearGradient(listOf(Color(0xFFFF1744), Color(0xFFFF6D00)))), contentAlignment = Alignment.Center) {
+            Text("X", fontSize = 30.sp, fontWeight = FontWeight.Black, color = Color.White)
+        }'''
+          new_side = '''        XtremeLogo(size = 58.dp)'''
+
+          old_header = '''fun Header(title: String, subtitle: String? = null) {
+    Row(Modifier.fillMaxWidth().padding(horizontal = 34.dp, vertical = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(title, fontSize = 30.sp, fontWeight = FontWeight.Black, color = Color.White)
+            subtitle?.let { Text(it, color = Color(0xFF858B98), fontSize = 13.sp) }
+        }
+        Box(Modifier.clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).padding(horizontal = 16.dp, vertical = 9.dp)) {
+            Text("●  XSPORTSX", color = Color(0xFFFF3D5A), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+        }
+    }
+}'''
+          new_header = '''fun Header(title: String, subtitle: String? = null) {
+    Row(Modifier.fillMaxWidth().padding(horizontal = 34.dp, vertical = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+        XtremeLogo(size = 54.dp)
+        Spacer(Modifier.width(16.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, fontSize = 30.sp, fontWeight = FontWeight.Black, color = Color.White)
+            subtitle?.let { Text(it, color = Color(0xFF858B98), fontSize = 13.sp) }
+        }
+        Box(Modifier.clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).padding(horizontal = 16.dp, vertical = 9.dp)) {
+            Text("●  XTREME", color = Color(0xFFFF3D5A), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+        }
+    }
+}'''
+
+          if old_side not in text:
+              raise SystemExit('SideRail logo block not found; refusing unsafe patch')
+          if old_header not in text:
+              raise SystemExit('Header block not found; refusing unsafe patch')
+
+          text = text.replace(old_side, new_side, 1)
+          text = text.replace(old_header, new_header, 1)
+          path.write_text(text)
+
+      - name: Commit UI patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/MainActivity.kt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add glowing rotating Xtreme logo to mobile and TV UI'
+          git push origin HEAD:android-app
