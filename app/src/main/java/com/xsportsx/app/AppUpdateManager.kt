@@ -23,28 +23,31 @@ object AppUpdateManager {
 
     suspend fun check(context: Context): AppUpdate? = withContext(Dispatchers.IO) {
         runCatching {
-            val current = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
+            val info = context.packageManager.getPackageInfo(context.packageName, 0)
+            val currentCode = info.longVersionCode
+            val currentName = info.versionName.orEmpty()
             val release = JSONObject(http("$RELEASE_URL?ts=${System.currentTimeMillis()}"))
             val tag = release.optString("tag_name", "").removePrefix("v")
-            val remoteCode = release.optInt("version_code", 0).takeIf { it > 0 }
-                ?: tag.substringAfterLast(".").toIntOrNull() ?: 0
-            val versionName = release.optString("version_name").ifBlank { tag.ifBlank { "New version" } }
             val notes = release.optString("body").ifBlank { "Performance and schedule improvements." }
+            val metadataCode = Regex("XSportsX-Update-Version-Code\\s*:\\s*(\\d+)").find(notes)?.groupValues?.getOrNull(1)?.toLongOrNull()
+            val remoteCode = release.optLong("version_code", 0L).takeIf { it > 0L } ?: metadataCode ?: 0L
+            val versionName = release.optString("version_name").ifBlank { tag.ifBlank { "New version" } }
             val assetName = if (BuildConfig.IS_TV_BUILD) "XSportsX-TV.apk" else "XSportsX-Mobile.apk"
             val apkUrl = findAssetUrl(release.optJSONArray("assets"), assetName)
-            if (remoteCode > current && apkUrl.isNotBlank()) {
-                return@runCatching AppUpdate(remoteCode, versionName, apkUrl, notes)
+
+            if (remoteCode > currentCode && apkUrl.isNotBlank()) {
+                return@runCatching AppUpdate(remoteCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), versionName, apkUrl, notes)
             }
 
             val manifest = runCatching { JSONObject(http("$MANIFEST_URL?ts=${System.currentTimeMillis()}")) }.getOrNull()
-            val fallbackCode = manifest?.optInt("versionCode", 0) ?: 0
+            val fallbackCode = manifest?.optLong("versionCode", 0L) ?: 0L
             val fallbackUrl = if (BuildConfig.IS_TV_BUILD) {
                 manifest?.optString("tvApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
             } else {
                 manifest?.optString("mobileApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
             }
-            if (fallbackCode > current && fallbackUrl.isNotBlank()) {
-                AppUpdate(fallbackCode, manifest?.optString("versionName", "New version") ?: "New version", fallbackUrl, manifest?.optString("notes", "Update available") ?: "Update available")
+            if (fallbackCode > currentCode && fallbackUrl.isNotBlank()) {
+                AppUpdate(fallbackCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), manifest?.optString("versionName", "New version") ?: "New version", fallbackUrl, manifest?.optString("notes", "Update available") ?: "Update available")
             } else null
         }.getOrNull()
     }
@@ -71,7 +74,7 @@ object AppUpdateManager {
 
             withContext(Dispatchers.Main) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
-                    context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}" )).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                     throw IllegalStateException("Allow XSportsX to install updates, then press UPDATE again.")
                 }
                 val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apk)
@@ -86,7 +89,7 @@ object AppUpdateManager {
     private fun http(target: String): String {
         val c = (URL(target).openConnection() as HttpURLConnection).apply {
             connectTimeout = 5000; readTimeout = 8000; requestMethod = "GET"; instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "XSportsX-Updater/4")
+            setRequestProperty("User-Agent", "XSportsX-Updater/5")
             setRequestProperty("Accept", "application/vnd.github+json, application/json")
             setRequestProperty("X-GitHub-Api-Version", "2026-03-10")
             setRequestProperty("Cache-Control", "no-cache")
@@ -98,7 +101,7 @@ object AppUpdateManager {
         if (file.exists()) file.delete()
         val c = (URL(target).openConnection() as HttpURLConnection).apply {
             connectTimeout = 10000; readTimeout = 20000; requestMethod = "GET"; instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "Mozilla/5.0 XSportsX-Updater/4")
+            setRequestProperty("User-Agent", "Mozilla/5.0 XSportsX-Updater/5")
             setRequestProperty("Accept", "application/vnd.android.package-archive,application/octet-stream,*/*")
         }
         val started = System.currentTimeMillis()
