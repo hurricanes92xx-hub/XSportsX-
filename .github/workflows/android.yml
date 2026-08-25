@@ -8,9 +8,11 @@ on:
 permissions:
   contents: write
 
+# Keep each build running to completion. Rapid commits should not make a
+# successful APK build appear as a cancelled run after artifacts are produced.
 concurrency:
   group: xsportsx-android-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
