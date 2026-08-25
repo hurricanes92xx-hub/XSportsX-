@@ -44,10 +44,14 @@ fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 52.dp) {
 
     Box(
         modifier = modifier.size(size).background(
-            Brush.radialGradient(
-                listOf(Color(0x552EB7FF).copy(alpha = pulse), Color(0x44FF1744).copy(alpha = pulse), Color.Transparent),
-                CircleShape
-            )
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color(0x552EB7FF).copy(alpha = pulse),
+                    Color(0x44FF1744).copy(alpha = pulse),
+                    Color.Transparent
+                )
+            ),
+            shape = CircleShape
         )
     ) {
         Box(Modifier.size(size).rotate(rotation)) {
