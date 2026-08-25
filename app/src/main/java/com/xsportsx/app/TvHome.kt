@@ -259,7 +259,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
             .padding(start = 22.dp, top = 22.dp, end = 18.dp, bottom = 72.dp)
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
-            Text("X", color = TvRed, fontSize = 46.sp, fontWeight = FontWeight.Black)
+            XtremeLogo(size = 52.dp)
         }
         Text("XSPORTSX", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black)
         Spacer(Modifier.height(22.dp))
