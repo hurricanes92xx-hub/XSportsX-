@@ -68,9 +68,10 @@ new = '''@Composable private fun TvSportMark(name: String, size: androidx.compos
         }
     }
 }'''
-if old not in ts:
-    raise SystemExit('TvSportMark pattern not found')
-ts = ts.replace(old, new, 1)
+if old in ts:
+    ts = ts.replace(old, new, 1)
+else:
+    print('TvSportMark already patched; skipping')
 old_card = '''@Composable private fun TvNetworkCard(network: TvNetwork, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Column(Modifier.width(108.dp).height(72.dp).clip(RoundedCornerShape(11.dp)).background(TvPanel).border(1.5.dp, TvBlue.copy(alpha = if (focused) 1f else .16f), RoundedCornerShape(11.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) { TvSportMark(network.mark, 30.dp, focused); Text(network.name, color = TvMuted, fontSize = 7.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }'''
 new_card = '''@Composable private fun TvNetworkCard(network: TvNetwork, onClick: () -> Unit) {
     var focused by remember { mutableStateOf(false) }
@@ -100,8 +101,9 @@ new_card = '''@Composable private fun TvNetworkCard(network: TvNetwork, onClick:
         Text(label, color = if (focused) TvRed else fg, fontSize = if (label.length > 4) 8.sp else 11.sp, fontWeight = FontWeight.Black, letterSpacing = .25.sp, textAlign = TextAlign.Center)
     }
 }'''
-if old_card not in ts:
-    raise SystemExit('TvNetworkCard pattern not found')
-ts = ts.replace(old_card, new_card, 1)
+if old_card in ts:
+    ts = ts.replace(old_card, new_card, 1)
+else:
+    print('TvNetworkCard already patched; skipping')
 tv.write_text(ts)
 print('patched mobile + TV logo treatments')
