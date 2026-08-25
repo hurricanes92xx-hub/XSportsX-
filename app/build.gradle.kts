@@ -13,6 +13,7 @@ android {
         targetSdk = 36
         versionCode = 15
         versionName = "1.6.4"
+        // Xtreme ticker/crack UI release build trigger.
     }
     flavorDimensions += "device"
     productFlavors {
