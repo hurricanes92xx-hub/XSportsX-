@@ -172,7 +172,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 
 @Composable private fun TvNav(selected: String, onSelect: (String) -> Unit) {
     Column(Modifier.width(210.dp).fillMaxHeight().background(Brush.horizontalGradient(listOf(Color(0xFF071019), Color(0xFF04070C)))).padding(start = 22.dp, top = 22.dp, end = 18.dp, bottom = 72.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) { Text("X", color = TvRed, fontSize = 46.sp, fontWeight = FontWeight.Black); Text("SPORTS", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black); Text("X", color = TvRed, fontSize = 25.sp, fontWeight = FontWeight.Black) }
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) { XtremeLogo(size = 72.dp) }
         Spacer(Modifier.height(30.dp)); listOf("⌂" to "HOME", "●" to "LIVE NOW", "▣" to "UPCOMING", "▤" to "NETWORKS", "★" to "FAVORITES", "⚙" to "SETTINGS").forEach { (icon, label) -> TvNavItem(icon, label, selected == label) { onSelect(label) } }
         Spacer(Modifier.height(22.dp)); Text("SPORTS", color = TvMuted, fontSize = 9.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp); Spacer(Modifier.height(6.dp)); tvSports.forEach { sport -> TvSportNavItem(sport) { onSelect(sport.name) } }
         Spacer(Modifier.weight(1f)); Text("XSportsX TV", color = Color(0xFF596371), fontSize = 10.sp, fontWeight = FontWeight.Bold)
@@ -191,7 +191,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
     }
 }
 
-@Composable private fun TvTopBar(onConnect: () -> Unit) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { Text("XSPORTSX", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black); Spacer(Modifier.weight(1f)); Text("⌕  Search", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold); Spacer(Modifier.width(18.dp)); TvActionButton("⚙  Settings", onConnect); Spacer(Modifier.width(18.dp)); Text("TV MODE", color = TvMuted, fontSize = 10.sp, fontWeight = FontWeight.Black) } }
+@Composable private fun TvTopBar(onConnect: () -> Unit) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { XtremeLogo(size = 42.dp); Spacer(Modifier.weight(1f)); Text("⌕  Search", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold); Spacer(Modifier.width(18.dp)); TvActionButton("⚙  Settings", onConnect); Spacer(Modifier.width(18.dp)); Text("TV MODE", color = TvMuted, fontSize = 10.sp, fontWeight = FontWeight.Black) } }
 
 @Composable private fun TvActionButton(text: String, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Box(Modifier.clip(RoundedCornerShape(14.dp)).background(if (focused) Color(0xFF241018) else Color.Transparent).border(1.dp, TvRed.copy(alpha = if (focused) 1f else .35f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }.padding(horizontal = 12.dp, vertical = 9.dp)) { Text(text, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold) } }
 
