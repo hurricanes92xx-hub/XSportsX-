@@ -11,9 +11,9 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.6.4"
-        // Xtreme ticker/crack UI release build trigger.
+        versionCode = 16
+        versionName = "1.6.5"
+        // Xtreme Command Center release: live/next/news/network dashboard.
     }
     flavorDimensions += "device"
     productFlavors {
@@ -78,10 +78,4 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.6.1")
     implementation("androidx.camera:camera-lifecycle:1.6.1")
     implementation("androidx.camera:camera-view:1.6.1")
-    implementation("androidx.security:security-crypto:1.1.0")
-    implementation("androidx.media3:media3-exoplayer:1.11.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.11.0")
-    implementation("androidx.media3:media3-ui:1.11.0")
-    implementation("androidx.media3:media3-common:1.11.0")
-    debugImplementation("androidx.compose.ui:ui-tooling")
 }
