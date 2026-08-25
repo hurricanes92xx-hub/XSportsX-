@@ -15,12 +15,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-/**
- * ESPN is the structured schedule provider. We query date ranges rather than
- * making one request per league per day. That is the important reliability fix:
- * the old implementation made ~76 HTTP calls and a single slow provider could
- * trip the 15s global timeout before anything reached the UI.
- */
 data class SportsEvent(
     val id:String,val sport:String,val league:String,val title:String,val startUtc:String,
     val status:String,val state:String,val home:String,val away:String,val homeLogo:String,
@@ -58,13 +52,13 @@ object SportsScheduleService {
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
         val today=LocalDate.now(ZoneId.systemDefault())
-        // A 30-day window is much more useful for UPCOMING and avoids the
-        // false-empty result when today has no games (off days are normal).
         val end=today.plusDays(30)
         val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
-        val limiter=Semaphore(6)
+        // 19 leagues in parallel, capped below the point where the device or
+        // ESPN starts queueing connections. This replaces the old 76-call loop.
+        val limiter=Semaphore(10)
 
-        val results=withTimeout(20_000L) {
+        val results=withTimeout(25_000L) {
             coroutineScope {
                 leagues.map { league ->
                     async {
@@ -85,14 +79,10 @@ object SportsScheduleService {
     private fun fetchLeague(league:ScheduleLeague,dates:String):List<SportsEvent> {
         val primary="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
         val v3="https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
-        val sport=league.path.substringBefore('/')
-        val code=league.path.substringAfterLast('/')
-        val urls=listOf(
-            primary,
-            v3,
-            "https://cdn.espn.com/core/$sport/scoreboard?xhr=1&league=${encode(code)}&limit=1000&dates=$dates"
-        )
-        for(url in urls) {
+        // Keep fallback count low: the primary endpoint is public and the v3
+        // endpoint is the only useful alternate. Extra CDN retries were a major
+        // contributor to the old timeout on slower mobile connections.
+        for(url in listOf(primary,v3)) {
             try {
                 val parsed=parse(JSONObject(http(url)),league)
                 if(parsed.isNotEmpty()) return parsed
@@ -146,13 +136,11 @@ object SportsScheduleService {
         return out
     }
 
-    private fun encode(value:String):String=java.net.URLEncoder.encode(value,"UTF-8")
-
     private fun http(target:String):String {
         val c=(URL(target).openConnection() as HttpURLConnection).apply {
             requestMethod="GET"
-            connectTimeout=3500
-            readTimeout=6000
+            connectTimeout=2500
+            readTimeout=5000
             instanceFollowRedirects=true
             setRequestProperty("User-Agent","XSportsX/1.4 (Android)")
             setRequestProperty("Accept","application/json,text/plain,*/*")
