@@ -15,13 +15,13 @@ jobs:
         with:
           ref: android-app
           fetch-depth: 0
-      - name: Apply sports UI patch
-        run: python3 .github/patch_ui.py
+      - name: Apply network UI patch
+        run: python3 .github/patch_networks.py
       - name: Commit patched UI
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
+          git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           git diff --cached --quiet && exit 0
-          git commit -m "Fix sports branding and combat event artwork"
+          git commit -m "Fix network card branding"
           git push origin android-app
