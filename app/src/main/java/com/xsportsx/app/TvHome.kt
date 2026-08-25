@@ -158,6 +158,17 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
                     "UPCOMING" -> { TvSection("UPCOMING"); TvEmpty("Upcoming events will appear here") }
                     "NETWORKS" -> { TvSection("SPORTS NETWORKS"); TvNetworkGrid(tvNetworks, onNetwork) }
                     "FAVORITES" -> { TvSection("FAVORITES"); TvEmpty("Your favorite leagues and networks will appear here") }
+                    "NFL", "NCAA FB", "NBA", "WNBA", "NCAA BB", "MLB", "NHL", "MLS", "EPL" -> {
+                        TvSection(selectedNav, "LIVE FEED")
+                        val games = liveGames.filter { it.league == selectedNav }
+                        if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false)
+                    }
+                    "UFC", "BOXING" -> {
+                        TvSection(selectedNav, "EVENT FEED")
+                        TvSportRow(tvSports.filter { it.name == selectedNav }) { sport -> onNetwork(sport.name) }
+                        Spacer(Modifier.height(14.dp))
+                        TvEmpty("Select ${selectedNav} to browse available events")
+                    }
                     "SETTINGS" -> TvSettings(onConnect)
                 }
             }
