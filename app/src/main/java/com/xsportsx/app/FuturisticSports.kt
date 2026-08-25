@@ -176,18 +176,17 @@ private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
 
 @Composable
 private fun NetworkBrandMark(name: String) {
-    val key = name.uppercase()
-    when {
-        key == "ESPN" -> BrandPill("ESPN", XRed)
-        key == "ESPN2" -> BrandPill("ESPN 2", XRed)
-        key == "ESPNU" -> BrandPill("ESPNU", XRed)
-        key == "NFL NETWORK" -> BrandPill("NFL", Color.White, Color(0xFF14233A))
-        key == "FS1" -> BrandPill("FS1", Color.White, Color(0xFF173A6A))
-        key == "CBS SPORTS" -> BrandPill("CBS SPORTS", Color.White, Color(0xFF1267A5))
-        key == "SEC NETWORK" -> BrandPill("SEC", Color.White, Color(0xFF193C69))
-        key == "ACC NETWORK" -> BrandPill("ACC", Color.White, Color(0xFF1C5C9B))
-        key == "BIG TEN NETWORK" -> BrandPill("B1G", Color.White, Color(0xFF26374A))
-        key == "BIG 12" -> BrandPill("BIG 12", Color.White, Color(0xFF6B1F2A))
+    when (name.uppercase()) {
+        "ESPN" -> BrandPill("ESPN", XRed)
+        "ESPN2" -> BrandPill("ESPN 2", XRed)
+        "ESPNU" -> BrandPill("ESPNU", XRed)
+        "NFL NETWORK" -> BrandPill("NFL", Color.White, Color(0xFF14233A))
+        "FS1" -> BrandPill("FS1", Color.White, Color(0xFF173A6A))
+        "CBS SPORTS" -> BrandPill("CBS SPORTS", Color.White, Color(0xFF1267A5))
+        "SEC NETWORK" -> BrandPill("SEC", Color.White, Color(0xFF193C69))
+        "ACC NETWORK" -> BrandPill("ACC", Color.White, Color(0xFF1C5C9B))
+        "BIG TEN NETWORK" -> BrandPill("B1G", Color.White, Color(0xFF26374A))
+        "BIG 12" -> BrandPill("BIG 12", Color.White, Color(0xFF6B1F2A))
         else -> BrandPill(name.take(5).uppercase(), Color.White)
     }
 }
