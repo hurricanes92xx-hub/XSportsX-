@@ -241,9 +241,9 @@ private fun GlowingCracks(modifier: Modifier, intensity: Float) {
         lines.forEach { points ->
             for (i in 0 until points.lastIndex) {
                 val a = points[i]; val b = points[i + 1]
-                drawLine(XRed.copy(alpha = intensity * .10f), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 11f)
-                drawLine(XRed.copy(alpha = intensity * .22f), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 4f)
-                drawLine(XRed.copy(alpha = intensity), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 1.3f)
+                drawLine(XRed.copy(alpha = intensity * .10f), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 20f)
+                drawLine(XRed.copy(alpha = intensity * .22f), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 7f)
+                drawLine(XRed.copy(alpha = intensity), androidx.compose.ui.geometry.Offset(a.first * w, a.second * h), androidx.compose.ui.geometry.Offset(b.first * w, b.second * h), strokeWidth = 2.1f)
             }
         }
     }

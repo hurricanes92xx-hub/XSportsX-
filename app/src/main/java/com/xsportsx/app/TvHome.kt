@@ -1,6 +1,7 @@
 package com.xsportsx.app
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -146,6 +147,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
         }
     }
     Box(Modifier.fillMaxSize().background(TvBg)) {
+        TvGlowingCracks(Modifier.fillMaxSize())
         Row(Modifier.fillMaxSize()) {
             TvNav(selectedNav) { selectedNav = it }
             Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(scroll).padding(start = 22.dp, end = 30.dp, top = 20.dp, bottom = 76.dp)) {
@@ -292,3 +294,30 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 @Composable private fun TvEmpty(text: String) { Box(Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel), contentAlignment = Alignment.Center) { Text(text, color = TvMuted, fontSize = 13.sp, fontWeight = FontWeight.Bold) } }
 
 private fun teamMark(name: String): String = name.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.take(2).joinToString("") { it.take(1).uppercase() }.ifBlank { "•" }
+
+
+@Composable
+private fun TvGlowingCracks(modifier: Modifier) {
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        val lines = listOf(
+            listOf(.00f to .20f, .11f to .25f, .16f to .34f, .29f to .38f),
+            listOf(1.00f to .17f, .88f to .24f, .83f to .34f, .69f to .40f),
+            listOf(.03f to .77f, .16f to .72f, .23f to .61f, .37f to .57f),
+            listOf(.97f to .73f, .85f to .67f, .79f to .56f, .64f to .51f),
+            listOf(.43f to .00f, .47f to .10f, .53f to .18f, .60f to .27f)
+        )
+        lines.forEach { points ->
+            for (i in 0 until points.lastIndex) {
+                val a = points[i]
+                val b = points[i + 1]
+                val start = androidx.compose.ui.geometry.Offset(a.first * w, a.second * h)
+                val end = androidx.compose.ui.geometry.Offset(b.first * w, b.second * h)
+                drawLine(TvRed.copy(alpha = .10f), start, end, strokeWidth = 24f)
+                drawLine(TvRed.copy(alpha = .20f), start, end, strokeWidth = 10f)
+                drawLine(TvRed.copy(alpha = .72f), start, end, strokeWidth = 3f)
+            }
+        }
+    }
+}
