@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,9 +33,7 @@ fun LiveChannelsScreen(filter: String? = null, onBack: () -> Unit) {
         runCatching { StreamResolver(context).loadLiveStreams() }
             .onSuccess { all ->
                 val q = filter?.trim().orEmpty()
-                streams = if (q.isBlank()) all else all.filter {
-                    it.name.contains(q, true) || it.group.contains(q, true)
-                }
+                streams = if (q.isBlank()) all else all.filter { it.name.contains(q, true) || it.group.contains(q, true) }
             }
             .onFailure { error = it.message ?: "Unable to load live streams" }
         loading = false
