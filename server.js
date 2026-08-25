@@ -69,7 +69,12 @@ app.use((req,res,next)=>{
     next(e);
   }
 });
-function selectedLeagueSet(c){const raw=Array.isArray(c?.sports)?c.sports:[];if(!raw.length)return new Set();const aliases={"nfl": ["nfl", "football"], "ncaaf": ["ncaaf", "ncaa football", "college football", "college-football"], "nba": ["nba"], "wnba": ["wnba"], "ncaab": ["ncaab", "ncaa basketball", "college basketball", "mens-college-basketball"], "mlb": ["mlb"], "nhl": ["nhl"], "mls": ["mls"], "epl": ["epl", "premier league", "english premier league"], "ucl": ["ucl", "uefa champions league", "champions league"], "laliga": ["laliga", "la liga"], "seriea": ["seriea", "serie a"], "bundesliga": ["bundesliga"], "ligue1": ["ligue1", "ligue 1"], "ufc": ["ufc", "mma"], "boxing": ["boxing", "box"]};const out=new Set();for(const v of raw){const x=String(v||'').trim().toLowerCase();for(const [id,a] of Object.entries(aliases))if(a.includes(x)){out.add(id);break;}}return out;}
+function selectedLeagueSet(c){
+  // The XSportsX command center is an all-sports feed. Keep every
+  // supported league visible even when an older encrypted config
+  // contains a partial/legacy sports array.
+  return new Set(Object.keys(LEAGUES));
+}
 function config(){return ctx.getStore()||normalize({source:'xtream',xtream:{baseUrl:process.env.XTREAM_BASE_URL||'',username:process.env.XTREAM_USERNAME||'',password:process.env.XTREAM_PASSWORD||''}})}
 function baseUrl(req){return BASE||`${String(req.headers['x-forwarded-proto']||'https').split(',')[0]}://${req.headers.host||'localhost'}`}
 function xtreamApi(action,extra={}){const c=config().xtream,u=new URL(`${c.baseUrl}/player_api.php`);u.searchParams.set('username',c.username);u.searchParams.set('password',c.password);if(action)u.searchParams.set('action',action);for(const[k,v]of Object.entries(extra))u.searchParams.set(k,String(v));return u.toString();}
