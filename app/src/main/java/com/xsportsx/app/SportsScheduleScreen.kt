@@ -78,24 +78,24 @@ private fun ScheduleEventCard(event: SportsEvent, onClick: () -> Unit) {
     val combat = event.league.equals("UFC", true) || event.league.equals("BOXING", true) || event.sport.equals("MMA", true)
     val racing = event.league.equals("F1", true) || event.sport.equals("Racing", true)
     val art = event.artUrl.trim()
-    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color(0xFF0E121A)).clickable { onClick() }) {
-        Box(Modifier.fillMaxWidth().height(if (combat || racing) 185.dp else 170.dp).background(cardBrush(event, combat, racing))) {
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).background(Color(0xFF0A0E15)).clickable { onClick() }) {
+        Box(Modifier.fillMaxWidth().height(if (combat || racing) 196.dp else 184.dp).background(cardBrush(event, combat, racing))) {
             if (art.isNotBlank()) {
-                AsyncImage(model = art, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop, alpha = 0.48f)
-                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC080A10)))))
+                AsyncImage(model = art, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop, alpha = 0.34f)
+                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xE8070A10)))))
             }
             if (combat || racing) {
-                Column(Modifier.align(Alignment.TopStart).padding(16.dp)) {
+                Column(Modifier.align(Alignment.TopStart).padding(18.dp)) {
                     Text(when { event.league.equals("UFC", true) -> "UFC • FIGHT EVENT"; event.league.equals("BOXING", true) -> "BOXING • EVENT NIGHT"; else -> "F1 • GRAND PRIX" }, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
                     Spacer(Modifier.height(5.dp)); Text(event.title.ifBlank { event.league }, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black)
                 }
                 EventArtBadge(event, combat, racing, Modifier.align(Alignment.Center))
             } else LogoVsLogo(event, Modifier.align(Alignment.Center))
-            Surface(color = if (event.isLive) Color(0xFFFF1744) else Color(0xDD0A0D13), shape = RoundedCornerShape(9.dp), modifier = Modifier.align(Alignment.TopEnd).padding(14.dp)) {
-                Text(if (event.isLive) "● LIVE" else event.league.uppercase(), color = Color.White, modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp), fontSize = 9.sp, fontWeight = FontWeight.Black)
+            Surface(color = if (event.isLive) Color(0xFFFF1744) else Color(0xE60A0D13), shape = RoundedCornerShape(10.dp), modifier = Modifier.align(Alignment.TopEnd).padding(14.dp)) {
+                Text(if (event.isLive) "● LIVE" else event.league.uppercase(), color = Color.White, modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp), fontSize = 9.sp, fontWeight = FontWeight.Black)
             }
         }
-        Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 15.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(if (event.isLive) "LIVE NOW" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF1744) else Color(0xFFB8BEC8), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 Text(event.status.ifBlank { event.broadcast }.ifBlank { "EVENT" }, color = Color(0xFF7F8794), fontSize = 10.sp)
@@ -108,30 +108,45 @@ private fun ScheduleEventCard(event: SportsEvent, onClick: () -> Unit) {
 @Composable
 private fun LogoVsLogo(event: SportsEvent, modifier: Modifier = Modifier) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-        TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 66.dp)
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 18.dp)) {
-            Text("VS", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
-            Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 8.sp, fontWeight = FontWeight.Black)
+        TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 76.dp)
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 14.dp)) {
+            Box(Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xE90B1018)).padding(horizontal = 10.dp, vertical = 7.dp)) {
+                Text("VS", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
+            }
+            Spacer(Modifier.height(5.dp))
+            Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 8.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
         }
-        TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 66.dp)
+        TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 76.dp)
     }
 }
 
 @Composable
 private fun TeamLogo(url: String, name: String, size: androidx.compose.ui.unit.Dp) {
-    Box(Modifier.size(size).clip(CircleShape).background(Brush.radialGradient(listOf(Color(0xFF202A38), Color(0xFF0C1017)))), contentAlignment = Alignment.Center) {
-        // Keep a deterministic fallback visible underneath the network image. Coil's AsyncImage
-        // otherwise leaves the dark placeholder when a provider logo URL is missing or fails.
-        Text(teamInitials(name), color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black)
-        if (url.isNotBlank()) {
-            AsyncImage(model = url, contentDescription = name, modifier = Modifier.fillMaxSize().padding(7.dp), contentScale = ContentScale.Fit)
+    var failed by remember(url) { mutableStateOf(false) }
+    Box(
+        Modifier.size(size)
+            .clip(CircleShape)
+            .background(Brush.radialGradient(listOf(Color(0xFF273446), Color(0xFF0A0F17))))
+            .padding(5.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (url.isNotBlank() && !failed) {
+            AsyncImage(
+                model = url,
+                contentDescription = name,
+                modifier = Modifier.fillMaxSize().padding(4.dp),
+                contentScale = ContentScale.Fit,
+                onError = { failed = true }
+            )
+        } else {
+            Text(teamInitials(name), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
         }
     }
 }
 
 @Composable
 private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
-    Box(modifier.size(82.dp).clip(RoundedCornerShape(20.dp)).background(Color(0xB50A0D13)), contentAlignment = Alignment.Center) {
+    Box(modifier.size(88.dp).clip(RoundedCornerShape(22.dp)).background(Color(0xD90A0D13)), contentAlignment = Alignment.Center) {
         Text(when { racing -> "F1"; combat && event.league.equals("UFC", true) -> "UFC"; else -> "BOX" }, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
     }
 }
@@ -140,7 +155,7 @@ private fun cardBrush(event: SportsEvent, combat: Boolean, racing: Boolean): Bru
     racing -> Brush.linearGradient(listOf(Color(0xFF120B14), Color(0xFF111A2B), Color(0xFF29080E)))
     combat && event.league.equals("UFC", true) -> Brush.linearGradient(listOf(Color(0xFF28070D), Color(0xFF10141C), Color(0xFF3A1010)))
     combat -> Brush.linearGradient(listOf(Color(0xFF29100A), Color(0xFF15141A), Color(0xFF3A0A18)))
-    else -> Brush.linearGradient(listOf(Color(0xFF250812), Color(0xFF111722), Color(0xFF211108)))
+    else -> Brush.linearGradient(listOf(Color(0xFF280712), Color(0xFF101722), Color(0xFF251008)))
 }
 
 private fun teamInitials(name: String): String = name.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.take(2).joinToString("") { it.first().uppercase() }
