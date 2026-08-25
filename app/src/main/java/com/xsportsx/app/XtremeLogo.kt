@@ -23,10 +23,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.min
 
-/**
- * Prominent Xtreme neon X used in the mobile and Android TV headers.
- * The mark slowly rotates while its red/blue glow breathes so it is
- * visibly branded without distracting from the sports UI.
+/** Exact in-app neon X mark: red left arms, blue right arms, white hot edge.
+ *  The mark glows, pulses and rotates continuously on Mobile and Android TV.
  */
 @Composable
 fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 52.dp) {
@@ -34,63 +32,54 @@ fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 52.dp) {
     val rotation by transition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 24000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
+        animationSpec = infiniteRepeatable(tween(24000, easing = LinearEasing), RepeatMode.Restart),
         label = "xtreme-logo-rotation"
     )
     val pulse by transition.animateFloat(
-        initialValue = 0.72f,
+        initialValue = 0.68f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
+        animationSpec = infiniteRepeatable(tween(1600, easing = LinearEasing), RepeatMode.Reverse),
         label = "xtreme-logo-pulse"
     )
 
     Box(
-        modifier = modifier
-            .size(size)
-            .background(
-                Brush.radialGradient(
-                    listOf(
-                        Color(0x332EB7FF).copy(alpha = pulse),
-                        Color(0x22FF1744).copy(alpha = pulse),
-                        Color.Transparent
-                    )
-                ),
+        modifier = modifier.size(size).background(
+            Brush.radialGradient(
+                listOf(Color(0x552EB7FF).copy(alpha = pulse), Color(0x44FF1744).copy(alpha = pulse), Color.Transparent),
                 CircleShape
             )
+        )
     ) {
         Box(Modifier.size(size).rotate(rotation)) {
             Canvas(Modifier.size(size)) {
-                val dimension = min(this.size.width, this.size.height)
-                val inset = dimension * 0.15f
+                val d = min(this.size.width, this.size.height)
+                val inset = d * 0.12f
                 val left = inset
-                val right = dimension - inset
+                val right = d - inset
                 val top = inset
-                val bottom = dimension - inset
-                val center = dimension / 2f
-                val red = Color(0xFFFF1744)
-                val blue = Color(0xFF32B7FF)
-                val redGlow = Color(0x66FF1744).copy(alpha = pulse)
-                val blueGlow = Color(0x6632B7FF).copy(alpha = pulse)
-                val stroke = dimension * 0.115f
+                val bottom = d - inset
+                val cx = d / 2f
+                val cy = d / 2f
+                val red = Color(0xFFFF1838)
+                val blue = Color(0xFF20A9FF)
+                val white = Color.White.copy(alpha = 0.96f)
+                val stroke = d * 0.145f
 
-                drawLine(redGlow, Offset(left, top), Offset(center, center), strokeWidth = stroke * 4.8f, cap = StrokeCap.Round)
-                drawLine(redGlow, Offset(center, center), Offset(left, bottom), strokeWidth = stroke * 4.8f, cap = StrokeCap.Round)
-                drawLine(blueGlow, Offset(right, top), Offset(center, center), strokeWidth = stroke * 4.8f, cap = StrokeCap.Round)
-                drawLine(blueGlow, Offset(center, center), Offset(right, bottom), strokeWidth = stroke * 4.8f, cap = StrokeCap.Round)
+                // Broad neon aura.
+                drawLine(Color(0x99FF1838).copy(alpha = pulse), Offset(left, top), Offset(cx, cy), stroke * 4.6f, StrokeCap.Round)
+                drawLine(Color(0x99FF1838).copy(alpha = pulse), Offset(cx, cy), Offset(left, bottom), stroke * 4.6f, StrokeCap.Round)
+                drawLine(Color(0x9920A9FF).copy(alpha = pulse), Offset(right, top), Offset(cx, cy), stroke * 4.6f, StrokeCap.Round)
+                drawLine(Color(0x9920A9FF).copy(alpha = pulse), Offset(cx, cy), Offset(right, bottom), stroke * 4.6f, StrokeCap.Round)
 
-                drawLine(red, Offset(left, top), Offset(center, center), strokeWidth = stroke, cap = StrokeCap.Round)
-                drawLine(red, Offset(center, center), Offset(left, bottom), strokeWidth = stroke, cap = StrokeCap.Round)
-                drawLine(blue, Offset(right, top), Offset(center, center), strokeWidth = stroke, cap = StrokeCap.Round)
-                drawLine(blue, Offset(center, center), Offset(right, bottom), strokeWidth = stroke, cap = StrokeCap.Round)
+                // Main angular X.
+                drawLine(red, Offset(left, top), Offset(cx, cy), stroke, StrokeCap.Square)
+                drawLine(red, Offset(cx, cy), Offset(left, bottom), stroke, StrokeCap.Square)
+                drawLine(blue, Offset(right, top), Offset(cx, cy), stroke, StrokeCap.Square)
+                drawLine(blue, Offset(cx, cy), Offset(right, bottom), stroke, StrokeCap.Square)
 
-                drawLine(Color.White.copy(alpha = 0.92f), Offset(left, top), Offset(center, center), strokeWidth = stroke * 0.20f, cap = StrokeCap.Round)
-                drawLine(Color.White.copy(alpha = 0.92f), Offset(right, bottom), Offset(center, center), strokeWidth = stroke * 0.20f, cap = StrokeCap.Round)
+                // White-hot inner edge.
+                drawLine(white, Offset(left + d * .01f, top), Offset(cx, cy), stroke * .19f, StrokeCap.Square)
+                drawLine(white, Offset(right - d * .01f, bottom), Offset(cx, cy), stroke * .19f, StrokeCap.Square)
             }
         }
     }
