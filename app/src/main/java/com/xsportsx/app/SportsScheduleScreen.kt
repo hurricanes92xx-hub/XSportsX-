@@ -13,11 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -33,13 +31,15 @@ fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
 
     fun refresh() {
         scope.launch {
-            loading = true; error = null
+            loading = true
+            error = null
             runCatching { SportsScheduleService.load() }
                 .onSuccess { events = it }
                 .onFailure { error = it.message ?: "Unable to load schedules" }
             loading = false
         }
     }
+
     LaunchedEffect(Unit) { refresh() }
 
     val visible = when (filter) {
@@ -54,7 +54,7 @@ fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text("LIVE + UPCOMING", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
-                Text("ESPN + official league and combat-event feeds", color = Color(0xFF858B98), fontSize = 12.sp)
+                Text("Sports schedule", color = Color(0xFF858B98), fontSize = 12.sp)
             }
             TextButton(onClick = { refresh() }) { Text("REFRESH") }
         }
@@ -84,24 +84,16 @@ fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
 
 @Composable
 private fun ScheduleEventCard(event: SportsEvent, onClick: () -> Unit) {
-    Column(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).clickable { onClick() }
-    ) {
-        Box(Modifier.fillMaxWidth().height(155.dp).background(Color(0xFF171C26))) {
-            if (event.artUrl.isNotBlank()) {
-                AsyncImage(model = event.artUrl, contentDescription = event.title, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xEE07080C)))))
-            } else {
-                Box(Modifier.fillMaxSize().background(Brush.linearGradient(listOf(Color(0xFF300914), Color(0xFF10151E), Color(0xFF1D0C08)))))
-            }
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).clickable { onClick() }) {
+        Box(Modifier.fillMaxWidth().height(155.dp).background(Brush.linearGradient(listOf(Color(0xFF300914), Color(0xFF10151E), Color(0xFF1D0C08))))) {
             Row(Modifier.fillMaxWidth().align(Alignment.BottomStart).padding(16.dp), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f)) {
-                    Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
+                    Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 10.sp, fontWeight = FontWeight.Black)
                     Text(event.home.ifBlank { event.title }, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
                     if (event.away.isNotBlank()) Text(event.away, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                 }
-                if (event.isLive) {
-                    Surface(color = Color(0xFFFF1744), shape = RoundedCornerShape(9.dp)) { Text("● LIVE", color = Color.White, modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp), fontSize = 10.sp, fontWeight = FontWeight.Black) }
+                if (event.isLive) Surface(color = Color(0xFFFF1744), shape = RoundedCornerShape(9.dp)) {
+                    Text("● LIVE", color = Color.White, modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp), fontSize = 10.sp, fontWeight = FontWeight.Black)
                 }
             }
         }
