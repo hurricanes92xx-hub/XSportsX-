@@ -7,6 +7,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -15,23 +16,12 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 data class SportsEvent(
-    val id:String,
-    val sport:String,
-    val league:String,
-    val title:String,
-    val startUtc:String,
-    val status:String,
-    val state:String,
-    val home:String,
-    val away:String,
-    val homeLogo:String,
-    val awayLogo:String,
-    val broadcast:String,
-    val artUrl:String="",
-    val sourceUrl:String=""
+    val id:String,val sport:String,val league:String,val title:String,val startUtc:String,
+    val status:String,val state:String,val home:String,val away:String,val homeLogo:String,
+    val awayLogo:String,val broadcast:String,val artUrl:String="",val sourceUrl:String=""
 ) {
-    val isLive:Boolean get()=state.equals("in", true)||state.equals("live", true)
-    val isUpcoming:Boolean get()=state.equals("pre", true)||state.equals("scheduled", true)
+    val isLive:Boolean get()=state.equals("in",true)||state.equals("live",true)
+    val isUpcoming:Boolean get()=state.equals("pre",true)||state.equals("scheduled",true)
     val searchText:String get()=listOf(home,away,title,league,broadcast).joinToString(" ")
 }
 
@@ -59,19 +49,20 @@ object SportsScheduleService {
     )
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
+        // Fast first paint: only request today's scoreboard. The previous version
+        // requested 15 days x 17 leagues, which could leave the UI spinning for minutes.
         val today=LocalDate.now(ZoneOffset.UTC)
-        val dates=(0..14).map { today.plusDays(it.toLong()) }
-        val limiter=Semaphore(6)
-        val results=coroutineScope {
-            leagues.flatMap { league ->
-                dates.map { date ->
+        val limiter=Semaphore(8)
+        val results=withTimeout(15_000L) {
+            coroutineScope {
+                leagues.map { league ->
                     async {
                         limiter.withPermit {
-                            runCatching { fetchLeague(league,date) }.getOrElse { emptyList() }
+                            runCatching { fetchLeague(league,today) }.getOrElse { emptyList() }
                         }
                     }
-                }
-            }.awaitAll()
+                }.awaitAll()
+            }
         }
 
         val events=results.flatten()
@@ -79,16 +70,14 @@ object SportsScheduleService {
             .filter { it.isLive || it.isUpcoming }
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
 
-        if (events.isEmpty()) {
-            error("No schedule data returned. Check network/API access and try REFRESH.")
-        }
+        if(events.isEmpty()) error("No events found for today. Check network access and try REFRESH.")
         events
     }
 
     private fun fetchLeague(league:ScheduleLeague,date:LocalDate):List<SportsEvent> {
         val dateText=date.format(DateTimeFormatter.BASIC_ISO_DATE)
         val endpoint="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dateText&limit=500"
-        val root=JSONObject(httpWithRetry(endpoint))
+        val root=JSONObject(http(endpoint))
         val events=root.optJSONArray("events") ?: return emptyList()
         val out=ArrayList<SportsEvent>(events.length())
 
@@ -97,56 +86,42 @@ object SportsScheduleService {
             val competition=e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
             val competitors=competition.optJSONArray("competitors") ?: continue
             var home="";var away="";var homeLogo="";var awayLogo=""
-
             for(j in 0 until competitors.length()) {
                 val c=competitors.optJSONObject(j) ?: continue
                 val team=c.optJSONObject("team") ?: continue
                 val name=team.optString("displayName").ifBlank { team.optString("shortDisplayName") }
                 val logo=team.optString("logo")
-                if(c.optString("homeAway").equals("home",true)) {
-                    home=name;homeLogo=logo
-                } else {
-                    away=name;awayLogo=logo
-                }
+                if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo}
+                else {away=name;awayLogo=logo}
             }
-
             val status=competition.optJSONObject("status") ?: e.optJSONObject("status") ?: JSONObject()
             val type=status.optJSONObject("type") ?: JSONObject()
             val state=type.optString("state").ifBlank { status.optString("state") }
             val detail=type.optString("shortDetail").ifBlank { type.optString("detail") }
-            val start=e.optString("date").ifBlank { competition.optString("startDate") }
-
             out += SportsEvent(
                 id=e.optString("id"),sport=league.sport,league=league.league,
                 title=e.optString("name").ifBlank { e.optString("shortName") },
-                startUtc=start,status=detail,state=state,
-                home=home,away=away,homeLogo=homeLogo,awayLogo=awayLogo,
-                broadcast=competition.optString("broadcast"),artUrl=e.optString("image")
+                startUtc=e.optString("date").ifBlank { competition.optString("startDate") },
+                status=detail,state=state,home=home,away=away,homeLogo=homeLogo,
+                awayLogo=awayLogo,broadcast=competition.optString("broadcast"),artUrl=e.optString("image")
             )
         }
         return out
     }
 
-    private fun httpWithRetry(target:String):String {
-        var lastError:Throwable?=null
-        repeat(3) { attempt ->
-            try {
-                val c=(URL(target).openConnection() as HttpURLConnection).apply {
-                    requestMethod="GET";connectTimeout=7000;readTimeout=12000;instanceFollowRedirects=true
-                    setRequestProperty("User-Agent","XSportsX/1.2")
-                    setRequestProperty("Accept","application/json")
-                    setRequestProperty("Cache-Control","no-cache")
-                }
-                return try {
-                    val code=c.responseCode
-                    if(code !in 200..299) error("Schedule HTTP $code")
-                    c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-                } finally { c.disconnect() }
-            } catch(t:Throwable) {
-                lastError=t
-                if(attempt<2) Thread.sleep(250L*(attempt+1))
-            }
+    private fun http(target:String):String {
+        val c=(URL(target).openConnection() as HttpURLConnection).apply {
+            requestMethod="GET"
+            connectTimeout=3500
+            readTimeout=5000
+            instanceFollowRedirects=true
+            setRequestProperty("User-Agent","XSportsX/1.3")
+            setRequestProperty("Accept","application/json")
         }
-        throw lastError ?: IllegalStateException("Schedule request failed")
+        return try {
+            val code=c.responseCode
+            if(code !in 200..299) error("Schedule HTTP $code")
+            c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { c.disconnect() }
     }
 }
