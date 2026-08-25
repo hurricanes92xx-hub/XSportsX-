@@ -16,20 +16,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 data class SportsEvent(
-    val id: String,
-    val sport: String,
-    val league: String,
-    val title: String,
-    val startUtc: String,
-    val status: String,
-    val state: String,
-    val home: String,
-    val away: String,
-    val homeLogo: String,
-    val awayLogo: String,
-    val broadcast: String,
-    val artUrl: String = "",
-    val sourceUrl: String = ""
+    val id: String, val sport: String, val league: String, val title: String,
+    val startUtc: String, val status: String, val state: String,
+    val home: String, val away: String, val homeLogo: String, val awayLogo: String,
+    val broadcast: String, val artUrl: String = "", val sourceUrl: String = ""
 ) {
     val isLive: Boolean get() = state == "in" || state == "live"
     val isUpcoming: Boolean get() = state == "pre" || state == "scheduled"
@@ -39,14 +29,8 @@ data class SportsEvent(
 data class ScheduleLeague(val sport: String, val league: String, val path: String)
 
 private data class OfficialEvent(
-    val id: String,
-    val title: String,
-    val startUtc: String,
-    val status: String,
-    val state: String,
-    val artUrl: String,
-    val sourceUrl: String,
-    val league: String
+    val id: String, val title: String, val startUtc: String, val status: String,
+    val state: String, val artUrl: String, val sourceUrl: String, val league: String
 )
 
 object SportsScheduleService {
@@ -74,12 +58,10 @@ object SportsScheduleService {
         val today = LocalDate.now(ZoneOffset.UTC)
         val end = today.plusDays(14)
         val dates = "${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
-
         val espn = coroutineScope {
             leagues.map { league -> async { runCatching { fetchLeague(league, dates) }.getOrDefault(emptyList()) } }
                 .awaitAll().flatten()
         }
-
         val officialCombat = coroutineScope {
             listOf(
                 async { runCatching { fetchOfficialCombat("UFC", "https://www.ufc.com/events") }.getOrDefault(emptyList()) },
@@ -88,7 +70,6 @@ object SportsScheduleService {
                 async { runCatching { fetchOfficialCombat("Boxing", "https://www.premierboxingchampions.com/schedule") }.getOrDefault(emptyList()) }
             ).awaitAll().flatten()
         }
-
         (espn + officialCombat.map { it.toSportsEvent() })
             .distinctBy { it.id.ifBlank { it.title + it.startUtc + it.league } }
             .filter { it.isLive || it.isUpcoming }
@@ -110,8 +91,7 @@ object SportsScheduleService {
                 val team = c.optJSONObject("team") ?: continue
                 val name = team.optString("displayName").ifBlank { team.optString("shortDisplayName") }
                 val logo = team.optString("logo")
-                if (c.optString("homeAway") == "home") { home = name; homeLogo = logo }
-                else { away = name; awayLogo = logo }
+                if (c.optString("homeAway") == "home") { home = name; homeLogo = logo } else { away = name; awayLogo = logo }
             }
             val status = competition.optJSONObject("status") ?: e.optJSONObject("status") ?: JSONObject()
             val type = status.optJSONObject("type") ?: JSONObject()
@@ -141,7 +121,10 @@ object SportsScheduleService {
 
     private fun fetchOfficialCombat(kind: String, pageUrl: String): List<OfficialEvent> {
         val html = http(pageUrl, "text/html,application/xhtml+xml")
-        val scripts = Regex("<script[^>]+type=[\\\"']application/ld\\+json[\\\"'][^>]*>(.*?)</script>", RegexOption.IGNORE_CASE or RegexOption.DOT_MATCHES_ALL)
+        val scripts = Regex(
+            "<script[^>]+type=[\\\"']application/ld\\+json[\\\"'][^>]*>(.*?)</script>",
+            setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+        )
         val out = ArrayList<OfficialEvent>()
         for (match in scripts.findAll(html)) {
             val raw = match.groupValues[1].trim()
@@ -169,9 +152,8 @@ object SportsScheduleService {
                         }
                         val state = runCatching { if (Instant.parse(date).isAfter(Instant.now())) "pre" else "in" }.getOrDefault("pre")
                         out += OfficialEvent(
-                            id = value.optString("@id").ifBlank { url + "#" + name },
-                            title = name, startUtc = date,
-                            status = value.optString("eventStatus"), state = state,
+                            id = value.optString("@id").ifBlank { url + "#" + name }, title = name,
+                            startUtc = date, status = value.optString("eventStatus"), state = state,
                             artUrl = image, sourceUrl = url, league = kind
                         )
                     }
