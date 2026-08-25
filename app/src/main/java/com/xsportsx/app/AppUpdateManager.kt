@@ -74,19 +74,14 @@ object AppUpdateManager {
         return ""
     }
 
-    /**
-     * Fast/resumable system download path. Android DownloadManager handles the actual
-     * transfer instead of the old app-thread byte loop, giving TV/mobile the same
-     * optimized network stack and allowing the OS to resume/interleave the download.
-     */
+    /** Fast/resumable OS-managed download path for both Mobile and TV. */
     suspend fun downloadAndInstall(context: Context, update: AppUpdate, onProgress: (Int) -> Unit = {}): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
             val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "updates").apply { mkdirs() }
             val apk = File(dir, "XSportsX-${update.versionCode}.apk")
             if (apk.isFile && apk.length() >= 1024) {
                 onProgress(100)
-                install(context, apk)
-                return@runCatching
+                return@runCatching apk
             }
 
             val tempName = "XSportsX-${update.versionCode}.apk.part"
@@ -102,19 +97,17 @@ object AppUpdateManager {
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, "updates/$tempName")
             }
-
             val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val downloadId = manager.enqueue(request)
             val started = System.currentTimeMillis()
-            var finishedFile: File? = null
+            var finished = false
 
-            while (finishedFile == null) {
+            while (!finished) {
                 if (System.currentTimeMillis() - started > MAX_DOWNLOAD_MS) {
                     manager.remove(downloadId)
                     error("Update download timed out. Please try again.")
                 }
-                val query = DownloadManager.Query().setFilterById(downloadId)
-                manager.query(query).use { cursor ->
+                manager.query(DownloadManager.Query().setFilterById(downloadId)).use { cursor ->
                     if (!cursor.moveToFirst()) error("Update download disappeared")
                     when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
                         DownloadManager.STATUS_SUCCESSFUL -> {
@@ -124,7 +117,7 @@ object AppUpdateManager {
                             if (apk.exists()) apk.delete()
                             if (!downloaded.renameTo(apk) && downloaded.absolutePath != apk.absolutePath) error("Unable to prepare the update package")
                             onProgress(100)
-                            finishedFile = apk
+                            finished = true
                         }
                         DownloadManager.STATUS_FAILED -> {
                             val reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
@@ -137,14 +130,16 @@ object AppUpdateManager {
                         }
                     }
                 }
-                if (finishedFile == null) delay(250)
+                if (!finished) delay(250)
             }
-
-            install(context, finishedFile!!)
+            apk
+        }.mapCatching { apk ->
+            withContext(Dispatchers.Main) { install(context, apk) }
+            Unit
         }
     }
 
-    private suspend fun install(context: Context, apk: File) = withContext(Dispatchers.Main) {
+    private fun install(context: Context, apk: File) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
             context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             throw IllegalStateException("Allow XSportsX to install updates, then press UPDATE again.")
