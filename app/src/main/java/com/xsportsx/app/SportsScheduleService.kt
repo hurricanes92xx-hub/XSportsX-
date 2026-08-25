@@ -25,7 +25,7 @@ data class SportsEvent(
     val searchText:String get()=listOf(home,away,title,league,broadcast).joinToString(" ")
 }
 
-data class ScheduleLeague(val sport:String,val league:String,val path:String)
+data class ScheduleLeague(val sport:String,val league:String,val path:String,val officialUrl:String="")
 
 object SportsScheduleService {
     private val leagues=listOf(
@@ -45,7 +45,12 @@ object SportsScheduleService {
         ScheduleLeague("Soccer","UCL","soccer/uefa.champions"),
         ScheduleLeague("Soccer","UEL","soccer/uefa.europa"),
         ScheduleLeague("Soccer","NWSL","soccer/usa.nwsl"),
-        ScheduleLeague("Racing","F1","racing/f1")
+        ScheduleLeague("Racing","F1","racing/f1"),
+        // Combat sports: ESPN supplies the structured live/upcoming event feed.
+        // officialUrl is retained on every event so the UI can offer an official
+        // event source instead of treating combat events like team games.
+        ScheduleLeague("MMA","UFC","mma/ufc","https://www.ufc.com/events"),
+        ScheduleLeague("Boxing","BOXING","boxing/boxing","https://wbcboxing.com/en/eventos/list/")
     )
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
@@ -94,10 +99,22 @@ object SportsScheduleService {
             var home="";var away="";var homeLogo="";var awayLogo=""
             for(j in 0 until competitors.length()) {
                 val c=competitors.optJSONObject(j) ?: continue
-                val team=c.optJSONObject("team") ?: continue
-                val name=team.optString("displayName").ifBlank { team.optString("shortDisplayName") }
-                val logo=team.optString("logo").ifBlank { team.optJSONArray("logos")?.optJSONObject(0)?.optString("href") ?: "" }
+                val team=c.optJSONObject("team")
+                val athlete=c.optJSONObject("athlete")
+                val name=team?.optString("displayName")?.ifBlank { team.optString("shortDisplayName") }
+                    ?: athlete?.optString("displayName")?.ifBlank { athlete.optString("shortName") }
+                    ?: c.optString("displayName")
+                val logo=team?.optString("logo")?.ifBlank { team.optJSONArray("logos")?.optJSONObject(0)?.optString("href") ?: "" } ?: ""
                 if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo} else {away=name;awayLogo=logo}
+            }
+            // Combat feeds do not always label a fighter as home/away. Preserve
+            // the complete matchup in the title rather than dropping the event.
+            val rawName=e.optString("name").ifBlank { e.optString("shortName") }
+            if(league.sport=="MMA" || league.sport=="Boxing") {
+                if(home.isBlank() && away.isBlank()) {
+                    val parts=rawName.split(" vs "," vs. "," at ",ignoreCase=true,limit=2)
+                    if(parts.size==2){home=parts[0].trim();away=parts[1].trim()}
+                }
             }
             val status=competition.optJSONObject("status") ?: e.optJSONObject("status") ?: JSONObject()
             val type=status.optJSONObject("type") ?: JSONObject()
@@ -112,7 +129,13 @@ object SportsScheduleService {
                 }
             }
             val start=e.optString("date").ifBlank { competition.optString("startDate") }
-            out += SportsEvent(e.optString("id"),league.sport,league.league,e.optString("name").ifBlank { e.optString("shortName") },start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"))
+            val official=when(league.league){"UFC"->"https://www.ufc.com/events";"BOXING"->"https://wbcboxing.com/en/eventos/list/";else->league.officialUrl}
+            val title=when(league.league){
+                "UFC" -> rawName.ifBlank { listOf(home,away).filter { it.isNotBlank() }.joinToString(" vs ") }
+                "BOXING" -> rawName.ifBlank { listOf(home,away).filter { it.isNotBlank() }.joinToString(" vs ") }
+                else -> rawName
+            }
+            out += SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),official)
         }
         return out
     }
