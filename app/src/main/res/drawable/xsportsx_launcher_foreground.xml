@@ -4,9 +4,14 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Full-bleed XSportsX mark; no white legacy-circle treatment. -->
-    <path android:fillColor="#FF1744" android:pathData="M54,12L96,54 54,96 12,54z" />
-    <path android:fillColor="#080A10" android:pathData="M54,24L84,54 54,84 24,54z" />
-    <path android:fillColor="#FF1744" android:pathData="M54,34L74,54 54,74 34,54z" />
-    <path android:fillColor="#080A10" android:pathData="M54,43L65,54 54,65 43,54z" />
+    <path android:fillColor="#55FF1744" android:pathData="M13,13L20,6 60,46 53,53z" />
+    <path android:fillColor="#FFFF1744" android:pathData="M13,13L20,6 58,44 51,51z" />
+    <path android:fillColor="#55FF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
+    <path android:fillColor="#FFFF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
+    <path android:fillColor="#5532B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
+    <path android:fillColor="#FF32B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
+    <path android:fillColor="#5532B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
+    <path android:fillColor="#FF32B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M17,13L20,10 55,45 52,48z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M91,95L88,98 53,63 56,60z" />
 </vector>
