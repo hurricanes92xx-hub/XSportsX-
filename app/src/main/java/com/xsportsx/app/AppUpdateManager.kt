@@ -26,25 +26,29 @@ object AppUpdateManager {
 
     suspend fun check(context: Context): AppUpdate? = withContext(Dispatchers.IO) {
         runCatching {
-            val info = context.packageManager.getPackageInfo(context.packageName, 0)
-            val currentCode = info.longVersionCode
+            val currentCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
+
+            // Normal path: one tiny manifest request. Once the manifest is reachable,
+            // do not make a second GitHub API request just to confirm that nothing changed.
             val manifest = runCatching { JSONObject(http(MANIFEST_URL)) }.getOrNull()
-            val manifestCode = manifest?.optLong("versionCode", 0L) ?: 0L
-            val manifestUrl = if (BuildConfig.IS_TV_BUILD) {
-                manifest?.optString("tvApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
-            } else {
-                manifest?.optString("mobileApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
-            }
-            if (manifestCode > currentCode && manifestUrl.isNotBlank()) {
-                return@runCatching AppUpdate(
-                    manifestCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
-                    manifest?.optString("versionName", "New version") ?: "New version",
-                    manifestUrl,
-                    manifest?.optString("notes", "Update available") ?: "Update available"
-                )
+            if (manifest != null) {
+                val manifestCode = manifest.optLong("versionCode", 0L)
+                val manifestUrl = if (BuildConfig.IS_TV_BUILD) {
+                    manifest.optString("tvApkUrl", "").ifBlank { manifest.optString("apkUrl", "") }
+                } else {
+                    manifest.optString("mobileApkUrl", "").ifBlank { manifest.optString("apkUrl", "") }
+                }
+                return@runCatching if (manifestCode > currentCode && manifestUrl.isNotBlank()) {
+                    AppUpdate(
+                        manifestCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                        manifest.optString("versionName", "New version"),
+                        manifestUrl,
+                        manifest.optString("notes", "Update available")
+                    )
+                } else null
             }
 
-            // Fallback only when the tiny manifest does not advertise a newer build.
+            // Recovery path only if the lightweight manifest endpoint is unavailable.
             val release = JSONObject(http(RELEASE_URL))
             val tag = release.optString("tag_name", "").removePrefix("v")
             val notes = release.optString("body").ifBlank { "Performance and schedule improvements." }
@@ -55,12 +59,7 @@ object AppUpdateManager {
             val assetName = if (BuildConfig.IS_TV_BUILD) "XSportsX-TV.apk" else "XSportsX-Mobile.apk"
             val apkUrl = findAssetUrl(release.optJSONArray("assets"), assetName)
             if (remoteCode > currentCode && apkUrl.isNotBlank()) {
-                AppUpdate(
-                    remoteCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
-                    versionName,
-                    apkUrl,
-                    notes
-                )
+                AppUpdate(remoteCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), versionName, apkUrl, notes)
             } else null
         }.getOrNull()
     }
@@ -74,7 +73,7 @@ object AppUpdateManager {
         return ""
     }
 
-    /** Fast/resumable OS-managed download path for both Mobile and TV. */
+    /** OS-managed download path for both Mobile and TV. */
     suspend fun downloadAndInstall(context: Context, update: AppUpdate, onProgress: (Int) -> Unit = {}): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
             val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "updates").apply { mkdirs() }
@@ -86,6 +85,9 @@ object AppUpdateManager {
 
             val tempName = "XSportsX-${update.versionCode}.apk.part"
             val temp = File(dir, tempName)
+            // A stale partial file cannot safely be attached to a new DownloadManager
+            // request. Remove only an orphan from an earlier attempt; completed APKs are
+            // retained above and reused immediately.
             if (temp.exists()) temp.delete()
 
             val request = DownloadManager.Request(Uri.parse(update.apkUrl)).apply {
@@ -101,7 +103,6 @@ object AppUpdateManager {
             val downloadId = manager.enqueue(request)
             val started = System.currentTimeMillis()
             var finished = false
-
             while (!finished) {
                 if (System.currentTimeMillis() - started > MAX_DOWNLOAD_MS) {
                     manager.remove(downloadId)
