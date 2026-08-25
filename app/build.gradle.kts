@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 12
-        versionName = "1.6.1"
+        versionCode = 11
+        versionName = "1.6.0"
     }
     flavorDimensions += "device"
     productFlavors {
@@ -29,7 +29,10 @@ android {
             buildConfigField("String", "PAIRING_BASE_URL", "\"https://xsportsx.onrender.com\"")
         }
     }
-    buildFeatures { compose = true; buildConfig = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
