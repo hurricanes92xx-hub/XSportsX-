@@ -10,16 +10,32 @@ class MainActivityFuture : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             var connectSource by remember { mutableStateOf(false) }
-            if (connectSource) {
-                SourceConnectScreen(
+            var liveFilter by remember { mutableStateOf<String?>(null) }
+            var sourceVersion by remember { mutableIntStateOf(0) }
+            val connected = remember(sourceVersion) { SourceStore(this@MainActivityFuture).load().isConfigured() }
+
+            when {
+                connectSource -> SourceConnectScreen(
                     onBack = { connectSource = false },
-                    onSaved = { connectSource = false }
+                    onSaved = {
+                        sourceVersion++
+                        connectSource = false
+                    }
                 )
-            } else {
-                FuturisticHome(
-                    onConnect = { connectSource = true },
-                    onNetwork = { connectSource = true }
+                liveFilter != null -> LiveChannelsScreen(
+                    filter = liveFilter,
+                    onBack = { liveFilter = null }
                 )
+                else -> key(sourceVersion) {
+                    FuturisticHome(
+                        onConnect = {
+                            if (connected) liveFilter = null else connectSource = true
+                        },
+                        onNetwork = { network ->
+                            if (connected) liveFilter = network.name else connectSource = true
+                        }
+                    )
+                }
             }
         }
     }
