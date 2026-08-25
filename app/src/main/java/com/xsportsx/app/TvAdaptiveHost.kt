@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Density
 /**
  * Keeps the TV UI proportional across different Android TV panel resolutions/densities.
  * 1280x720 logical space is the design baseline; the scale is bounded so very small
- * displays remain usable and very large 4K displays do not become comically oversized.
+ * displays remain usable and very large 4K displays do not become oversized.
  */
 @Composable
 fun TvAdaptiveHost(
@@ -21,8 +21,8 @@ fun TvAdaptiveHost(
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val baseDensity = LocalDensity.current
-        val widthScale = maxWidth / 1280f
-        val heightScale = maxHeight / 720f
+        val widthScale = maxWidth.value / 1280f
+        val heightScale = maxHeight.value / 720f
         val scale = minOf(widthScale, heightScale).coerceIn(0.85f, 1.35f)
 
         CompositionLocalProvider(
