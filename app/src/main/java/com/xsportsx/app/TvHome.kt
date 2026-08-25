@@ -61,9 +61,9 @@ private data class TvGame(
 )
 private data class TvSport(val name: String, val glyph: String)
 private data class TvNetwork(val name: String, val mark: String)
-private data class TvLeague(val name: String, val sport: String, val id: String)
+data class TvLeague(val name: String, val sport: String, val id: String)
 
-private val liveLeagues = listOf(
+val liveLeagues = listOf(
     TvLeague("NFL", "football", "nfl"), TvLeague("NCAA FB", "football", "college-football"),
     TvLeague("NBA", "basketball", "nba"), TvLeague("WNBA", "basketball", "wnba"),
     TvLeague("NCAA BB", "basketball", "mens-college-basketball"), TvLeague("MLB", "baseball", "mlb"),
@@ -291,7 +291,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 
 @Composable private fun TvSettings(onConnect: () -> Unit) { TvSection("SETTINGS"); Column(Modifier.widthIn(max = 700.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { TvSetting("Source connection", "Connect your authorized Xtream/M3U source", "CONNECT", onConnect); TvSetting("Device sync", "Pair this TV with your XSportsX mobile device", "PAIR", onConnect); TvSetting("TV controls", "D-pad optimized navigation and focus states", "ON", {}) } }
 @Composable private fun TvSetting(title: String, subtitle: String, action: String, onClick: () -> Unit) { Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)).background(TvPanel).padding(16.dp), verticalAlignment = Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Text(title, color = Color.White, fontWeight = FontWeight.Black); Text(subtitle, color = TvMuted, fontSize = 11.sp) }; TvActionButton(action, onClick) } }
-@Composable private fun TvEmpty(text: String) { Box(Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel), contentAlignment = Alignment.Center) { Text(text, color = TvMuted, fontSize = 13.sp, fontWeight = FontWeight.Bold) } }
+@Composable fun TvEmpty(text: String) { Box(Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel), contentAlignment = Alignment.Center) { Text(text, color = TvMuted, fontSize = 13.sp, fontWeight = FontWeight.Bold) } }
 
 private fun teamMark(name: String): String = name.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.take(2).joinToString("") { it.take(1).uppercase() }.ifBlank { "•" }
 
