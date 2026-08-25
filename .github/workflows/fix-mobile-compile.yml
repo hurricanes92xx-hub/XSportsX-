@@ -1,0 +1,39 @@
+name: Fix mobile compile
+
+on:
+  push:
+    branches: [android-app]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 2
+      - name: Apply Kotlin fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt')
+          s = p.read_text()
+          s = s.replace('import androidx.compose.foundation.rememberScrollState\n', 'import androidx.compose.foundation.rememberScrollState\nimport androidx.compose.foundation.verticalScroll\n')
+          s = s.replace('private data class XNetwork(', 'data class XNetwork(')
+          p.write_text(s)
+          PY
+          git diff --check
+          if git diff --quiet; then
+            echo 'No source changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          git commit -m 'Fix mobile compile errors'
+          git push origin android-app
