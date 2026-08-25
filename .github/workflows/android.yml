@@ -1,5 +1,7 @@
 name: Build XSportsX APK
 
+# Release build includes the animated Xtreme logo on Mobile + Android TV.
+
 on:
   push:
     branches: [android-app]
