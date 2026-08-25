@@ -29,23 +29,23 @@ data class ScheduleLeague(val sport:String,val league:String,val path:String,val
 
 object SportsScheduleService {
     private val leagues=listOf(
-        ScheduleLeague("Football","NFL","football/nfl"),
-        ScheduleLeague("College Football","NCAA","football/college-football"),
-        ScheduleLeague("Basketball","NBA","basketball/nba"),
-        ScheduleLeague("Basketball","WNBA","basketball/wnba"),
-        ScheduleLeague("College Basketball","NCAA","basketball/mens-college-basketball"),
-        ScheduleLeague("Baseball","MLB","baseball/mlb"),
-        ScheduleLeague("Hockey","NHL","hockey/nhl"),
-        ScheduleLeague("Soccer","MLS","soccer/usa.1"),
-        ScheduleLeague("Soccer","EPL","soccer/eng.1"),
-        ScheduleLeague("Soccer","LaLiga","soccer/esp.1"),
-        ScheduleLeague("Soccer","Bundesliga","soccer/ger.1"),
-        ScheduleLeague("Soccer","Serie A","soccer/ita.1"),
-        ScheduleLeague("Soccer","Ligue 1","soccer/fra.1"),
-        ScheduleLeague("Soccer","UCL","soccer/uefa.champions"),
-        ScheduleLeague("Soccer","UEL","soccer/uefa.europa"),
-        ScheduleLeague("Soccer","NWSL","soccer/usa.nwsl"),
-        ScheduleLeague("Racing","F1","racing/f1"),
+        ScheduleLeague("Football","NFL","football/nfl","https://www.nfl.com/schedules/"),
+        ScheduleLeague("College Football","NCAA","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
+        ScheduleLeague("Basketball","NBA","basketball/nba","https://www.nba.com/schedule"),
+        ScheduleLeague("Basketball","WNBA","basketball/wnba","https://www.wnba.com/schedule"),
+        ScheduleLeague("College Basketball","NCAA","basketball/mens-college-basketball","https://www.ncaa.com/scoreboard/basketball-men/d1"),
+        ScheduleLeague("Baseball","MLB","baseball/mlb","https://www.mlb.com/schedule"),
+        ScheduleLeague("Hockey","NHL","hockey/nhl","https://www.nhl.com/schedule"),
+        ScheduleLeague("Soccer","MLS","soccer/usa.1","https://www.mlssoccer.com/schedule"),
+        ScheduleLeague("Soccer","EPL","soccer/eng.1","https://www.premierleague.com/fixtures"),
+        ScheduleLeague("Soccer","LaLiga","soccer/esp.1","https://www.laliga.com/en-GB/laliga-easports/results"),
+        ScheduleLeague("Soccer","Bundesliga","soccer/ger.1","https://www.bundesliga.com/en/bundesliga/matchday"),
+        ScheduleLeague("Soccer","Serie A","soccer/ita.1","https://www.legaseriea.it/en"),
+        ScheduleLeague("Soccer","Ligue 1","soccer/fra.1","https://www.ligue1.com/"),
+        ScheduleLeague("Soccer","UCL","soccer/uefa.champions","https://www.uefa.com/uefachampionsleague/fixtures-results/"),
+        ScheduleLeague("Soccer","UEL","soccer/uefa.europa","https://www.uefa.com/uefaeuropaleague/fixtures-results/"),
+        ScheduleLeague("Soccer","NWSL","soccer/usa.nwsl","https://www.nwslsoccer.com/schedule"),
+        ScheduleLeague("Racing","F1","racing/f1","https://www.formula1.com/en/racing/2026"),
         ScheduleLeague("MMA","UFC","mma/ufc","https://www.ufc.com/events"),
         ScheduleLeague("Boxing","BOXING","boxing/boxing","https://wbcboxing.com/en/eventos/list/")
     )
@@ -54,17 +54,13 @@ object SportsScheduleService {
         val today=LocalDate.now(ZoneId.systemDefault())
         val end=today.plusDays(30)
         val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
-        // 19 leagues in parallel, capped below the point where the device or
-        // ESPN starts queueing connections. This replaces the old 76-call loop.
-        val limiter=Semaphore(10)
+        val limiter=Semaphore(8)
 
-        val results=withTimeout(25_000L) {
+        val results=withTimeout(28_000L) {
             coroutineScope {
                 leagues.map { league ->
                     async {
-                        limiter.withPermit {
-                            runCatching { fetchLeague(league,dates) }.getOrElse { emptyList() }
-                        }
+                        limiter.withPermit { fetchLeagueWithFallbacks(league,dates,today,end) }
                     }
                 }.awaitAll()
             }
@@ -76,30 +72,69 @@ object SportsScheduleService {
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
     }
 
-    private fun fetchLeague(league:ScheduleLeague,dates:String):List<SportsEvent> {
-        val primary="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
-        val v3="https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
-        // Keep fallback count low: the primary endpoint is public and the v3
-        // endpoint is the only useful alternate. Extra CDN retries were a major
-        // contributor to the old timeout on slower mobile connections.
-        for(url in listOf(primary,v3)) {
-            try {
-                val parsed=parse(JSONObject(http(url)),league)
-                if(parsed.isNotEmpty()) return parsed
-            } catch (_:Throwable) { }
+    /**
+     * Reliability chain:
+     * 1) ESPN structured scoreboard.
+     * 2) League-specific structured/public fallback where one exists.
+     * 3) Official league URL is retained on every event so the UI can expose
+     *    the authoritative source for verification.
+     *
+     * Google is intentionally NOT scraped. Search-result HTML is not a stable
+     * sports data API and can change by region/device. When we add a server-side
+     * search provider later it should be treated as discovery/verification only,
+     * never as the sole source of truth.
+     */
+    private suspend fun fetchLeagueWithFallbacks(
+        league:ScheduleLeague,
+        dates:String,
+        from:LocalDate,
+        to:LocalDate
+    ):List<SportsEvent> {
+        val sources=mutableListOf<List<SportsEvent>>()
+
+        // Primary + ESPN v3 fallback.
+        runCatching { sources += fetchEspn(league,dates) }
+        if(sources.lastOrNull().isNullOrEmpty()) runCatching { sources += fetchEspnV3(league,dates) }
+
+        // Independent league-specific feeds.
+        when(league.league){
+            "MLB" -> runCatching { sources += fetchMlbOfficial(from,to) }
+            "NHL" -> runCatching { sources += fetchNhlOfficial(from,to) }
+            "F1" -> runCatching { sources += fetchF1Fallback(from,to) }
         }
-        return emptyList()
+
+        // Only return useful data. We merge independent sources and dedupe so
+        // a source outage cannot blank the entire schedule.
+        return sources.flatten()
+            .filter { it.league.equals(league.league,true) }
+            .map { it.copy(sourceUrl = it.sourceUrl.ifBlank { league.officialUrl }) }
+            .distinctBy { canonicalKey(it) }
     }
 
-    private fun parse(root:JSONObject,league:ScheduleLeague):List<SportsEvent> {
+    private fun canonicalKey(e:SportsEvent):String =
+        listOf(e.league,normalize(e.home),normalize(e.away),e.startUtc.take(10)).joinToString("|")
+
+    private fun normalize(v:String):String = v.lowercase().replace("fc"," ").replace("  "," ").trim()
+
+    private fun fetchEspn(league:ScheduleLeague,dates:String):List<SportsEvent>{
+        val url="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
+        return parseEspn(JSONObject(http(url)),league)
+    }
+
+    private fun fetchEspnV3(league:ScheduleLeague,dates:String):List<SportsEvent>{
+        val url="https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dates&limit=1000"
+        return parseEspn(JSONObject(http(url)),league)
+    }
+
+    private fun parseEspn(root:JSONObject,league:ScheduleLeague):List<SportsEvent>{
         val events=root.optJSONArray("events") ?: root.optJSONObject("content")?.optJSONArray("events") ?: return emptyList()
         val out=ArrayList<SportsEvent>(events.length())
-        for(i in 0 until events.length()) {
+        for(i in 0 until events.length()){
             val e=events.optJSONObject(i) ?: continue
             val competition=e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
             val competitors=competition.optJSONArray("competitors") ?: continue
             var home="";var away="";var homeLogo="";var awayLogo=""
-            for(j in 0 until competitors.length()) {
+            for(j in 0 until competitors.length()){
                 val c=competitors.optJSONObject(j) ?: continue
                 val team=c.optJSONObject("team")
                 val athlete=c.optJSONObject("athlete")
@@ -107,49 +142,85 @@ object SportsScheduleService {
                     ?: athlete?.optString("displayName")?.ifBlank { athlete.optString("shortName") }
                     ?: c.optString("displayName")
                 val logo=team?.optString("logo")?.ifBlank { team.optJSONArray("logos")?.optJSONObject(0)?.optString("href") ?: "" } ?: ""
-                if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo} else {away=name;awayLogo=logo}
+                if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo}else{away=name;awayLogo=logo}
             }
             val rawName=e.optString("name").ifBlank { e.optString("shortName") }
-            if(league.sport=="MMA" || league.sport=="Boxing") {
-                if(home.isBlank() && away.isBlank()) {
-                    val parts=rawName.split(" vs "," vs. "," at ",ignoreCase=true,limit=2)
-                    if(parts.size==2){home=parts[0].trim();away=parts[1].trim()}
-                }
-            }
             val status=competition.optJSONObject("status") ?: e.optJSONObject("status") ?: JSONObject()
             val type=status.optJSONObject("type") ?: JSONObject()
             val state=type.optString("state").ifBlank { status.optString("state") }
             val detail=type.optString("shortDetail").ifBlank { type.optString("detail") }.ifBlank { status.optString("displayClock") }
             val broadcasts=competition.optJSONArray("broadcasts")
             val broadcast=buildString {
-                if(broadcasts!=null) for(j in 0 until broadcasts.length()) {
-                    val b=broadcasts.optJSONObject(j) ?: continue
-                    val names=b.optJSONArray("names")
-                    if(names!=null) for(k in 0 until names.length()) { if(isNotEmpty()) append(", "); append(names.optString(k)) }
+                if(broadcasts!=null) for(j in 0 until broadcasts.length()){
+                    val names=broadcasts.optJSONObject(j)?.optJSONArray("names")
+                    if(names!=null) for(k in 0 until names.length()){if(isNotEmpty())append(", ");append(names.optString(k))}
                 }
             }
             val start=e.optString("date").ifBlank { competition.optString("startDate") }
-            val official=when(league.league){"UFC"->"https://www.ufc.com/events";"BOXING"->"https://wbcboxing.com/en/eventos/list/";else->league.officialUrl}
             val title=rawName.ifBlank { listOf(home,away).filter { it.isNotBlank() }.joinToString(" vs ") }
-            out += SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),official)
+            out += SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),league.officialUrl)
         }
         return out
     }
 
-    private fun http(target:String):String {
-        val c=(URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod="GET"
-            connectTimeout=2500
-            readTimeout=5000
-            instanceFollowRedirects=true
-            setRequestProperty("User-Agent","XSportsX/1.4 (Android)")
-            setRequestProperty("Accept","application/json,text/plain,*/*")
-            setRequestProperty("Cache-Control","no-cache")
+    /** MLB's official StatsAPI is an independent structured source. */
+    private fun fetchMlbOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
+        val url="https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=$from&endDate=$to&hydrate=team,venue"
+        val root=JSONObject(http(url));val days=root.optJSONArray("dates") ?: return emptyList();val out=ArrayList<SportsEvent>()
+        for(i in 0 until days.length()){
+            val games=days.optJSONObject(i)?.optJSONArray("games") ?: continue
+            for(j in 0 until games.length()){
+                val g=games.optJSONObject(j) ?: continue;val teams=g.optJSONObject("teams") ?: continue
+                val h=teams.optJSONObject("home")?.optJSONObject("team");val a=teams.optJSONObject("away")?.optJSONObject("team")
+                val state=g.optJSONObject("status")?.optString("abstractGameState").orEmpty().lowercase()
+                val detail=g.optJSONObject("status")?.optString("detailedState").orEmpty()
+                val home=h?.optString("name").orEmpty();val away=a?.optString("name").orEmpty()
+                out += SportsEvent("mlb-${g.optInt("gamePk")}","Baseball","MLB","$away vs $home",g.optString("gameDate"),detail,if(state=="live")"in" else if(state=="preview")"pre" else state,home,away,"","","", "https://www.mlb.com/schedule","https://www.mlb.com/schedule")
+            }
         }
-        return try {
-            val code=c.responseCode
-            if(code !in 200..299) error("Schedule HTTP $code")
-            c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-        } finally { c.disconnect() }
+        return out
+    }
+
+    /** NHL's public web API is independent from ESPN. */
+    private fun fetchNhlOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
+        val out=ArrayList<SportsEvent>();var d=from
+        while(!d.isAfter(to)){
+            runCatching{
+                val root=JSONObject(http("https://api-web.nhle.com/v1/schedule/$d"));val dates=root.optJSONArray("gameWeek") ?: return@runCatching
+                for(i in 0 until dates.length()){
+                    val day=dates.optJSONObject(i) ?: continue;val games=day.optJSONArray("games") ?: continue
+                    for(j in 0 until games.length()){
+                        val g=games.optJSONObject(j) ?: continue;val h=g.optJSONObject("homeTeam");val a=g.optJSONObject("awayTeam")
+                        val state=g.optString("gameState").lowercase()
+                        val mapped=when(state){"live","critical"->"in";"future","preview"->"pre";else->"post"}
+                        if(mapped=="post")continue
+                        out += SportsEvent("nhl-${g.optInt("id")}","Hockey","NHL","${a?.optString("place","Away")} ${a?.optString("commonName","")} vs ${h?.optString("place","Home")} ${h?.optString("commonName","")}",g.optString("startTimeUTC"),g.optString("gameScheduleState"),mapped,h?.optString("place","").orEmpty(),a?.optString("place","").orEmpty(),h?.optString("logo","").orEmpty(),a?.optString("logo","").orEmpty(),"","https://www.nhl.com/schedule")
+                    }
+                }
+            }
+            d=d.plusDays(1)
+        }
+        return out
+    }
+
+    /** F1 fallback uses Jolpica when ESPN has no race data. */
+    private fun fetchF1Fallback(from:LocalDate,to:LocalDate):List<SportsEvent>{
+        val root=JSONObject(http("https://api.jolpi.ca/ergast/f1/${from.year}.json"));val races=root.optJSONObject("MRData")?.optJSONObject("RaceTable")?.optJSONArray("Races") ?: return emptyList();val out=ArrayList<SportsEvent>()
+        for(i in 0 until races.length()){
+            val r=races.optJSONObject(i) ?: continue;val date=r.optString("date");if(date.isBlank())continue
+            val local=runCatching{LocalDate.parse(date)}.getOrNull() ?: continue;if(local.isBefore(from)||local.isAfter(to))continue
+            val circuit=r.optJSONObject("Circuit")?.optString("circuitName").orEmpty();val name=r.optString("raceName")
+            out += SportsEvent("f1-${r.optString("round")}","Racing","F1",name,"${date}T${r.optString("time","12:00:00Z")}","Scheduled","pre",circuit,"","","","","https://www.formula1.com/en/racing/${from.year}","https://www.formula1.com/en/racing/${from.year}")
+        }
+        return out
+    }
+
+    private fun http(target:String):String{
+        val c=(URL(target).openConnection() as HttpURLConnection).apply{
+            requestMethod="GET";connectTimeout=2200;readTimeout=4500;instanceFollowRedirects=true
+            setRequestProperty("User-Agent","XSportsX/1.5 (Android)")
+            setRequestProperty("Accept","application/json,text/plain,*/*")
+        }
+        return try{val code=c.responseCode;if(code !in 200..299)error("Schedule HTTP $code");c.inputStream.bufferedReader(Charsets.UTF_8).use{it.readText()}}finally{c.disconnect()}
     }
 }
