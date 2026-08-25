@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.min
 
 /** Xtreme neon X logo used consistently on phone and Android TV builds. */
 @Composable
@@ -35,17 +36,18 @@ fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 52.dp) {
 
     Box(modifier = modifier.size(size).rotate(rotation)) {
         Canvas(Modifier.size(size)) {
-            val inset = size.minDimension * 0.17f
+            val dimension = min(this.size.width, this.size.height)
+            val inset = dimension * 0.17f
             val left = inset
-            val right = size.minDimension - inset
+            val right = dimension - inset
             val top = inset
-            val bottom = size.minDimension - inset
-            val center = size.minDimension / 2f
+            val bottom = dimension - inset
+            val center = dimension / 2f
             val red = Color(0xFFFF1744)
             val blue = Color(0xFF32B7FF)
             val redGlow = Color(0x55FF1744)
             val blueGlow = Color(0x5532B7FF)
-            val stroke = size.minDimension * 0.105f
+            val stroke = dimension * 0.105f
 
             drawLine(redGlow, Offset(left, top), Offset(center, center), strokeWidth = stroke * 3.8f, cap = StrokeCap.Round)
             drawLine(redGlow, Offset(center, center), Offset(left, bottom), strokeWidth = stroke * 3.8f, cap = StrokeCap.Round)
