@@ -3,10 +3,13 @@ package com.xsportsx.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -131,17 +134,56 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
         while (isActive) {
             loading = true
             val loaded = runCatching { loadTickerGroups() }.getOrDefault(emptyList())
-            if (loaded.isNotEmpty()) { groups = loaded; index = 0; failed = false } else if (groups.isEmpty()) failed = true
+            if (loaded.isNotEmpty()) {
+                groups = loaded
+                index = index.coerceIn(0, loaded.lastIndex)
+                failed = false
+            } else if (groups.isEmpty()) {
+                failed = true
+            }
             loading = false
             delay(60_000L)
         }
     }
-    LaunchedEffect(groups.size) { while (isActive && groups.size > 1) { delay(7_000L); index = (index + 1) % groups.size } }
     val group = groups.getOrNull(index.coerceIn(0, (groups.size - 1).coerceAtLeast(0)))
-    val text = group?.let(::line)?.takeIf { it.isNotBlank() } ?: when { loading -> "SPORTS FEED  •  LOADING"; failed -> "SPORTS FEED  •  TEMPORARILY UNAVAILABLE"; else -> "SPORTS FEED  •  NO GAMES / NEWS AVAILABLE" }
-    Row(modifier.fillMaxWidth().height(42.dp).background(Color(0xEE07090E)).padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+    val text = group?.let(::line)?.takeIf { it.isNotBlank() } ?: when {
+        loading -> "SPORTS FEED  •  LOADING"
+        failed -> "SPORTS FEED  •  TEMPORARILY UNAVAILABLE"
+        else -> "SPORTS FEED  •  NO GAMES / NEWS AVAILABLE"
+    }
+    Row(
+        modifier.fillMaxWidth().height(42.dp).background(Color(0xEE07090E)).padding(horizontal = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text("X", color = Color(0xFFFF1744), fontWeight = FontWeight.Black, fontSize = 20.sp)
         Spacer(Modifier.width(10.dp))
-        Text(text, modifier = Modifier.weight(1f).basicMarquee(iterations = Int.MAX_VALUE), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp, maxLines = 1)
+        TickerMarquee(text) {
+            if (groups.size > 1) index = (index + 1) % groups.size
+        }
+    }
+}
+
+@Composable
+private fun TickerMarquee(text: String, onFinished: () -> Unit) {
+    val density = LocalDensity.current
+    var viewportWidthPx by remember { mutableIntStateOf(0) }
+    var textWidthPx by remember(text) { mutableIntStateOf(0) }
+    LaunchedEffect(text, viewportWidthPx, textWidthPx) {
+        if (viewportWidthPx <= 0 || textWidthPx <= 0) return@LaunchedEffect
+        val velocityPxPerSecond = with(density) { 55.dp.toPx() }
+        val duration = if (textWidthPx <= viewportWidthPx) 4_500L else ((textWidthPx + viewportWidthPx) / velocityPxPerSecond * 1_000L + 900L).toLong().coerceAtLeast(5_000L)
+        delay(duration)
+        onFinished()
+    }
+    BoxWithConstraints(Modifier.weight(1f).fillMaxHeight().onSizeChanged { viewportWidthPx = it.width }) {
+        Text(
+            text,
+            modifier = Modifier.fillMaxWidth().basicMarquee(iterations = 1, repeatDelayMillis = 0, initialDelayMillis = 650, velocity = 55.dp),
+            onTextLayout = { textWidthPx = it.size.width },
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            maxLines = 1
+        )
     }
 }
