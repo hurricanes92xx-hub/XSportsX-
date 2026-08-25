@@ -83,12 +83,19 @@ class MainActivityFuture : ComponentActivity() {
                 schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> liveFilter = listOf(event.home, event.away, event.broadcast).filter { it.isNotBlank() }.joinToString("||"); schedules = false })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
-                    Box(Modifier.fillMaxSize()) {
-                        FuturisticHome(
+                    if (BuildConfig.IS_TV_BUILD) {
+                        TvHome(
                             onConnect = { if (connected) schedules = true else connectSource = true },
-                            onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true }
+                            onNetwork = { network -> if (connected) liveFilter = network else connectSource = true }
                         )
-                        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
+                    } else {
+                        Box(Modifier.fillMaxSize()) {
+                            FuturisticHome(
+                                onConnect = { if (connected) schedules = true else connectSource = true },
+                                onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true }
+                            )
+                            HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
+                        }
                     }
                 }
             }
