@@ -1,0 +1,50 @@
+name: Fix TV sidebar navigation
+
+on:
+  push:
+    branches: [android-app]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[tv-sidebar-patched]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch TV navigation
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
+          s = p.read_text()
+          old = '''                    "LIVE NOW" -> { TvSection("LIVE NOW", if (liveGames.isEmpty()) "No games live right now" else "${liveGames.size} LIVE"); if (liveGames.isNotEmpty()) TvGameRow(liveGames, onNetwork) else TvLiveEmpty(loadingLive) }
+                    "UPCOMING" -> { TvSection("UPCOMING"); TvEmpty("Upcoming events will appear here") }
+                    "NETWORKS" -> { TvSection("SPORTS NETWORKS"); TvNetworkGrid(tvNetworks, onNetwork) }
+                    "FAVORITES" -> { TvSection("FAVORITES"); TvEmpty("Your favorite leagues and networks will appear here") }
+                    "SETTINGS" -> TvSettings(onConnect)'''
+          new = '''                    "LIVE NOW" -> { TvSection("LIVE NOW", if (liveGames.isEmpty()) "No games live right now" else "${liveGames.size} LIVE"); if (liveGames.isNotEmpty()) TvGameRow(liveGames, onNetwork) else TvLiveEmpty(loadingLive) }
+                    "UPCOMING" -> { TvSection("UPCOMING", "SPORTS FEED"); TvUpcomingPanel() }
+                    "NETWORKS" -> { TvSection("SPORTS NETWORKS"); TvNetworkGrid(tvNetworks, onNetwork) }
+                    "FAVORITES" -> { TvSection("FAVORITES", "YOUR PINNED SPORTS"); TvSportRow(tvSports, onOpen = { sport -> onNetwork(sport.name) }) }
+                    "NFL", "NCAA FB" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
+                    "NBA", "WNBA", "NCAA BB" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
+                    "MLB", "NHL", "MLS", "EPL" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
+                    "UFC", "BOXING" -> { TvSection(selectedNav, "EVENT FEED"); TvSportRow(tvSports.filter { it.name == selectedNav }) { sport -> onNetwork(sport.name) }; Spacer(Modifier.height(14.dp)); TvEmpty("Select ${selectedNav} to browse available events") }
+                    "SETTINGS" -> TvSettings(onConnect)'''
+          if old not in s:
+              raise SystemExit('Target navigation block not found; refusing to modify source.')
+          s = s.replace(old, new, 1)
+          marker = '\n// TV_SIDEBAR_WIRED\n'
+          if 'TV_SIDEBAR_WIRED' not in s:
+              s += marker
+          p.write_text(s)
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/com/xsportsx/app/TvHome.kt
+          git diff --cached --quiet && exit 0
+          git commit -m "Wire TV sidebar sports navigation [tv-sidebar-patched]"
+          git push
