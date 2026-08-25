@@ -25,29 +25,41 @@ object AppUpdateManager {
         runCatching {
             val info = context.packageManager.getPackageInfo(context.packageName, 0)
             val currentCode = info.longVersionCode
-            val currentName = info.versionName.orEmpty()
-            val release = JSONObject(http("$RELEASE_URL?ts=${System.currentTimeMillis()}"))
-            val tag = release.optString("tag_name", "").removePrefix("v")
-            val notes = release.optString("body").ifBlank { "Performance and schedule improvements." }
-            val metadataCode = Regex("XSportsX-Update-Version-Code\\s*:\\s*(\\d+)").find(notes)?.groupValues?.getOrNull(1)?.toLongOrNull()
-            val remoteCode = release.optLong("version_code", 0L).takeIf { it > 0L } ?: metadataCode ?: 0L
-            val versionName = release.optString("version_name").ifBlank { tag.ifBlank { "New version" } }
             val assetName = if (BuildConfig.IS_TV_BUILD) "XSportsX-TV.apk" else "XSportsX-Mobile.apk"
-            val apkUrl = findAssetUrl(release.optJSONArray("assets"), assetName)
 
-            if (remoteCode > currentCode && apkUrl.isNotBlank()) {
-                return@runCatching AppUpdate(remoteCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), versionName, apkUrl, notes)
-            }
-
-            val manifest = runCatching { JSONObject(http("$MANIFEST_URL?ts=${System.currentTimeMillis()}")) }.getOrNull()
-            val fallbackCode = manifest?.optLong("versionCode", 0L) ?: 0L
-            val fallbackUrl = if (BuildConfig.IS_TV_BUILD) {
+            // Fast path: the tiny CDN-backed manifest avoids the much larger GitHub API response.
+            val manifest = runCatching { JSONObject(http(MANIFEST_URL)) }.getOrNull()
+            val manifestCode = manifest?.optLong("versionCode", 0L) ?: 0L
+            val manifestUrl = if (BuildConfig.IS_TV_BUILD) {
                 manifest?.optString("tvApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
             } else {
                 manifest?.optString("mobileApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
             }
-            if (fallbackCode > currentCode && fallbackUrl.isNotBlank()) {
-                AppUpdate(fallbackCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), manifest?.optString("versionName", "New version") ?: "New version", fallbackUrl, manifest?.optString("notes", "Update available") ?: "Update available")
+            if (manifestCode > currentCode && manifestUrl.isNotBlank()) {
+                return@runCatching AppUpdate(
+                    manifestCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                    manifest?.optString("versionName", "New version") ?: "New version",
+                    manifestUrl,
+                    manifest?.optString("notes", "Update available") ?: "Update available"
+                )
+            }
+
+            // Fallback for releases while the manifest/CDN is propagating.
+            val release = JSONObject(http(RELEASE_URL))
+            val tag = release.optString("tag_name", "").removePrefix("v")
+            val notes = release.optString("body").ifBlank { "Performance and schedule improvements." }
+            val metadataCode = Regex("XSportsX-Update-Version-Code\\s*:\\s*(\\d+)")
+                .find(notes)?.groupValues?.getOrNull(1)?.toLongOrNull()
+            val remoteCode = release.optLong("version_code", 0L).takeIf { it > 0L } ?: metadataCode ?: 0L
+            val versionName = release.optString("version_name").ifBlank { tag.ifBlank { "New version" } }
+            val apkUrl = findAssetUrl(release.optJSONArray("assets"), assetName)
+            if (remoteCode > currentCode && apkUrl.isNotBlank()) {
+                AppUpdate(
+                    remoteCode.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                    versionName,
+                    apkUrl,
+                    notes
+                )
             } else null
         }.getOrNull()
     }
@@ -88,32 +100,47 @@ object AppUpdateManager {
 
     private fun http(target: String): String {
         val c = (URL(target).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 5000; readTimeout = 8000; requestMethod = "GET"; instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "XSportsX-Updater/5")
-            setRequestProperty("Accept", "application/vnd.github+json, application/json")
+            connectTimeout = 3000
+            readTimeout = 5000
+            requestMethod = "GET"
+            instanceFollowRedirects = true
+            useCaches = false
+            setRequestProperty("User-Agent", "XSportsX-Updater/6")
+            setRequestProperty("Accept", "application/json, application/vnd.github+json")
             setRequestProperty("X-GitHub-Api-Version", "2026-03-10")
             setRequestProperty("Cache-Control", "no-cache")
         }
-        return try { if (c.responseCode !in 200..299) error("Update server HTTP ${c.responseCode}"); c.inputStream.bufferedReader().use { it.readText() } } finally { c.disconnect() }
+        return try {
+            if (c.responseCode !in 200..299) error("Update server HTTP ${c.responseCode}")
+            c.inputStream.bufferedReader().use { it.readText() }
+        } finally { c.disconnect() }
     }
 
     private fun download(target: String, file: File, onProgress: (Int) -> Unit) {
         if (file.exists()) file.delete()
         val c = (URL(target).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 10000; readTimeout = 20000; requestMethod = "GET"; instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "Mozilla/5.0 XSportsX-Updater/5")
+            connectTimeout = 10000
+            readTimeout = 20000
+            requestMethod = "GET"
+            instanceFollowRedirects = true
+            setRequestProperty("User-Agent", "XSportsX-Updater/6")
             setRequestProperty("Accept", "application/vnd.android.package-archive,application/octet-stream,*/*")
         }
         val started = System.currentTimeMillis()
         try {
             if (c.responseCode !in 200..299) error("APK download HTTP ${c.responseCode}")
-            val total = c.contentLengthLong; var received = 0L; var last = -1
+            val total = c.contentLengthLong
+            var received = 0L
+            var last = -1
             c.inputStream.buffered().use { input -> file.outputStream().buffered().use { output ->
-                val buffer = ByteArray(32 * 1024)
+                // Larger chunks reduce overhead on TV/mobile APK downloads.
+                val buffer = ByteArray(256 * 1024)
                 while (true) {
                     if (System.currentTimeMillis() - started > MAX_DOWNLOAD_MS) error("Update download timed out. Please try again.")
-                    val n = input.read(buffer); if (n < 0) break
-                    output.write(buffer, 0, n); received += n
+                    val n = input.read(buffer)
+                    if (n < 0) break
+                    output.write(buffer, 0, n)
+                    received += n
                     val p = if (total > 0) ((received * 100L) / total).toInt().coerceIn(0, 99) else (received / 524288L).toInt().coerceAtMost(99)
                     if (p != last) { last = p; onProgress(p) }
                 }
