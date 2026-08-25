@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 data class SportsEvent(
@@ -20,8 +20,8 @@ data class SportsEvent(
     val status:String,val state:String,val home:String,val away:String,val homeLogo:String,
     val awayLogo:String,val broadcast:String,val artUrl:String="",val sourceUrl:String=""
 ) {
-    val isLive:Boolean get()=state.equals("in",true)||state.equals("live",true)
-    val isUpcoming:Boolean get()=state.equals("pre",true)||state.equals("scheduled",true)
+    val isLive:Boolean get()=state.equals("in",true)||state.equals("live",true)||status.contains("live",true)
+    val isUpcoming:Boolean get()=state.equals("pre",true)||state.equals("scheduled",true)||state.equals("upcoming",true)
     val searchText:String get()=listOf(home,away,title,league,broadcast).joinToString(" ")
 }
 
@@ -49,38 +49,44 @@ object SportsScheduleService {
     )
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
-        // Fast first paint: only request today's scoreboard. The previous version
-        // requested 15 days x 17 leagues, which could leave the UI spinning for minutes.
-        val today=LocalDate.now(ZoneOffset.UTC)
+        val today=LocalDate.now(ZoneId.systemDefault())
+        val dates=(0L..3L).map { today.plusDays(it) }
         val limiter=Semaphore(8)
         val results=withTimeout(15_000L) {
             coroutineScope {
-                leagues.map { league ->
-                    async {
-                        limiter.withPermit {
-                            runCatching { fetchLeague(league,today) }.getOrElse { emptyList() }
-                        }
-                    }
-                }.awaitAll()
+                leagues.flatMap { league -> dates.map { date ->
+                    async { limiter.withPermit { runCatching { fetchLeague(league,date) }.getOrElse { emptyList() } } }
+                } }.awaitAll()
             }
         }
-
         val events=results.flatten()
             .distinctBy { it.id.ifBlank { it.title+it.startUtc+it.league } }
             .filter { it.isLive || it.isUpcoming }
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
-
-        if(events.isEmpty()) error("No events found for today. Check network access and try REFRESH.")
+        if(events.isEmpty()) error("Schedule providers returned no events. Check internet access and tap REFRESH.")
         events
     }
 
     private fun fetchLeague(league:ScheduleLeague,date:LocalDate):List<SportsEvent> {
         val dateText=date.format(DateTimeFormatter.BASIC_ISO_DATE)
-        val endpoint="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dateText&limit=500"
-        val root=JSONObject(http(endpoint))
-        val events=root.optJSONArray("events") ?: return emptyList()
-        val out=ArrayList<SportsEvent>(events.length())
+        val primary="https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dateText&limit=500"
+        val v3="https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dateText&limit=500"
+        val urls=mutableListOf(primary,v3)
+        val sport=league.path.substringBefore('/')
+        val code=league.path.substringAfterLast('/')
+        urls += "https://cdn.espn.com/core/$sport/scoreboard?xhr=1&league=${encode(code)}&dates=$dateText"
+        for(url in urls) {
+            try {
+                val parsed=parse(JSONObject(http(url)),league)
+                if(parsed.isNotEmpty()) return parsed
+            } catch (_:Throwable) { }
+        }
+        return emptyList()
+    }
 
+    private fun parse(root:JSONObject,league:ScheduleLeague):List<SportsEvent> {
+        val events=root.optJSONArray("events") ?: root.optJSONObject("content")?.optJSONArray("events") ?: return emptyList()
+        val out=ArrayList<SportsEvent>(events.length())
         for(i in 0 until events.length()) {
             val e=events.optJSONObject(i) ?: continue
             val competition=e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
@@ -90,33 +96,35 @@ object SportsScheduleService {
                 val c=competitors.optJSONObject(j) ?: continue
                 val team=c.optJSONObject("team") ?: continue
                 val name=team.optString("displayName").ifBlank { team.optString("shortDisplayName") }
-                val logo=team.optString("logo")
-                if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo}
-                else {away=name;awayLogo=logo}
+                val logo=team.optString("logo").ifBlank { team.optJSONArray("logos")?.optJSONObject(0)?.optString("href") ?: "" }
+                if(c.optString("homeAway").equals("home",true)){home=name;homeLogo=logo} else {away=name;awayLogo=logo}
             }
             val status=competition.optJSONObject("status") ?: e.optJSONObject("status") ?: JSONObject()
             val type=status.optJSONObject("type") ?: JSONObject()
             val state=type.optString("state").ifBlank { status.optString("state") }
-            val detail=type.optString("shortDetail").ifBlank { type.optString("detail") }
-            out += SportsEvent(
-                id=e.optString("id"),sport=league.sport,league=league.league,
-                title=e.optString("name").ifBlank { e.optString("shortName") },
-                startUtc=e.optString("date").ifBlank { competition.optString("startDate") },
-                status=detail,state=state,home=home,away=away,homeLogo=homeLogo,
-                awayLogo=awayLogo,broadcast=competition.optString("broadcast"),artUrl=e.optString("image")
-            )
+            val detail=type.optString("shortDetail").ifBlank { type.optString("detail") }.ifBlank { status.optString("displayClock") }
+            val broadcasts=competition.optJSONArray("broadcasts")
+            val broadcast=buildString {
+                if(broadcasts!=null) for(j in 0 until broadcasts.length()) {
+                    val b=broadcasts.optJSONObject(j) ?: continue
+                    val names=b.optJSONArray("names")
+                    if(names!=null) for(k in 0 until names.length()) { if(isNotEmpty()) append(", "); append(names.optString(k)) }
+                }
+            }
+            val start=e.optString("date").ifBlank { competition.optString("startDate") }
+            out += SportsEvent(e.optString("id"),league.sport,league.league,e.optString("name").ifBlank { e.optString("shortName") },start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"))
         }
         return out
     }
 
+    private fun encode(value:String):String=java.net.URLEncoder.encode(value,"UTF-8")
+
     private fun http(target:String):String {
         val c=(URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod="GET"
-            connectTimeout=3500
-            readTimeout=5000
-            instanceFollowRedirects=true
-            setRequestProperty("User-Agent","XSportsX/1.3")
-            setRequestProperty("Accept","application/json")
+            requestMethod="GET";connectTimeout=2500;readTimeout=4500;instanceFollowRedirects=true
+            setRequestProperty("User-Agent","XSportsX/1.4")
+            setRequestProperty("Accept","application/json,text/plain,*/*")
+            setRequestProperty("Cache-Control","no-cache")
         }
         return try {
             val code=c.responseCode
