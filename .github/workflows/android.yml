@@ -36,14 +36,6 @@ jobs:
           test -f gradle.properties
           grep -q '^android.useAndroidX=true$' gradle.properties
 
-      - name: Apply Xtreme Command Center safely
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 .github/apply_command_center.py
-          grep -q 'XtremeCommandCenterMobile' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XtremeCommandCenterTv' app/src/main/java/com/xsportsx/app/TvHome.kt
-
       - name: Verify release signing secrets
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}

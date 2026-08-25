@@ -11,9 +11,9 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.6.6"
-        // Xtreme Command Center: search, favorites, news, network health, league shortcuts.
+        versionCode = 15
+        versionName = "1.6.4"
+        // Xtreme ticker/crack UI release build trigger.
     }
     flavorDimensions += "device"
     productFlavors {
@@ -36,15 +36,30 @@ android {
             val storePassword = System.getenv("XSORTSX_KEYSTORE_PASSWORD")
             val keyAlias = System.getenv("XSORTSX_KEY_ALIAS")
             val keyPassword = System.getenv("XSORTSX_KEY_PASSWORD")
-            if (listOf(keystorePath, storePassword, keyAlias, keyPassword).any { it.isNullOrBlank() }) throw GradleException("Stable release signing is required.")
-            storeFile = file(keystorePath!!); this.storePassword = storePassword; this.keyAlias = keyAlias; this.keyPassword = keyPassword
+            if (listOf(keystorePath, storePassword, keyAlias, keyPassword).any { it.isNullOrBlank() }) {
+                throw GradleException("Stable release signing is required. Configure XSPORTSX_KEYSTORE_PATH, XSPORTSX_KEYSTORE_PASSWORD, XSPORTSX_KEY_ALIAS and XSPORTSX_KEY_PASSWORD.")
+            }
+            storeFile = file(keystorePath!!)
+            this.storePassword = storePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
         }
     }
-    buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
     buildFeatures { compose = true; buildConfig = true }
-    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
+
 kotlin { jvmToolchain(17) }
+
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.04.01")
     implementation(composeBom)
@@ -58,13 +73,15 @@ dependencies {
     implementation("androidx.browser:browser:1.9.0")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
-    implementation("androidx.media3:media3-exoplayer:1.11.0")
-    implementation("androidx.media3:media3-ui:1.11.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.11.0")
-    implementation("androidx.security:security-crypto:1.1.0")
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.camera:camera-camera2:1.6.1")
     implementation("androidx.camera:camera-lifecycle:1.6.1")
     implementation("androidx.camera:camera-view:1.6.1")
+    implementation("androidx.security:security-crypto:1.1.0")
+    implementation("androidx.media3:media3-exoplayer:1.11.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.11.0")
+    implementation("androidx.media3:media3-ui:1.11.0")
+    implementation("androidx.media3:media3-common:1.11.0")
+    debugImplementation("androidx.compose.ui:ui-tooling")
 }
