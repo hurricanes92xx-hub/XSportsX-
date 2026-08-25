@@ -1,0 +1,48 @@
+name: Fix upcoming panel visibility
+
+on:
+  push:
+    branches: [android-app]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[upcoming-visibility-fixed]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix cross-file visibility
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
+          s = p.read_text()
+          replacements = [
+              ('private data class TvLeague(', 'data class TvLeague('),
+              ('private val liveLeagues = listOf(', 'val liveLeagues = listOf('),
+              ('@Composable private fun TvEmpty(text: String)', '@Composable fun TvEmpty(text: String)'),
+          ]
+          changed = 0
+          for old, new in replacements:
+              if old in s:
+                  s = s.replace(old, new, 1)
+                  changed += 1
+          if changed != len(replacements):
+              raise SystemExit(f'Expected all visibility targets; changed {changed}/{len(replacements)}')
+          p.write_text(s)
+      - name: Validate source
+        run: |
+          grep -q '^data class TvLeague' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q '^val liveLeagues = listOf' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q '@Composable fun TvEmpty' app/src/main/java/com/xsportsx/app/TvHome.kt
+          git diff --check
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/com/xsportsx/app/TvHome.kt
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix upcoming panel visibility [upcoming-visibility-fixed]"
+          git push origin android-app
