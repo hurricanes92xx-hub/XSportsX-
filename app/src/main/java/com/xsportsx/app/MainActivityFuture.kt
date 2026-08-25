@@ -25,6 +25,7 @@ class MainActivityFuture : ComponentActivity() {
             var sourceVersion by remember { mutableIntStateOf(0) }
             var availableUpdate by remember { mutableStateOf<AppUpdate?>(null) }
             var updateBusy by remember { mutableStateOf(false) }
+            var updateProgress by remember { mutableIntStateOf(0) }
             var updateMessage by remember { mutableStateOf<String?>(null) }
             val scope = rememberCoroutineScope()
             val connected = remember(sourceVersion) { SourceStore(this@MainActivityFuture).load().isConfigured() }
@@ -38,17 +39,29 @@ class MainActivityFuture : ComponentActivity() {
                 AlertDialog(
                     onDismissRequest = { if (!updateBusy) availableUpdate = null },
                     title = { Text("XSportsX UPDATE AVAILABLE") },
-                    text = { Text("Version ${update.versionName} is ready.\n\n${update.notes}") },
+                    text = {
+                        Text(if (updateBusy)
+                            "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes."
+                        else
+                            "Version ${update.versionName} is ready.\n\n${update.notes}")
+                    },
                     confirmButton = {
                         TextButton(enabled = !updateBusy, onClick = {
                             updateBusy = true
+                            updateProgress = 0
                             updateMessage = null
                             scope.launch {
-                                val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update)
+                                val result = AppUpdateManager.downloadAndInstall(
+                                    this@MainActivityFuture,
+                                    update,
+                                    onProgress = { p -> updateProgress = p }
+                                )
                                 updateBusy = false
-                                result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" }
+                                result.exceptionOrNull()?.let {
+                                    updateMessage = it.message ?: "Update failed"
+                                }
                             }
-                        }) { Text(if (updateBusy) "DOWNLOADING…" else "UPDATE NOW") }
+                        }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") }
                     },
                     dismissButton = {
                         TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") }
