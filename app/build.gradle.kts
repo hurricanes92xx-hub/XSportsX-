@@ -11,8 +11,25 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.4.2"
+        versionCode = 10
+        versionName = "1.5.0"
+    }
+    flavorDimensions += "device"
+    productFlavors {
+        create("mobile") {
+            dimension = "device"
+            applicationIdSuffix = ".mobile"
+            buildConfigField("boolean", "IS_TV_BUILD", "false")
+        }
+        create("tv") {
+            dimension = "device"
+            applicationIdSuffix = ".tv"
+            buildConfigField("boolean", "IS_TV_BUILD", "true")
+        }
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -21,7 +38,7 @@ android {
 }
 
 kotlin { jvmToolchain(17) }
-android { buildFeatures { compose = true } }
+
 
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.04.01")
