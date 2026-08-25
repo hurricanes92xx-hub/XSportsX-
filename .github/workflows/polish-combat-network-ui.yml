@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 
-a jobs:
+jobs:
   patch:
     runs-on: ubuntu-latest
     steps:
@@ -84,10 +84,8 @@ a jobs:
           fut.write_text(s)
 
           s = sched.read_text()
-          old_calls = '''TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 76.dp)'''
-          s = s.replace(old_calls, '''TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, event.league, 76.dp)''')
-          old_calls = '''TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 76.dp)'''
-          s = s.replace(old_calls, '''TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, event.league, 76.dp)''')
+          s = s.replace('TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 76.dp)', 'TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, event.league, 76.dp)')
+          s = s.replace('TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 76.dp)', 'TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, event.league, 76.dp)')
 
           start = s.index('@Composable\nprivate fun TeamLogo(')
           end = s.index('\n\n@Composable\nprivate fun EventArtBadge(', start)
@@ -200,8 +198,6 @@ a jobs:
           '''
           s = s[:start] + art + s[end:]
           sched.write_text(s)
-
-          print('UI patch applied' if 'NetworkBrandMark' in fut.read_text() and 'espnTeamLogoUrl' in sched.read_text() else 'UI patch markers missing')
 
       - name: Commit patched UI
         run: |
