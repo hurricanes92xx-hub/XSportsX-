@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -35,8 +37,6 @@ data class SportsEvent(
 
 data class ScheduleLeague(val sport:String,val league:String,val path:String)
 
-data class ScheduleFetchResult(val events:List<SportsEvent>, val failed:Boolean)
-
 object SportsScheduleService {
     private val leagues=listOf(
         ScheduleLeague("Football","NFL","football/nfl"),
@@ -61,18 +61,20 @@ object SportsScheduleService {
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
         val today=LocalDate.now(ZoneOffset.UTC)
         val dates=(0..14).map { today.plusDays(it.toLong()) }
-        val jobs=coroutineScope {
+        val limiter=Semaphore(6)
+        val results=coroutineScope {
             leagues.flatMap { league ->
                 dates.map { date ->
                     async {
-                        runCatching { fetchLeague(league,date) }
-                            .getOrElse { emptyList() }
+                        limiter.withPermit {
+                            runCatching { fetchLeague(league,date) }.getOrElse { emptyList() }
+                        }
                     }
                 }
             }.awaitAll()
         }
 
-        val events=jobs.flatten()
+        val events=results.flatten()
             .distinctBy { it.id.ifBlank { it.title+it.startUtc+it.league } }
             .filter { it.isLive || it.isUpcoming }
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
@@ -94,22 +96,17 @@ object SportsScheduleService {
             val e=events.optJSONObject(i) ?: continue
             val competition=e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
             val competitors=competition.optJSONArray("competitors") ?: continue
+            var home="";var away="";var homeLogo="";var awayLogo=""
 
-            var home=""
-            var away=""
-            var homeLogo=""
-            var awayLogo=""
             for(j in 0 until competitors.length()) {
                 val c=competitors.optJSONObject(j) ?: continue
                 val team=c.optJSONObject("team") ?: continue
                 val name=team.optString("displayName").ifBlank { team.optString("shortDisplayName") }
                 val logo=team.optString("logo")
                 if(c.optString("homeAway").equals("home",true)) {
-                    home=name
-                    homeLogo=logo
+                    home=name;homeLogo=logo
                 } else {
-                    away=name
-                    awayLogo=logo
+                    away=name;awayLogo=logo
                 }
             }
 
@@ -120,19 +117,11 @@ object SportsScheduleService {
             val start=e.optString("date").ifBlank { competition.optString("startDate") }
 
             out += SportsEvent(
-                id=e.optString("id"),
-                sport=league.sport,
-                league=league.league,
+                id=e.optString("id"),sport=league.sport,league=league.league,
                 title=e.optString("name").ifBlank { e.optString("shortName") },
-                startUtc=start,
-                status=detail,
-                state=state,
-                home=home,
-                away=away,
-                homeLogo=homeLogo,
-                awayLogo=awayLogo,
-                broadcast=competition.optString("broadcast"),
-                artUrl=e.optString("image")
+                startUtc=start,status=detail,state=state,
+                home=home,away=away,homeLogo=homeLogo,awayLogo=awayLogo,
+                broadcast=competition.optString("broadcast"),artUrl=e.optString("image")
             )
         }
         return out
@@ -143,11 +132,8 @@ object SportsScheduleService {
         repeat(3) { attempt ->
             try {
                 val c=(URL(target).openConnection() as HttpURLConnection).apply {
-                    requestMethod="GET"
-                    connectTimeout=7000
-                    readTimeout=12000
-                    instanceFollowRedirects=true
-                    setRequestProperty("User-Agent","XSportsX/1.1")
+                    requestMethod="GET";connectTimeout=7000;readTimeout=12000;instanceFollowRedirects=true
+                    setRequestProperty("User-Agent","XSportsX/1.2")
                     setRequestProperty("Accept","application/json")
                     setRequestProperty("Cache-Control","no-cache")
                 }
@@ -155,9 +141,7 @@ object SportsScheduleService {
                     val code=c.responseCode
                     if(code !in 200..299) error("Schedule HTTP $code")
                     c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-                } finally {
-                    c.disconnect()
-                }
+                } finally { c.disconnect() }
             } catch(t:Throwable) {
                 lastError=t
                 if(attempt<2) Thread.sleep(250L*(attempt+1))
