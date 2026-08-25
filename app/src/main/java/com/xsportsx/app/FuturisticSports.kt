@@ -54,20 +54,6 @@ private val sports = listOf(
     SportVisual("BOXING", "BOX"), SportVisual("SOCCER", "FC")
 )
 
-private fun networkLogoUrl(name: String): String? = when (name) {
-    "ESPN" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN_logo.png"
-    "ESPN2" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN2_logo.svg"
-    "ESPNU" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPNU_logo.svg"
-    "NFL Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/NFL_Network_logo.svg"
-    "FS1" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/FS1_logo.svg"
-    "CBS Sports" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/CBS_Sports_logo.svg"
-    "SEC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/SEC_Network_(2024).svg"
-    "ACC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_ESPN_logo.svg"
-    "Big Ten Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_Ten_Network_logo.svg"
-    "Big 12" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_12_Conference_logo.svg"
-    else -> null
-}
-
 @Composable
 private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) {
     Box(
@@ -177,20 +163,42 @@ private fun SportPill(sport: SportVisual, onClick: () -> Unit) {
 
 @Composable
 private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
-    val logoUrl = remember(network.name) { networkLogoUrl(network.name) }
-    var logoFailed by remember(network.name) { mutableStateOf(false) }
     Column(Modifier.width(128.dp).height(142.dp).clip(RoundedCornerShape(20.dp)).background(Panel).clickable { onClick(network) }.padding(13.dp)) {
         Box(Modifier.fillMaxWidth().height(50.dp).clip(RoundedCornerShape(13.dp)).background(Brush.linearGradient(listOf(Color(0xFF182231), Color(0xFF0B1018)))), contentAlignment = Alignment.Center) {
-            if (logoUrl != null && !logoFailed) {
-                AsyncImage(model = logoUrl, contentDescription = network.name, modifier = Modifier.fillMaxSize().padding(8.dp), contentScale = ContentScale.Fit, onError = { logoFailed = true })
-            } else {
-                Text(network.icon, color = Color.White, fontSize = if (network.icon.length > 4) 10.sp else 15.sp, fontWeight = FontWeight.Black, letterSpacing = .3.sp)
-            }
+            NetworkBrandMark(network.name)
         }
-        Spacer(Modifier.height(9.dp)); Text(network.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Spacer(Modifier.height(3.dp)); Text("SOURCE MATCH", color = Color(0xFF697382), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .7.sp)
+        Spacer(Modifier.height(9.dp))
+        Text(network.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Spacer(Modifier.height(3.dp))
+        Text("SOURCE MATCH", color = Color(0xFF697382), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .7.sp)
     }
 }
+
+@Composable
+private fun NetworkBrandMark(name: String) {
+    val key = name.uppercase()
+    when {
+        key == "ESPN" -> BrandPill("ESPN", XRed)
+        key == "ESPN2" -> BrandPill("ESPN 2", XRed)
+        key == "ESPNU" -> BrandPill("ESPNU", XRed)
+        key == "NFL NETWORK" -> BrandPill("NFL", Color.White, Color(0xFF14233A))
+        key == "FS1" -> BrandPill("FS1", Color.White, Color(0xFF173A6A))
+        key == "CBS SPORTS" -> BrandPill("CBS SPORTS", Color.White, Color(0xFF1267A5))
+        key == "SEC NETWORK" -> BrandPill("SEC", Color.White, Color(0xFF193C69))
+        key == "ACC NETWORK" -> BrandPill("ACC", Color.White, Color(0xFF1C5C9B))
+        key == "BIG TEN NETWORK" -> BrandPill("B1G", Color.White, Color(0xFF26374A))
+        key == "BIG 12" -> BrandPill("BIG 12", Color.White, Color(0xFF6B1F2A))
+        else -> BrandPill(name.take(5).uppercase(), Color.White)
+    }
+}
+
+@Composable
+private fun BrandPill(text: String, foreground: Color, background: Color = Color(0xFF202A38)) {
+    Box(Modifier.fillMaxWidth().padding(horizontal = 9.dp).clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) {
+        Text(text, color = foreground, fontSize = if (text.length > 7) 8.sp else 14.sp, fontWeight = FontWeight.Black, letterSpacing = .4.sp, maxLines = 1)
+    }
+}
+
 
 @Composable
 private fun UpcomingStrip() {

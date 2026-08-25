@@ -108,7 +108,7 @@ private fun ScheduleEventCard(event: SportsEvent, onClick: () -> Unit) {
 @Composable
 private fun LogoVsLogo(event: SportsEvent, modifier: Modifier = Modifier) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-        TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 76.dp)
+        TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, event.league, 76.dp)
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 14.dp)) {
             Box(Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xE90B1018)).padding(horizontal = 10.dp, vertical = 7.dp)) {
                 Text("VS", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
@@ -116,40 +116,117 @@ private fun LogoVsLogo(event: SportsEvent, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(5.dp))
             Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 8.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
         }
-        TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 76.dp)
+        TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, event.league, 76.dp)
     }
 }
 
 @Composable
-private fun TeamLogo(url: String, name: String, size: androidx.compose.ui.unit.Dp) {
-    var failed by remember(url) { mutableStateOf(false) }
-    Box(
-        Modifier.size(size)
-            .clip(CircleShape)
-            .background(Brush.radialGradient(listOf(Color(0xFF273446), Color(0xFF0A0F17))))
-            .padding(5.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (url.isNotBlank() && !failed) {
-            AsyncImage(
-                model = url,
-                contentDescription = name,
-                modifier = Modifier.fillMaxSize().padding(4.dp),
-                contentScale = ContentScale.Fit,
-                onError = { failed = true }
-            )
+private fun TeamLogo(url: String, name: String, league: String, size: androidx.compose.ui.unit.Dp) {
+    val fallbackUrl = remember(name, league) { espnTeamLogoUrl(name, league) }
+    var currentUrl by remember(url, name, league) { mutableStateOf(url.ifBlank { fallbackUrl.orEmpty() }) }
+    var failed by remember(url, name, league) { mutableStateOf(false) }
+    Box(Modifier.size(size).clip(CircleShape).background(Brush.radialGradient(listOf(Color(0xFF273446), Color(0xFF0A0F17)))), contentAlignment = Alignment.Center) {
+        if (currentUrl.isNotBlank() && !failed) {
+            AsyncImage(model = currentUrl, contentDescription = name, modifier = Modifier.fillMaxSize().padding(8.dp), contentScale = ContentScale.Fit, onError = {
+                if (fallbackUrl != null && currentUrl != fallbackUrl) currentUrl = fallbackUrl else failed = true
+            })
         } else {
             Text(teamInitials(name), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
         }
     }
 }
 
+private fun espnTeamLogoUrl(name: String, league: String): String? {
+    val n = name.trim().lowercase()
+    if (n.isBlank() || n == "home" || n == "away") return null
+    val code = when {
+        n.length in 2..4 && n.all { it.isLetter() } -> n
+        n.contains("arizona") || n.contains("cardinals") -> "ari"
+        n.contains("atlanta") || n.contains("falcons") -> "atl"
+        n.contains("baltimore") || n.contains("ravens") -> "bal"
+        n.contains("buffalo") || n.contains("bills") -> "buf"
+        n.contains("carolina") || n.contains("panthers") -> "car"
+        n.contains("chicago") || n.contains("bears") -> "chi"
+        n.contains("cincinnati") || n.contains("bengals") -> "cin"
+        n.contains("cleveland") || n.contains("browns") -> "cle"
+        n.contains("dallas") || n.contains("cowboys") -> "dal"
+        n.contains("denver") || n.contains("broncos") -> "den"
+        n.contains("detroit") || n.contains("lions") -> "det"
+        n.contains("green bay") || n.contains("packers") -> "gb"
+        n.contains("houston") || n.contains("texans") -> "hou"
+        n.contains("indianapolis") || n.contains("colts") -> "ind"
+        n.contains("jacksonville") || n.contains("jaguars") -> "jax"
+        n.contains("kansas city") || n.contains("chiefs") -> "kc"
+        n.contains("las vegas") || n.contains("raiders") -> "lv"
+        n.contains("chargers") -> "lac"
+        n.contains("rams") -> "lar"
+        n.contains("miami") || n.contains("dolphins") -> "mia"
+        n.contains("minnesota") || n.contains("vikings") -> "min"
+        n.contains("new england") || n.contains("patriots") -> "ne"
+        n.contains("new orleans") || n.contains("saints") -> "no"
+        n.contains("new york giants") || n.contains("giants") -> "nyg"
+        n.contains("new york jets") || n.contains("jets") -> "nyj"
+        n.contains("philadelphia") || n.contains("eagles") -> "phi"
+        n.contains("pittsburgh") || n.contains("steelers") -> "pit"
+        n.contains("san francisco") || n.contains("49ers") -> "sf"
+        n.contains("seattle") || n.contains("seahawks") -> "sea"
+        n.contains("tampa bay") || n.contains("buccaneers") -> "tb"
+        n.contains("tennessee") || n.contains("titans") -> "ten"
+        n.contains("washington") || n.contains("commanders") -> "wsh"
+        n.contains("lakers") -> "lal"
+        n.contains("celtics") -> "bos"
+        n.contains("knicks") -> "ny"
+        n.contains("yankees") -> "nyy"
+        n.contains("astros") -> "hou"
+        n.contains("blue jays") -> "tor"
+        n.contains("mariners") -> "sea"
+        else -> return null
+    }
+    val sport = when {
+        league.equals("NFL", true) -> "nfl"
+        league.equals("NBA", true) -> "nba"
+        league.equals("MLB", true) -> "mlb"
+        league.equals("NHL", true) -> "nhl"
+        else -> return null
+    }
+    return "https://a.espncdn.com/i/teamlogos/$sport/500/scoreboard/$code.png"
+}
+
+
 @Composable
 private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
-    Box(modifier.size(88.dp).clip(RoundedCornerShape(22.dp)).background(Color(0xD90A0D13)), contentAlignment = Alignment.Center) {
-        Text(when { racing -> "F1"; combat && event.league.equals("UFC", true) -> "UFC"; else -> "BOX" }, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
+    val isUfc = combat && event.league.equals("UFC", true)
+    Box(modifier.size(112.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xD90A0D13)), contentAlignment = Alignment.Center) {
+        androidx.compose.foundation.Canvas(Modifier.fillMaxSize().padding(10.dp)) {
+            val cx = size.width / 2f
+            val cy = size.height / 2f
+            if (isUfc) {
+                val r = size.minDimension * .34f
+                val pts = (0 until 8).map { i ->
+                    val a = Math.PI / 8.0 + i * Math.PI / 4.0
+                    androidx.compose.ui.geometry.Offset(cx + (r * kotlin.math.cos(a)).toFloat(), cy + (r * kotlin.math.sin(a)).toFloat())
+                }
+                for (i in pts.indices) drawLine(Color(0xFFFF1744), pts[i], pts[(i + 1) % pts.size], strokeWidth = 5f)
+                drawCircle(Color(0x33FF1744), r * .62f)
+                drawLine(Color.White, androidx.compose.ui.geometry.Offset(cx - r * .55f, cy), androidx.compose.ui.geometry.Offset(cx + r * .55f, cy), strokeWidth = 3f)
+            } else {
+                val left = size.width * .18f
+                val right = size.width * .82f
+                val top = size.height * .28f
+                val bottom = size.height * .72f
+                drawLine(Color(0xFFFF6D00), androidx.compose.ui.geometry.Offset(left, top), androidx.compose.ui.geometry.Offset(right, top), strokeWidth = 4f)
+                drawLine(Color(0xFFFF1744), androidx.compose.ui.geometry.Offset(left, (top + bottom) / 2f), androidx.compose.ui.geometry.Offset(right, (top + bottom) / 2f), strokeWidth = 4f)
+                drawLine(Color.White, androidx.compose.ui.geometry.Offset(left, bottom), androidx.compose.ui.geometry.Offset(right, bottom), strokeWidth = 4f)
+                drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(left, top - 8f), androidx.compose.ui.geometry.Offset(left, bottom + 8f), strokeWidth = 6f)
+                drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(right, top - 8f), androidx.compose.ui.geometry.Offset(right, bottom + 8f), strokeWidth = 6f)
+                drawCircle(Color(0x33FFFF00), 11f, androidx.compose.ui.geometry.Offset(cx - 12f, cy - 2f))
+                drawCircle(Color(0x33FF1744), 11f, androidx.compose.ui.geometry.Offset(cx + 12f, cy + 2f))
+            }
+        }
+        Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
     }
 }
+
 
 private fun cardBrush(event: SportsEvent, combat: Boolean, racing: Boolean): Brush = when {
     racing -> Brush.linearGradient(listOf(Color(0xFF120B14), Color(0xFF111A2B), Color(0xFF29080E)))
