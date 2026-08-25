@@ -1,5 +1,6 @@
 package com.xsportsx.app
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,9 @@ import kotlinx.coroutines.launch
 class MainActivityFuture : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (BuildConfig.IS_TV_BUILD) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
         setContent {
             var connectSource by remember { mutableStateOf(false) }
             var mobilePair by remember { mutableStateOf(false) }
@@ -80,7 +84,7 @@ class MainActivityFuture : ComponentActivity() {
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
                     if (BuildConfig.IS_TV_BUILD) {
-                        TvHome(onConnect = { tvPair = true }, onNetwork = { network -> if (connected) liveFilter = network else tvPair = true })
+                        TvAdaptiveHost(onConnect = { tvPair = true }, onNetwork = { network -> if (connected) liveFilter = network else tvPair = true })
                     } else {
                         Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                             FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true })
