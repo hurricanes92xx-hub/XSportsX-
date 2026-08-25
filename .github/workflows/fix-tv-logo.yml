@@ -1,0 +1,47 @@
+name: Fix TV Logo
+
+on:
+  push:
+    branches: [android-app]
+    paths: ['.github/workflows/fix-tv-logo.yml']
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: android-app
+          fetch-depth: 0
+      - name: Replace TV logo
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
+          s = p.read_text()
+          old = 'Text("X", color = TvRed, fontSize = 46.sp, fontWeight = FontWeight.Black)'
+          new = 'XtremeLogo(size = 52.dp)'
+          if old not in s:
+              raise SystemExit('Expected TV logo line was not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit TV logo fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/TvHome.kt
+          git commit -m 'fix: use animated neon X on TV navigation'
+          git push origin android-app
+      - name: Start Android APK build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run android.yml --repo "$GITHUB_REPOSITORY" --ref android-app
+      - name: Remove temporary fixer
+        run: |
+          git rm .github/workflows/fix-tv-logo.yml
+          git commit -m 'chore: remove temporary TV logo fixer'
+          git push origin android-app
