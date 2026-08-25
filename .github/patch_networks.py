@@ -106,4 +106,34 @@ if old_card in ts:
 else:
     print('TvNetworkCard already patched; skipping')
 tv.write_text(ts)
-print('patched mobile + TV logo treatments')
+
+# Mobile crack treatment: thicker outer glow, brighter core.
+mobile = Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt')
+ms = mobile.read_text()
+ms = ms.replace('strokeWidth = 11f)', 'strokeWidth = 20f)', 1)
+ms = ms.replace('strokeWidth = 4f)', 'strokeWidth = 7f)', 1)
+ms = ms.replace('strokeWidth = 1.3f)', 'strokeWidth = 2.1f)', 1)
+mobile.write_text(ms)
+
+# TV gets the same XSportsX crack language, tuned for a 10-foot display.
+tv = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
+ts = tv.read_text()
+if 'import androidx.compose.foundation.Canvas' not in ts:
+    ts = ts.replace('import androidx.compose.foundation.background\n', 'import androidx.compose.foundation.Canvas\nimport androidx.compose.foundation.background\n', 1)
+if 'private fun TvGlowingCracks(' not in ts:
+    ts += '''\n\n@Composable\nprivate fun TvGlowingCracks(modifier: Modifier) {\n    Canvas(modifier) {\n        val w = size.width\n        val h = size.height\n        val lines = listOf(\n            listOf(.00f to .20f, .11f to .25f, .16f to .34f, .29f to .38f),\n            listOf(1.00f to .17f, .88f to .24f, .83f to .34f, .69f to .40f),\n            listOf(.03f to .77f, .16f to .72f, .23f to .61f, .37f to .57f),\n            listOf(.97f to .73f, .85f to .67f, .79f to .56f, .64f to .51f),\n            listOf(.43f to .00f, .47f to .10f, .53f to .18f, .60f to .27f)\n        )\n        lines.forEach { points ->\n            for (i in 0 until points.lastIndex) {\n                val a = points[i]\n                val b = points[i + 1]\n                val start = androidx.compose.ui.geometry.Offset(a.first * w, a.second * h)\n                val end = androidx.compose.ui.geometry.Offset(b.first * w, b.second * h)\n                drawLine(TvRed.copy(alpha = .10f), start, end, strokeWidth = 24f)\n                drawLine(TvRed.copy(alpha = .20f), start, end, strokeWidth = 10f)\n                drawLine(TvRed.copy(alpha = .72f), start, end, strokeWidth = 3f)\n            }\n        }\n    }\n}\n'''
+# Put cracks behind the TV content but above the background.
+needle = 'Box(Modifier.fillMaxSize().background(TvBg)) {\n        Row(Modifier.fillMaxSize()) {'
+replacement = 'Box(Modifier.fillMaxSize().background(TvBg)) {\n        TvGlowingCracks(Modifier.fillMaxSize())\n        Row(Modifier.fillMaxSize()) {'
+if needle in ts:
+    ts = ts.replace(needle, replacement, 1)
+ts = ts
+
+tv.write_text(ts)
+
+# Bump the signed APK version so installed 1.6.3 builds can receive this UI fix in-app.
+gradle = Path('app/build.gradle.kts')
+gs = gradle.read_text()
+gs = gs.replace('versionCode = 14', 'versionCode = 15', 1)
+gs = gs.replace('versionName = "1.6.3"', 'versionName = "1.6.4"', 1)
+gradle.write_text(gs)
