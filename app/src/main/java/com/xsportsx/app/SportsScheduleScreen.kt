@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -84,27 +87,134 @@ fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
 
 @Composable
 private fun ScheduleEventCard(event: SportsEvent, onClick: () -> Unit) {
-    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).clickable { onClick() }) {
-        Box(Modifier.fillMaxWidth().height(155.dp).background(Brush.linearGradient(listOf(Color(0xFF300914), Color(0xFF10151E), Color(0xFF1D0C08))))) {
-            Row(Modifier.fillMaxWidth().align(Alignment.BottomStart).padding(16.dp), verticalAlignment = Alignment.Bottom) {
-                Column(Modifier.weight(1f)) {
-                    Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 10.sp, fontWeight = FontWeight.Black)
-                    Text(event.home.ifBlank { event.title }, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
-                    if (event.away.isNotBlank()) Text(event.away, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+    val combat = event.league.equals("UFC", true) || event.league.equals("BOXING", true) || event.sport.equals("MMA", true)
+    val racing = event.league.equals("F1", true) || event.sport.equals("Racing", true)
+    val art = event.artUrl.trim()
+
+    Column(
+        Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(Color(0xFF0E121A))
+            .clickable { onClick() }
+    ) {
+        Box(
+            Modifier.fillMaxWidth().height(if (combat || racing) 185.dp else 170.dp)
+                .background(cardBrush(event, combat, racing))
+        ) {
+            if (art.isNotBlank()) {
+                AsyncImage(
+                    model = art,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    alpha = 0.48f
+                )
+                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC080A10)))))
+            }
+
+            if (combat || racing) {
+                Column(Modifier.align(Alignment.TopStart).padding(16.dp)) {
+                    Text(
+                        when {
+                            event.league.equals("UFC", true) -> "UFC • FIGHT EVENT"
+                            event.league.equals("BOXING", true) -> "BOXING • EVENT NIGHT"
+                            else -> "F1 • GRAND PRIX"
+                        },
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.4.sp
+                    )
+                    Spacer(Modifier.height(5.dp))
+                    Text(event.title.ifBlank { event.league }, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black)
                 }
-                if (event.isLive) Surface(color = Color(0xFFFF1744), shape = RoundedCornerShape(9.dp)) {
-                    Text("● LIVE", color = Color.White, modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp), fontSize = 10.sp, fontWeight = FontWeight.Black)
-                }
+                EventArtBadge(event, combat, racing, Modifier.align(Alignment.Center))
+            } else {
+                LogoVsLogo(event, Modifier.align(Alignment.Center))
+            }
+
+            Surface(
+                color = if (event.isLive) Color(0xFFFF1744) else Color(0xDD0A0D13),
+                shape = RoundedCornerShape(9.dp),
+                modifier = Modifier.align(Alignment.TopEnd).padding(14.dp)
+            ) {
+                Text(
+                    if (event.isLive) "● LIVE" else event.league.uppercase(),
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Black
+                )
             }
         }
         Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(if (event.isLive) "LIVE NOW" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF1744) else Color(0xFFB8BEC8), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.width(12.dp))
-            Text(event.status.ifBlank { event.broadcast }.ifBlank { "EVENT" }, color = Color(0xFF7F8794), fontSize = 10.sp, modifier = Modifier.weight(1f))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    if (event.isLive) "LIVE NOW" else formatTime(event.startUtc),
+                    color = if (event.isLive) Color(0xFFFF1744) else Color(0xFFB8BEC8),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(event.status.ifBlank { event.broadcast }.ifBlank { "EVENT" }, color = Color(0xFF7F8794), fontSize = 10.sp)
+            }
             Text("VIEW CARD →", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
         }
     }
 }
+
+@Composable
+private fun LogoVsLogo(event: SportsEvent, modifier: Modifier = Modifier) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+        TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 66.dp)
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 18.dp)) {
+            Text("VS", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
+            Text(event.league.uppercase(), color = Color(0xFFFF536C), fontSize = 8.sp, fontWeight = FontWeight.Black)
+        }
+        TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 66.dp)
+    }
+}
+
+@Composable
+private fun TeamLogo(url: String, name: String, size: androidx.compose.ui.unit.Dp) {
+    Box(
+        Modifier.size(size).clip(CircleShape).background(Color(0xEE121823)),
+        contentAlignment = Alignment.Center
+    ) {
+        if (url.isNotBlank()) {
+            AsyncImage(model = url, contentDescription = name, modifier = Modifier.fillMaxSize().padding(7.dp), contentScale = ContentScale.Fit)
+        } else {
+            Text(teamInitials(name), color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black)
+        }
+    }
+}
+
+@Composable
+private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
+    Box(modifier.size(82.dp).clip(RoundedCornerShape(20.dp)).background(Color(0xB50A0D13)), contentAlignment = Alignment.Center) {
+        Text(
+            when {
+                racing -> "F1"
+                combat && event.league.equals("UFC", true) -> "UFC"
+                else -> "BOX"
+            },
+            color = Color.White,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Black,
+            letterSpacing = 1.sp
+        )
+    }
+}
+
+private fun cardBrush(event: SportsEvent, combat: Boolean, racing: Boolean): Brush {
+    return when {
+        racing -> Brush.linearGradient(listOf(Color(0xFF120B14), Color(0xFF111A2B), Color(0xFF29080E)))
+        combat && event.league.equals("UFC", true) -> Brush.linearGradient(listOf(Color(0xFF28070D), Color(0xFF10141C), Color(0xFF3A1010)))
+        combat -> Brush.linearGradient(listOf(Color(0xFF29100A), Color(0xFF15141A), Color(0xFF3A0A18)))
+        else -> Brush.linearGradient(listOf(Color(0xFF250812), Color(0xFF111722), Color(0xFF211108)))
+    }
+}
+
+private fun teamInitials(name: String): String = name.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.take(2).joinToString("") { it.first().uppercase() }
 
 private fun formatTime(utc: String): String = runCatching {
     OffsetDateTime.parse(utc).atZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("M/d h:mm a"))
