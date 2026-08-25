@@ -5,6 +5,9 @@ on:
     branches: [android-app]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: xsportsx-android-${{ github.ref }}
   cancel-in-progress: true
@@ -52,12 +55,33 @@ jobs:
 
       - name: Verify APK exists
         run: |
+          set -euo pipefail
           test -s app/build/outputs/apk/debug/app-debug.apk
-          ls -lh app/build/outputs/apk/debug/app-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk XSportsX.apk
+          ls -lh XSportsX.apk
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: XSportsX.apk
           if-no-files-found: error
+
+      - name: Publish APK release for in-app updater
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
+          VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
+          TAG="v${VERSION_NAME}"
+          echo "Publishing XSportsX ${VERSION_NAME} (${VERSION_CODE}) as ${TAG}"
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release upload "${TAG}" XSportsX.apk --clobber
+          else
+            gh release create "${TAG}" XSportsX.apk \
+              --title "XSportsX ${VERSION_NAME}" \
+              --notes "XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Install this release from the in-app UPDATE button." \
+              --latest
+          fi
