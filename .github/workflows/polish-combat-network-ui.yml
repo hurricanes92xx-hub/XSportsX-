@@ -30,7 +30,7 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           grep -q 'fun XtremeLogo' app/src/main/java/com/xsportsx/app/XtremeLogo.kt
           grep -q 'versionName = "1.6.5"' app/build.gradle.kts
-          grep -q 'XtremeLogo(size = 46.dp)' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XtremeLogo(size = 56.dp)' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XtremeLogo(size = 72.dp)' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Commit patched UI
         run: |
