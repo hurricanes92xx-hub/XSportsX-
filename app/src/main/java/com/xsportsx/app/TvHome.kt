@@ -235,11 +235,57 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
     }
 }
 
-@Composable private fun TvSportMark(name: String, size: androidx.compose.ui.unit.Dp, focused: Boolean) { Box(Modifier.size(size).clip(RoundedCornerShape(size / 4)).background(if (focused) Color(0xFF241018) else TvPanel2).border(1.dp, if (focused) TvRed else Color(0xFF1B2532), RoundedCornerShape(size / 4)), contentAlignment = Alignment.Center) { Text(teamMark(name), color = if (focused) TvRed else Color.White, fontSize = if (name.length > 5) 7.sp else 9.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center) } }
+@Composable private fun TvSportMark(name: String, size: androidx.compose.ui.unit.Dp, focused: Boolean) {
+    val key = name.uppercase()
+    val (label, fg, bg) = when {
+        key == "NFL" -> Triple("NFL", Color.White, Color(0xFF102B52))
+        key == "NBA" -> Triple("NBA", Color.White, Color(0xFF8B1736))
+        key == "NCAA FB" -> Triple("NCAA", Color.White, Color(0xFF6A1515))
+        key == "NCAA BB" -> Triple("NCAA", Color.White, Color(0xFF173B67))
+        key == "MLB" -> Triple("MLB", Color.White, Color(0xFF173C73))
+        key == "NHL" -> Triple("NHL", Color.White, Color(0xFF202A38))
+        key == "UFC" -> Triple("UFC", Color.White, Color(0xFF7A0F22))
+        key == "BOXING" || key == "BOX" -> Triple("BOX", Color.White, Color(0xFF3A1B10))
+        else -> Triple(key.take(5), Color.White, Color(0xFF202A38))
+    }
+    Box(Modifier.size(size).clip(RoundedCornerShape(size / 4)).background(if (focused) Color(0xFF241018) else bg).border(1.dp, if (focused) TvRed else Color(0xFF273445), RoundedCornerShape(size / 4)), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(label, color = if (focused) TvRed else fg, fontSize = if (label.length > 4) (size.value * .17f).sp else (size.value * .23f).sp, fontWeight = FontWeight.Black, letterSpacing = .3.sp)
+            if (size.value >= 40f) Text(when (key) { "NFL" -> "FOOTBALL"; "NBA" -> "BASKETBALL"; "MLB" -> "BASEBALL"; "NHL" -> "HOCKEY"; "UFC" -> "FIGHT"; "BOXING" -> "COMBAT"; else -> "SPORTS" }, color = Color.White.copy(alpha = .62f), fontSize = 5.sp, fontWeight = FontWeight.Bold, letterSpacing = .6.sp)
+        }
+    }
+}
 
 @Composable private fun TvNetworksBlock(onNetwork: (String) -> Unit) { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(22.dp)) { Column(Modifier.weight(1f)) { TvSection("FEATURED NETWORKS"); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(tvNetworks.take(6)) { TvNetworkCard(it) { onNetwork(it.name) } } } }; Column(Modifier.weight(1f)) { TvSection("COLLEGE NETWORKS"); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(tvNetworks.drop(6)) { TvNetworkCard(it) { onNetwork(it.name) } } } } } }
 @Composable private fun TvNetworkGrid(networks: List<TvNetwork>, onNetwork: (String) -> Unit) { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { networks.chunked(5).forEach { row -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) { row.forEach { network -> TvNetworkCard(network) { onNetwork(network.name) } } } } } }
-@Composable private fun TvNetworkCard(network: TvNetwork, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Column(Modifier.width(108.dp).height(72.dp).clip(RoundedCornerShape(11.dp)).background(TvPanel).border(1.5.dp, TvBlue.copy(alpha = if (focused) 1f else .16f), RoundedCornerShape(11.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) { TvSportMark(network.mark, 30.dp, focused); Text(network.name, color = TvMuted, fontSize = 7.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
+@Composable private fun TvNetworkCard(network: TvNetwork, onClick: () -> Unit) {
+    var focused by remember { mutableStateOf(false) }
+    Column(Modifier.width(108.dp).height(86.dp).clip(RoundedCornerShape(11.dp)).background(TvPanel).border(1.5.dp, TvBlue.copy(alpha = if (focused) 1f else .16f), RoundedCornerShape(11.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        TvNetworkMark(network.name, network.mark, 42.dp, focused)
+        Spacer(Modifier.height(5.dp))
+        Text(network.name, color = Color.White, fontSize = 7.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+@Composable private fun TvNetworkMark(name: String, mark: String, size: androidx.compose.ui.unit.Dp, focused: Boolean) {
+    val key = name.uppercase()
+    val (label, bg, fg) = when {
+        key == "ESPN" -> Triple("ESPN", Color(0xFF181818), Color(0xFFFF303F))
+        key == "ESPN2" -> Triple("ESPN2", Color(0xFF181818), Color(0xFFFF303F))
+        key == "ESPNU" -> Triple("ESPNU", Color(0xFF181818), Color(0xFFFF303F))
+        key == "NFL NETWORK" -> Triple("NFL", Color(0xFF102B52), Color.White)
+        key == "FS1" -> Triple("FS1", Color(0xFF173A6A), Color.White)
+        key == "CBS SPORTS" -> Triple("CBS", Color(0xFF123C63), Color.White)
+        key == "SEC NETWORK" -> Triple("SEC", Color(0xFF1B3158), Color.White)
+        key == "ACC NETWORK" -> Triple("ACC", Color(0xFF15548B), Color.White)
+        key == "BIG TEN NETWORK" -> Triple("B1G", Color(0xFF24374D), Color.White)
+        key == "ESPN+" -> Triple("ESPN+", Color(0xFF181818), Color(0xFFFF303F))
+        else -> Triple(mark, Color(0xFF202A38), Color.White)
+    }
+    Box(Modifier.size(size).clip(RoundedCornerShape(size / 4)).background(if (focused) Color(0xFF241018) else bg).border(1.dp, if (focused) TvRed else Color(0xFF273445), RoundedCornerShape(size / 4)), contentAlignment = Alignment.Center) {
+        Text(label, color = if (focused) TvRed else fg, fontSize = if (label.length > 4) 8.sp else 11.sp, fontWeight = FontWeight.Black, letterSpacing = .25.sp, textAlign = TextAlign.Center)
+    }
+}
 
 @Composable private fun TvSettings(onConnect: () -> Unit) { TvSection("SETTINGS"); Column(Modifier.widthIn(max = 700.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { TvSetting("Source connection", "Connect your authorized Xtream/M3U source", "CONNECT", onConnect); TvSetting("Device sync", "Pair this TV with your XSportsX mobile device", "PAIR", onConnect); TvSetting("TV controls", "D-pad optimized navigation and focus states", "ON", {}) } }
 @Composable private fun TvSetting(title: String, subtitle: String, action: String, onClick: () -> Unit) { Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)).background(TvPanel).padding(16.dp), verticalAlignment = Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Text(title, color = Color.White, fontWeight = FontWeight.Black); Text(subtitle, color = TvMuted, fontSize = 11.sp) }; TvActionButton(action, onClick) } }
