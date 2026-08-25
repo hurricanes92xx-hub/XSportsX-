@@ -13,33 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch TV navigation
+      - name: Wire sports sidebar destinations
         shell: python
         run: |
           from pathlib import Path
           p = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
           s = p.read_text()
-          old = '''                    "LIVE NOW" -> { TvSection("LIVE NOW", if (liveGames.isEmpty()) "No games live right now" else "${liveGames.size} LIVE"); if (liveGames.isNotEmpty()) TvGameRow(liveGames, onNetwork) else TvLiveEmpty(loadingLive) }
-                    "UPCOMING" -> { TvSection("UPCOMING"); TvEmpty("Upcoming events will appear here") }
-                    "NETWORKS" -> { TvSection("SPORTS NETWORKS"); TvNetworkGrid(tvNetworks, onNetwork) }
-                    "FAVORITES" -> { TvSection("FAVORITES"); TvEmpty("Your favorite leagues and networks will appear here") }
-                    "SETTINGS" -> TvSettings(onConnect)'''
-          new = '''                    "LIVE NOW" -> { TvSection("LIVE NOW", if (liveGames.isEmpty()) "No games live right now" else "${liveGames.size} LIVE"); if (liveGames.isNotEmpty()) TvGameRow(liveGames, onNetwork) else TvLiveEmpty(loadingLive) }
-                    "UPCOMING" -> { TvSection("UPCOMING", "SPORTS FEED"); TvUpcomingPanel() }
-                    "NETWORKS" -> { TvSection("SPORTS NETWORKS"); TvNetworkGrid(tvNetworks, onNetwork) }
-                    "FAVORITES" -> { TvSection("FAVORITES", "YOUR PINNED SPORTS"); TvSportRow(tvSports, onOpen = { sport -> onNetwork(sport.name) }) }
-                    "NFL", "NCAA FB" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
-                    "NBA", "WNBA", "NCAA BB" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
-                    "MLB", "NHL", "MLS", "EPL" -> { TvSection(selectedNav, "LIVE FEED"); val games = liveGames.filter { it.league == selectedNav }; if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false) }
-                    "UFC", "BOXING" -> { TvSection(selectedNav, "EVENT FEED"); TvSportRow(tvSports.filter { it.name == selectedNav }) { sport -> onNetwork(sport.name) }; Spacer(Modifier.height(14.dp)); TvEmpty("Select ${selectedNav} to browse available events") }
-                    "SETTINGS" -> TvSettings(onConnect)'''
-          if old not in s:
-              raise SystemExit('Target navigation block not found; refusing to modify source.')
-          s = s.replace(old, new, 1)
-          marker = '\n// TV_SIDEBAR_WIRED\n'
-          if 'TV_SIDEBAR_WIRED' not in s:
-              s += marker
+          target = '                    "SETTINGS" -> TvSettings(onConnect)'
+          cases = '''                    "NFL", "NCAA FB", "NBA", "WNBA", "NCAA BB", "MLB", "NHL", "MLS", "EPL" -> {\n                        TvSection(selectedNav, "LIVE FEED")\n                        val games = liveGames.filter { it.league == selectedNav }\n                        if (games.isNotEmpty()) TvGameRow(games, onNetwork) else TvLiveEmpty(false)\n                    }\n                    "UFC", "BOXING" -> {\n                        TvSection(selectedNav, "EVENT FEED")\n                        TvSportRow(tvSports.filter { it.name == selectedNav }) { sport -> onNetwork(sport.name) }\n                        Spacer(Modifier.height(14.dp))\n                        TvEmpty("Select ${selectedNav} to browse available events")\n                    }\n'''
+          if target not in s:
+              raise SystemExit('SETTINGS navigation target not found; refusing to modify source.')
+          if '"NFL", "NCAA FB", "NBA", "WNBA", "NCAA BB", "MLB", "NHL", "MLS", "EPL" ->' not in s:
+              s = s.replace(target, cases + target, 1)
           p.write_text(s)
+      - name: Validate Kotlin source
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '"NFL", "NCAA FB", "NBA", "WNBA", "NCAA BB", "MLB", "NHL", "MLS", "EPL" ->' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q '"UFC", "BOXING" ->' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
