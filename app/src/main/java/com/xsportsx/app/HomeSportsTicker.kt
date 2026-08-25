@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +30,8 @@ import java.util.Locale
 import java.util.TimeZone
 
 data class TickerItem(val kind: String, val league: String, val text: String)
-
 data class TickerLeague(val name: String, val sport: String, val id: String)
+data class TickerLeagueGroup(val league: String, val items: List<TickerItem>)
 
 private val tickerLeagues = listOf(
     TickerLeague("NFL", "football", "nfl"),
@@ -59,106 +60,136 @@ private fun dateRange(): String {
 
 private fun getJson(url: String): JSONObject? = try {
     val c = URL(url).openConnection() as HttpURLConnection
-    c.connectTimeout = 4500
-    c.readTimeout = 4500
+    c.connectTimeout = 3000
+    c.readTimeout = 3000
     c.requestMethod = "GET"
-    c.setRequestProperty("User-Agent", "XSportsX/1.4")
+    c.setRequestProperty("User-Agent", "XSportsX/1.5")
     c.setRequestProperty("Accept", "application/json")
     if (c.responseCode !in 200..299) return null
     c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
 } catch (_: Exception) { null }
 
-private suspend fun loadScores(): List<TickerItem> = coroutineScope {
-    val range = dateRange()
-    tickerLeagues.map { league ->
-        async(Dispatchers.IO) {
-            val url = "https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=$range&limit=50"
-            val json = getJson(url) ?: return@async emptyList()
-            val events = json.optJSONArray("events") ?: return@async emptyList()
-            buildList {
-                for (i in 0 until events.length()) {
-                    val e = events.optJSONObject(i) ?: continue
-                    val c = e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
-                    val competitors = c.optJSONArray("competitors") ?: continue
-                    var home = "TBD"
-                    var away = "TBD"
-                    var homeScore = ""
-                    var awayScore = ""
-                    for (j in 0 until competitors.length()) {
-                        val team = competitors.optJSONObject(j) ?: continue
-                        val name = team.optJSONObject("team")?.optString("abbreviation")?.ifBlank { team.optJSONObject("team")?.optString("shortDisplayName") } ?: "TBD"
-                        val score = team.optString("score")
-                        if (team.optString("homeAway") == "home") { home = name; homeScore = score } else { away = name; awayScore = score }
+private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup = withContext(Dispatchers.IO) {
+    val url = "https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${dateRange()}&limit=50"
+    val json = getJson(url)
+    val events = json?.optJSONArray("events")
+    val items = buildList {
+        if (events != null) {
+            for (i in 0 until events.length()) {
+                val event = events.optJSONObject(i) ?: continue
+                val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue
+                val competitors = competition.optJSONArray("competitors") ?: continue
+                var home = "TBD"
+                var away = "TBD"
+                var homeScore = ""
+                var awayScore = ""
+                for (j in 0 until competitors.length()) {
+                    val team = competitors.optJSONObject(j) ?: continue
+                    val teamObj = team.optJSONObject("team")
+                    val name = teamObj?.optString("abbreviation")?.ifBlank {
+                        teamObj.optString("shortDisplayName")
+                    }.orEmpty().ifBlank { "TBD" }
+                    val score = team.optString("score")
+                    if (team.optString("homeAway") == "home") {
+                        home = name
+                        homeScore = score
+                    } else {
+                        away = name
+                        awayScore = score
                     }
-                    val state = c.optJSONObject("status")?.optJSONObject("type")?.optString("state") ?: "pre"
-                    val detail = c.optJSONObject("status")?.optJSONObject("type")?.optString("shortDetail") ?: ""
-                    val kind = when (state) { "in" -> "LIVE"; "post" -> "FINAL"; else -> "UPCOMING" }
-                    val scoreText = if (kind == "UPCOMING") "$away @ $home • $detail" else "$away $awayScore • $home $homeScore"
-                    add(TickerItem(kind, league.name, scoreText))
                 }
+                val status = competition.optJSONObject("status")?.optJSONObject("type")
+                val state = status?.optString("state") ?: "pre"
+                val detail = status?.optString("shortDetail") ?: ""
+                val kind = when (state) {
+                    "in" -> "LIVE"
+                    "post" -> "FINAL"
+                    else -> "UPCOMING"
+                }
+                val text = if (kind == "UPCOMING") {
+                    "$away @ $home • $detail"
+                } else {
+                    "$away $awayScore  •  $home $homeScore"
+                }
+                add(TickerItem(kind, league.name, text))
             }
         }
-    }.awaitAll().flatten()
-}
-
-private suspend fun loadNews(): List<TickerItem> = coroutineScope {
-    listOf("football", "basketball", "baseball", "hockey", "soccer", "mma").map { sport ->
-        async(Dispatchers.IO) {
-            val json = getJson("https://now.core.api.espn.com/v1/sports/news?limit=12&sport=$sport") ?: return@async emptyList()
-            val headlines = json.optJSONArray("headlines") ?: return@async emptyList()
-            buildList {
-                for (i in 0 until headlines.length()) {
-                    val h = headlines.optJSONObject(i) ?: continue
-                    val title = h.optString("headline").trim()
-                    if (title.isNotEmpty()) add(TickerItem("NEWS", sport.uppercase(Locale.US), title))
-                }
-            }
-        }
-    }.awaitAll().flatten()
-}
-
-private suspend fun fetchTicker(): List<TickerItem> = withContext(Dispatchers.IO) {
-    val scores = loadScores()
-    val news = loadNews()
-    val live = scores.filter { it.kind == "LIVE" }
-    val finals = scores.filter { it.kind == "FINAL" }.take(8)
-    val upcoming = scores.filter { it.kind == "UPCOMING" }.take(10)
-    val headlines = news.take(10)
-    (live + finals + headlines + upcoming).ifEmpty {
-        listOf(TickerItem("NEWS", "XSPORTSX", "Checking ESPN scores, finals, schedules and breaking sports news…"))
     }
+    TickerLeagueGroup(league.name, items.take(12))
+}
+
+private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = coroutineScope {
+    tickerLeagues.map { league ->
+        async { loadLeague(league) }
+    }.awaitAll().filter { it.items.isNotEmpty() }
 }
 
 @Composable
 fun HomeSportsTicker(modifier: Modifier = Modifier) {
-    var items by remember { mutableStateOf<List<TickerItem>>(emptyList()) }
+    var groups by remember { mutableStateOf<List<TickerLeagueGroup>>(emptyList()) }
+    var activeIndex by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(Unit) {
         while (isActive) {
-            items = fetchTicker()
+            groups = loadTickerGroups()
+            activeIndex = 0
             delay(60_000)
         }
     }
+
+    LaunchedEffect(groups) {
+        while (isActive && groups.isNotEmpty()) {
+            delay(6_000)
+            if (groups.isNotEmpty()) {
+                activeIndex = (activeIndex + 1) % groups.size
+            }
+        }
+    }
+
+    val activeGroup = groups.getOrNull(activeIndex)
+    val visibleItems = activeGroup?.items ?: listOf(
+        TickerItem("NEWS", "XSPORTSX", "Live scores and schedules loading…")
+    )
+
     Box(
-        modifier.fillMaxWidth().height(58.dp).background(Color(0xF2080A10)),
+        modifier = modifier.fillMaxWidth().height(58.dp).background(Color(0xF2080A10)),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.padding(start = 12.dp, end = 8.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFFFF1744)).padding(horizontal = 10.dp, vertical = 7.dp)) {
-                Text("X LIVE", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black)
+            // XSportsX replaces the ESPN logo. No advertising is included.
+            Box(
+                Modifier
+                    .padding(start = 10.dp, end = 8.dp)
+                    .clip(RoundedCornerShape(7.dp))
+                    .background(Color(0xFF111722))
+                    .padding(horizontal = 9.dp, vertical = 6.dp)
+            ) {
+                Text("X", color = Color(0xFFFF1744), fontSize = 16.sp, fontWeight = FontWeight.Black)
             }
+
+            Text(
+                text = activeGroup?.league ?: "SPORTS",
+                color = Color.White,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+
             LazyRow(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = PaddingValues(end = 14.dp)
             ) {
-                items(items) { item ->
-                    val accent = when (item.kind) { "LIVE" -> Color(0xFFFF1744); "FINAL" -> Color(0xFFB7C1D1); "NEWS" -> Color(0xFFFF6D00); else -> Color(0xFF74809A) }
-                    Row(Modifier.clip(RoundedCornerShape(9.dp)).background(Color(0xFF111722)).padding(horizontal = 10.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                items(visibleItems) { item ->
+                    val accent = when (item.kind) {
+                        "LIVE" -> Color(0xFFFF1744)
+                        "FINAL" -> Color(0xFFB7C1D1)
+                        else -> Color(0xFF74809A)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(item.kind, color = accent, fontSize = 8.sp, fontWeight = FontWeight.Black)
-                        Spacer(Modifier.width(7.dp))
-                        Text(item.league, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black)
-                        Spacer(Modifier.width(7.dp))
-                        Text(item.text, color = Color(0xFFC3CBD8), fontSize = 9.sp, maxLines = 1)
+                        Spacer(Modifier.width(6.dp))
+                        Text(item.text, color = Color(0xFFD7DDE7), fontSize = 10.sp, maxLines = 1)
                     }
                 }
             }
