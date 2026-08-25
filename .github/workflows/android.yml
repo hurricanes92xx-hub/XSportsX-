@@ -2,6 +2,7 @@ name: Build XSportsX APK
 
 # Release build includes the animated Xtreme logo on Mobile + Android TV.
 # Build trigger is intentionally kept on android-app so the release APKs follow the patched branch.
+# TV UI repair is now on android-app; this commit intentionally triggers the release build.
 
 on:
   push:
