@@ -19,6 +19,8 @@ jobs:
         run: python3 .github/patch_networks.py
       - name: Apply ticker and Xtreme crack patch
         run: python3 .github/patch_ticker_cracks.py
+      - name: Apply shared XSportsX branding
+        run: python3 .github/patch_branding.py
       - name: Validate Kotlin source
         run: |
           git diff --check
@@ -26,11 +28,13 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           test -s app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           grep -q 'versionName = "1.6.4"' app/build.gradle.kts
+          grep -q 'XtremeLogo(size = 46.dp)' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XtremeLogo(size = 72.dp)' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Commit patched UI
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/patch_networks.py .github/patch_ticker_cracks.py app/build.gradle.kts app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
+          git add .github/patch_networks.py .github/patch_ticker_cracks.py .github/patch_branding.py app/build.gradle.kts app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           git diff --cached --quiet && exit 0
-          git commit -m "Fix ticker progression and Xtreme UI cracks"
+          git commit -m "Fix XSportsX mobile and TV branding"
           git push origin android-app
