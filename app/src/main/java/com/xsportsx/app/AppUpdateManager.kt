@@ -8,121 +8,114 @@ import android.provider.Settings
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Reliable sideload updater. The downloaded APK must be signed with the same key as the installed app. */
-data class AppUpdate(val versionCode:Int,val versionName:String,val apkUrl:String,val notes:String)
+data class AppUpdate(val versionCode: Int, val versionName: String, val apkUrl: String, val notes: String)
 
 object AppUpdateManager {
+    private const val RELEASE_URL = "https://api.github.com/repos/hurricanes92xx-hub/XSportsX-/releases/latest"
     private const val MANIFEST_URL = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/update.json"
     private const val MAX_DOWNLOAD_MS = 180_000L
 
-    suspend fun check(context:Context):AppUpdate? = withContext(Dispatchers.IO) {
+    suspend fun check(context: Context): AppUpdate? = withContext(Dispatchers.IO) {
         runCatching {
-            val current = context.packageManager.getPackageInfo(context.packageName,0).longVersionCode
-            val json = JSONObject(http("$MANIFEST_URL?ts=${System.currentTimeMillis()}"))
-            val remote = json.optLong("versionCode",0L)
-            if(remote <= current) return@runCatching null
-            val apkUrl = json.optString("apkUrl","").trim()
-            if(apkUrl.isBlank()) error("Update package is not available yet")
-            AppUpdate(remote.toInt(), json.optString("versionName","New version"), apkUrl,
-                json.optString("notes","Performance and schedule improvements."))
+            val current = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
+            val release = JSONObject(http("$RELEASE_URL?ts=${System.currentTimeMillis()}"))
+            val tag = release.optString("tag_name", "").removePrefix("v")
+            val remoteCode = release.optInt("version_code", 0).takeIf { it > 0 }
+                ?: tag.substringAfterLast(".").toIntOrNull() ?: 0
+            val versionName = release.optString("version_name").ifBlank { tag.ifBlank { "New version" } }
+            val notes = release.optString("body").ifBlank { "Performance and schedule improvements." }
+            val assetName = if (BuildConfig.IS_TV_BUILD) "XSportsX-TV.apk" else "XSportsX-Mobile.apk"
+            val apkUrl = findAssetUrl(release.optJSONArray("assets"), assetName)
+            if (remoteCode > current && apkUrl.isNotBlank()) {
+                return@runCatching AppUpdate(remoteCode, versionName, apkUrl, notes)
+            }
+
+            val manifest = runCatching { JSONObject(http("$MANIFEST_URL?ts=${System.currentTimeMillis()}")) }.getOrNull()
+            val fallbackCode = manifest?.optInt("versionCode", 0) ?: 0
+            val fallbackUrl = if (BuildConfig.IS_TV_BUILD) {
+                manifest?.optString("tvApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
+            } else {
+                manifest?.optString("mobileApkUrl", "").orEmpty().ifBlank { manifest?.optString("apkUrl", "").orEmpty() }
+            }
+            if (fallbackCode > current && fallbackUrl.isNotBlank()) {
+                AppUpdate(fallbackCode, manifest?.optString("versionName", "New version") ?: "New version", fallbackUrl, manifest?.optString("notes", "Update available") ?: "Update available")
+            } else null
         }.getOrNull()
     }
 
-    suspend fun downloadAndInstall(
-        context:Context,
-        update:AppUpdate,
-        onProgress:(Int)->Unit = {}
-    ):Result<Unit> = withContext(Dispatchers.IO) {
-        runCatching {
-            val dir = File(context.cacheDir,"updates").apply { mkdirs() }
-            val apk = File(dir,"XSportsX-${update.versionCode}.apk")
-            val temp = File(dir,"XSportsX-${update.versionCode}.download")
+    private fun findAssetUrl(assets: JSONArray?, name: String): String {
+        if (assets == null) return ""
+        for (i in 0 until assets.length()) {
+            val asset = assets.optJSONObject(i) ?: continue
+            if (asset.optString("name") == name) return asset.optString("browser_download_url", "").trim()
+        }
+        return ""
+    }
 
-            if(!apk.isFile || apk.length() < 1024) {
-                download(update.apkUrl,temp,onProgress)
-                if(apk.exists()) apk.delete()
-                if(!temp.renameTo(apk)) error("Unable to prepare the update package")
-            } else {
-                onProgress(100)
-            }
+    suspend fun downloadAndInstall(context: Context, update: AppUpdate, onProgress: (Int) -> Unit = {}): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            val dir = File(context.cacheDir, "updates").apply { mkdirs() }
+            val apk = File(dir, "XSportsX-${update.versionCode}.apk")
+            val temp = File(dir, "XSportsX-${update.versionCode}.download")
+            if (!apk.isFile || apk.length() < 1024) {
+                download(update.apkUrl, temp, onProgress)
+                if (apk.exists()) apk.delete()
+                if (!temp.renameTo(apk)) error("Unable to prepare the update package")
+            } else onProgress(100)
 
             withContext(Dispatchers.Main) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                    !context.packageManager.canRequestPackageInstalls()) {
-                    context.startActivity(
-                        Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
-                            Uri.parse("package:${context.packageName}"))
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
+                    context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}" )).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                     throw IllegalStateException("Allow XSportsX to install updates, then press UPDATE again.")
                 }
-
-                val uri = FileProvider.getUriForFile(context,"${context.packageName}.fileprovider",apk)
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(uri,"application/vnd.android.package-archive")
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                }
-                context.startActivity(intent)
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apk)
+                context.startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/vnd.android.package-archive")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                })
             }
         }
     }
 
-    private fun http(target:String):String {
-        val c=(URL(target).openConnection() as HttpURLConnection).apply {
-            connectTimeout=5000; readTimeout=8000; requestMethod="GET"; instanceFollowRedirects=true
-            setRequestProperty("User-Agent","XSportsX-Updater/3")
-            setRequestProperty("Accept","application/json")
-            setRequestProperty("Cache-Control","no-cache")
-            setRequestProperty("Pragma","no-cache")
+    private fun http(target: String): String {
+        val c = (URL(target).openConnection() as HttpURLConnection).apply {
+            connectTimeout = 5000; readTimeout = 8000; requestMethod = "GET"; instanceFollowRedirects = true
+            setRequestProperty("User-Agent", "XSportsX-Updater/4")
+            setRequestProperty("Accept", "application/vnd.github+json, application/json")
+            setRequestProperty("X-GitHub-Api-Version", "2026-03-10")
+            setRequestProperty("Cache-Control", "no-cache")
         }
-        return try {
-            if(c.responseCode !in 200..299) error("Update server HTTP ${c.responseCode}")
-            c.inputStream.bufferedReader().use { it.readText() }
-        } finally { c.disconnect() }
+        return try { if (c.responseCode !in 200..299) error("Update server HTTP ${c.responseCode}"); c.inputStream.bufferedReader().use { it.readText() } } finally { c.disconnect() }
     }
 
-    private fun download(target:String,file:File,onProgress:(Int)->Unit) {
-        if(file.exists()) file.delete()
-        val c=(URL(target).openConnection() as HttpURLConnection).apply {
-            connectTimeout=10000; readTimeout=20000; requestMethod="GET"; instanceFollowRedirects=true
-            setRequestProperty("User-Agent","Mozilla/5.0 XSportsX-Updater/3")
-            setRequestProperty("Accept","application/vnd.android.package-archive,application/octet-stream,*/*")
-            setRequestProperty("Cache-Control","no-cache")
+    private fun download(target: String, file: File, onProgress: (Int) -> Unit) {
+        if (file.exists()) file.delete()
+        val c = (URL(target).openConnection() as HttpURLConnection).apply {
+            connectTimeout = 10000; readTimeout = 20000; requestMethod = "GET"; instanceFollowRedirects = true
+            setRequestProperty("User-Agent", "Mozilla/5.0 XSportsX-Updater/4")
+            setRequestProperty("Accept", "application/vnd.android.package-archive,application/octet-stream,*/*")
         }
-        val started=System.currentTimeMillis()
+        val started = System.currentTimeMillis()
         try {
-            if(c.responseCode !in 200..299) error("APK download HTTP ${c.responseCode}")
-            val total=c.contentLengthLong
-            var received=0L
-            var lastProgress=-1
-            c.inputStream.buffered().use { input ->
-                file.outputStream().buffered().use { output ->
-                    val buffer=ByteArray(32*1024)
-                    while(true) {
-                        if(System.currentTimeMillis()-started > MAX_DOWNLOAD_MS) error("Update download timed out. Please try again.")
-                        val n=input.read(buffer)
-                        if(n < 0) break
-                        output.write(buffer,0,n)
-                        received += n
-                        if(total > 0) {
-                            val p=((received*100L)/total).toInt().coerceIn(0,99)
-                            if(p != lastProgress) { lastProgress=p; onProgress(p) }
-                        } else {
-                            val p=(received/524288L).toInt().coerceAtMost(99)
-                            if(p != lastProgress) { lastProgress=p; onProgress(p) }
-                        }
-                    }
-                    output.flush()
+            if (c.responseCode !in 200..299) error("APK download HTTP ${c.responseCode}")
+            val total = c.contentLengthLong; var received = 0L; var last = -1
+            c.inputStream.buffered().use { input -> file.outputStream().buffered().use { output ->
+                val buffer = ByteArray(32 * 1024)
+                while (true) {
+                    if (System.currentTimeMillis() - started > MAX_DOWNLOAD_MS) error("Update download timed out. Please try again.")
+                    val n = input.read(buffer); if (n < 0) break
+                    output.write(buffer, 0, n); received += n
+                    val p = if (total > 0) ((received * 100L) / total).toInt().coerceIn(0, 99) else (received / 524288L).toInt().coerceAtMost(99)
+                    if (p != last) { last = p; onProgress(p) }
                 }
-            }
-            if(!file.isFile || file.length()<1024) error("Downloaded APK is invalid")
+            }}
+            if (!file.isFile || file.length() < 1024) error("Downloaded APK is invalid")
             onProgress(100)
         } finally { c.disconnect() }
     }
