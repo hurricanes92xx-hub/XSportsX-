@@ -11,9 +11,10 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 12
-        versionName = "1.6.1"
+        versionCode = 13
+        versionName = "1.6.2"
     }
+
     flavorDimensions += "device"
     productFlavors {
         create("mobile") {
@@ -29,6 +30,30 @@ android {
             buildConfigField("String", "PAIRING_BASE_URL", "\"https://xsportsx.onrender.com\"")
         }
     }
+
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("XSORTSX_KEYSTORE_PATH")
+            val storePassword = System.getenv("XSORTSX_KEYSTORE_PASSWORD")
+            val keyAlias = System.getenv("XSORTSX_KEY_ALIAS")
+            val keyPassword = System.getenv("XSORTSX_KEY_PASSWORD")
+            if (listOf(keystorePath, storePassword, keyAlias, keyPassword).any { it.isNullOrBlank() }) {
+                throw GradleException("Stable release signing is required. Configure XSPORTSX_KEYSTORE_PATH, XSPORTSX_KEYSTORE_PASSWORD, XSPORTSX_KEY_ALIAS and XSPORTSX_KEY_PASSWORD.")
+            }
+            storeFile = file(keystorePath!!)
+            this.storePassword = storePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
