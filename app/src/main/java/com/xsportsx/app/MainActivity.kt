@@ -83,9 +83,7 @@ fun SideRail(tab: String, onTab: (String) -> Unit) {
         modifier = Modifier.width(88.dp).fillMaxHeight().background(Color(0xFF0B0D12)).padding(vertical = 22.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(Modifier.size(52.dp).clip(RoundedCornerShape(16.dp)).background(Brush.linearGradient(listOf(Color(0xFFFF1744), Color(0xFFFF6D00)))), contentAlignment = Alignment.Center) {
-            Text("X", fontSize = 30.sp, fontWeight = FontWeight.Black, color = Color.White)
-        }
+        XtremeLogo(size = 58.dp)
         Spacer(Modifier.height(36.dp))
         listOf("🏠" to "HOME", "🔴" to "LIVE", "⌕" to "SEARCH", "▣" to "SOURCES", "⚙" to "SETTINGS").forEach { (icon, id) ->
             val active = tab == id
@@ -104,13 +102,15 @@ fun SideRail(tab: String, onTab: (String) -> Unit) {
 
 @Composable
 fun Header(title: String, subtitle: String? = null) {
-    Row(Modifier.fillMaxWidth().padding(horizontal = 34.dp, vertical = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().padding(horizontal = 34.dp, vertical = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+        XtremeLogo(size = 54.dp)
+        Spacer(Modifier.width(16.dp))
         Column(Modifier.weight(1f)) {
             Text(title, fontSize = 30.sp, fontWeight = FontWeight.Black, color = Color.White)
             subtitle?.let { Text(it, color = Color(0xFF858B98), fontSize = 13.sp) }
         }
         Box(Modifier.clip(RoundedCornerShape(22.dp)).background(Color(0xFF11151D)).padding(horizontal = 16.dp, vertical = 9.dp)) {
-            Text("●  XSPORTSX", color = Color(0xFFFF3D5A), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+            Text("●  XTREME", color = Color(0xFFFF3D5A), fontWeight = FontWeight.Bold, fontSize = 11.sp)
         }
     }
 }
