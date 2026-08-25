@@ -3,7 +3,6 @@ package com.xsportsx.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -157,14 +156,14 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
     ) {
         Text("X", color = Color(0xFFFF1744), fontWeight = FontWeight.Black, fontSize = 20.sp)
         Spacer(Modifier.width(10.dp))
-        TickerMarquee(text) {
+        TickerMarquee(text, Modifier.weight(1f)) {
             if (groups.size > 1) index = (index + 1) % groups.size
         }
     }
 }
 
 @Composable
-private fun TickerMarquee(text: String, onFinished: () -> Unit) {
+private fun TickerMarquee(text: String, modifier: Modifier, onFinished: () -> Unit) {
     val density = LocalDensity.current
     var viewportWidthPx by remember { mutableIntStateOf(0) }
     var textWidthPx by remember(text) { mutableIntStateOf(0) }
@@ -175,7 +174,7 @@ private fun TickerMarquee(text: String, onFinished: () -> Unit) {
         delay(duration)
         onFinished()
     }
-    BoxWithConstraints(Modifier.weight(1f).fillMaxHeight().onSizeChanged { viewportWidthPx = it.width }) {
+    BoxWithConstraints(modifier.fillMaxHeight().onSizeChanged { viewportWidthPx = it.width }) {
         Text(
             text,
             modifier = Modifier.fillMaxWidth().basicMarquee(iterations = 1, repeatDelayMillis = 0, initialDelayMillis = 650, velocity = 55.dp),
