@@ -8,8 +8,6 @@ on:
 permissions:
   contents: write
 
-# Keep each build running to completion. Rapid commits should not make a
-# successful APK build appear as a cancelled run after artifacts are produced.
 concurrency:
   group: xsportsx-android-${{ github.ref }}
   cancel-in-progress: false
@@ -19,34 +17,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
           cache-read-only: false
-
       - name: Verify Android build configuration
         shell: bash
         run: |
           set -euo pipefail
           test -f gradle.properties
           grep -q '^android.useAndroidX=true$' gradle.properties
-          java -version
-          gradle --version
-
       - name: Clean and build mobile + TV APKs
         shell: bash
         run: |
           set -o pipefail
           gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
-
       - name: Upload Gradle build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,7 +44,6 @@ jobs:
           name: XSportsX-gradle-build-log
           path: gradle-build.log
           if-no-files-found: ignore
-
       - name: Verify APKs exist
         run: |
           set -euo pipefail
@@ -62,22 +51,18 @@ jobs:
           test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
           cp app/build/outputs/apk/mobile/debug/app-mobile-debug.apk XSportsX-Mobile.apk
           cp app/build/outputs/apk/tv/debug/app-tv-debug.apk XSportsX-TV.apk
-          ls -lh XSportsX-Mobile.apk XSportsX-TV.apk
-
       - name: Upload mobile APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-Mobile-APK
           path: XSportsX-Mobile.apk
           if-no-files-found: error
-
       - name: Upload TV APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-TV-APK
           path: XSportsX-TV.apk
           if-no-files-found: error
-
       - name: Publish APKs for in-app updater
         env:
           GH_TOKEN: ${{ github.token }}
@@ -87,12 +72,10 @@ jobs:
           VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
           TAG="v${VERSION_NAME}"
-          echo "Publishing XSportsX ${VERSION_NAME} (${VERSION_CODE}) as ${TAG}"
+          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Includes separate Mobile and Android TV APKs.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
           if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release edit "${TAG}" --notes "${NOTES}"
             gh release upload "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
           else
-            gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk \
-              --title "XSportsX ${VERSION_NAME}" \
-              --notes "XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Includes separate Mobile/Tablet and Android TV APKs." \
-              --latest
+            gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "${NOTES}" --latest
           fi
