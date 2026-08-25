@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MainActivityFuture : ComponentActivity() {
@@ -34,11 +36,40 @@ class MainActivityFuture : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val connected = remember(sourceVersion) { SourceStore(this@MainActivityFuture).load().isConfigured() }
 
-            LaunchedEffect(Unit) { availableUpdate = AppUpdateManager.check(this@MainActivityFuture) }
+            fun checkForUpdate() {
+                scope.launch {
+                    val found = AppUpdateManager.check(this@MainActivityFuture)
+                    if (found != null && found.versionCode > (availableUpdate?.versionCode ?: 0)) availableUpdate = found
+                }
+            }
+
+            // Ping the release endpoint on launch and every 30 minutes while the app is open.
+            LaunchedEffect(Unit) {
+                checkForUpdate()
+                while (isActive) {
+                    delay(30 * 60 * 1000L)
+                    checkForUpdate()
+                }
+            }
 
             if (availableUpdate != null) {
                 val update = availableUpdate!!
-                AlertDialog(onDismissRequest = { if (!updateBusy) availableUpdate = null }, title = { Text("XSPORTSX UPDATE AVAILABLE") }, text = { Text(if (updateBusy) "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes." else "Version ${update.versionName} is ready.\n\n${update.notes}") }, confirmButton = { TextButton(enabled = !updateBusy, onClick = { updateBusy = true; updateProgress = 0; updateMessage = null; scope.launch { val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update) { p -> updateProgress = p }; updateBusy = false; result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" } } }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") } }, dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") } })
+                AlertDialog(
+                    onDismissRequest = { if (!updateBusy) availableUpdate = null },
+                    title = { Text("XSPORTSX UPDATE AVAILABLE") },
+                    text = { Text(if (updateBusy) "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes." else "Version ${update.versionName} is ready.\n\n${update.notes}") },
+                    confirmButton = {
+                        TextButton(enabled = !updateBusy, onClick = {
+                            updateBusy = true; updateProgress = 0; updateMessage = null
+                            scope.launch {
+                                val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update) { p -> updateProgress = p }
+                                updateBusy = false
+                                result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" }
+                            }
+                        }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") }
+                    },
+                    dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") } }
+                )
             }
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
