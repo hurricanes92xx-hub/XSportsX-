@@ -20,6 +20,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -49,37 +50,47 @@ private val tickerLeagues = listOf(
     TickerLeague("Ligue 1", "soccer", "fra.1")
 )
 
-private fun dateRange(): String {
-    val fmt = SimpleDateFormat("yyyyMMdd", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
-    val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    cal.add(Calendar.DAY_OF_YEAR, -1)
-    val yesterday = fmt.format(cal.time)
-    cal.add(Calendar.DAY_OF_YEAR, 2)
-    val tomorrow = fmt.format(cal.time)
-    return "$yesterday-$tomorrow"
-}
-
-private fun getJson(url: String): JSONObject? {
-    val connection = try { URL(url).openConnection() as HttpURLConnection } catch (_: Exception) { return null }
-    return try {
-        connection.connectTimeout = 3500
-        connection.readTimeout = 5500
-        connection.requestMethod = "GET"
-        connection.setRequestProperty("User-Agent", "XSportsX/1.6")
-        connection.setRequestProperty("Accept", "application/json")
-        if (connection.responseCode !in 200..299) null
-        else connection.inputStream.bufferedReader().use { JSONObject(it.readText()) }
-    } catch (_: Exception) {
-        null
-    } finally {
-        connection.disconnect()
+private fun dateString(offset: Int): String {
+    val format = SimpleDateFormat("yyyyMMdd", Locale.US).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
     }
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.add(Calendar.DAY_OF_YEAR, offset)
+    return format.format(calendar.time)
 }
 
-private fun eventTime(event: JSONObject): Long {
-    val raw = event.optString("date", "")
-    return try { java.time.Instant.parse(raw).toEpochMilli() } catch (_: Exception) { 0L }
+private fun httpBody(url: String, accept: String = "application/json"): String? {
+    repeat(2) { attempt ->
+        val connection = try { URL(url).openConnection() as HttpURLConnection } catch (_: Exception) { return@repeat }
+        try {
+            connection.connectTimeout = 4000
+            connection.readTimeout = 6500
+            connection.requestMethod = "GET"
+            connection.instanceFollowRedirects = true
+            connection.setRequestProperty("User-Agent", "XSportsX/1.8")
+            connection.setRequestProperty("Accept", accept)
+            val code = connection.responseCode
+            if (code in 200..299) {
+                return connection.inputStream.bufferedReader().use { it.readText() }
+            }
+            if (code !in 408..429 && code !in 500..599) return null
+        } catch (_: Exception) {
+            if (attempt == 1) return null
+        } finally {
+            connection.disconnect()
+        }
+        if (attempt == 0) Thread.sleep(250)
+    }
+    return null
 }
+
+private fun getJson(url: String): JSONObject? = httpBody(url)?.let { body ->
+    runCatching { JSONObject(body) }.getOrNull()
+}
+
+private fun eventTime(event: JSONObject): Long = runCatching {
+    java.time.Instant.parse(event.optString("date")).toEpochMilli()
+}.getOrDefault(0L)
 
 private fun tickerPriority(kind: String): Int = when (kind) {
     "LIVE" -> 0
@@ -89,98 +100,105 @@ private fun tickerPriority(kind: String): Int = when (kind) {
     else -> 4
 }
 
-private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup = withContext(Dispatchers.IO) {
-    val url = "https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${dateRange()}&limit=50"
-    val json = getJson(url)
-    val events = json?.optJSONArray("events")
+private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup? = withContext(Dispatchers.IO) {
+    val url = "https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${dateString(0)}&limit=50"
+    val json = getJson(url) ?: return@withContext null
+    val events = json.optJSONArray("events") ?: return@withContext TickerLeagueGroup(league.name, emptyList())
     val now = System.currentTimeMillis()
-    val cutoff = now - 24L * 60L * 60L * 1000L
     val items = buildList {
-        if (events != null) {
-            for (i in 0 until events.length()) {
-                val event = events.optJSONObject(i) ?: continue
-                val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue
-                val competitors = competition.optJSONArray("competitors") ?: continue
-                var home = "TBD"
-                var away = "TBD"
-                var homeScore = ""
-                var awayScore = ""
-
-                for (j in 0 until competitors.length()) {
-                    val team = competitors.optJSONObject(j) ?: continue
-                    val teamObj = team.optJSONObject("team")
-                    val name = teamObj?.optString("abbreviation")?.ifBlank { teamObj.optString("shortDisplayName") }
-                        .orEmpty().ifBlank { "TBD" }
-                    val score = team.optString("score")
-                    if (team.optString("homeAway") == "home") {
-                        home = name
-                        homeScore = score
-                    } else {
-                        away = name
-                        awayScore = score
-                    }
+        for (i in 0 until events.length()) {
+            val event = events.optJSONObject(i) ?: continue
+            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue
+            val competitors = competition.optJSONArray("competitors") ?: continue
+            var home = "TBD"
+            var away = "TBD"
+            var homeScore = ""
+            var awayScore = ""
+            for (j in 0 until competitors.length()) {
+                val team = competitors.optJSONObject(j) ?: continue
+                val teamObj = team.optJSONObject("team")
+                val name = teamObj?.optString("abbreviation")?.ifBlank { teamObj.optString("shortDisplayName") }
+                    .orEmpty().ifBlank { "TBD" }
+                if (team.optString("homeAway") == "home") {
+                    home = name
+                    homeScore = team.optString("score")
+                } else {
+                    away = name
+                    awayScore = team.optString("score")
                 }
-
-                val statusType = competition.optJSONObject("status")?.optJSONObject("type")
-                val state = statusType?.optString("state").orEmpty().ifBlank { "pre" }
-                val detail = statusType?.optString("shortDetail").orEmpty()
-                val timestamp = eventTime(event)
-                val kind = when (state) {
-                    "in" -> "LIVE"
-                    "post" -> if (timestamp == 0L || timestamp >= cutoff) "FINAL" else "EXPIRED"
-                    else -> "UPCOMING"
-                }
-                if (kind == "EXPIRED") continue
-
-                val text = when (kind) {
-                    "UPCOMING" -> "$away @ $home${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}"
-                    else -> "$away $awayScore  •  $home $homeScore"
-                }
+            }
+            val statusType = competition.optJSONObject("status")?.optJSONObject("type")
+            val state = statusType?.optString("state").orEmpty().ifBlank { "pre" }
+            val detail = statusType?.optString("shortDetail").orEmpty()
+            val timestamp = eventTime(event)
+            val kind = when (state) {
+                "in" -> "LIVE"
+                "post" -> "FINAL"
+                else -> "UPCOMING"
+            }
+            val text = if (kind == "UPCOMING") {
+                "$away @ $home${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}"
+            } else {
+                "$away $awayScore  •  $home $homeScore"
+            }
+            if (timestamp == 0L || timestamp >= now - 36L * 60L * 60L * 1000L) {
                 add(TickerItem(kind, league.name, text, timestamp))
             }
         }
     }
-
     TickerLeagueGroup(
         league.name,
-        items.sortedWith(compareBy<TickerItem> { tickerPriority(it.kind) }.thenBy { it.timestamp }).take(10)
+        items.sortedWith(compareBy<TickerItem> { tickerPriority(it.kind) }.thenBy { it.timestamp }).take(12)
     )
 }
 
-private suspend fun loadBreakingNews(): TickerLeagueGroup = withContext(Dispatchers.IO) {
+private suspend fun loadEspnNews(): TickerLeagueGroup? = withContext(Dispatchers.IO) {
     val urls = listOf(
         "https://site.api.espn.com/apis/site/v2/sports/news?region=us&lang=en&limit=12",
         "https://site.api.espn.com/apis/site/v2/sports/general/news?region=us&lang=en&limit=12"
     )
-    var json: JSONObject? = null
     for (url in urls) {
-        json = getJson(url)
-        if (json != null) break
-    }
-
-    val articles = json?.optJSONArray("articles")
-    val items = buildList {
-        if (articles != null) {
+        val articles = getJson(url)?.optJSONArray("articles") ?: continue
+        val items = buildList {
             for (i in 0 until articles.length()) {
                 val article = articles.optJSONObject(i) ?: continue
                 val headline = article.optString("headline").trim()
                 if (headline.isBlank()) continue
-                val published = try {
+                val timestamp = runCatching {
                     java.time.Instant.parse(article.optString("published")).toEpochMilli()
-                } catch (_: Exception) { 0L }
-                add(TickerItem("NEWS", "BREAKING", headline, published))
+                }.getOrDefault(0L)
+                add(TickerItem("NEWS", "BREAKING", headline, timestamp))
             }
-        }
-    }.sortedByDescending { it.timestamp }.take(8)
-
-    TickerLeagueGroup("BREAKING NEWS", items)
+        }.sortedByDescending { it.timestamp }.take(8)
+        if (items.isNotEmpty()) return@withContext TickerLeagueGroup("BREAKING NEWS", items)
+    }
+    null
 }
 
-private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = coroutineScope {
-    val leagueGroups = tickerLeagues.map { league -> async { loadLeague(league) } }.awaitAll()
-    val news = async { loadBreakingNews() }.await()
-    leagueGroups.filter { it.items.isNotEmpty() } + listOfNotNull(news.takeIf { it.items.isNotEmpty() })
+private suspend fun loadPrimaryGroups(): List<TickerLeagueGroup> = coroutineScope {
+    val groups = mutableListOf<TickerLeagueGroup>()
+    tickerLeagues.chunked(4).forEach { batch ->
+        val results = batch.map { league -> async { loadLeague(league) } }.awaitAll()
+        groups += results.filterNotNull().filter { it.items.isNotEmpty() }
+    }
+    groups
 }
+
+private suspend fun loadFallbackScores(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {
+    val url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${dateString(0)}&limit=50"
+    val group = loadLeague(TickerLeague("NFL", "football", "nfl"))
+    if (group?.items?.isNotEmpty() == true) listOf(group) else emptyList()
+}
+
+private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withTimeoutOrNull(30_000L) {
+    val primary = runCatching { loadPrimaryGroups() }.getOrDefault(emptyList())
+    val news = runCatching { loadEspnNews() }.getOrNull()
+    if (primary.isNotEmpty()) {
+        return@withTimeoutOrNull primary + listOfNotNull(news)
+    }
+    val fallback = runCatching { loadFallbackScores() }.getOrDefault(emptyList())
+    fallback + listOfNotNull(news)
+} ?: emptyList()
 
 private fun tickerLine(group: TickerLeagueGroup): String = group.items.joinToString("     •     ") { item ->
     "${item.kind}  ${item.text}"
@@ -191,7 +209,8 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
     var groups by remember { mutableStateOf<List<TickerLeagueGroup>>(emptyList()) }
     var activeIndex by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(true) }
-    var lastRefresh by remember { mutableLongStateOf(0L) }
+    var lastGoodRefresh by remember { mutableLongStateOf(0L) }
+    var feedFailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         while (isActive) {
@@ -200,29 +219,31 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
             if (loaded.isNotEmpty()) {
                 groups = loaded
                 activeIndex = 0
-                lastRefresh = System.currentTimeMillis()
+                lastGoodRefresh = System.currentTimeMillis()
+                feedFailed = false
+            } else {
+                feedFailed = groups.isEmpty()
             }
             loading = false
-            delay(60_000)
+            delay(60_000L)
         }
     }
 
     LaunchedEffect(groups.size) {
         while (isActive && groups.size > 1) {
-            delay(8_000)
+            delay(7_000L)
             activeIndex = (activeIndex + 1) % groups.size
         }
     }
 
     val activeGroup = groups.getOrNull(activeIndex.coerceIn(0, (groups.size - 1).coerceAtLeast(0)))
-    val fallback = if (loading) {
-        "LIVE SCORES • PULLING THE LATEST SPORTS DATA…"
-    } else if (lastRefresh > 0L) {
-        "LIVE SCORES • FEED UPDATED • ${groups.size} LEAGUES"
-    } else {
-        "LIVE SCORES • SPORTS FEED TEMPORARILY UNAVAILABLE"
+    val fallbackText = when {
+        loading && groups.isEmpty() -> "LIVE SCORES • CONNECTING TO SPORTS FEEDS…"
+        feedFailed && lastGoodRefresh == 0L -> "LIVE SCORES • SPORTS FEED TEMPORARILY UNAVAILABLE"
+        groups.isEmpty() -> "LIVE SCORES • NO LIVE SPORTS DATA RIGHT NOW"
+        else -> "LIVE SCORES • FEED UPDATED"
     }
-    val line = activeGroup?.let(::tickerLine)?.ifBlank { fallback } ?: fallback
+    val line = activeGroup?.let(::tickerLine)?.ifBlank { fallbackText } ?: fallbackText
 
     Box(
         modifier = modifier.fillMaxWidth().height(64.dp).background(Color(0xF2080A10)),
@@ -237,7 +258,6 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
             ) {
                 Text("X", color = Color(0xFFFF1744), fontSize = 20.sp, fontWeight = FontWeight.Black)
             }
-
             Text(
                 activeGroup?.league ?: "SPORTS",
                 color = Color.White,
@@ -245,7 +265,6 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Black,
                 modifier = Modifier.padding(end = 10.dp)
             )
-
             Box(
                 modifier = Modifier
                     .weight(1f)
