@@ -11,9 +11,9 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.6.6"
-        // Xtreme animated logo + updater performance release for mobile + TV.
+        versionCode = 18
+        versionName = "1.6.7"
+        // Neon X branding release.
     }
     flavorDimensions += "device"
     productFlavors {
