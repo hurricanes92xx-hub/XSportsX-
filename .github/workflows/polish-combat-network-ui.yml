@@ -19,183 +19,161 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
-
-          root = Path('android-app/app/src/main/java/com/xsportsx/app')
+          root = Path('app/src/main/java/com/xsportsx/app')
           fut = root / 'FuturisticSports.kt'
           sched = root / 'SportsScheduleScreen.kt'
-
           s = fut.read_text()
           old = '''private fun networkLogoUrl(name: String): String? = when (name) {
-              "ESPN" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN_logo.png"
-              "ESPN2" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN2_logo.svg"
-              "ESPNU" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPNU_logo.svg"
-              "NFL Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/NFL_Network_logo.svg"
-              "FS1" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/FS1_logo.svg"
-              "CBS Sports" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/CBS_Sports_logo.svg"
-              "SEC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/SEC_Network_(2024).svg"
-              "ACC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_ESPN_logo.svg"
-              "Big Ten Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_Ten_Network_logo.svg"
-              "Big 12" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_12_Conference_logo.svg"
-              else -> null
-          }
-          '''
-          if old in s:
-              s = s.replace(old, '')
-
+    "ESPN" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN_logo.png"
+    "ESPN2" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN2_logo.svg"
+    "ESPNU" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPNU_logo.svg"
+    "NFL Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/NFL_Network_logo.svg"
+    "FS1" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/FS1_logo.svg"
+    "CBS Sports" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/CBS_Sports_logo.svg"
+    "SEC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/SEC_Network_(2024).svg"
+    "ACC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_ESPN_logo.svg"
+    "Big Ten Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_Ten_Network_logo.svg"
+    "Big 12" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_12_Conference_logo.svg"
+    else -> null
+}
+'''
+          if old in s: s = s.replace(old, '')
           start = s.index('@Composable\nprivate fun NetworkCard(')
           end = s.index('\n\n@Composable\nprivate fun UpcomingStrip()', start)
           new_card = '''@Composable
-          private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
-              Column(Modifier.width(128.dp).height(142.dp).clip(RoundedCornerShape(20.dp)).background(Panel).clickable { onClick(network) }.padding(13.dp)) {
-                  Box(Modifier.fillMaxWidth().height(50.dp).clip(RoundedCornerShape(13.dp)).background(Brush.linearGradient(listOf(Color(0xFF182231), Color(0xFF0B1018)))), contentAlignment = Alignment.Center) {
-                      NetworkBrandMark(network.name)
-                  }
-                  Spacer(Modifier.height(9.dp)); Text(network.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                  Spacer(Modifier.height(3.dp)); Text("SOURCE MATCH", color = Color(0xFF697382), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .7.sp)
-              }
-          }
+private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
+    Column(Modifier.width(128.dp).height(142.dp).clip(RoundedCornerShape(20.dp)).background(Panel).clickable { onClick(network) }.padding(13.dp)) {
+        Box(Modifier.fillMaxWidth().height(50.dp).clip(RoundedCornerShape(13.dp)).background(Brush.linearGradient(listOf(Color(0xFF182231), Color(0xFF0B1018)))), contentAlignment = Alignment.Center) { NetworkBrandMark(network.name) }
+        Spacer(Modifier.height(9.dp)); Text(network.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Spacer(Modifier.height(3.dp)); Text("SOURCE MATCH", color = Color(0xFF697382), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .7.sp)
+    }
+}
 
-          @Composable
-          private fun NetworkBrandMark(name: String) {
-              val key = name.uppercase()
-              when {
-                  key == "ESPN" -> BrandPill("ESPN", XRed)
-                  key == "ESPN2" -> BrandPill("ESPN 2", XRed)
-                  key == "ESPNU" -> BrandPill("ESPNU", XRed)
-                  key == "NFL NETWORK" -> BrandPill("NFL", Color.White, Color(0xFF14233A))
-                  key == "FS1" -> BrandPill("FS1", Color.White, Color(0xFF173A6A))
-                  key == "CBS SPORTS" -> BrandPill("CBS SPORTS", Color.White, Color(0xFF1267A5))
-                  key == "SEC NETWORK" -> BrandPill("SEC", Color.White, Color(0xFF193C69))
-                  key == "ACC NETWORK" -> BrandPill("ACC", Color.White, Color(0xFF1C5C9B))
-                  key == "BIG TEN NETWORK" -> BrandPill("B1G", Color.White, Color(0xFF26374A))
-                  key == "BIG 12" -> BrandPill("BIG 12", Color.White, Color(0xFF6B1F2A))
-                  else -> BrandPill(name.take(5).uppercase(), Color.White)
-              }
-          }
+@Composable
+private fun NetworkBrandMark(name: String) {
+    val key = name.uppercase()
+    when {
+        key == "ESPN" -> BrandPill("ESPN", XRed)
+        key == "ESPN2" -> BrandPill("ESPN 2", XRed)
+        key == "ESPNU" -> BrandPill("ESPNU", XRed)
+        key == "NFL NETWORK" -> BrandPill("NFL", Color.White, Color(0xFF14233A))
+        key == "FS1" -> BrandPill("FS1", Color.White, Color(0xFF173A6A))
+        key == "CBS SPORTS" -> BrandPill("CBS SPORTS", Color.White, Color(0xFF1267A5))
+        key == "SEC NETWORK" -> BrandPill("SEC", Color.White, Color(0xFF193C69))
+        key == "ACC NETWORK" -> BrandPill("ACC", Color.White, Color(0xFF1C5C9B))
+        key == "BIG TEN NETWORK" -> BrandPill("B1G", Color.White, Color(0xFF26374A))
+        key == "BIG 12" -> BrandPill("BIG 12", Color.White, Color(0xFF6B1F2A))
+        else -> BrandPill(name.take(5).uppercase(), Color.White)
+    }
+}
 
-          @Composable
-          private fun BrandPill(text: String, foreground: Color, background: Color = Color(0xFF202A38)) {
-              Box(Modifier.fillMaxWidth().padding(horizontal = 9.dp).clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) {
-                  Text(text, color = foreground, fontSize = if (text.length > 7) 8.sp else 14.sp, fontWeight = FontWeight.Black, letterSpacing = .4.sp, maxLines = 1)
-              }
-          }
-          '''
+@Composable
+private fun BrandPill(text: String, foreground: Color, background: Color = Color(0xFF202A38)) {
+    Box(Modifier.fillMaxWidth().padding(horizontal = 9.dp).clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) {
+        Text(text, color = foreground, fontSize = if (text.length > 7) 8.sp else 14.sp, fontWeight = FontWeight.Black, letterSpacing = .4.sp, maxLines = 1)
+    }
+}
+'''
           s = s[:start] + new_card + s[end:]
           fut.write_text(s)
 
           s = sched.read_text()
           s = s.replace('TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, 76.dp)', 'TeamLogo(event.homeLogo, event.home.ifBlank { "HOME" }, event.league, 76.dp)')
           s = s.replace('TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, 76.dp)', 'TeamLogo(event.awayLogo, event.away.ifBlank { "AWAY" }, event.league, 76.dp)')
-
           start = s.index('@Composable\nprivate fun TeamLogo(')
           end = s.index('\n\n@Composable\nprivate fun EventArtBadge(', start)
           team = '''@Composable
-          private fun TeamLogo(url: String, name: String, league: String, size: androidx.compose.ui.unit.Dp) {
-              val fallbackUrl = remember(name, league) { espnTeamLogoUrl(name, league) }
-              var currentUrl by remember(url, name, league) { mutableStateOf(url.ifBlank { fallbackUrl.orEmpty() }) }
-              var failed by remember(url, name, league) { mutableStateOf(false) }
-              Box(Modifier.size(size).clip(CircleShape).background(Brush.radialGradient(listOf(Color(0xFF273446), Color(0xFF0A0F17)))), contentAlignment = Alignment.Center) {
-                  if (currentUrl.isNotBlank() && !failed) {
-                      AsyncImage(model = currentUrl, contentDescription = name, modifier = Modifier.fillMaxSize().padding(8.dp), contentScale = ContentScale.Fit, onError = {
-                          if (fallbackUrl != null && currentUrl != fallbackUrl) currentUrl = fallbackUrl else failed = true
-                      })
-                  } else {
-                      Text(teamInitials(name), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
-                  }
-              }
-          }
+private fun TeamLogo(url: String, name: String, league: String, size: androidx.compose.ui.unit.Dp) {
+    val fallbackUrl = remember(name, league) { espnTeamLogoUrl(name, league) }
+    var currentUrl by remember(url, name, league) { mutableStateOf(url.ifBlank { fallbackUrl.orEmpty() }) }
+    var failed by remember(url, name, league) { mutableStateOf(false) }
+    Box(Modifier.size(size).clip(CircleShape).background(Brush.radialGradient(listOf(Color(0xFF273446), Color(0xFF0A0F17)))), contentAlignment = Alignment.Center) {
+        if (currentUrl.isNotBlank() && !failed) {
+            AsyncImage(model = currentUrl, contentDescription = name, modifier = Modifier.fillMaxSize().padding(8.dp), contentScale = ContentScale.Fit, onError = { if (fallbackUrl != null && currentUrl != fallbackUrl) currentUrl = fallbackUrl else failed = true })
+        } else Text(teamInitials(name), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
+    }
+}
 
-          private fun espnTeamLogoUrl(name: String, league: String): String? {
-              val n = name.trim().lowercase()
-              if (n.isBlank() || n == "home" || n == "away") return null
-              val code = when {
-                  n.length in 2..4 && n.all { it.isLetter() } -> n
-                  n.contains("arizona") || n.contains("cardinals") -> "ari"
-                  n.contains("atlanta") || n.contains("falcons") -> "atl"
-                  n.contains("baltimore") || n.contains("ravens") -> "bal"
-                  n.contains("buffalo") || n.contains("bills") -> "buf"
-                  n.contains("carolina") || n.contains("panthers") -> "car"
-                  n.contains("chicago") || n.contains("bears") -> "chi"
-                  n.contains("cincinnati") || n.contains("bengals") -> "cin"
-                  n.contains("cleveland") || n.contains("browns") -> "cle"
-                  n.contains("dallas") || n.contains("cowboys") -> "dal"
-                  n.contains("denver") || n.contains("broncos") -> "den"
-                  n.contains("detroit") || n.contains("lions") -> "det"
-                  n.contains("green bay") || n.contains("packers") -> "gb"
-                  n.contains("houston") || n.contains("texans") -> "hou"
-                  n.contains("indianapolis") || n.contains("colts") -> "ind"
-                  n.contains("jacksonville") || n.contains("jaguars") -> "jax"
-                  n.contains("kansas city") || n.contains("chiefs") -> "kc"
-                  n.contains("las vegas") || n.contains("raiders") -> "lv"
-                  n.contains("los angeles chargers") || n.contains("chargers") -> "lac"
-                  n.contains("los angeles rams") || n.contains("rams") -> "lar"
-                  n.contains("miami") || n.contains("dolphins") -> "mia"
-                  n.contains("minnesota") || n.contains("vikings") -> "min"
-                  n.contains("new england") || n.contains("patriots") -> "ne"
-                  n.contains("new orleans") || n.contains("saints") -> "no"
-                  n.contains("new york giants") || n.contains("giants") -> "nyg"
-                  n.contains("new york jets") || n.contains("jets") -> "nyj"
-                  n.contains("philadelphia") || n.contains("eagles") -> "phi"
-                  n.contains("pittsburgh") || n.contains("steelers") -> "pit"
-                  n.contains("san francisco") || n.contains("49ers") -> "sf"
-                  n.contains("seattle") || n.contains("seahawks") -> "sea"
-                  n.contains("tampa bay") || n.contains("buccaneers") -> "tb"
-                  n.contains("tennessee") || n.contains("titans") -> "ten"
-                  n.contains("washington") || n.contains("commanders") -> "wsh"
-                  n.contains("lakers") -> "lal"
-                  n.contains("celtics") -> "bos"
-                  n.contains("knicks") -> "ny"
-                  n.contains("yankees") -> "nyy"
-                  n.contains("astros") -> "hou"
-                  n.contains("blue jays") -> "tor"
-                  n.contains("mariners") -> "sea"
-                  else -> return null
-              }
-              val sport = when {
-                  league.equals("NFL", true) -> "nfl"
-                  league.equals("NBA", true) -> "nba"
-                  league.equals("MLB", true) -> "mlb"
-                  league.equals("NHL", true) -> "nhl"
-                  else -> return null
-              }
-              return "https://a.espncdn.com/i/teamlogos/$sport/500/scoreboard/$code.png"
-          }
-          '''
+private fun espnTeamLogoUrl(name: String, league: String): String? {
+    val n = name.trim().lowercase()
+    if (n.isBlank() || n == "home" || n == "away") return null
+    val code = when {
+        n.length in 2..4 && n.all { it.isLetter() } -> n
+        n.contains("arizona") || n.contains("cardinals") -> "ari"
+        n.contains("atlanta") || n.contains("falcons") -> "atl"
+        n.contains("baltimore") || n.contains("ravens") -> "bal"
+        n.contains("buffalo") || n.contains("bills") -> "buf"
+        n.contains("carolina") || n.contains("panthers") -> "car"
+        n.contains("chicago") || n.contains("bears") -> "chi"
+        n.contains("cincinnati") || n.contains("bengals") -> "cin"
+        n.contains("cleveland") || n.contains("browns") -> "cle"
+        n.contains("dallas") || n.contains("cowboys") -> "dal"
+        n.contains("denver") || n.contains("broncos") -> "den"
+        n.contains("detroit") || n.contains("lions") -> "det"
+        n.contains("green bay") || n.contains("packers") -> "gb"
+        n.contains("houston") || n.contains("texans") -> "hou"
+        n.contains("indianapolis") || n.contains("colts") -> "ind"
+        n.contains("jacksonville") || n.contains("jaguars") -> "jax"
+        n.contains("kansas city") || n.contains("chiefs") -> "kc"
+        n.contains("las vegas") || n.contains("raiders") -> "lv"
+        n.contains("chargers") -> "lac"
+        n.contains("rams") -> "lar"
+        n.contains("miami") || n.contains("dolphins") -> "mia"
+        n.contains("minnesota") || n.contains("vikings") -> "min"
+        n.contains("new england") || n.contains("patriots") -> "ne"
+        n.contains("new orleans") || n.contains("saints") -> "no"
+        n.contains("new york giants") || n.contains("giants") -> "nyg"
+        n.contains("new york jets") || n.contains("jets") -> "nyj"
+        n.contains("philadelphia") || n.contains("eagles") -> "phi"
+        n.contains("pittsburgh") || n.contains("steelers") -> "pit"
+        n.contains("san francisco") || n.contains("49ers") -> "sf"
+        n.contains("seattle") || n.contains("seahawks") -> "sea"
+        n.contains("tampa bay") || n.contains("buccaneers") -> "tb"
+        n.contains("tennessee") || n.contains("titans") -> "ten"
+        n.contains("washington") || n.contains("commanders") -> "wsh"
+        n.contains("lakers") -> "lal"
+        n.contains("celtics") -> "bos"
+        n.contains("knicks") -> "ny"
+        n.contains("yankees") -> "nyy"
+        n.contains("astros") -> "hou"
+        n.contains("blue jays") -> "tor"
+        n.contains("mariners") -> "sea"
+        else -> return null
+    }
+    val sport = when { league.equals("NFL", true) -> "nfl"; league.equals("NBA", true) -> "nba"; league.equals("MLB", true) -> "mlb"; league.equals("NHL", true) -> "nhl"; else -> return null }
+    return "https://a.espncdn.com/i/teamlogos/$sport/500/scoreboard/$code.png"
+}
+'''
           s = s[:start] + team + s[end:]
-
           start = s.index('@Composable\nprivate fun EventArtBadge(')
           end = s.index('\n\nprivate fun cardBrush(', start)
           art = '''@Composable
-          private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
-              val isUfc = combat && event.league.equals("UFC", true)
-              Box(modifier.size(112.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xD90A0D13)), contentAlignment = Alignment.Center) {
-                  androidx.compose.foundation.Canvas(Modifier.fillMaxSize().padding(10.dp)) {
-                      val cx = size.width / 2f
-                      val cy = size.height / 2f
-                      if (isUfc) {
-                          val r = size.minDimension * .34f
-                          val pts = (0 until 8).map { i ->
-                              val a = Math.PI / 8.0 + i * Math.PI / 4.0
-                              androidx.compose.ui.geometry.Offset(cx + (r * kotlin.math.cos(a)).toFloat(), cy + (r * kotlin.math.sin(a)).toFloat())
-                          }
-                          for (i in pts.indices) drawLine(Color(0xFFFF1744), pts[i], pts[(i + 1) % pts.size], strokeWidth = 5f)
-                          drawCircle(Color(0x33FF1744), r * .62f)
-                          drawLine(Color.White, androidx.compose.ui.geometry.Offset(cx - r * .55f, cy), androidx.compose.ui.geometry.Offset(cx + r * .55f, cy), strokeWidth = 3f)
-                      } else {
-                          val left = size.width * .18f; val right = size.width * .82f; val top = size.height * .28f; val bottom = size.height * .72f
-                          drawLine(Color(0xFFFF6D00), androidx.compose.ui.geometry.Offset(left, top), androidx.compose.ui.geometry.Offset(right, top), strokeWidth = 4f)
-                          drawLine(Color(0xFFFF1744), androidx.compose.ui.geometry.Offset(left, (top + bottom) / 2f), androidx.compose.ui.geometry.Offset(right, (top + bottom) / 2f), strokeWidth = 4f)
-                          drawLine(Color.White, androidx.compose.ui.geometry.Offset(left, bottom), androidx.compose.ui.geometry.Offset(right, bottom), strokeWidth = 4f)
-                          drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(left, top - 8f), androidx.compose.ui.geometry.Offset(left, bottom + 8f), strokeWidth = 6f)
-                          drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(right, top - 8f), androidx.compose.ui.geometry.Offset(right, bottom + 8f), strokeWidth = 6f)
-                          drawCircle(Color(0x33FFFF00), 11f, androidx.compose.ui.geometry.Offset(cx - 12f, cy - 2f))
-                          drawCircle(Color(0x33FF1744), 11f, androidx.compose.ui.geometry.Offset(cx + 12f, cy + 2f))
-                      }
-                  }
-                  Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
-              }
-          }
-          '''
+private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
+    val isUfc = combat && event.league.equals("UFC", true)
+    Box(modifier.size(112.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xD90A0D13)), contentAlignment = Alignment.Center) {
+        androidx.compose.foundation.Canvas(Modifier.fillMaxSize().padding(10.dp)) {
+            val cx = size.width / 2f; val cy = size.height / 2f
+            if (isUfc) {
+                val r = size.minDimension * .34f
+                val pts = (0 until 8).map { i -> val a = Math.PI / 8.0 + i * Math.PI / 4.0; androidx.compose.ui.geometry.Offset(cx + (r * kotlin.math.cos(a)).toFloat(), cy + (r * kotlin.math.sin(a)).toFloat()) }
+                for (i in pts.indices) drawLine(Color(0xFFFF1744), pts[i], pts[(i + 1) % pts.size], strokeWidth = 5f)
+                drawCircle(Color(0x33FF1744), r * .62f)
+                drawLine(Color.White, androidx.compose.ui.geometry.Offset(cx - r * .55f, cy), androidx.compose.ui.geometry.Offset(cx + r * .55f, cy), strokeWidth = 3f)
+            } else {
+                val left = size.width * .18f; val right = size.width * .82f; val top = size.height * .28f; val bottom = size.height * .72f
+                drawLine(Color(0xFFFF6D00), androidx.compose.ui.geometry.Offset(left, top), androidx.compose.ui.geometry.Offset(right, top), strokeWidth = 4f)
+                drawLine(Color(0xFFFF1744), androidx.compose.ui.geometry.Offset(left, (top + bottom) / 2f), androidx.compose.ui.geometry.Offset(right, (top + bottom) / 2f), strokeWidth = 4f)
+                drawLine(Color.White, androidx.compose.ui.geometry.Offset(left, bottom), androidx.compose.ui.geometry.Offset(right, bottom), strokeWidth = 4f)
+                drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(left, top - 8f), androidx.compose.ui.geometry.Offset(left, bottom + 8f), strokeWidth = 6f)
+                drawLine(Color(0xFF7F8794), androidx.compose.ui.geometry.Offset(right, top - 8f), androidx.compose.ui.geometry.Offset(right, bottom + 8f), strokeWidth = 6f)
+                drawCircle(Color(0x33FFFF00), 11f, androidx.compose.ui.geometry.Offset(cx - 12f, cy - 2f))
+                drawCircle(Color(0x33FF1744), 11f, androidx.compose.ui.geometry.Offset(cx + 12f, cy + 2f))
+            }
+        }
+        Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
+    }
+}
+'''
           s = s[:start] + art + s[end:]
           sched.write_text(s)
 
@@ -203,7 +181,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add android-app/app/src/main/java/com/xsportsx/app/FuturisticSports.kt android-app/app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
+          git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
           git diff --cached --quiet && exit 0
           git commit -m "Fix sports branding and combat event artwork"
           git push origin android-app
