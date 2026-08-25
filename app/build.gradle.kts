@@ -14,7 +14,6 @@ android {
         versionCode = 13
         versionName = "1.6.2"
     }
-
     flavorDimensions += "device"
     productFlavors {
         create("mobile") {
@@ -30,7 +29,6 @@ android {
             buildConfigField("String", "PAIRING_BASE_URL", "\"https://xsportsx.onrender.com\"")
         }
     }
-
     signingConfigs {
         create("release") {
             val keystorePath = System.getenv("XSORTSX_KEYSTORE_PATH")
@@ -46,18 +44,13 @@ android {
             this.keyPassword = keyPassword
         }
     }
-
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
         }
     }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
+    buildFeatures { compose = true; buildConfig = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -78,6 +71,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2")
     implementation("androidx.browser:browser:1.9.0")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.camera:camera-camera2:1.6.1")
