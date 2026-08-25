@@ -191,7 +191,7 @@ fun TvHome(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
     }
 }
 
-@Composable private fun TvTopBar(onConnect: () -> Unit) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { XtremeLogo(size = 42.dp); Spacer(Modifier.weight(1f)); Text("⌕  Search", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold); Spacer(Modifier.width(18.dp)); TvActionButton("⚙  Settings", onConnect); Spacer(Modifier.width(18.dp)); Text("TV MODE", color = TvMuted, fontSize = 10.sp, fontWeight = FontWeight.Black) } }
+@Composable private fun TvTopBar(onConnect: () -> Unit) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { XtremeLogo(size = 56.dp); Spacer(Modifier.weight(1f)); Text("⌕  Search", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold); Spacer(Modifier.width(18.dp)); TvActionButton("⚙  Settings", onConnect); Spacer(Modifier.width(18.dp)); Text("TV MODE", color = TvMuted, fontSize = 10.sp, fontWeight = FontWeight.Black) } }
 
 @Composable private fun TvActionButton(text: String, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Box(Modifier.clip(RoundedCornerShape(14.dp)).background(if (focused) Color(0xFF241018) else Color.Transparent).border(1.dp, TvRed.copy(alpha = if (focused) 1f else .35f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }.padding(horizontal = 12.dp, vertical = 9.dp)) { Text(text, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold) } }
 
