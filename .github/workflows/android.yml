@@ -39,11 +39,11 @@ jobs:
           java -version
           gradle --version
 
-      - name: Clean and build debug APK
+      - name: Clean and build mobile + TV APKs
         shell: bash
         run: |
           set -o pipefail
-          gradle clean :app:assembleDebug --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
+          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
 
       - name: Upload Gradle build log
         if: always()
@@ -53,21 +53,30 @@ jobs:
           path: gradle-build.log
           if-no-files-found: ignore
 
-      - name: Verify APK exists
+      - name: Verify APKs exist
         run: |
           set -euo pipefail
-          test -s app/build/outputs/apk/debug/app-debug.apk
-          cp app/build/outputs/apk/debug/app-debug.apk XSportsX.apk
-          ls -lh XSportsX.apk
+          test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+          test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
+          cp app/build/outputs/apk/mobile/debug/app-mobile-debug.apk XSportsX-Mobile.apk
+          cp app/build/outputs/apk/tv/debug/app-tv-debug.apk XSportsX-TV.apk
+          ls -lh XSportsX-Mobile.apk XSportsX-TV.apk
 
-      - name: Upload APK artifact
+      - name: Upload mobile APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: XSportsX-debug-apk
-          path: XSportsX.apk
+          name: XSportsX-Mobile-APK
+          path: XSportsX-Mobile.apk
           if-no-files-found: error
 
-      - name: Publish APK release for in-app updater
+      - name: Upload TV APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-TV-APK
+          path: XSportsX-TV.apk
+          if-no-files-found: error
+
+      - name: Publish APKs for in-app updater
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -78,10 +87,10 @@ jobs:
           TAG="v${VERSION_NAME}"
           echo "Publishing XSportsX ${VERSION_NAME} (${VERSION_CODE}) as ${TAG}"
           if gh release view "${TAG}" >/dev/null 2>&1; then
-            gh release upload "${TAG}" XSportsX.apk --clobber
+            gh release upload "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
           else
-            gh release create "${TAG}" XSportsX.apk \
+            gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk \
               --title "XSportsX ${VERSION_NAME}" \
-              --notes "XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Install this release from the in-app UPDATE button." \
+              --notes "XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Includes separate Mobile/Tablet and Android TV APKs." \
               --latest
           fi
