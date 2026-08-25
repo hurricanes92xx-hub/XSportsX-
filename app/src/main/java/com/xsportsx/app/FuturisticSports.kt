@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +37,7 @@ private val Panel = Color(0xFF0D1119)
 private val Panel2 = Color(0xFF141A24)
 private val Muted = Color(0xFF727B8B)
 
-private data class XNetwork(val name: String, val type: String, val icon: String)
+data class XNetwork(val name: String, val type: String, val icon: String)
 private val xNetworks = listOf(
     XNetwork("ESPN", "SPORTS", "E"), XNetwork("ESPN2", "SPORTS", "E2"),
     XNetwork("ESPNU", "COLLEGE", "EU"), XNetwork("NFL Network", "NFL", "N"),
