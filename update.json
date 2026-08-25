@@ -1,6 +1,8 @@
 {
-  "versionCode": 9,
-  "versionName": "1.4.2",
-  "apkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/download/v1.4.2/XSportsX.apk",
-  "notes": "Fixed update downloads: direct release asset, visible download progress, bounded timeout, safer temporary download, and cleaner installer handoff."
+  "versionCode": 15,
+  "versionName": "1.6.4",
+  "mobileApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/download/v1.6.4/XSportsX-Mobile.apk",
+  "tvApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/download/v1.6.4/XSportsX-TV.apk",
+  "apkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/download/v1.6.4/XSportsX-Mobile.apk",
+  "notes": "Faster in-app update checks with a CDN-backed manifest, direct signed Mobile/TV APK downloads, and a release API fallback."
 }
