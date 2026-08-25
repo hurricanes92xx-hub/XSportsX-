@@ -36,13 +36,28 @@ jobs:
           test -f gradle.properties
           grep -q '^android.useAndroidX=true$' gradle.properties
 
+      - name: Verify release signing secrets
+        env:
+          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing XSPORTSX release signing secret: ${name}"
+              exit 1
+            fi
+          done
+
       - name: Restore release signing key
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
         shell: bash
         run: |
           set -euo pipefail
-          test -n "${KEYSTORE_B64}" || { echo "Missing XSPORTSX_KEYSTORE_B64 repository secret"; exit 1; }
           printf '%s' "${KEYSTORE_B64}" | base64 --decode > xsportsx-release.jks
           chmod 600 xsportsx-release.jks
           test -s xsportsx-release.jks
