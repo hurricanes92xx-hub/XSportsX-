@@ -29,7 +29,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-data class TickerItem(val kind: String, val league: String, val text: String)
+data class TickerItem(val kind: String, val league: String, val text: String, val timestamp: Long = 0L)
 data class TickerLeague(val name: String, val sport: String, val id: String)
 data class TickerLeagueGroup(val league: String, val items: List<TickerItem>)
 
@@ -53,15 +53,17 @@ private val tickerLeagues = listOf(
 private fun dateRange(): String {
     val fmt = SimpleDateFormat("yyyyMMdd", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
     val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    val start = fmt.format(cal.time)
-    cal.add(Calendar.DAY_OF_YEAR, 1)
-    return "$start-${fmt.format(cal.time)}"
+    cal.add(Calendar.DAY_OF_YEAR, -1)
+    val yesterday = fmt.format(cal.time)
+    cal.add(Calendar.DAY_OF_YEAR, 2)
+    val tomorrow = fmt.format(cal.time)
+    return "$yesterday-$tomorrow"
 }
 
 private fun getJson(url: String): JSONObject? = try {
     val c = URL(url).openConnection() as HttpURLConnection
-    c.connectTimeout = 3000
-    c.readTimeout = 3000
+    c.connectTimeout = 4500
+    c.readTimeout = 6500
     c.requestMethod = "GET"
     c.setRequestProperty("User-Agent", "XSportsX/1.5")
     c.setRequestProperty("Accept", "application/json")
@@ -69,10 +71,17 @@ private fun getJson(url: String): JSONObject? = try {
     c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
 } catch (_: Exception) { null }
 
+private fun eventTime(event: JSONObject): Long {
+    val raw = event.optString("date", "")
+    return try { java.time.Instant.parse(raw).toEpochMilli() } catch (_: Exception) { 0L }
+}
+
 private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup = withContext(Dispatchers.IO) {
     val url = "https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${dateRange()}&limit=50"
     val json = getJson(url)
     val events = json?.optJSONArray("events")
+    val now = System.currentTimeMillis()
+    val cutoff = now - 24L * 60L * 60L * 1000L
     val items = buildList {
         if (events != null) {
             for (i in 0 until events.length()) {
@@ -86,53 +95,77 @@ private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup = withCo
                 for (j in 0 until competitors.length()) {
                     val team = competitors.optJSONObject(j) ?: continue
                     val teamObj = team.optJSONObject("team")
-                    val name = teamObj?.optString("abbreviation")?.ifBlank {
-                        teamObj.optString("shortDisplayName")
-                    }.orEmpty().ifBlank { "TBD" }
+                    val name = teamObj?.optString("abbreviation")?.ifBlank { teamObj.optString("shortDisplayName") }
+                        .orEmpty().ifBlank { "TBD" }
                     val score = team.optString("score")
                     if (team.optString("homeAway") == "home") {
-                        home = name
-                        homeScore = score
+                        home = name; homeScore = score
                     } else {
-                        away = name
-                        awayScore = score
+                        away = name; awayScore = score
                     }
                 }
                 val status = competition.optJSONObject("status")?.optJSONObject("type")
                 val state = status?.optString("state") ?: "pre"
                 val detail = status?.optString("shortDetail") ?: ""
+                val timestamp = eventTime(event)
                 val kind = when (state) {
                     "in" -> "LIVE"
-                    "post" -> "FINAL"
+                    "post" -> if (timestamp == 0L || timestamp >= cutoff) "FINAL" else "EXPIRED"
                     else -> "UPCOMING"
                 }
-                val text = if (kind == "UPCOMING") {
-                    "$away @ $home • $detail"
-                } else {
-                    "$away $awayScore  •  $home $homeScore"
-                }
-                add(TickerItem(kind, league.name, text))
+                if (kind == "EXPIRED") continue
+                val text = if (kind == "UPCOMING") "$away @ $home • $detail" else "$away $awayScore  •  $home $homeScore"
+                add(TickerItem(kind, league.name, text, timestamp))
             }
         }
     }
-    TickerLeagueGroup(league.name, items.take(12))
+    TickerLeagueGroup(league.name, items.sortedBy { it.timestamp }.take(12))
+}
+
+private suspend fun loadBreakingNews(): TickerLeagueGroup = withContext(Dispatchers.IO) {
+    val urls = listOf(
+        "https://site.api.espn.com/apis/site/v2/sports/news?region=us&lang=en&limit=12",
+        "https://site.api.espn.com/apis/site/v2/sports/general/news?region=us&lang=en&limit=12"
+    )
+    var json: JSONObject? = null
+    for (url in urls) {
+        json = getJson(url)
+        if (json != null) break
+    }
+    val articles = json?.optJSONArray("articles")
+    val items = buildList {
+        if (articles != null) {
+            for (i in 0 until articles.length()) {
+                val article = articles.optJSONObject(i) ?: continue
+                val headline = article.optString("headline").trim()
+                if (headline.isBlank()) continue
+                val published = try { java.time.Instant.parse(article.optString("published")).toEpochMilli() } catch (_: Exception) { 0L }
+                add(TickerItem("NEWS", "BREAKING", headline, published))
+            }
+        }
+    }.sortedByDescending { it.timestamp }.take(8)
+    TickerLeagueGroup("BREAKING NEWS", items)
 }
 
 private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = coroutineScope {
-    tickerLeagues.map { league ->
-        async { loadLeague(league) }
-    }.awaitAll().filter { it.items.isNotEmpty() }
+    val leagueGroups = tickerLeagues.map { league -> async { loadLeague(league) } }.awaitAll()
+    val news = async { loadBreakingNews() }.await()
+    (leagueGroups.filter { it.items.isNotEmpty() } + news.takeIf { it.items.isNotEmpty() }).filterNotNull()
 }
 
 @Composable
 fun HomeSportsTicker(modifier: Modifier = Modifier) {
     var groups by remember { mutableStateOf<List<TickerLeagueGroup>>(emptyList()) }
     var activeIndex by remember { mutableIntStateOf(0) }
+    var loading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         while (isActive) {
-            groups = loadTickerGroups()
+            loading = true
+            val loaded = runCatching { loadTickerGroups() }.getOrDefault(emptyList())
+            if (loaded.isNotEmpty()) groups = loaded
             activeIndex = 0
+            loading = false
             delay(60_000)
         }
     }
@@ -140,56 +173,44 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
     LaunchedEffect(groups) {
         while (isActive && groups.isNotEmpty()) {
             delay(6_000)
-            if (groups.isNotEmpty()) {
-                activeIndex = (activeIndex + 1) % groups.size
-            }
+            activeIndex = (activeIndex + 1) % groups.size
         }
     }
 
     val activeGroup = groups.getOrNull(activeIndex)
     val visibleItems = activeGroup?.items ?: listOf(
-        TickerItem("NEWS", "XSPORTSX", "Live scores and schedules loading…")
+        TickerItem("NEWS", "XSPORTSX", if (loading) "Pulling scores, finals and breaking news…" else "Sports feed temporarily unavailable")
     )
 
     Box(
-        modifier = modifier.fillMaxWidth().height(58.dp).background(Color(0xF2080A10)),
+        modifier = modifier.fillMaxWidth().height(72.dp).background(Color(0xF2080A10)),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-            // XSportsX replaces the ESPN logo. No advertising is included.
             Box(
-                Modifier
-                    .padding(start = 10.dp, end = 8.dp)
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(Color(0xFF111722))
-                    .padding(horizontal = 9.dp, vertical = 6.dp)
-            ) {
-                Text("X", color = Color(0xFFFF1744), fontSize = 16.sp, fontWeight = FontWeight.Black)
-            }
+                Modifier.padding(start = 10.dp, end = 8.dp).clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF111722)).padding(horizontal = 11.dp, vertical = 8.dp)
+            ) { Text("X", color = Color(0xFFFF1744), fontSize = 20.sp, fontWeight = FontWeight.Black) }
 
-            Text(
-                text = activeGroup?.league ?: "SPORTS",
-                color = Color.White,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(end = 8.dp)
-            )
+            Text(activeGroup?.league ?: "SPORTS", color = Color.White, fontSize = 11.sp,
+                fontWeight = FontWeight.Black, modifier = Modifier.padding(end = 10.dp))
 
             LazyRow(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding = PaddingValues(end = 14.dp)
             ) {
                 items(visibleItems) { item ->
                     val accent = when (item.kind) {
                         "LIVE" -> Color(0xFFFF1744)
                         "FINAL" -> Color(0xFFB7C1D1)
-                        else -> Color(0xFF74809A)
+                        "NEWS" -> Color(0xFFFFC107)
+                        else -> Color(0xFF8D99AE)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(item.kind, color = accent, fontSize = 8.sp, fontWeight = FontWeight.Black)
-                        Spacer(Modifier.width(6.dp))
-                        Text(item.text, color = Color(0xFFD7DDE7), fontSize = 10.sp, maxLines = 1)
+                        Text(item.kind, color = accent, fontSize = 9.sp, fontWeight = FontWeight.Black)
+                        Spacer(Modifier.width(7.dp))
+                        Text(item.text, color = Color(0xFFE5E9F0), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
                     }
                 }
             }
