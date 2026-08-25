@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -49,21 +50,18 @@ fun FuturisticHome(
     val sourceConfigured = remember { SourceStore(context).load().isConfigured() }
     val pulse = rememberInfiniteTransition(label = "live")
     val alpha by pulse.animateFloat(.35f, 1f, infiniteRepeatable(tween(750), RepeatMode.Reverse), label = "pulse")
+    val crackAlpha by pulse.animateFloat(.22f, .58f, infiniteRepeatable(tween(1400), RepeatMode.Reverse), label = "cracks")
     val sports = listOf("NFL", "NBA", "NCAA", "MLB", "NHL", "UFC", "BOXING", "SOCCER")
     MaterialTheme(colorScheme = darkColorScheme(primary = XRed, secondary = XOrange, background = Void, surface = Panel)) {
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF080A10), Void)))) {
+            GlowingCracks(Modifier.fillMaxSize(), crackAlpha)
             Column(Modifier.fillMaxSize().padding(horizontal = 28.dp, vertical = 22.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text("XSPORTS", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp)
                         Text("NEXT-GEN SPORTS COMMAND", color = Color(0xFF687180), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                     }
-                    Box(
-                        Modifier.clip(RoundedCornerShape(20.dp))
-                            .background(if (sourceConfigured) Color(0x2219FF72) else Color(0x22FF1744))
-                            .clickable { onConnect() }
-                            .padding(horizontal = 12.dp, vertical = 7.dp)
-                    ) {
+                    Box(Modifier.clip(RoundedCornerShape(20.dp)).background(if (sourceConfigured) Color(0x2219FF72) else Color(0x22FF1744)).clickable { onConnect() }.padding(horizontal = 12.dp, vertical = 7.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(Modifier.size(8.dp).alpha(alpha).clip(RoundedCornerShape(50)).background(if (sourceConfigured) Color(0xFF22FF7A) else XRed))
                             Spacer(Modifier.width(7.dp))
@@ -72,13 +70,7 @@ fun FuturisticHome(
                     }
                 }
                 Spacer(Modifier.height(18.dp))
-                Row(
-                    Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp))
-                        .clickable { onConnect() }
-                        .background(Brush.horizontalGradient(listOf(Color(0xFF260812), Color(0xFF111827), Color(0xFF251108))))
-                        .padding(24.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp)).clickable { onConnect() }.background(Brush.horizontalGradient(listOf(Color(0xFF260812), Color(0xFF111827), Color(0xFF251108)))).padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(Modifier.clip(RoundedCornerShape(7.dp)).background(XRed).padding(horizontal = 9.dp, vertical = 5.dp)) { Text("LIVE", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black) }
@@ -108,6 +100,31 @@ fun FuturisticHome(
                 Text("COLLEGE NETWORKS", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
                 Spacer(Modifier.height(9.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 12.dp)) { items(xNetworks.filter { it.type == "COLLEGE" }) { NetworkCard(it, onNetwork) } }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GlowingCracks(modifier: Modifier, intensity: Float) {
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        val lines = listOf(
+            listOf(.02f to .18f, .12f to .23f, .16f to .31f, .28f to .35f),
+            listOf(.98f to .24f, .86f to .29f, .82f to .38f, .70f to .43f),
+            listOf(.06f to .72f, .16f to .68f, .22f to .58f, .34f to .55f),
+            listOf(.94f to .67f, .84f to .62f, .78f to .53f, .66f to .49f),
+            listOf(.38f to .02f, .43f to .11f, .51f to .17f, .58f to .25f)
+        )
+        lines.forEach { points ->
+            for (i in 0 until points.lastIndex) {
+                val a = points[i]; val b = points[i + 1]
+                val ax = a.first * w; val ay = a.second * h
+                val bx = b.first * w; val by = b.second * h
+                drawLine(XRed.copy(alpha = intensity * .12f), androidx.compose.ui.geometry.Offset(ax, ay), androidx.compose.ui.geometry.Offset(bx, by), strokeWidth = 12f)
+                drawLine(XRed.copy(alpha = intensity * .24f), androidx.compose.ui.geometry.Offset(ax, ay), androidx.compose.ui.geometry.Offset(bx, by), strokeWidth = 5f)
+                drawLine(XRed.copy(alpha = intensity), androidx.compose.ui.geometry.Offset(ax, ay), androidx.compose.ui.geometry.Offset(bx, by), strokeWidth = 1.5f)
             }
         }
     }
