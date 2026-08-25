@@ -3,10 +3,16 @@ package com.xsportsx.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 class MainActivityFuture : ComponentActivity() {
@@ -64,10 +70,13 @@ class MainActivityFuture : ComponentActivity() {
                 schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> liveFilter = listOf(event.home, event.away, event.broadcast).filter { it.isNotBlank() }.joinToString("||"); schedules = false })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
-                    FuturisticHome(
-                        onConnect = { if (connected) schedules = true else connectSource = true },
-                        onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true }
-                    )
+                    Box(Modifier.fillMaxSize()) {
+                        FuturisticHome(
+                            onConnect = { if (connected) schedules = true else connectSource = true },
+                            onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true }
+                        )
+                        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
+                    }
                 }
             }
         }
