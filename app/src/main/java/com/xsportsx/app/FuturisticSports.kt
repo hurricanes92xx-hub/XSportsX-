@@ -13,16 +13,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
@@ -33,10 +24,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 
 private val XRed = Color(0xFFFF1744)
 private val XOrange = Color(0xFFFF6D00)
@@ -60,6 +53,20 @@ private val sports = listOf(
     SportVisual("MLB", "MLB"), SportVisual("NHL", "NHL"), SportVisual("UFC", "UFC"),
     SportVisual("BOXING", "BOX"), SportVisual("SOCCER", "FC")
 )
+
+private fun networkLogoUrl(name: String): String? = when (name) {
+    "ESPN" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN_logo.png"
+    "ESPN2" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPN2_logo.svg"
+    "ESPNU" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ESPNU_logo.svg"
+    "NFL Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/NFL_Network_logo.svg"
+    "FS1" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/FS1_logo.svg"
+    "CBS Sports" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/CBS_Sports_logo.svg"
+    "SEC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/SEC_Network_(2024).svg"
+    "ACC Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_ESPN_logo.svg"
+    "Big Ten Network" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_Ten_Network_logo.svg"
+    "Big 12" -> "https://commons.wikimedia.org/wiki/Special:Redirect/file/Big_12_Conference_logo.svg"
+    else -> null
+}
 
 @Composable
 private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) {
@@ -170,8 +177,16 @@ private fun SportPill(sport: SportVisual, onClick: () -> Unit) {
 
 @Composable
 private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) {
-    Column(Modifier.width(118.dp).height(136.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick(network) }.padding(13.dp)) {
-        SportGlyph(network.icon, 40.dp)
+    val logoUrl = remember(network.name) { networkLogoUrl(network.name) }
+    var logoFailed by remember(network.name) { mutableStateOf(false) }
+    Column(Modifier.width(128.dp).height(142.dp).clip(RoundedCornerShape(20.dp)).background(Panel).clickable { onClick(network) }.padding(13.dp)) {
+        Box(Modifier.fillMaxWidth().height(50.dp).clip(RoundedCornerShape(13.dp)).background(Brush.linearGradient(listOf(Color(0xFF182231), Color(0xFF0B1018)))), contentAlignment = Alignment.Center) {
+            if (logoUrl != null && !logoFailed) {
+                AsyncImage(model = logoUrl, contentDescription = network.name, modifier = Modifier.fillMaxSize().padding(8.dp), contentScale = ContentScale.Fit, onError = { logoFailed = true })
+            } else {
+                Text(network.icon, color = Color.White, fontSize = if (network.icon.length > 4) 10.sp else 15.sp, fontWeight = FontWeight.Black, letterSpacing = .3.sp)
+            }
+        }
         Spacer(Modifier.height(9.dp)); Text(network.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(3.dp)); Text("SOURCE MATCH", color = Color(0xFF697382), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .7.sp)
     }
