@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05070c">
+<meta name="description" content="XSportsX official Mobile, Tablet and Android TV installer.">
+<title>XSportsX Installer</title>
+<style>
+:root{--bg:#05070c;--panel:#0b1019;--panel2:#111927;--red:#ff173f;--text:#f7f8fb;--muted:#8993a5;--line:#263042}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at 75% 10%,#1b0a12 0,#05070c 42%),var(--bg);color:var(--text)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(135deg,transparent 0 47%,rgba(255,23,63,.12) 47.2%,transparent 47.5%),linear-gradient(315deg,transparent 0 64%,rgba(255,23,63,.08) 64.2%,transparent 64.5%)}
+.wrap{width:min(1050px,calc(100% - 32px));margin:auto;padding:28px 0 50px}.brand{font-weight:900;font-size:clamp(34px,7vw,62px);letter-spacing:-2px}.brand b{color:var(--red)}.tag{color:var(--muted);letter-spacing:4px;text-transform:uppercase;font-size:12px;font-weight:800;margin-top:4px}
+.hero{margin-top:28px;padding:32px;border:1px solid #2a3445;border-radius:28px;background:linear-gradient(120deg,rgba(255,23,63,.14),rgba(10,18,31,.92) 55%,rgba(42,16,10,.7));box-shadow:0 20px 70px rgba(0,0,0,.35)}h1{font-size:clamp(30px,6vw,56px);line-height:1.02;margin:0 0 14px}p{color:var(--muted);line-height:1.6}.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:26px}.card{padding:24px;border:1px solid var(--line);border-radius:22px;background:rgba(11,16,25,.9)}.card.recommended{border-color:var(--red);box-shadow:0 0 28px rgba(255,23,63,.13)}.device{font-size:13px;color:#aeb7c6;text-transform:uppercase;letter-spacing:2px;font-weight:800}.card h2{margin:8px 0;font-size:26px}.card p{margin:8px 0 20px}.btn{display:inline-block;width:100%;padding:15px 18px;text-align:center;text-decoration:none;color:white;background:var(--red);border-radius:13px;font-weight:900}.btn.alt{background:#172131}.meta{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.meta div{padding:14px;border-radius:14px;background:#0a0f18;border:1px solid #202a39;text-align:center}.meta strong{display:block;font-size:18px}.meta span{color:var(--muted);font-size:12px}.steps{margin-top:24px}.steps h2{font-size:24px}.steps ol{padding-left:22px;color:#c7ced9;line-height:1.8}.notice{margin-top:20px;padding:15px 17px;border-left:3px solid var(--red);background:#0b1019;color:#aeb7c6;border-radius:10px}.foot{margin-top:30px;color:#596477;font-size:12px;text-align:center}
+@media(max-width:700px){.wrap{width:min(100% - 20px,600px);padding-top:20px}.hero{padding:23px;border-radius:22px}.buttons{grid-template-columns:1fr}.meta{grid-template-columns:1fr 1fr}.brand{font-size:42px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="brand"><b>X</b>SPORTS<b>X</b></div>
+  <div class="tag">Next-gen sports command</div>
+  <section class="hero">
+    <div class="device">Official installer</div>
+    <h1>Get XSportsX.</h1>
+    <p>Choose the version for your device. Mobile and tablet use the Mobile build. Android TV uses the dedicated TV build with its D-pad optimized interface.</p>
+    <div class="buttons">
+      <article class="card" id="mobile">
+        <div class="device">Phone / Tablet</div><h2>Mobile / Tablet</h2>
+        <p>Touch-optimized XSportsX experience.</p>
+        <a class="btn" href="https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk">Download Mobile APK</a>
+      </article>
+      <article class="card" id="tv">
+        <div class="device">Android TV</div><h2>TV</h2>
+        <p>10-foot UI, D-pad navigation and TV layout.</p>
+        <a class="btn" href="https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-TV.apk">Download TV APK</a>
+      </article>
+    </div>
+    <div class="meta"><div><strong>Latest</strong><span>Always follows latest release</span></div><div><strong>2 APKs</strong><span>Mobile + TV kept separate</span></div><div><strong>HTTPS</strong><span>Secure delivery</span></div></div>
+  </section>
+  <section class="steps">
+    <h2>Install</h2>
+    <ol><li>Choose Mobile/Tablet or TV above.</li><li>Open the downloaded APK and allow installation from this source if Android asks.</li><li>Install XSportsX and launch it.</li><li>Future signed releases can be delivered through the app's update system.</li></ol>
+    <div class="notice">For Android TV, open this page in the TV browser or use your phone to transfer/open the TV APK. Do not install the Mobile APK on TV.</div>
+  </section>
+  <div class="foot">XSportsX • Official installer • Mobile and TV builds are distributed separately</div>
+</main>
+<script>
+const ua=navigator.userAgent.toLowerCase();
+const tv=/android tv|googletv|aft[mb]|bravia|shield/.test(ua);
+const card=document.getElementById(tv?'tv':'mobile'); if(card) card.classList.add('recommended');
+</script>
+</body>
+</html>
