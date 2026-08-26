@@ -23,9 +23,7 @@ import kotlinx.coroutines.launch
 class MainActivityFuture : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (BuildConfig.IS_TV_BUILD) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
+        if (BuildConfig.IS_TV_BUILD) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         setContent {
             var connectSource by remember { mutableStateOf(false) }
             var mobilePair by remember { mutableStateOf(false) }
@@ -40,40 +38,23 @@ class MainActivityFuture : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val connected = remember(sourceVersion) { SourceStore(this@MainActivityFuture).load().isConfigured() }
 
-            fun checkForUpdate() {
-                scope.launch {
-                    val found = AppUpdateManager.check(this@MainActivityFuture)
-                    if (found != null && found.versionCode > (availableUpdate?.versionCode ?: 0)) availableUpdate = found
-                }
-            }
+            fun checkForUpdate() { scope.launch { val found = AppUpdateManager.check(this@MainActivityFuture); if (found != null && found.versionCode > (availableUpdate?.versionCode ?: 0)) availableUpdate = found } }
 
-            // Ping the release endpoint on launch and every 30 minutes while the app is open.
             LaunchedEffect(Unit) {
                 checkForUpdate()
-                while (isActive) {
-                    delay(30 * 60 * 1000L)
-                    checkForUpdate()
-                }
+                while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
+            }
+
+            // Warm the channel cache immediately after a source is connected/paired.
+            LaunchedEffect(sourceVersion, connected) {
+                if (connected) runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams() }
             }
 
             if (availableUpdate != null) {
                 val update = availableUpdate!!
-                AlertDialog(
-                    onDismissRequest = { if (!updateBusy) availableUpdate = null },
-                    title = { Text("XSPORTSX UPDATE AVAILABLE") },
-                    text = { Text(if (updateBusy) "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes." else "Version ${update.versionName} is ready.\n\n${update.notes}") },
-                    confirmButton = {
-                        TextButton(enabled = !updateBusy, onClick = {
-                            updateBusy = true; updateProgress = 0; updateMessage = null
-                            scope.launch {
-                                val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update) { p -> updateProgress = p }
-                                updateBusy = false
-                                result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" }
-                            }
-                        }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") }
-                    },
-                    dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") } }
-                )
+                AlertDialog(onDismissRequest = { if (!updateBusy) availableUpdate = null }, title = { Text("XSPORTSX UPDATE AVAILABLE") }, text = { Text(if (updateBusy) "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes." else "Version ${update.versionName} is ready.\n\n${update.notes}") }, confirmButton = {
+                    TextButton(enabled = !updateBusy, onClick = { updateBusy = true; updateProgress = 0; updateMessage = null; scope.launch { val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update) { p -> updateProgress = p }; updateBusy = false; result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" } } }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") }
+                }, dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") } })
             }
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
@@ -83,14 +64,11 @@ class MainActivityFuture : ComponentActivity() {
                 schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> liveFilter = listOf(event.home, event.away, event.broadcast).filter { it.isNotBlank() }.joinToString("||"); schedules = false })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
-                    if (BuildConfig.IS_TV_BUILD) {
-                        TvAdaptiveHost(onConnect = { tvPair = true }, onNetwork = { network -> if (connected) liveFilter = network else tvPair = true })
-                    } else {
-                        Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-                            FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true })
-                            TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
-                            HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
-                        }
+                    if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(onConnect = { tvPair = true }, onNetwork = { network -> if (connected) liveFilter = network else tvPair = true })
+                    else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
+                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true })
+                        TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
+                        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
                     }
                 }
             }
