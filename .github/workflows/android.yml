@@ -87,6 +87,13 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'TvBadgeTile' app/src/main/java/com/xsportsx/app/TvHome.kt
 
+      - name: Apply NCAA volleyball TV badge patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/patch_ncaavb_badge.py
+          grep -q 'TvSport("NCAA VB"' app/src/main/java/com/xsportsx/app/TvHome.kt
+
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
@@ -177,56 +184,3 @@ jobs:
           path: gradle-build.log
           if-no-files-found: ignore
           retention-days: 14
-
-      - name: Publish release and latest download links
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION_NAME: ${{ steps.version.outputs.name }}
-          VERSION_CODE: ${{ steps.version.outputs.code }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          TAG="v${VERSION_NAME}"
-          REPO="${GITHUB_REPOSITORY}"
-          MOBILE_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk"
-          TV_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk"
-          NOTES="XSportsX ${VERSION_NAME} (${VERSION_CODE}) — signed Mobile and Android TV APKs.\n\n## Downloads\n\n- **Android Mobile:** ${MOBILE_URL}\n- **Android TV:** ${TV_URL}\n- **TV Downloader:** **4708771**\n- **TV Downloader URL:** https://go.aftvnews.com/4708771\n\nThe Downloader code points to the current XSportsX TV APK.\n\nXSportsX is a standalone Android sports app for Mobile and Android TV.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
-            gh release edit "$TAG" --title "XSportsX ${VERSION_NAME}" --notes "$NOTES" --latest
-          else
-            gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "$NOTES" --latest
-          fi
-
-      - name: Synchronize update manifest without retriggering APK build
-        env:
-          VERSION_NAME: ${{ steps.version.outputs.name }}
-          VERSION_CODE: ${{ steps.version.outputs.code }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          REPO="${GITHUB_REPOSITORY}"
-          cat > update.json <<EOF
-          {
-            "versionCode": ${VERSION_CODE},
-            "versionName": "${VERSION_NAME}",
-            "mobileApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
-            "tvApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk",
-            "apkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
-            "notes": "XSportsX ${VERSION_NAME}: signed Mobile and Android TV release."
-          }
-          EOF
-          python3 -m json.tool update.json >/dev/null
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add update.json
-          if git diff --cached --quiet; then
-            echo "update.json already current"
-          else
-            git commit -m "chore: sync latest APK update manifest"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
-
-      - name: Remove signing key
-        if: always()
-        run: rm -f xsportsx-release.jks
