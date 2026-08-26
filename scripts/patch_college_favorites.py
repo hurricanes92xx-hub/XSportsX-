@@ -41,10 +41,9 @@ if missing:
 source.write_text(text, encoding="utf-8")
 subprocess.run(["python3", "scripts/patch_favorites_feed.py"], check=True)
 
-# Keep college volleyball visible in the existing Home top sport carousel on both builds.
-# Use the NCAA Volleyball wordmark rather than a generic volleyball/favicon icon.
+# Add NCAA Volleyball to the existing Mobile top sport carousel. TV is patched
+# after the general sports-badge patch so the two patchers remain order-safe.
 NCAA_VB_LOGO = "https://commons.wikimedia.org/wiki/Special:Redirect/file/NCAA_Volleyball_wordmark_color.svg"
-
 mobile = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 if mobile.exists():
     m = mobile.read_text(encoding="utf-8")
@@ -55,15 +54,4 @@ if mobile.exists():
         m = m.replace(marker, marker + f'\n    SportVisual("NCAA VB", "NCAA", "{NCAA_VB_LOGO}"),', 1)
     mobile.write_text(m, encoding="utf-8")
 
-# TV uses the same existing horizontal sport carousel and the same lightweight remote badge.
-tv = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
-if tv.exists():
-    t = tv.read_text(encoding="utf-8")
-    if 'TvSport("NCAA VB"' not in t:
-        marker = '    TvSport("NCAA BB","NCAA","https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png"),'
-        if marker not in t:
-            raise SystemExit("NCAA BB TV sport marker not found")
-        t = t.replace(marker, marker + f'\n    TvSport("NCAA VB","NCAA","{NCAA_VB_LOGO}"),', 1)
-    tv.write_text(t, encoding="utf-8")
-
-print("College Favorites + NCAA volleyball sport badge/feed classification applied")
+print("College Favorites + NCAA volleyball mobile badge/feed classification applied")
