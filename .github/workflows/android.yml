@@ -207,3 +207,5 @@ EOF
       - name: Remove signing key
         if: always()
         run: rm -f xsportsx-release.jks
+
+# Trigger production build after workflow repair.
