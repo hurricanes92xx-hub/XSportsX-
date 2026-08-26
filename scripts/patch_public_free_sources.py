@@ -12,10 +12,8 @@ replacements = {
         "Free public streams work without login. Add Xtream/M3U only for your own source.",
     "Connect your authorized source to turn these cards into playable source matches.":
         "Free public streams are playable without login. Add a private source for additional channels.",
-    "Connect your authorized source to turn these cards into playable source matches.":
-        "Free public streams are playable without login. Add a private source for additional channels.",
-    "SPORTS NETWORKS","FREE SPORTS SOURCES",
-    "LIVE SOURCES","NO LOGIN REQUIRED",
+    "SPORTS NETWORKS": "FREE SPORTS SOURCES",
+    "LIVE SOURCES": "NO LOGIN REQUIRED",
     "MobileSectionLabel(\"NETWORKS\", null)":
         "MobileSectionLabel(\"FREE SPORTS SOURCES\", \"NO LOGIN\")",
 }
@@ -26,8 +24,6 @@ for path in files:
     s = path.read_text(encoding="utf-8")
     changed = False
     for old, new in replacements.items():
-        if isinstance(old, tuple):
-            continue
         if old in s:
             s = s.replace(old, new)
             changed = True
