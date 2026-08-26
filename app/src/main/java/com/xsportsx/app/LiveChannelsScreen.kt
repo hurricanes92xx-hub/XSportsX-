@@ -44,7 +44,7 @@ fun LiveChannelsScreen(filter: String? = null, onBack: () -> Unit) {
             Text("‹", color = Color.White, fontSize = 36.sp, modifier = Modifier.clickable { onBack() }); Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(if (filter.isNullOrBlank()) "LIVE CHANNELS" else "GAME STREAMS", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
-                Text("Authorized source streams • ${streams.size} matches", color = Color(0xFF737B89), fontSize = 11.sp)
+                Text("Free public + authorized streams • ${streams.size} matches", color = Color(0xFF737B89), fontSize = 11.sp)
             }
             TextButton(onClick = { reload(true) }) { Text("REFRESH") }
         }
