@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updated": "2026-08-26",
+  "cacheTtlMinutes": 15,
+  "sources": [
+    {
+      "id": "iptv-org-sports",
+      "name": "IPTV-org Sports",
+      "playlist": "https://iptv-org.github.io/iptv/categories/sports.m3u",
+      "enabled": true,
+      "public": true
+    },
+    {
+      "id": "free-tv",
+      "name": "Free-TV/IPTV",
+      "playlist": "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8",
+      "enabled": true,
+      "public": true
+    },
+    {
+      "id": "freecasthub-sports",
+      "name": "FreeCastHub Sports",
+      "playlist": "https://raw.githubusercontent.com/freecasthub/public-iptv/main/sports.m3u",
+      "enabled": true,
+      "public": true
+    }
+  ]
+}
