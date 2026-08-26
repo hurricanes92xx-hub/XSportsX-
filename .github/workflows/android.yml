@@ -52,41 +52,6 @@ jobs:
           [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
           python3 scripts/patch_ncaavb_badge.py
-      - name: Fix verified sports and ACC logos
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          files=[Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),Path('app/src/main/java/com/xsportsx/app/TvHome.kt')]
-          logos={
-            'formula1.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_One_logo.svg',
-            'nascar.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg',
-            'dtm.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg',
-            'motogp.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg',
-            'wrc.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg',
-            'fiawec.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg',
-            'fiaformulae.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg',
-            'mxgp.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg',
-            'fivb.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
-            'volleyballworld.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
-            'accnetwork.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_logo_fc_db.svg',
-          }
-          for p in files:
-            s=p.read_text()
-            for domain,url in logos.items():
-              s=s.replace(f'https://www.google.com/s2/favicons?domain={domain}&sz=128',url)
-            # Only the BOXING entry should use the World Boxing mark; ESPN itself stays ESPN.
-            s=s.replace('SportVisual("BOXING", "BOX", "https://www.google.com/s2/favicons?domain=espn.com&sz=128")','SportVisual("BOXING", "BOX", "https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg")')
-            s=s.replace('TvSport("BOXING","BOX","https://www.google.com/s2/favicons?domain=espn.com&sz=128")','TvSport("BOXING","BOX","https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg")')
-            # Restore ESPN favicon anywhere a previous build-time patch may have changed it.
-            s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg"),\n    XNetwork("ESPN2','https://www.google.com/s2/favicons?domain=espn.com&sz=128"),\n    XNetwork("ESPN2')
-            s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg"),\n    TvNetwork("ESPN2','https://www.google.com/s2/favicons?domain=espn.com&sz=128"),\n    TvNetwork("ESPN2')
-            p.write_text(s)
-          PY
-          grep -q 'ACC_Network_logo_fc_db.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'Formula_One_logo.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'MotoGP_logo_(2024).svg' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
@@ -105,6 +70,7 @@ jobs:
           set -euo pipefail
           printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
           chmod 600 xsportsx-release.jks
+          test -s xsportsx-release.jks
       - name: Build Mobile + TV release APKs
         env:
           XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
@@ -121,6 +87,7 @@ jobs:
           TV=app/build/outputs/apk/tv/release/app-tv-release.apk
           test -s "$MOBILE" && test -s "$TV"
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
+          test -n "$APKSIGNER"
           "$APKSIGNER" verify --verbose "$MOBILE"
           "$APKSIGNER" verify --verbose "$TV"
           cp "$MOBILE" XSportsX-Mobile.apk
