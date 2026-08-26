@@ -54,8 +54,8 @@ private fun PairingQrCode(value: String, size: Dp) {
             .background(Color.White)
             .padding(8.dp)
     ) {
-        val moduleW = size.width.value / matrix.width
-        val moduleH = size.height.value / matrix.height
+        val moduleW = this.size.width / matrix.width
+        val moduleH = this.size.height / matrix.height
         for (x in 0 until matrix.width) {
             for (y in 0 until matrix.height) {
                 if (matrix[x, y]) {
