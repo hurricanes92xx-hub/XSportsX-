@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "policy": "official-or-authorized-public-events-only",
+  "sports": [
+    "NFL","NBA","NCAA Football","NCAA Basketball","MLB","NHL","UFC","Boxing",
+    "Rugby","Volleyball","Beach Volleyball","Lacrosse","Wrestling","Grappling","Judo","Taekwondo",
+    "Swimming","Diving","Water Polo","Gymnastics","Cycling","Darts","Snooker","Pool","Billiards",
+    "Archery","Equestrian","Handball","Field Hockey","Cricket","Soccer",
+    "Motorsports","Formula 1","NASCAR","IndyCar","MotoGP","WRC","WEC","IMSA","Formula E","DTM","MXGP","Karting","Dirt Track","Sprint Car",
+    "Monster Jam","Esports","Action Sports","MTB","BMX","Surfing","Skateboarding","Cliff Diving","Skiing","Snowboarding","Kitesurfing","Climbing","Padel"
+  ],
+  "sources": [
+    {"id":"redbull","name":"Red Bull TV","type":"official","url":"https://www.redbull.com/us-en/live-events","sports":["Motorsports","Action Sports","Esports"],"enabled":true},
+    {"id":"monster-jam","name":"Monster Jam","type":"official","url":"https://www.monsterjam.com/en-us/watch/","sports":["Monster Jam"],"enabled":true},
+    {"id":"rugbypass","name":"RugbyPass TV","type":"official","url":"https://www.rugbypass.tv/","sports":["Rugby"],"enabled":true},
+    {"id":"official-youtube","name":"Official YouTube Live","type":"official","sports":["Rugby","Volleyball","Lacrosse","Wrestling","Motorsports","Combat","Aquatics","Gymnastics","Cycling","Darts","Esports","Action Sports"],"enabled":true},
+    {"id":"school-team","name":"Official school/team streams","type":"official","sports":["NCAA Football","NCAA Basketball","Volleyball","Lacrosse","Wrestling","Soccer","Baseball","Softball","Basketball"],"enabled":true},
+    {"id":"official-broadcasters","name":"Official TV / FAST broadcasters","type":"official","sports":["NFL","NBA","MLB","NHL","NCAA Football","NCAA Basketball","Soccer","Motorsports","Rugby","Volleyball"],"enabled":true}
+  ],
+  "artwork": {
+    "teamSports": "team badge + team name; cache remotely; sport fallback",
+    "motorsports": "series logo + event name; motorsport fallback",
+    "individualSports": "competition/organizer logo + event name; sport fallback",
+    "apkBundledArtwork": false
+  }
+}
