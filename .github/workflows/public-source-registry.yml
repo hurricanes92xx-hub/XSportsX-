@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'public-sources-registry.json'
-      - 'docs/public-sources-registry.json'
       - '.github/workflows/public-source-registry.yml'
   workflow_dispatch:
 
@@ -17,12 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify registry mirrors
+      - name: Sync GitHub Pages payload
+        run: cp public-sources-registry.json docs/public-sources-registry.json
+      - name: Commit mirror when changed
         run: |
-          python - <<'PY'
-          import json
-          a=json.load(open('public-sources-registry.json'))
-          b=json.load(open('docs/public-sources-registry.json'))
-          assert a == b, 'Registry mirrors differ'
-          print('Registry mirrors match:', len(a.get('sources', [])), 'sources')
-          PY
+          if git diff --quiet -- docs/public-sources-registry.json; then
+            echo "Mirror already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/public-sources-registry.json
+          git commit -m "Sync static public source registry mirror"
+          git push
