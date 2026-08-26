@@ -2,15 +2,24 @@ name: Build XSportsX APK
 
 # Production-only pipeline. QA/emulator/source tests live in
 # .github/workflows/xsportsx-ui-tester.yml and never gate or publish releases.
+# Use an allow-list so QA-only commits and workflow-only changes do not appear here.
 
 on:
   push:
     branches: [android-app]
-    paths-ignore:
-      - '.github/workflows/xsportsx-ui-tester.yml'
-      - 'scripts/ui_smoke_test.sh'
-      - 'scripts/qa_source_server.py'
-      - 'qa/**'
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - 'build.gradle'
+      - 'build.gradle.kts'
+      - 'settings.gradle'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'scripts/patch_tv_navigation.py'
+      - 'scripts/patch_college_favorites.py'
+      - 'scripts/patch_*.py'
   workflow_dispatch:
 
 permissions:
