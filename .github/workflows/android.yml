@@ -41,6 +41,14 @@ jobs:
           test -f gradle.properties
           grep -q '^android.useAndroidX=true$' gradle.properties
 
+      - name: Apply TV navigation fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/patch_tv_navigation.py
+          grep -q 'onSettings = { selectedNav = "SETTINGS" }' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'TvModeButton' app/src/main/java/com/xsportsx/app/TvHome.kt
+
       - name: Verify release signing secrets
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
