@@ -2,7 +2,6 @@ name: Build XSportsX APK
 
 # Production-only pipeline. QA/emulator/source tests live in
 # .github/workflows/xsportsx-ui-tester.yml and never gate or publish releases.
-# Use an allow-list so QA-only commits and workflow-only changes do not appear here.
 
 on:
   push:
@@ -20,6 +19,7 @@ on:
       - 'scripts/patch_tv_navigation.py'
       - 'scripts/patch_college_favorites.py'
       - 'scripts/patch_*.py'
+      - '.github/workflows/android.yml'
   workflow_dispatch:
 
 permissions:
@@ -130,7 +130,7 @@ jobs:
           name: XSportsX-TV-APK
           path: XSportsX-TV.apk
           if-no-files-found: error
-      - name: Publish signed APKs for in-app updater
+      - name: Publish signed APKs and synchronize update manifest
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -138,13 +138,40 @@ jobs:
           set -euo pipefail
           VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
+          test -n "${VERSION_NAME}" && test -n "${VERSION_CODE}"
           TAG="v${VERSION_NAME}"
-          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs."
+          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
+
           if gh release view "${TAG}" >/dev/null 2>&1; then
             gh release edit "${TAG}" --notes "${NOTES}"
             gh release upload "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
           else
             gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "${NOTES}" --latest
+          fi
+
+          REPO="${GITHUB_REPOSITORY}"
+          MOBILE_URL="https://github.com/${REPO}/releases/download/${TAG}/XSportsX-Mobile.apk"
+          TV_URL="https://github.com/${REPO}/releases/download/${TAG}/XSportsX-TV.apk"
+          cat > update.json <<EOF
+          {
+            "versionCode": ${VERSION_CODE},
+            "versionName": "${VERSION_NAME}",
+            "mobileApkUrl": "${MOBILE_URL}",
+            "tvApkUrl": "${TV_URL}",
+            "apkUrl": "${MOBILE_URL}",
+            "notes": "XSportsX ${VERSION_NAME}: signed Mobile and Android TV release."
+          }
+          EOF
+          python3 -m json.tool update.json >/dev/null
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add update.json
+          if git diff --cached --quiet; then
+            echo "update.json already synchronized"
+          else
+            git commit -m "chore: sync update manifest for ${TAG}"
+            git push origin "${GITHUB_REF_NAME}"
           fi
       - name: Remove signing key
         if: always()
