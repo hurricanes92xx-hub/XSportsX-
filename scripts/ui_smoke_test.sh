@@ -2,14 +2,26 @@
 set -euo pipefail
 
 APK="${1:?APK path required}"
-PACKAGE="com.xsportsx.app"
 OUT="${2:-test-output}"
+SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
+PACKAGE="com.xsportsx.app"
 mkdir -p "$OUT"
 
 adb wait-for-device
 adb shell settings put system screen_off_timeout 1800000 || true
 adb install -r -d "$APK"
-adb shell am force-stop "$PACKAGE"
+
+# Verify the emulator can reach the isolated QA provider fixture before touching
+# the app. This is deterministic and never uses real provider credentials.
+adb shell am force-stop "$PACKAGE" || true
+curl -fsS "$SOURCE_BASE/health" >/dev/null
+curl -fsS "$SOURCE_BASE/playlist.m3u" | grep -q '#EXTM3U'
+curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass" | grep -q '"auth": 1'
+curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_streams" | grep -q 'QA Sports One'
+
+# Also run the same fixture checks from the runner's Python environment.
+python3 scripts/qa_source_probe.py
+
 adb shell monkey -p "$PACKAGE" 1 >/dev/null
 sleep 5
 
@@ -32,23 +44,20 @@ assert_text() {
 snapshot 01-launch
 assert_text "SPORTS COMMAND CENTER" 01-launch
 
-# Exercise the main navigation with Android input. This is intentionally
-# read-only: it never writes source credentials or changes release artifacts.
+# Exercise main navigation without modifying source credentials.
 adb shell input keyevent KEYCODE_DPAD_RIGHT || true
 adb shell input keyevent KEYCODE_DPAD_RIGHT || true
 adb shell input keyevent KEYCODE_DPAD_CENTER || true
 sleep 1
 snapshot 02-navigation
 
-# Settings should expose the pairing area in the current build.
+# Relaunch and verify the process remains healthy.
 adb shell input keyevent KEYCODE_HOME
 sleep 1
 adb shell monkey -p "$PACKAGE" 1 >/dev/null
 sleep 2
 snapshot 03-relaunch
 assert_text "SETTINGS" 03-relaunch || true
-
-# Return cleanly and verify the process stays alive.
 adb shell pidof "$PACKAGE" >/dev/null
 
-echo "XSportsX UI smoke test passed"
+echo "XSportsX UI + isolated source smoke test passed"
