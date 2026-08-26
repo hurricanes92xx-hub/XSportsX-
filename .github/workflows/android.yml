@@ -59,6 +59,14 @@ jobs:
             exit 1
           fi
 
+      - name: Apply college favorites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/patch_college_favorites.py
+          grep -q 'addAll(collegeFavoriteTeams())' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
+          grep -q '"NCAAF"->"football/college-football"' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
+
       - name: Verify release signing secrets
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
