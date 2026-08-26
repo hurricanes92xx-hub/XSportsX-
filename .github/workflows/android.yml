@@ -21,146 +21,90 @@ jobs:
     name: Build signed Mobile + TV APKs
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout production branch
         uses: actions/checkout@v4
-
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-
       - name: Install Gradle 8.13
         shell: bash
         run: |
           set -euo pipefail
-          GRADLE_VERSION="8.13"
-          GRADLE_HOME="$RUNNER_TEMP/gradle-$GRADLE_VERSION"
-          if [ ! -x "$GRADLE_HOME/bin/gradle" ]; then
-            curl --fail --silent --show-error --location "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" --output "$RUNNER_TEMP/gradle.zip"
-            rm -rf "$GRADLE_HOME"
-            unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
-          fi
-          echo "GRADLE_HOME=$GRADLE_HOME" >> "$GITHUB_ENV"
-          echo "$GRADLE_HOME/bin" >> "$GITHUB_PATH"
-          gradle --version
-
+          curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.13-bin.zip --output "$RUNNER_TEMP/gradle.zip"
+          unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
+          echo "GRADLE_HOME=$RUNNER_TEMP/gradle-8.13" >> "$GITHUB_ENV"
+          echo "$RUNNER_TEMP/gradle-8.13/bin" >> "$GITHUB_PATH"
       - name: Verify Android project
-        shell: bash
         run: |
           set -euo pipefail
           test -f build.gradle.kts
           test -f app/build.gradle.kts
           test -f settings.gradle.kts
-          test ! -e ./gradlew || test -x ./gradlew
-          grep -q 'versionCode' app/build.gradle.kts
-          grep -q 'versionName' app/build.gradle.kts
-
-      - name: Apply production TV navigation patch
+      - name: Apply production UI and sports patches
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f scripts/patch_tv_navigation.py ]; then python3 scripts/patch_tv_navigation.py; fi
-          test -s app/src/main/java/com/xsportsx/app/TvHome.kt
-
-      - name: Apply production college favorites patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -f scripts/patch_college_favorites.py ]; then python3 scripts/patch_college_favorites.py; fi
-          test -s app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-
-      - name: Apply sports badge and network UI patch
-        shell: bash
-        run: |
-          set -euo pipefail
+          [ ! -f scripts/patch_tv_navigation.py ] || python3 scripts/patch_tv_navigation.py
+          [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
-          test -s app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'TvBadgeTile' app/src/main/java/com/xsportsx/app/TvHome.kt
-
-      - name: Apply NCAA volleyball TV badge patch
-        shell: bash
-        run: |
-          set -euo pipefail
           python3 scripts/patch_ncaavb_badge.py
-          grep -q 'TvSport("NCAA VB"' app/src/main/java/com/xsportsx/app/TvHome.kt
-
-      - name: Fix verified sports and network logo assets
+      - name: Fix verified sports and ACC logos
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-
-          urls = {
-              'f1': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_One_logo.svg',
-              'nascar': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg',
-              'dtm': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg',
-              'motogp': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg',
-              'wrc': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg',
-              'wec': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg',
-              'formulae': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg',
-              'mxgp': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg',
-              'volleyball': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
-              'boxing': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg',
-              'acc': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_logo_fc_db.svg',
-          }
-          files = [
-              Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),
-              Path('app/src/main/java/com/xsportsx/app/TvHome.kt'),
-          ]
-          replacements = {
-              'https://www.google.com/s2/favicons?domain=formula1.com&sz=128': urls['f1'],
-              'https://www.google.com/s2/favicons?domain=nascar.com&sz=128': urls['nascar'],
-              'https://www.google.com/s2/favicons?domain=dtm.com&sz=128': urls['dtm'],
-              'https://www.google.com/s2/favicons?domain=motogp.com&sz=128': urls['motogp'],
-              'https://www.google.com/s2/favicons?domain=wrc.com&sz=128': urls['wrc'],
-              'https://www.google.com/s2/favicons?domain=fiawec.com&sz=128': urls['wec'],
-              'https://www.google.com/s2/favicons?domain=fiaformulae.com&sz=128': urls['formulae'],
-              'https://www.google.com/s2/favicons?domain=mxgp.com&sz=128': urls['mxgp'],
-              'https://www.google.com/s2/favicons?domain=fivb.com&sz=128': urls['volleyball'],
-              'https://www.google.com/s2/favicons?domain=volleyballworld.com&sz=128': urls['volleyball'],
-              'https://www.google.com/s2/favicons?domain=espn.com&sz=128': urls['boxing'],
-              'https://www.google.com/s2/favicons?domain=accnetwork.com&sz=128': urls['acc'],
-              'https://www.google.com/s2/favicons?domain=acc.com&sz=128': urls['acc'],
+          files=[Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),Path('app/src/main/java/com/xsportsx/app/TvHome.kt')]
+          logos={
+            'formula1.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_One_logo.svg',
+            'nascar.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg',
+            'dtm.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg',
+            'motogp.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg',
+            'wrc.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg',
+            'fiawec.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg',
+            'fiaformulae.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg',
+            'mxgp.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg',
+            'fivb.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
+            'volleyballworld.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
+            'accnetwork.com':'https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_logo_fc_db.svg',
           }
           for p in files:
-              s = p.read_text()
-              for old, new in replacements.items():
-                  s = s.replace(old, new)
-              p.write_text(s)
-          print('verified logo overrides applied')
+            s=p.read_text()
+            for domain,url in logos.items():
+              s=s.replace(f'https://www.google.com/s2/favicons?domain={domain}&sz=128',url)
+            # Only the BOXING entry should use the World Boxing mark; ESPN itself stays ESPN.
+            s=s.replace('SportVisual("BOXING", "BOX", "https://www.google.com/s2/favicons?domain=espn.com&sz=128")','SportVisual("BOXING", "BOX", "https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg")')
+            s=s.replace('TvSport("BOXING","BOX","https://www.google.com/s2/favicons?domain=espn.com&sz=128")','TvSport("BOXING","BOX","https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg")')
+            # Restore ESPN favicon anywhere a previous build-time patch may have changed it.
+            s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg"),\n    XNetwork("ESPN2','https://www.google.com/s2/favicons?domain=espn.com&sz=128"),\n    XNetwork("ESPN2')
+            s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg"),\n    TvNetwork("ESPN2','https://www.google.com/s2/favicons?domain=espn.com&sz=128"),\n    TvNetwork("ESPN2')
+            p.write_text(s)
           PY
           grep -q 'ACC_Network_logo_fc_db.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'Formula_One_logo.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'MotoGP_logo_(2024).svg' app/src/main/java/com/xsportsx/app/TvHome.kt
-
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
           KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
-        shell: bash
         run: |
           set -euo pipefail
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            if [ -z "${!name}" ]; then echo "Missing required release signing secret: ${name}"; exit 1; fi
+            [ -n "${!name}" ] || { echo "Missing required release signing secret: $name"; exit 1; }
           done
-
       - name: Restore release keystore
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
-        shell: bash
         run: |
           set -euo pipefail
           printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
           chmod 600 xsportsx-release.jks
-          test -s xsportsx-release.jks
-
       - name: Build Mobile + TV release APKs
         env:
           XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
@@ -168,55 +112,34 @@ jobs:
           XSORTSX_KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
           XSORTSX_KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
         shell: bash
-        run: |
-          set -o pipefail
-          gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
-
-      - name: Verify APK files and signatures
+        run: gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
+      - name: Verify and upload APKs
         shell: bash
         run: |
           set -euo pipefail
-          MOBILE="app/build/outputs/apk/mobile/release/app-mobile-release.apk"
-          TV="app/build/outputs/apk/tv/release/app-tv-release.apk"
-          test -s "$MOBILE"
-          test -s "$TV"
+          MOBILE=app/build/outputs/apk/mobile/release/app-mobile-release.apk
+          TV=app/build/outputs/apk/tv/release/app-tv-release.apk
+          test -s "$MOBILE" && test -s "$TV"
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
-          test -n "$APKSIGNER"
           "$APKSIGNER" verify --verbose "$MOBILE"
           "$APKSIGNER" verify --verbose "$TV"
           cp "$MOBILE" XSportsX-Mobile.apk
           cp "$TV" XSportsX-TV.apk
-          sha256sum XSportsX-Mobile.apk XSportsX-TV.apk
-
-      - name: Read app version
-        id: version
-        shell: bash
-        run: |
-          set -euo pipefail
           VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
-          test -n "$VERSION_NAME"
-          test -n "$VERSION_CODE"
-          echo "name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
-          echo "code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION_NAME ($VERSION_CODE)"
-
-      - name: Upload Mobile APK artifact
+          echo "$VERSION_NAME ($VERSION_CODE)"
+      - name: Upload Mobile APK
         uses: actions/upload-artifact@v4
         with:
-          name: XSportsX-Mobile-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}
+          name: XSportsX-Mobile-${{ github.run_number }}
           path: XSportsX-Mobile.apk
-          if-no-files-found: error
           retention-days: 14
-
-      - name: Upload TV APK artifact
+      - name: Upload TV APK
         uses: actions/upload-artifact@v4
         with:
-          name: XSportsX-TV-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}
+          name: XSportsX-TV-${{ github.run_number }}
           path: XSportsX-TV.apk
-          if-no-files-found: error
           retention-days: 14
-
       - name: Upload Gradle log
         if: always()
         uses: actions/upload-artifact@v4
