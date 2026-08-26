@@ -166,23 +166,7 @@ jobs:
           REPO="${GITHUB_REPOSITORY}"
           MOBILE_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk"
           TV_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk"
-          NOTES=$(cat <<EOF
-XSportsX ${VERSION_NAME} (${VERSION_CODE}) — signed Mobile and Android TV APKs.
-
-## Downloads
-
-- **Android Mobile:** ${MOBILE_URL}
-- **Android TV:** ${TV_URL}
-- **TV Downloader:** **4708771**
-- **TV Downloader URL:** https://go.aftvnews.com/4708771
-
-The Downloader code points to the current XSportsX TV APK.
-
-XSportsX is a standalone Android sports app for Mobile and Android TV.
-
-XSportsX-Update-Version-Code: ${VERSION_CODE}
-EOF
-)
+          NOTES="XSportsX ${VERSION_NAME} (${VERSION_CODE}) — signed Mobile and Android TV APKs.\n\n## Downloads\n\n- **Android Mobile:** ${MOBILE_URL}\n- **Android TV:** ${TV_URL}\n- **TV Downloader:** **4708771**\n- **TV Downloader URL:** https://go.aftvnews.com/4708771\n\nThe Downloader code points to the current XSportsX TV APK.\n\nXSportsX is a standalone Android sports app for Mobile and Android TV.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
 
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
@@ -198,18 +182,17 @@ EOF
         shell: bash
         run: |
           set -euo pipefail
-          TAG="v${VERSION_NAME}"
           REPO="${GITHUB_REPOSITORY}"
           cat > update.json <<EOF
-          {
-            "versionCode": ${VERSION_CODE},
-            "versionName": "${VERSION_NAME}",
-            "mobileApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
-            "tvApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk",
-            "apkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
-            "notes": "XSportsX ${VERSION_NAME}: signed Mobile and Android TV release."
-          }
-          EOF
+{
+  "versionCode": ${VERSION_CODE},
+  "versionName": "${VERSION_NAME}",
+  "mobileApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
+  "tvApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk",
+  "apkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
+  "notes": "XSportsX ${VERSION_NAME}: signed Mobile and Android TV release."
+}
+EOF
           python3 -m json.tool update.json >/dev/null
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -218,7 +201,7 @@ EOF
             echo "update.json already current"
           else
             git commit -m "chore: sync latest APK update manifest"
-            git push origin HEAD:${GITHUB_REF_NAME}
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
       - name: Remove signing key
