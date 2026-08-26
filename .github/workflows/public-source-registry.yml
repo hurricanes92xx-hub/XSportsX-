@@ -1,0 +1,28 @@
+name: Public Source Registry Mirror
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public-sources-registry.json'
+      - 'docs/public-sources-registry.json'
+      - '.github/workflows/public-source-registry.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify registry mirrors
+        run: |
+          python - <<'PY'
+          import json
+          a=json.load(open('public-sources-registry.json'))
+          b=json.load(open('docs/public-sources-registry.json'))
+          assert a == b, 'Registry mirrors differ'
+          print('Registry mirrors match:', len(a.get('sources', [])), 'sources')
+          PY
