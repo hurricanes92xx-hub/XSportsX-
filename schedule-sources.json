@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "refreshSeconds": 60,
+  "sources": {
+    "ncaav": {"type":"espn","url":"https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard"},
+    "f1": {"type":"official","url":"https://www.formula1.com/en/racing/2026"},
+    "nascar": {"type":"official","url":"https://www.nascar.com/nascar-cup-series/2026/schedule/"},
+    "indycar": {"type":"official","url":"https://www.indycar.com/Schedule"},
+    "motogp": {"type":"official","url":"https://www.motogp.com/en/Calendar"},
+    "wrc": {"type":"official","url":"https://www.wrc.com/en/"},
+    "wec": {"type":"official","url":"https://www.fiawec.com/en/"},
+    "imsa": {"type":"official","url":"https://www.imsa.com/weathertech/weathertech-2026-schedule/"},
+    "formulae": {"type":"official","url":"https://www.fiaformulae.com/en/calendar"},
+    "mxgp": {"type":"official","url":"https://www.mxgp.com/calendar"},
+    "monsterjam": {"type":"official","url":"https://www.monsterjam.com/en-us/tickets/"},
+    "rugby": {"type":"official","url":"https://www.world.rugby/tournaments/fixtures-results"},
+    "lacrosse": {"type":"official","url":"https://worldlacrosse.sport/events/"},
+    "volleyball": {"type":"official","url":"https://en.volleyballworld.com/global-schedule"}
+  }
+}
