@@ -4,6 +4,7 @@ name: XSportsX QA — Mobile + TV
 # QA covers lifecycle, UI navigation, source fixtures, Xtream/M3U connection,
 # TV QR/manual login surfaces, favorites/college picker, source latency,
 # ticker/cracked-glass/icon assets, and regression evidence.
+# QA trigger marker: 2026-08-26 full regression pass.
 
 on:
   workflow_dispatch:
