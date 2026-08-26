@@ -140,7 +140,25 @@ jobs:
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
           test -n "${VERSION_NAME}" && test -n "${VERSION_CODE}"
           TAG="v${VERSION_NAME}"
-          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
+          NOTES=$(cat <<EOF
+XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs.
+
+## Downloads
+
+- **Android TV APK:** https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/XSportsX-TV.apk
+- **Android Mobile APK:** https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/XSportsX-Mobile.apk
+- **TV Downloader code:** **4708771**
+- **TV Downloader URL:** https://go.aftvnews.com/4708771
+
+The Downloader code redirects to the current XSportsX TV APK.
+
+## Project
+
+XSportsX is a standalone Android sports app for Mobile and Android TV — no longer a Nuvio add-on.
+
+XSportsX-Update-Version-Code: ${VERSION_CODE}
+EOF
+)
 
           if gh release view "${TAG}" >/dev/null 2>&1; then
             gh release edit "${TAG}" --notes "${NOTES}"
