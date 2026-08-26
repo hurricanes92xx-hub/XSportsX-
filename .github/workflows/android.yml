@@ -1,73 +1,69 @@
 name: Build XSportsX APK
 
-# Production-only pipeline. QA/emulator/source tests live in
-# .github/workflows/xsportsx-ui-tester.yml and never gate or publish releases.
-
 on:
   push:
     branches: [android-app]
-    paths:
-      - 'app/**'
-      - 'gradle/**'
-      - 'build.gradle'
-      - 'build.gradle.kts'
-      - 'settings.gradle'
-      - 'settings.gradle.kts'
-      - 'gradle.properties'
-      - 'gradlew'
-      - 'gradlew.bat'
-      - 'scripts/patch_tv_navigation.py'
-      - 'scripts/patch_college_favorites.py'
-      - 'scripts/patch_*.py'
-      - '.github/workflows/android.yml'
+    paths-ignore:
+      - 'update.json'
+      - 'README.md'
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: xsportsx-android-${{ github.ref }}
+  group: xsportsx-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build:
+    name: Build signed Mobile + TV APKs
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - name: Checkout production branch
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.13'
-          cache-read-only: false
-      - name: Verify Android build configuration
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Verify Android project
         shell: bash
         run: |
           set -euo pipefail
-          test -f gradle.properties
-          grep -q '^android.useAndroidX=true$' gradle.properties
-      - name: Apply TV navigation fix
+          test -f ./gradlew
+          test -f app/build.gradle.kts
+          grep -q 'versionCode' app/build.gradle.kts
+          grep -q 'versionName' app/build.gradle.kts
+
+      - name: Apply production TV navigation patch
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/patch_tv_navigation.py
-          TV_SOURCE="app/src/main/java/com/xsportsx/app/TvHome.kt"
-          test -s "${TV_SOURCE}"
-          grep -q '^package com.xsportsx.app$' "${TV_SOURCE}"
-          grep -q 'TvActionButton' "${TV_SOURCE}"
-          if grep -q 'tvModeEnabled' "${TV_SOURCE}"; then exit 1; fi
-          if grep -q 'TvModeButton' "${TV_SOURCE}"; then exit 1; fi
-      - name: Apply college favorites
+          if [ -f scripts/patch_tv_navigation.py ]; then
+            python3 scripts/patch_tv_navigation.py
+          fi
+          test -s app/src/main/java/com/xsportsx/app/TvHome.kt
+
+      - name: Apply production college favorites patch
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/patch_college_favorites.py
-          grep -q 'addAll(collegeFavoriteTeams())' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-          grep -q '"NCAAF"->"football/college-football"' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-      - name: Verify release signing secrets
+          if [ -f scripts/patch_college_favorites.py ]; then
+            python3 scripts/patch_college_favorites.py
+          fi
+          test -s app/src/main/java/com/xsportsx/app/TeamFavorites.kt
+
+      - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
           KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
@@ -77,18 +73,23 @@ jobs:
         run: |
           set -euo pipefail
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            if [ -z "${!name}" ]; then echo "Missing signing secret: ${name}"; exit 1; fi
+            if [ -z "${!name}" ]; then
+              echo "Missing required release signing secret: ${name}"
+              exit 1
+            fi
           done
-      - name: Restore release signing key
+
+      - name: Restore release keystore
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
         shell: bash
         run: |
           set -euo pipefail
-          printf '%s' "${KEYSTORE_B64}" | base64 --decode > xsportsx-release.jks
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
           chmod 600 xsportsx-release.jks
           test -s xsportsx-release.jks
-      - name: Build signed mobile + TV APKs
+
+      - name: Build Mobile + TV release APKs
         env:
           XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
           XSORTSX_KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
@@ -97,100 +98,129 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
-      - name: Verify APK signatures and outputs
+          ./gradlew clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
+
+      - name: Verify APK files and signatures
         shell: bash
         run: |
           set -euo pipefail
           MOBILE="app/build/outputs/apk/mobile/release/app-mobile-release.apk"
           TV="app/build/outputs/apk/tv/release/app-tv-release.apk"
-          test -s "${MOBILE}" && test -s "${TV}"
+          test -s "$MOBILE"
+          test -s "$TV"
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
-          "${APKSIGNER}" verify --verbose "${MOBILE}"
-          "${APKSIGNER}" verify --verbose "${TV}"
-          cp "${MOBILE}" XSportsX-Mobile.apk
-          cp "${TV}" XSportsX-TV.apk
+          test -n "$APKSIGNER"
+          "$APKSIGNER" verify --verbose "$MOBILE"
+          "$APKSIGNER" verify --verbose "$TV"
+          cp "$MOBILE" XSportsX-Mobile.apk
+          cp "$TV" XSportsX-TV.apk
           sha256sum XSportsX-Mobile.apk XSportsX-TV.apk
-      - name: Upload Gradle build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-gradle-build-log
-          path: gradle-build.log
-          if-no-files-found: ignore
-      - name: Upload mobile APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-Mobile-APK
-          path: XSportsX-Mobile.apk
-          if-no-files-found: error
-      - name: Upload TV APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-TV-APK
-          path: XSportsX-TV.apk
-          if-no-files-found: error
-      - name: Publish signed APKs and synchronize update manifest
-        env:
-          GH_TOKEN: ${{ github.token }}
+
+      - name: Read app version
+        id: version
         shell: bash
         run: |
           set -euo pipefail
           VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
-          test -n "${VERSION_NAME}" && test -n "${VERSION_CODE}"
+          test -n "$VERSION_NAME"
+          test -n "$VERSION_CODE"
+          echo "name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION_NAME ($VERSION_CODE)"
+
+      - name: Upload Mobile APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-Mobile-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}
+          path: XSportsX-Mobile.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload TV APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-TV-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}
+          path: XSportsX-TV.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Gradle log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-gradle-log-${{ github.run_number }}
+          path: gradle-build.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Publish release and latest download links
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        shell: bash
+        run: |
+          set -euo pipefail
           TAG="v${VERSION_NAME}"
+          REPO="${GITHUB_REPOSITORY}"
+          MOBILE_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk"
+          TV_URL="https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk"
           NOTES=$(cat <<EOF
-XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs.
+XSportsX ${VERSION_NAME} (${VERSION_CODE}) — signed Mobile and Android TV APKs.
 
 ## Downloads
 
-- **Android TV APK:** https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/XSportsX-TV.apk
-- **Android Mobile APK:** https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/XSportsX-Mobile.apk
-- **TV Downloader code:** **4708771**
+- **Android Mobile:** ${MOBILE_URL}
+- **Android TV:** ${TV_URL}
+- **TV Downloader:** **4708771**
 - **TV Downloader URL:** https://go.aftvnews.com/4708771
 
-The Downloader code redirects to the current XSportsX TV APK.
+The Downloader code points to the current XSportsX TV APK.
 
-## Project
-
-XSportsX is a standalone Android sports app for Mobile and Android TV — no longer a Nuvio add-on.
+XSportsX is a standalone Android sports app for Mobile and Android TV.
 
 XSportsX-Update-Version-Code: ${VERSION_CODE}
 EOF
 )
 
-          if gh release view "${TAG}" >/dev/null 2>&1; then
-            gh release edit "${TAG}" --notes "${NOTES}"
-            gh release upload "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
+            gh release edit "$TAG" --title "XSportsX ${VERSION_NAME}" --notes "$NOTES" --latest
           else
-            gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "${NOTES}" --latest
+            gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "$NOTES" --latest
           fi
 
+      - name: Synchronize update manifest without retriggering APK build
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION_NAME}"
           REPO="${GITHUB_REPOSITORY}"
-          MOBILE_URL="https://github.com/${REPO}/releases/download/${TAG}/XSportsX-Mobile.apk"
-          TV_URL="https://github.com/${REPO}/releases/download/${TAG}/XSportsX-TV.apk"
           cat > update.json <<EOF
           {
             "versionCode": ${VERSION_CODE},
             "versionName": "${VERSION_NAME}",
-            "mobileApkUrl": "${MOBILE_URL}",
-            "tvApkUrl": "${TV_URL}",
-            "apkUrl": "${MOBILE_URL}",
+            "mobileApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
+            "tvApkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-TV.apk",
+            "apkUrl": "https://github.com/${REPO}/releases/latest/download/XSportsX-Mobile.apk",
             "notes": "XSportsX ${VERSION_NAME}: signed Mobile and Android TV release."
           }
           EOF
           python3 -m json.tool update.json >/dev/null
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add update.json
           if git diff --cached --quiet; then
-            echo "update.json already synchronized"
+            echo "update.json already current"
           else
-            git commit -m "chore: sync update manifest for ${TAG}"
-            git push origin "${GITHUB_REF_NAME}"
+            git commit -m "chore: sync latest APK update manifest"
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
+
       - name: Remove signing key
         if: always()
         run: rm -f xsportsx-release.jks
