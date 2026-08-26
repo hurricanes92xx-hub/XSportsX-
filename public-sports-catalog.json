@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "categories": [
+    {"id":"motorsports","name":"Motorsports","icon":"motorsports","logo":"https://www.redbull.com/favicon.ico","sports":["WRC","MotoGP","FIM Hard Enduro","Dakar Rally","Drift Masters","Formula E","IMSA","WEC","DTM","MXGP","NASCAR","Red Bull Rookies Cup"]},
+    {"id":"monster-trucks","name":"Monster Trucks","icon":"monster-truck","logo":"https://www.monsterjam.com/favicon.ico","sports":["Monster Jam"]},
+    {"id":"action-sports","name":"Action Sports","icon":"action-sports","logo":"https://www.redbull.com/favicon.ico","sports":["MTB","Surfing","Skateboarding","Cliff Diving","Skiing","Snowboarding","Kitesurfing","Climbing","Padel"]},
+    {"id":"esports","name":"Esports","icon":"esports","logo":"https://www.redbull.com/favicon.ico","sports":["Streamer Games","Gaming","Red Bull BC One"]}
+  ],
+  "sourceHints": [
+    {"source":"Red Bull TV","official":"https://www.redbull.com/us-en/live-events","coverage":["motorsports","action-sports","esports"],"enabled":true},
+    {"source":"Monster Jam","official":"https://www.monsterjam.com/en-us/watch/","coverage":["monster-trucks"],"enabled":true}
+  ]
+}
