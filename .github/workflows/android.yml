@@ -10,6 +10,7 @@ on:
     paths-ignore:
       - '.github/workflows/xsportsx-ui-tester.yml'
       - 'scripts/ui_smoke_test.sh'
+      - 'scripts/qa_source_server.py'
   workflow_dispatch:
 
 permissions:
