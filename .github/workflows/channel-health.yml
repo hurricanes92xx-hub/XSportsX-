@@ -1,0 +1,29 @@
+name: Public Source Health
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - 'public-sources-registry.json'
+      - 'tools/channel_health.py'
+      - '.github/workflows/channel-health.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check approved public sources
+        run: python3 tools/channel_health.py > docs/public-source-health.json
+      - name: Commit health snapshot
+        run: |
+          git config user.name 'XSportsX Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add docs/public-source-health.json
+          git diff --cached --quiet || git commit -m 'Update public source health'
+          git push
