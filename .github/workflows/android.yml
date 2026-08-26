@@ -33,15 +33,31 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
+      - name: Install Gradle 8.13
+        shell: bash
+        run: |
+          set -euo pipefail
+          GRADLE_VERSION="8.13"
+          GRADLE_HOME="$RUNNER_TEMP/gradle-$GRADLE_VERSION"
+          if [ ! -x "$GRADLE_HOME/bin/gradle" ]; then
+            curl --fail --silent --show-error --location \
+              "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+              --output "$RUNNER_TEMP/gradle.zip"
+            rm -rf "$GRADLE_HOME"
+            unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
+          fi
+          echo "GRADLE_HOME=$GRADLE_HOME" >> "$GITHUB_ENV"
+          echo "$GRADLE_HOME/bin" >> "$GITHUB_PATH"
+          gradle --version
 
       - name: Verify Android project
         shell: bash
         run: |
           set -euo pipefail
-          test -f ./gradlew
+          test -f build.gradle.kts
           test -f app/build.gradle.kts
+          test -f settings.gradle.kts
+          test ! -e ./gradlew || test -x ./gradlew
           grep -q 'versionCode' app/build.gradle.kts
           grep -q 'versionName' app/build.gradle.kts
 
@@ -98,7 +114,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          ./gradlew clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
+          gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
 
       - name: Verify APK files and signatures
         shell: bash
@@ -206,5 +222,3 @@ jobs:
       - name: Remove signing key
         if: always()
         run: rm -f xsportsx-release.jks
-
-# Trigger production build after workflow repair.
