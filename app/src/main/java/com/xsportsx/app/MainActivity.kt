@@ -221,7 +221,16 @@ fun SourcesScreen() {
 }
 
 @Composable
-fun SettingsScreen() { Column(Modifier.fillMaxSize()) { Header("SETTINGS", "Make XSportsX yours") ; SettingRow("Auto refresh", "Keep schedules and source matches current", true); SettingRow("Live alerts", "Notify when a selected event is available", true); SettingRow("TV mode", "Optimize controls and focus for Android TV", true); SettingRow("Theme", "Obsidian / Red", false) } }
+fun SettingsScreen() {
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        item { Header("SETTINGS", "Make XSportsX yours") }
+        item { PairingQrCard(Modifier.padding(horizontal = 34.dp, vertical = 8.dp)) }
+        item { SettingRow("Auto refresh", "Keep schedules and source matches current", true) }
+        item { SettingRow("Live alerts", "Notify when a selected event is available", true) }
+        item { SettingRow("TV mode", "Optimize controls and focus for Android TV", true) }
+        item { SettingRow("Theme", "Obsidian / Red", false) }
+    }
+}
 
 @Composable fun SettingRow(title: String, subtitle: String, checked: Boolean) { Row(Modifier.fillMaxWidth().padding(horizontal = 34.dp, vertical = 8.dp).clip(RoundedCornerShape(18.dp)).background(Color(0xFF11151D)).padding(18.dp), verticalAlignment = Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Text(title, color = Color.White, fontWeight = FontWeight.Bold); Text(subtitle, color = Color(0xFF7D8491), fontSize = 12.sp) }; Switch(checked, {}) } }
 
