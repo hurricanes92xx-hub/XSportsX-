@@ -25,21 +25,26 @@ class PublicSourceResolver {
     companion object {
         private const val CACHE_TTL_MS = 15 * 60 * 1000L
         private const val MAX_PLAYLIST_BYTES = 8_000_000
-        private const val MAX_CANDIDATES = 120
-        private const val MAX_HEALTH_CHECKS = 24
-        // Primary CDN + two independent delivery paths. None depends on Render.
+        private const val MAX_CANDIDATES = 160
+        private const val MAX_HEALTH_CHECKS = 32
         private val REGISTRY_URLS = listOf(
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/public-sources-registry.json",
             "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json",
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/public-sources-registry.json",
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json"
         )
-        private val cache = LruCache<String, Pair<Long, List<PublicResolvedStream>>>(1)
         private val approvedHosts = setOf(
-            "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "wurl.com",
-            "amagi.tv", "tubi.video", "splus.ir", "akamaized.net", "tjktv.org", "rtatv.akamaized.net"
+            "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
+            "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net",
+            "tjktv.org", "rtatv.akamaized.net", "jmp2.uk", "i.mjh.nz"
+        )
+        private val sportsTerms = Regex(
+            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|btn|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount)\\b",
+            RegexOption.IGNORE_CASE
         )
     }
+
+    private val cache = LruCache<String, Pair<Long, List<PublicResolvedStream>>>(1)
 
     suspend fun load(force: Boolean = false): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
         val key = "static-public-registry"
@@ -119,12 +124,13 @@ class PublicSourceResolver {
         }.getOrNull()
     }
 
-    private fun isSports(name: String, group: String): Boolean =
-        Regex("\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa)\\b", RegexOption.IGNORE_CASE).containsMatchIn("$name $group")
+    private fun isSports(name: String, group: String): Boolean = sportsTerms.containsMatchIn("$name $group")
 
     private fun isAllowed(target: String): Boolean = runCatching {
         val uri = URL(target)
-        uri.protocol.equals("https", true) && approvedHosts.any { host -> uri.host.equals(host, true) || uri.host.endsWith(".$host", true) }
+        uri.protocol.equals("https", true) && approvedHosts.any { host ->
+            uri.host.equals(host, true) || uri.host.endsWith(".$host", true)
+        }
     }.getOrDefault(false)
 
     private fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES): String? = runCatching {
@@ -140,5 +146,6 @@ class PublicSourceResolver {
         input.close(); c.disconnect(); out.toString()
     }.getOrNull()
 
-    private fun attr(line: String, key: String): String = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
+    private fun attr(line: String, key: String): String =
+        Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
 }
