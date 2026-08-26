@@ -11,10 +11,10 @@ RUN npm install --omit=dev
 
 COPY . .
 
-# Expand the runtime sports resolver without adding the source registry or
+# Expand the runtime sports resolver without adding source registries or
 # event metadata to the Android APK. The patch is deterministic and runs once
 # during the container image build.
-RUN python3 scripts/patch_public_sports_backend.py
+RUN node scripts/patch_public_sports_backend.js
 
 EXPOSE 10000
 
