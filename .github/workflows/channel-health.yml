@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check approved public sources
-        run: python3 tools/channel_health.py > docs/public-source-health.json
+      - name: Check rolling batch of approved public channels
+        run: python3 tools/channel_health.py
       - name: Commit health snapshot
         run: |
           git config user.name 'XSportsX Bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add docs/public-source-health.json
-          git diff --cached --quiet || git commit -m 'Update public source health'
+          git add docs/public-channel-health.json
+          git diff --cached --quiet || git commit -m 'Update rolling public channel health'
           git push
