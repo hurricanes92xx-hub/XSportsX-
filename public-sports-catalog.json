@@ -9,131 +9,30 @@
     "apkAssets": false
   },
   "categories": [
-    {
-      "id": "motorsports",
-      "name": "Motorsports",
-      "icon": "motorsports",
-      "sourceHints": ["Red Bull TV", "official series/team YouTube", "official broadcaster"],
-      "sports": ["Formula 1", "NASCAR", "IndyCar", "MotoGP", "Moto2", "Moto3", "WRC", "WEC", "IMSA", "Formula E", "DTM", "MXGP", "FIM Hard Enduro", "Dakar Rally", "Drift Masters", "Red Bull Rookies Cup", "Karting", "Dirt Track", "Sprint Car"]
-    },
-    {
-      "id": "monster-trucks",
-      "name": "Monster Trucks",
-      "icon": "monster-truck",
-      "sourceHints": ["Monster Jam official"],
-      "sports": ["Monster Jam"]
-    },
-    {
-      "id": "action-sports",
-      "name": "Action Sports",
-      "icon": "action-sports",
-      "sourceHints": ["Red Bull TV", "official event/league YouTube"],
-      "sports": ["MTB", "BMX", "Surfing", "Skateboarding", "Cliff Diving", "Skiing", "Snowboarding", "Kitesurfing", "Climbing", "Padel"]
-    },
-    {
-      "id": "esports",
-      "name": "Esports",
-      "icon": "esports",
-      "sourceHints": ["Red Bull TV", "official tournament/league YouTube", "official broadcaster"],
-      "sports": ["Esports", "Gaming"]
-    },
-    {
-      "id": "rugby",
-      "name": "Rugby",
-      "icon": "rugby",
-      "sourceHints": ["RugbyPass TV", "official league/team YouTube", "official broadcaster"],
-      "sports": ["Rugby Union", "Rugby Sevens", "Rugby League"]
-    },
-    {
-      "id": "volleyball",
-      "name": "Volleyball",
-      "icon": "volleyball",
-      "sourceHints": ["official league/team YouTube", "official broadcaster", "public event stream"],
-      "sports": ["Volleyball", "Beach Volleyball"]
-    },
-    {
-      "id": "lacrosse",
-      "name": "Lacrosse",
-      "icon": "lacrosse",
-      "sourceHints": ["official league/team YouTube", "official broadcaster", "school athletics stream"],
-      "sports": ["Lacrosse"]
-    },
-    {
-      "id": "wrestling",
-      "name": "Wrestling",
-      "icon": "wrestling",
-      "sourceHints": ["official event/league YouTube", "official broadcaster", "school athletics stream"],
-      "sports": ["Wrestling", "Grappling"]
-    },
-    {
-      "id": "combat",
-      "name": "Combat Sports",
-      "icon": "combat",
-      "sourceHints": ["official promotion YouTube", "official broadcaster", "official event stream"],
-      "sports": ["Boxing", "Judo", "Taekwondo", "Kickboxing", "Muay Thai"]
-    },
-    {
-      "id": "aquatics",
-      "name": "Aquatics",
-      "icon": "aquatics",
-      "sourceHints": ["official federation YouTube", "official broadcaster", "official event stream"],
-      "sports": ["Swimming", "Diving", "Water Polo", "Open Water"]
-    },
-    {
-      "id": "gymnastics",
-      "name": "Gymnastics",
-      "icon": "gymnastics",
-      "sourceHints": ["official federation YouTube", "official broadcaster", "official event stream"],
-      "sports": ["Gymnastics", "Artistic Gymnastics", "Rhythmic Gymnastics"]
-    },
-    {
-      "id": "cue-sports",
-      "name": "Cue Sports",
-      "icon": "cue-sports",
-      "sourceHints": ["official tour YouTube", "official broadcaster", "official event stream"],
-      "sports": ["Snooker", "Pool", "Billiards"]
-    },
-    {
-      "id": "darts",
-      "name": "Darts",
-      "icon": "darts",
-      "sourceHints": ["official tour YouTube", "official broadcaster", "official event stream"],
-      "sports": ["Darts"]
-    },
-    {
-      "id": "cycling",
-      "name": "Cycling",
-      "icon": "cycling",
-      "sourceHints": ["official event/series YouTube", "official broadcaster", "FAST sports"],
-      "sports": ["Road Cycling", "Track Cycling", "Mountain Bike", "BMX"]
-    },
-    {
-      "id": "archery",
-      "name": "Archery",
-      "icon": "archery",
-      "sourceHints": ["official federation YouTube", "official event stream"],
-      "sports": ["Archery"]
-    },
-    {
-      "id": "equestrian",
-      "name": "Equestrian",
-      "icon": "equestrian",
-      "sourceHints": ["official event stream", "official broadcaster", "official YouTube"],
-      "sports": ["Show Jumping", "Dressage", "Eventing"]
-    },
-    {
-      "id": "other-team-sports",
-      "name": "Other Team Sports",
-      "icon": "team-sports",
-      "sourceHints": ["official league/team YouTube", "official broadcaster", "school athletics stream"],
-      "sports": ["Handball", "Field Hockey", "Cricket", "Soccer", "Softball", "Baseball", "Basketball", "Ice Hockey"]
-    }
+    {"id":"motorsports","name":"Motorsports","icon":"motorsports","sourceHints":["Red Bull TV","official series/team YouTube","official broadcaster"],"sports":["Formula 1","NASCAR","IndyCar","MotoGP","Moto2","Moto3","WRC","WEC","IMSA","Formula E","DTM","MXGP","FIM Hard Enduro","Dakar Rally","Drift Masters","Red Bull Rookies Cup","Karting","Dirt Track","Sprint Car"]},
+    {"id":"monster-trucks","name":"Monster Trucks","icon":"monster-truck","sourceHints":["Monster Jam official"],"sports":["Monster Jam"]},
+    {"id":"action-sports","name":"Action Sports","icon":"action-sports","sourceHints":["Red Bull TV","official event/league YouTube"],"sports":["MTB","BMX","Surfing","Skateboarding","Cliff Diving","Skiing","Snowboarding","Kitesurfing","Climbing","Padel"]},
+    {"id":"esports","name":"Esports","icon":"esports","sourceHints":["Red Bull TV","official tournament/league YouTube","official broadcaster"],"sports":["Esports","Gaming"]},
+    {"id":"rugby","name":"Rugby","icon":"rugby","sourceHints":["RugbyPass TV","official league/team YouTube","official broadcaster"],"sports":["Rugby Union","Rugby Sevens","Rugby League"]},
+    {"id":"volleyball","name":"Volleyball","icon":"volleyball","sourceHints":["official league/team YouTube","official broadcaster","public event stream"],"sports":["Volleyball","Beach Volleyball"]},
+    {"id":"lacrosse","name":"Lacrosse","icon":"lacrosse","sourceHints":["official league/team YouTube","official broadcaster","school athletics stream"],"sports":["Lacrosse"]},
+    {"id":"wrestling","name":"Wrestling","icon":"wrestling","sourceHints":["WWE official schedule","official event/league YouTube","official broadcaster","school athletics stream"],"sports":["Wrestling","Grappling","WWE"]},
+    {"id":"combat","name":"Combat Sports","icon":"combat","sourceHints":["official promotion YouTube","official broadcaster","official event stream"],"sports":["Boxing","Judo","Taekwondo","Kickboxing","Muay Thai"]},
+    {"id":"aquatics","name":"Aquatics","icon":"aquatics","sourceHints":["official federation YouTube","official broadcaster","official event stream"],"sports":["Swimming","Diving","Water Polo","Open Water"]},
+    {"id":"gymnastics","name":"Gymnastics","icon":"gymnastics","sourceHints":["official federation YouTube","official broadcaster","official event stream"],"sports":["Gymnastics","Artistic Gymnastics","Rhythmic Gymnastics"]},
+    {"id":"cue-sports","name":"Cue Sports","icon":"cue-sports","sourceHints":["official tour YouTube","official broadcaster","official event stream"],"sports":["Snooker","Pool","Billiards"]},
+    {"id":"darts","name":"Darts","icon":"darts","sourceHints":["official tour YouTube","official broadcaster","official event stream"],"sports":["Darts"]},
+    {"id":"cycling","name":"Cycling","icon":"cycling","sourceHints":["official event/series YouTube","official broadcaster","FAST sports"],"sports":["Road Cycling","Track Cycling","Mountain Bike","BMX"]},
+    {"id":"archery","name":"Archery","icon":"archery","sourceHints":["official federation YouTube","official event stream"],"sports":["Archery"]},
+    {"id":"equestrian","name":"Equestrian","icon":"equestrian","sourceHints":["official event stream","official broadcaster","official YouTube"],"sports":["Show Jumping","Dressage","Eventing"]},
+    {"id":"other-team-sports","name":"Other Team Sports","icon":"team-sports","sourceHints":["official league/team YouTube","official broadcaster","school athletics stream"],"sports":["Handball","Field Hockey","Cricket","Soccer","Softball","Baseball","Basketball","Ice Hockey"]}
   ],
   "sourceHints": [
     {"source":"Red Bull TV","official":"https://www.redbull.com/us-en/live-events","coverage":["motorsports","action-sports","esports"],"enabled":true},
     {"source":"Monster Jam","official":"https://www.monsterjam.com/en-us/watch/","coverage":["monster-trucks"],"enabled":true},
     {"source":"RugbyPass TV","official":"https://www.rugbypass.tv/","coverage":["rugby"],"enabled":true},
-    {"source":"Official YouTube Live","coverage":["team-sports","motorsports","combat","aquatics","gymnastics","cycling","darts","cue-sports","archery","equestrian","esports"],"enabled":true},
+    {"source":"WWE","official":"https://www.wwe.com/article/wwe-upcoming-events","coverage":["wrestling"],"enabled":true},
+    {"source":"Official YouTube Live","coverage":["team-sports","motorsports","combat","aquatics","gymnastics","cycling","darts","cue-sports","archery","equestrian","esports","wrestling"],"enabled":true},
     {"source":"Official school/team streams","coverage":["ncaa","volleyball","lacrosse","wrestling","soccer","baseball","softball","basketball","other-team-sports"],"enabled":true},
     {"source":"Official broadcasters / FAST","coverage":["all-supported-sports"],"enabled":true}
   ]
