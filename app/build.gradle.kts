@@ -32,22 +32,23 @@ android {
     }
     signingConfigs {
         create("release") {
+            // Do not require release credentials while configuring debug-only QA builds.
+            // The production release workflow supplies these values before assembling release APKs.
             val keystorePath = System.getenv("XSORTSX_KEYSTORE_PATH")
             val storePassword = System.getenv("XSORTSX_KEYSTORE_PASSWORD")
             val keyAlias = System.getenv("XSORTSX_KEY_ALIAS")
             val keyPassword = System.getenv("XSORTSX_KEY_PASSWORD")
-            if (listOf(keystorePath, storePassword, keyAlias, keyPassword).any { it.isNullOrBlank() }) {
-                throw GradleException("Stable release signing is required. Configure XSPORTSX_KEYSTORE_PATH, XSPORTSX_KEYSTORE_PASSWORD, XSPORTSX_KEY_ALIAS and XSPORTSX_KEY_PASSWORD.")
+            if (listOf(keystorePath, storePassword, keyAlias, keyPassword).all { !it.isNullOrBlank() }) {
+                storeFile = file(keystorePath!!)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
-            storeFile = file(keystorePath!!)
-            this.storePassword = storePassword
-            this.keyAlias = keyAlias
-            this.keyPassword = keyPassword
         }
     }
     buildTypes {
         getByName("debug") {
-            // QA builds are deliberately unsigned here; never require release credentials.
+            // QA builds use the standard debug key and never require release credentials.
             signingConfig = signingConfigs.getByName("debug")
         }
         getByName("release") {
