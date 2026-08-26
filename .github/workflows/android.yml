@@ -1,8 +1,7 @@
 name: Build XSportsX APK
 
-# Release build includes the animated Xtreme logo on Mobile + Android TV.
-# Release builds intentionally ignore QA-only tester changes so the tester never
-# changes, republishes, or otherwise gates the production APK pipeline.
+# Production-only pipeline. QA/emulator/source tests live in
+# .github/workflows/xsportsx-ui-tester.yml and never gate or publish releases.
 
 on:
   push:
@@ -11,6 +10,7 @@ on:
       - '.github/workflows/xsportsx-ui-tester.yml'
       - 'scripts/ui_smoke_test.sh'
       - 'scripts/qa_source_server.py'
+      - 'qa/**'
   workflow_dispatch:
 
 permissions:
@@ -25,25 +25,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
           cache-read-only: false
-
       - name: Verify Android build configuration
         shell: bash
         run: |
           set -euo pipefail
           test -f gradle.properties
           grep -q '^android.useAndroidX=true$' gradle.properties
-
       - name: Apply TV navigation fix
         shell: bash
         run: |
@@ -55,7 +51,6 @@ jobs:
           grep -q 'TvActionButton' "${TV_SOURCE}"
           if grep -q 'tvModeEnabled' "${TV_SOURCE}"; then exit 1; fi
           if grep -q 'TvModeButton' "${TV_SOURCE}"; then exit 1; fi
-
       - name: Apply college favorites
         shell: bash
         run: |
@@ -63,7 +58,6 @@ jobs:
           python3 scripts/patch_college_favorites.py
           grep -q 'addAll(collegeFavoriteTeams())' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
           grep -q '"NCAAF"->"football/college-football"' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-
       - name: Verify release signing secrets
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
@@ -76,7 +70,6 @@ jobs:
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
             if [ -z "${!name}" ]; then echo "Missing signing secret: ${name}"; exit 1; fi
           done
-
       - name: Restore release signing key
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
@@ -86,7 +79,6 @@ jobs:
           printf '%s' "${KEYSTORE_B64}" | base64 --decode > xsportsx-release.jks
           chmod 600 xsportsx-release.jks
           test -s xsportsx-release.jks
-
       - name: Build signed mobile + TV APKs
         env:
           XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
@@ -97,7 +89,6 @@ jobs:
         run: |
           set -o pipefail
           gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain --refresh-dependencies 2>&1 | tee gradle-build.log
-
       - name: Verify APK signatures and outputs
         shell: bash
         run: |
@@ -111,7 +102,6 @@ jobs:
           cp "${MOBILE}" XSportsX-Mobile.apk
           cp "${TV}" XSportsX-TV.apk
           sha256sum XSportsX-Mobile.apk XSportsX-TV.apk
-
       - name: Upload Gradle build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -119,21 +109,18 @@ jobs:
           name: XSportsX-gradle-build-log
           path: gradle-build.log
           if-no-files-found: ignore
-
       - name: Upload mobile APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-Mobile-APK
           path: XSportsX-Mobile.apk
           if-no-files-found: error
-
       - name: Upload TV APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: XSportsX-TV-APK
           path: XSportsX-TV.apk
           if-no-files-found: error
-
       - name: Publish signed APKs for in-app updater
         env:
           GH_TOKEN: ${{ github.token }}
@@ -150,7 +137,6 @@ jobs:
           else
             gh release create "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --title "XSportsX ${VERSION_NAME}" --notes "${NOTES}" --latest
           fi
-
       - name: Remove signing key
         if: always()
         run: rm -f xsportsx-release.jks
