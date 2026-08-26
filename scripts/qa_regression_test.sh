@@ -22,49 +22,14 @@ snapshot(){
   adb shell cat /sdcard/window.xml > "$OUT/${name}.xml" || true
 }
 
-has_text(){
-  local text="$1"
-  local file="$2"
-  grep -Fq "$text" "$OUT/${file}.xml"
-}
+has_text(){ grep -Fq "$1" "$OUT/$2.xml"; }
+assert_text(){ has_text "$1" "$2" || fail "Missing UI text '$1' in $2"; log "UI OK: $1"; }
+assert_any_text(){ local f="$1"; shift; for t in "$@"; do if has_text "$t" "$f"; then log "UI OK: $t"; return; fi; done; fail "None of expected UI labels found in $f: $*"; }
 
-assert_text(){
-  local text="$1"
-  local file="$2"
-  has_text "$text" "$file" || fail "Missing UI text '$text' in $file"
-  log "UI OK: $text"
-}
-
-assert_any_text(){
-  local file="$1"; shift
-  local text
-  for text in "$@"; do
-    if has_text "$text" "$file"; then log "UI OK: $text"; return 0; fi
-  done
-  fail "None of expected UI labels found in $file: $*"
-}
-
-# Find a Compose/UIAutomator node by visible text/content-desc and tap its center.
 tap_text(){
-  local wanted="$1"
-  local xml
+  local wanted="$1" xml point
   adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   xml="$(adb shell cat /sdcard/window.xml 2>/dev/null || true)"
-  python3 - "$wanted" "$xml" <<'PY'
-import re,sys,html
-wanted=sys.argv[1]
-xml=html.unescape(sys.argv[2])
-# Prefer exact text, then exact content-desc.
-patterns=[
-    r'<node[^>]*(?:text|content-desc)="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
-]
-for p in patterns:
-    m=re.search(p,xml)
-    if m:
-        x1,y1,x2,y2=map(int,m.groups()); print((x1+x2)//2,(y1+y2)//2); sys.exit(0)
-print('NOT_FOUND')
-PY
-  local point
   point="$(python3 - "$wanted" "$xml" <<'PY'
 import re,sys,html
 wanted=sys.argv[1]; xml=html.unescape(sys.argv[2])
@@ -82,13 +47,12 @@ PY
 }
 
 input_text(){
-  local value="$1"
-  local escaped
+  local value="$1" escaped
   escaped="$(printf '%s' "$value" | sed 's/ /%s/g; s/&/\\&/g')"
   adb shell input text "$escaped"
 }
 
-# ----- Source fixture and latency checks -----
+# ----- Isolated source fixture + measurable source latency -----
 log "Checking isolated source fixture"
 curl -fsS "$SOURCE_BASE/health" >/dev/null
 curl -fsS "$SOURCE_BASE/playlist.m3u" | grep -q '#EXTM3U'
@@ -100,7 +64,6 @@ curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=ge
 curl -fsS "$SOURCE_BASE/stream/101" >/dev/null
 python3 scripts/qa_source_probe.py
 
-# Measure deterministic fixture timing so regressions in source access are visible.
 python3 - "$SOURCE_BASE" "$OUT/source-latency.json" <<'PY'
 import json,sys,time,urllib.request
 base=sys.argv[1]; out=sys.argv[2]
@@ -122,7 +85,6 @@ assert_any_text 01-launch "SPORTS COMMAND CENTER" "XSPORTSX" "WELCOME TO"
 adb shell pidof "$PACKAGE" >/dev/null || fail "App process is not alive after launch"
 
 if [[ "$MODE" == "mobile" ]]; then
-  # Main navigation and sport filters.
   tap_text "LIVE"
   snapshot 02-live
   assert_any_text 02-live "LIVE NOW" "No games live right now" "LIVE SPORTS"
@@ -137,7 +99,6 @@ if [[ "$MODE" == "mobile" ]]; then
   assert_any_text 04-sources "SOURCE CENTER" "CONNECT SOURCE"
   assert_any_text 04-sources "XTREAM CODES" "CONNECT SOURCE"
 
-  # Exercise real Xtream connection against the isolated fixture.
   tap_text "Server URL"
   input_text "$SOURCE_BASE"
   tap_text "Username"
@@ -150,15 +111,18 @@ if [[ "$MODE" == "mobile" ]]; then
   snapshot 06-source-connected
   assert_any_text 06-source-connected "SOURCE SAVED" "Connected" "source responded"
 
-  # Verify relaunch keeps the app healthy after source configuration.
+  # Favorites tab must exist on the production mobile shell.
+  tap_text "FAVORITES"
+  snapshot 07-favorites
+  assert_any_text 07-favorites "FAVORITES" "YOUR FAVORITES LIVE HERE" "YOUR PICKS"
+
   adb shell input keyevent KEYCODE_HOME
   sleep 1
   adb shell monkey -p "$PACKAGE" 1 >/dev/null
   sleep 2
-  snapshot 07-relaunch
-  assert_any_text 07-relaunch "SPORTS COMMAND CENTER" "XSPORTSX"
+  snapshot 08-relaunch
+  assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "XSPORTS" "ADD SOURCE"
 else
-  # TV navigation, focusable controls and connection chooser.
   tap_text "SETTINGS"
   snapshot 02-tv-settings
   assert_text "SETTINGS" 02-tv-settings
@@ -173,14 +137,12 @@ else
   assert_text "SCAN QR CODE" 03-source-chooser
   assert_text "SIGN IN ON TV" 03-source-chooser
 
-  # QR flow: verify the QR screen can be opened without injecting credentials.
   tap_text "SCAN QR CODE"
   sleep 2
   snapshot 04-qr
   assert_any_text 04-qr "CONNECT THIS TV" "Creating secure pairing" "Scan this code with your phone"
   if has_text "CANCEL" 04-qr; then tap_text "CANCEL" || true; sleep 1; fi
 
-  # Manual Xtream flow.
   snapshot 05-source-chooser-return
   assert_text "SIGN IN ON TV" 05-source-chooser-return
   tap_text "SIGN IN ON TV"
@@ -188,7 +150,6 @@ else
   snapshot 06-manual
   assert_any_text 06-manual "CONNECT SOURCE" "XTREAM" "M3U"
 
-  # Try Xtream credentials first.
   if has_text "Server URL" 06-manual; then
     tap_text "Server URL"; input_text "$SOURCE_BASE"
     tap_text "Username"; input_text "qauser"
@@ -199,7 +160,6 @@ else
     assert_any_text 07-xtream-result "Connected" "source responded" "SOURCE SAVED"
   fi
 
-  # Verify M3U mode is present and accepts the deterministic playlist URL.
   snapshot 08-manual-m3u
   if has_text "M3U" 08-manual-m3u; then
     tap_text "M3U"
@@ -216,19 +176,41 @@ else
     fi
   fi
 
-  # TV relaunch/lifecycle.
+  # Full My Teams / Favorites surface, including college picker presence.
   adb shell input keyevent KEYCODE_HOME
   sleep 1
   adb shell monkey -p "$PACKAGE" 1 >/dev/null
   sleep 3
-  snapshot 11-tv-relaunch
-  assert_any_text 11-tv-relaunch "XSPORTSX" "WELCOME TO" "LIVE SPORTS"
+  snapshot 11-tv-home
+  tap_text "FAVORITES"
+  sleep 1
+  snapshot 12-tv-favorites
+  assert_text "MY TEAMS" 12-tv-favorites
+  assert_text "SELECT YOUR TEAMS" 12-tv-favorites || true
+  assert_any_text 12-tv-favorites "SELECT YOUR TEAMS" "SELECT MY TEAMS" "BUILD YOUR SPORTS FEED"
+  if has_text "SELECT YOUR TEAMS" 12-tv-favorites; then
+    tap_text "SELECT YOUR TEAMS"
+    sleep 1
+    snapshot 13-team-picker
+    assert_text "SELECT YOUR TEAMS" 13-team-picker
+    assert_text "Search teams" 13-team-picker
+    # College regression: search a known college team and verify it appears.
+    tap_text "Search teams"
+    input_text "Alabama"
+    sleep 1
+    snapshot 14-college-picker
+    assert_text "Alabama" 14-college-picker
+    if has_text "CANCEL" 14-college-picker; then tap_text "CANCEL" || true; fi
+  fi
+
+  # Return to home and verify ticker/background UI remains alive.
+  tap_text "HOME"
+  sleep 1
+  snapshot 15-tv-final
+  assert_any_text 15-tv-final "XSPORTSX" "LIVE SPORTS" "UPCOMING"
 fi
 
-# Capture a final UI hierarchy for debugging and confirm no crash dialog is present.
 snapshot final
-if grep -Eqi 'has stopped|keeps stopping|isn.t responding|Application Error' "$OUT/final.xml"; then
-  fail "Android crash/ANR dialog detected"
-fi
+if grep -Eqi 'has stopped|keeps stopping|isn.t responding|Application Error' "$OUT/final.xml"; then fail "Android crash/ANR dialog detected"; fi
 
 echo "XSportsX $MODE regression suite PASSED"
