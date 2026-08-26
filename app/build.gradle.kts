@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
-        versionName = "1.6.7"
+        versionCode = 19
+        versionName = "1.6.8"
         // Neon X branding release.
     }
     flavorDimensions += "device"
