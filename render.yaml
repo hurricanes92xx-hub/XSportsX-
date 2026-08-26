@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     autoDeploy: true
-    buildCommand: npm install && npm run check && node apply-public-sources.js && node --check hotfix-entry.js
+    buildCommand: npm install && npm run check && node apply-public-sources.js && python3 patch_wwe_backend.py && node --check hotfix-entry.js && node --check artwork.js
     startCommand: npm start
     healthCheckPath: /health
     envVars:
