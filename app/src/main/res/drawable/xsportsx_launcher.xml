@@ -4,15 +4,24 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:fillColor="#03050A" android:pathData="M0,0h108v108h-108z" />
-    <path android:fillColor="#55FF1744" android:pathData="M13,13L20,6 60,46 53,53z" />
-    <path android:fillColor="#FFFF1744" android:pathData="M13,13L20,6 58,44 51,51z" />
-    <path android:fillColor="#55FF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
-    <path android:fillColor="#FFFF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
-    <path android:fillColor="#5532B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
-    <path android:fillColor="#FF32B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
-    <path android:fillColor="#5532B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
-    <path android:fillColor="#FF32B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M17,13L20,10 55,45 52,48z" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M91,95L88,98 53,63 56,60z" />
+    <!-- Deep-black glass/void base -->
+    <path android:fillColor="#030509" android:pathData="M0,0h108v108h-108z" />
+    <!-- Thick fractured red X -->
+    <path android:fillColor="#669D001D" android:pathData="M7,7L25,7 54,39 83,7 101,7 67,54 101,101 83,101 54,69 25,101 7,101 41,54z" />
+    <path android:fillColor="#FFFF102F" android:pathData="M10,10L27,10 54,41 81,10 98,10 65,54 98,98 81,98 54,67 27,98 10,98 43,54z" />
+    <!-- White-hot fractured edge -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M16,14L26,14 54,45 82,14 92,14 59,54 92,94 82,94 54,63 26,94 16,94 49,54z" />
+    <path android:fillColor="#FFFF102F" android:pathData="M20,18L29,18 54,46 79,18 88,18 61,54 88,90 79,90 54,62 29,90 20,90 47,54z" />
+    <!-- Broken-glass cuts -->
+    <path android:fillColor="#FFFF6678" android:pathData="M11,31L29,42 35,49 30,52 17,43z" />
+    <path android:fillColor="#FFFF6678" android:pathData="M97,77L79,66 73,59 78,56 91,65z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M28,21L34,25 44,36 40,40z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M80,87L74,83 64,72 68,68z" />
+    <!-- Red glow shards -->
+    <path android:fillColor="#99FF102F" android:pathData="M4,25L17,31 9,36z" />
+    <path android:fillColor="#99FF102F" android:pathData="M4,83L17,77 9,72z" />
+    <path android:fillColor="#99FF435C" android:pathData="M24,4L31,17 20,11z" />
+    <path android:fillColor="#99FF435C" android:pathData="M84,104L77,91 88,97z" />
+    <!-- Hot center fracture -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M49,49L54,43 59,49 55,54 59,59 54,65 49,59 53,54z" />
 </vector>
