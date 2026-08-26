@@ -33,7 +33,6 @@ data class FavoriteNews(val team:String,val headline:String,val description:Stri
 private val FavRed=Color(0xFFFF1838)
 private val FavBg=Color(0xFF05060A)
 private val FavPanel=Color(0xFF0D121A)
-private val FavPanel2=Color(0xFF141A24)
 private val FavMuted=Color(0xFF7D8797)
 
 object FavoritesStore{
@@ -41,101 +40,90 @@ object FavoritesStore{
     private const val KEY="teams"
     fun load(context:Context):List<FavoriteTeam>{
         val raw=context.getSharedPreferences(PREFS,Context.MODE_PRIVATE).getStringSet(KEY,emptySet()).orEmpty()
-        return raw.mapNotNull(::decode).sortedBy{it.name}
+        return raw.mapNotNull{decode(it)}.sortedBy{it.name}
     }
-    fun save(context:Context,teams:List<FavoriteTeam>){
-        context.getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit().putStringSet(KEY,teams.map(::encode).toSet()).apply()
-    }
+    fun save(context:Context,teams:List<FavoriteTeam>){context.getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit().putStringSet(KEY,teams.map{encode(it)}.toSet()).apply()}
     private fun encode(t:FavoriteTeam)=listOf(t.league,t.sport,t.abbr,t.name).joinToString("|")
     private fun decode(v:String):FavoriteTeam?{val p=v.split("|",limit=4);return if(p.size==4)FavoriteTeam(p[3],p[0],p[1],p[2])else null}
 }
 
-private val favoriteTeams=listOf(
-    "NFL|Football|ARI|Arizona Cardinals","NFL|Football|ATL|Atlanta Falcons","NFL|Football|BAL|Baltimore Ravens","NFL|Football|BUF|Buffalo Bills","NFL|Football|CAR|Carolina Panthers","NFL|Football|CHI|Chicago Bears","NFL|Football|CIN|Cincinnati Bengals","NFL|Football|CLE|Cleveland Browns","NFL|Football|DAL|Dallas Cowboys","NFL|Football|DEN|Denver Broncos","NFL|Football|DET|Detroit Lions","NFL|Football|GB|Green Bay Packers","NFL|Football|HOU|Houston Texans","NFL|Football|IND|Indianapolis Colts","NFL|Football|JAX|Jacksonville Jaguars","NFL|Football|KC|Kansas City Chiefs","NFL|Football|LV|Las Vegas Raiders","NFL|Football|LAC|Los Angeles Chargers","NFL|Football|LAR|Los Angeles Rams","NFL|Football|MIA|Miami Dolphins","NFL|Football|MIN|Minnesota Vikings","NFL|Football|NE|New England Patriots","NFL|Football|NO|New Orleans Saints","NFL|Football|NYG|New York Giants","NFL|Football|NYJ|New York Jets","NFL|Football|PHI|Philadelphia Eagles","NFL|Football|PIT|Pittsburgh Steelers","NFL|Football|SF|San Francisco 49ers","NFL|Football|SEA|Seattle Seahawks","NFL|Football|TB|Tampa Bay Buccaneers","NFL|Football|TEN|Tennessee Titans","NFL|Football|WAS|Washington Commanders",
-    "NBA|Basketball|ATL|Atlanta Hawks","NBA|Basketball|BOS|Boston Celtics","NBA|Basketball|BKN|Brooklyn Nets","NBA|Basketball|CHA|Charlotte Hornets","NBA|Basketball|CHI|Chicago Bulls","NBA|Basketball|CLE|Cleveland Cavaliers","NBA|Basketball|DAL|Dallas Mavericks","NBA|Basketball|DEN|Denver Nuggets","NBA|Basketball|DET|Detroit Pistons","NBA|Basketball|GS|Golden State Warriors","NBA|Basketball|HOU|Houston Rockets","NBA|Basketball|IND|Indiana Pacers","NBA|Basketball|LAC|LA Clippers","NBA|Basketball|LAL|Los Angeles Lakers","NBA|Basketball|MEM|Memphis Grizzlies","NBA|Basketball|MIA|Miami Heat","NBA|Basketball|MIL|Milwaukee Bucks","NBA|Basketball|MIN|Minnesota Timberwolves","NBA|Basketball|NO|New Orleans Pelicans","NBA|Basketball|NY|New York Knicks","NBA|Basketball|OKC|Oklahoma City Thunder","NBA|Basketball|ORL|Orlando Magic","NBA|Basketball|PHI|Philadelphia 76ers","NBA|Basketball|PHX|Phoenix Suns","NBA|Basketball|POR|Portland Trail Blazers","NBA|Basketball|SAC|Sacramento Kings","NBA|Basketball|SA|San Antonio Spurs","NBA|Basketball|TOR|Toronto Raptors","NBA|Basketball|UTA|Utah Jazz","NBA|Basketball|WAS|Washington Wizards",
-    "MLB|Baseball|ARI|Arizona Diamondbacks","MLB|Baseball|ATL|Atlanta Braves","MLB|Baseball|BAL|Baltimore Orioles","MLB|Baseball|BOS|Boston Red Sox","MLB|Baseball|CHC|Chicago Cubs","MLB|Baseball|CWS|Chicago White Sox","MLB|Baseball|CIN|Cincinnati Reds","MLB|Baseball|CLE|Cleveland Guardians","MLB|Baseball|COL|Colorado Rockies","MLB|Baseball|DET|Detroit Tigers","MLB|Baseball|HOU|Houston Astros","MLB|Baseball|KC|Kansas City Royals","MLB|Baseball|LAA|Los Angeles Angels","MLB|Baseball|LAD|Los Angeles Dodgers","MLB|Baseball|MIA|Miami Marlins","MLB|Baseball|MIL|Milwaukee Brewers","MLB|Baseball|MIN|Minnesota Twins","MLB|Baseball|NYM|New York Mets","MLB|Baseball|NYY|New York Yankees","MLB|Baseball|OAK|Athletics","MLB|Baseball|PHI|Philadelphia Phillies","MLB|Baseball|PIT|Pittsburgh Pirates","MLB|Baseball|SD|San Diego Padres","MLB|Baseball|SEA|Seattle Mariners","MLB|Baseball|SF|San Francisco Giants","MLB|Baseball|STL|St. Louis Cardinals","MLB|Baseball|TB|Tampa Bay Rays","MLB|Baseball|TEX|Texas Rangers","MLB|Baseball|TOR|Toronto Blue Jays","MLB|Baseball|WSH|Washington Nationals",
-    "NHL|Hockey|ANA|Anaheim Ducks","NHL|Hockey|BOS|Boston Bruins","NHL|Hockey|BUF|Buffalo Sabres","NHL|Hockey|CGY|Calgary Flames","NHL|Hockey|CAR|Carolina Hurricanes","NHL|Hockey|CHI|Chicago Blackhawks","NHL|Hockey|COL|Colorado Avalanche","NHL|Hockey|CBJ|Columbus Blue Jackets","NHL|Hockey|DAL|Dallas Stars","NHL|Hockey|DET|Detroit Red Wings","NHL|Hockey|EDM|Edmonton Oilers","NHL|Hockey|FLA|Florida Panthers","NHL|Hockey|LAK|Los Angeles Kings","NHL|Hockey|MIN|Minnesota Wild","NHL|Hockey|MTL|Montreal Canadiens","NHL|Hockey|NSH|Nashville Predators","NHL|Hockey|NJD|New Jersey Devils","NHL|Hockey|NYI|New York Islanders","NHL|Hockey|NYR|New York Rangers","NHL|Hockey|OTT|Ottawa Senators","NHL|Hockey|PHI|Philadelphia Flyers","NHL|Hockey|PIT|Pittsburgh Penguins","NHL|Hockey|SJS|San Jose Sharks","NHL|Hockey|SEA|Seattle Kraken","NHL|Hockey|STL|St. Louis Blues","NHL|Hockey|TBL|Tampa Bay Lightning","NHL|Hockey|TOR|Toronto Maple Leafs","NHL|Hockey|UTA|Utah Mammoth","NHL|Hockey|VAN|Vancouver Canucks","NHL|Hockey|VGK|Vegas Golden Knights","NHL|Hockey|WPG|Winnipeg Jets","NHL|Hockey|WSH|Washington Capitals"
-).map{val p=it.split("|");FavoriteTeam(p[3],p[0],p[1],p[2])}
+private fun makeTeams(league:String,sport:String,names:String):List<FavoriteTeam>=names.split(",").map{it.trim()}.filter{it.isNotBlank()}.map{n->FavoriteTeam(n,league,sport,abbrFor(n))}
+private fun abbrFor(name:String)=when(name){
+    "Arizona Cardinals"->"ARI";"Atlanta Falcons"->"ATL";"Baltimore Ravens"->"BAL";"Buffalo Bills"->"BUF";"Carolina Panthers"->"CAR";"Chicago Bears"->"CHI";"Cincinnati Bengals"->"CIN";"Cleveland Browns"->"CLE";"Dallas Cowboys"->"DAL";"Denver Broncos"->"DEN";"Detroit Lions"->"DET";"Green Bay Packers"->"GB";"Houston Texans"->"HOU";"Indianapolis Colts"->"IND";"Jacksonville Jaguars"->"JAX";"Kansas City Chiefs"->"KC";"Las Vegas Raiders"->"LV";"Los Angeles Chargers"->"LAC";"Los Angeles Rams"->"LAR";"Miami Dolphins"->"MIA";"Minnesota Vikings"->"MIN";"New England Patriots"->"NE";"New Orleans Saints"->"NO";"New York Giants"->"NYG";"New York Jets"->"NYJ";"Philadelphia Eagles"->"PHI";"Pittsburgh Steelers"->"PIT";"San Francisco 49ers"->"SF";"Seattle Seahawks"->"SEA";"Tampa Bay Buccaneers"->"TB";"Tennessee Titans"->"TEN";"Washington Commanders"->"WAS";
+    "Atlanta Hawks"->"ATL";"Boston Celtics"->"BOS";"Brooklyn Nets"->"BKN";"Charlotte Hornets"->"CHA";"Chicago Bulls"->"CHI";"Cleveland Cavaliers"->"CLE";"Dallas Mavericks"->"DAL";"Denver Nuggets"->"DEN";"Detroit Pistons"->"DET";"Golden State Warriors"->"GS";"Houston Rockets"->"HOU";"Indiana Pacers"->"IND";"LA Clippers"->"LAC";"Los Angeles Lakers"->"LAL";"Memphis Grizzlies"->"MEM";"Miami Heat"->"MIA";"Milwaukee Bucks"->"MIL";"Minnesota Timberwolves"->"MIN";"New Orleans Pelicans"->"NO";"New York Knicks"->"NY";"Oklahoma City Thunder"->"OKC";"Orlando Magic"->"ORL";"Philadelphia 76ers"->"PHI";"Phoenix Suns"->"PHX";"Portland Trail Blazers"->"POR";"Sacramento Kings"->"SAC";"San Antonio Spurs"->"SA";"Toronto Raptors"->"TOR";"Utah Jazz"->"UTA";"Washington Wizards"->"WAS";
+    "Arizona Diamondbacks"->"ARI";"Atlanta Braves"->"ATL";"Baltimore Orioles"->"BAL";"Boston Red Sox"->"BOS";"Chicago Cubs"->"CHC";"Chicago White Sox"->"CWS";"Cincinnati Reds"->"CIN";"Cleveland Guardians"->"CLE";"Colorado Rockies"->"COL";"Detroit Tigers"->"DET";"Houston Astros"->"HOU";"Kansas City Royals"->"KC";"Los Angeles Angels"->"LAA";"Los Angeles Dodgers"->"LAD";"Miami Marlins"->"MIA";"Milwaukee Brewers"->"MIL";"Minnesota Twins"->"MIN";"New York Mets"->"NYM";"New York Yankees"->"NYY";"Athletics"->"ATH";"Philadelphia Phillies"->"PHI";"Pittsburgh Pirates"->"PIT";"San Diego Padres"->"SD";"Seattle Mariners"->"SEA";"San Francisco Giants"->"SF";"St. Louis Cardinals"->"STL";"Tampa Bay Rays"->"TB";"Texas Rangers"->"TEX";"Toronto Blue Jays"->"TOR";"Washington Nationals"->"WSH";
+    "Anaheim Ducks"->"ANA";"Boston Bruins"->"BOS";"Buffalo Sabres"->"BUF";"Calgary Flames"->"CGY";"Carolina Hurricanes"->"CAR";"Chicago Blackhawks"->"CHI";"Colorado Avalanche"->"COL";"Columbus Blue Jackets"->"CBJ";"Dallas Stars"->"DAL";"Detroit Red Wings"->"DET";"Edmonton Oilers"->"EDM";"Florida Panthers"->"FLA";"Los Angeles Kings"->"LAK";"Minnesota Wild"->"MIN";"Montreal Canadiens"->"MTL";"Nashville Predators"->"NSH";"New Jersey Devils"->"NJD";"New York Islanders"->"NYI";"New York Rangers"->"NYR";"Ottawa Senators"->"OTT";"Philadelphia Flyers"->"PHI";"Pittsburgh Penguins"->"PIT";"San Jose Sharks"->"SJS";"Seattle Kraken"->"SEA";"St. Louis Blues"->"STL";"Tampa Bay Lightning"->"TBL";"Toronto Maple Leafs"->"TOR";"Utah Mammoth"->"UTA";"Vancouver Canucks"->"VAN";"Vegas Golden Knights"->"VGK";"Winnipeg Jets"->"WPG";"Washington Capitals"->"WSH";
+    else->name.split(" ").mapNotNull{it.firstOrNull()}.joinToString("").take(3).uppercase()
+}
+
+private val favoriteTeams=buildList{
+    addAll(makeTeams("NFL","Football","Arizona Cardinals,Atlanta Falcons,Baltimore Ravens,Buffalo Bills,Carolina Panthers,Chicago Bears,Cincinnati Bengals,Cleveland Browns,Dallas Cowboys,Denver Broncos,Detroit Lions,Green Bay Packers,Houston Texans,Indianapolis Colts,Jacksonville Jaguars,Kansas City Chiefs,Las Vegas Raiders,Los Angeles Chargers,Los Angeles Rams,Miami Dolphins,Minnesota Vikings,New England Patriots,New Orleans Saints,New York Giants,New York Jets,Philadelphia Eagles,Pittsburgh Steelers,San Francisco 49ers,Seattle Seahawks,Tampa Bay Buccaneers,Tennessee Titans,Washington Commanders"))
+    addAll(makeTeams("NBA","Basketball","Atlanta Hawks,Boston Celtics,Brooklyn Nets,Charlotte Hornets,Chicago Bulls,Cleveland Cavaliers,Dallas Mavericks,Denver Nuggets,Detroit Pistons,Golden State Warriors,Houston Rockets,Indiana Pacers,LA Clippers,Los Angeles Lakers,Memphis Grizzlies,Miami Heat,Milwaukee Bucks,Minnesota Timberwolves,New Orleans Pelicans,New York Knicks,Oklahoma City Thunder,Orlando Magic,Philadelphia 76ers,Phoenix Suns,Portland Trail Blazers,Sacramento Kings,San Antonio Spurs,Toronto Raptors,Utah Jazz,Washington Wizards"))
+    addAll(makeTeams("MLB","Baseball","Arizona Diamondbacks,Atlanta Braves,Baltimore Orioles,Boston Red Sox,Chicago Cubs,Chicago White Sox,Cincinnati Reds,Cleveland Guardians,Colorado Rockies,Detroit Tigers,Houston Astros,Kansas City Royals,Los Angeles Angels,Los Angeles Dodgers,Miami Marlins,Milwaukee Brewers,Minnesota Twins,New York Mets,New York Yankees,Athletics,Philadelphia Phillies,Pittsburgh Pirates,San Diego Padres,Seattle Mariners,San Francisco Giants,St. Louis Cardinals,Tampa Bay Rays,Texas Rangers,Toronto Blue Jays,Washington Nationals"))
+    addAll(makeTeams("NHL","Hockey","Anaheim Ducks,Boston Bruins,Buffalo Sabres,Calgary Flames,Carolina Hurricanes,Chicago Blackhawks,Colorado Avalanche,Columbus Blue Jackets,Dallas Stars,Detroit Red Wings,Edmonton Oilers,Florida Panthers,Los Angeles Kings,Minnesota Wild,Montreal Canadiens,Nashville Predators,New Jersey Devils,New York Islanders,New York Rangers,Ottawa Senators,Philadelphia Flyers,Pittsburgh Penguins,San Jose Sharks,Seattle Kraken,St. Louis Blues,Tampa Bay Lightning,Toronto Maple Leafs,Utah Mammoth,Vancouver Canucks,Vegas Golden Knights,Winnipeg Jets,Washington Capitals"))
+}
 
 @Composable
 fun FavoritesCenter(tvMode:Boolean=false){
     val context=LocalContext.current
     var selected by remember{mutableStateOf(FavoritesStore.load(context))}
-    var showPicker by remember{mutableStateOf(false)}
-    var refresh by remember{mutableIntStateOf(0)}
+    var picker by remember{mutableStateOf(false)}
+    var active by remember{mutableStateOf<FavoriteTeam?>(selected.firstOrNull())}
+    var events by remember{mutableStateOf<List<SportsEvent>>(emptyList())}
     var news by remember{mutableStateOf<List<FavoriteNews>>(emptyList())}
-    var loadingNews by remember{mutableStateOf(false)}
-    var activeTeam by remember{mutableStateOf<FavoriteTeam?>(selected.firstOrNull())}
-    val allEvents by produceState<List<SportsEvent>>(emptyList(),selected,refresh){value=runCatching{SportsScheduleService.load()}.getOrDefault(emptyList())}
-    val selectedEvents=remember(allEvents,selected){allEvents.filter{event->selected.any{team->teamMatches(team,event)}}}
-    LaunchedEffect(selected,refresh){
-        if(selected.isEmpty()){news=emptyList();loadingNews=false;return@LaunchedEffect}
-        loadingNews=true
+    var loading by remember{mutableStateOf(false)}
+    LaunchedEffect(selected){
+        loading=true
+        events=runCatching{SportsScheduleService.load()}.getOrDefault(emptyList())
         news=loadFavoriteNews(selected.take(6))
-        loadingNews=false
+        loading=false
+        if(active==null||active !in selected)active=selected.firstOrNull()
     }
+    val matching=remember(events,selected){events.filter{e->selected.any{t->teamMatches(t,e)}}}
     Column(Modifier.fillMaxSize().background(FavBg).padding(if(tvMode)28.dp else 18.dp)){
         Row(verticalAlignment=Alignment.CenterVertically,modifier=Modifier.fillMaxWidth()){
-            Column(Modifier.weight(1f)){Text("MY TEAMS",color=Color.White,fontSize=if(tvMode)30.sp else 24.sp,fontWeight=FontWeight.Black);Text("Your teams • live • upcoming • news",color=FavMuted,fontSize=11.sp)}
-            OutlinedButton(onClick={showPicker=true},shape=RoundedCornerShape(14.dp),colors=ButtonDefaults.outlinedButtonColors(contentColor=Color.White)){Text("＋ SELECT TEAMS",fontSize=10.sp,fontWeight=FontWeight.Black)}
-            Spacer(Modifier.width(8.dp));TextButton(onClick={refresh++}){Text("REFRESH",color=FavRed,fontWeight=FontWeight.Black,fontSize=10.sp)}
+            Column(Modifier.weight(1f)){Text("MY TEAMS",color=Color.White,fontSize=if(tvMode)30.sp else 24.sp,fontWeight=FontWeight.Black);Text("Live games • schedules • team news",color=FavMuted,fontSize=11.sp)}
+            OutlinedButton(onClick={picker=true},shape=RoundedCornerShape(14.dp),colors=ButtonDefaults.outlinedButtonColors(contentColor=Color.White)){Text("＋ SELECT TEAMS",fontSize=10.sp,fontWeight=FontWeight.Black)}
+            Spacer(Modifier.width(8.dp));TextButton(onClick={events=emptyList();news=emptyList();}){Text("RESET",color=FavRed,fontSize=10.sp,fontWeight=FontWeight.Black)}
         }
         Spacer(Modifier.height(16.dp))
-        if(selected.isEmpty()) EmptyFavorites{showPicker=true} else {
-            LazyRow(horizontalArrangement=Arrangement.spacedBy(9.dp),contentPadding=PaddingValues(end=8.dp)){items(selected){team->FavoriteTeamChip(team,activeTeam==team){activeTeam=team}}}
-            Spacer(Modifier.height(16.dp))
-            activeTeam?.let{team->FavoriteTeamHero(team,selectedEvents.filter{e->teamMatches(team,e)},tvMode);Spacer(Modifier.height(14.dp))}
-            FavoriteSection("LIVE NOW",if(selectedEvents.any{it.isLive})"${selectedEvents.count{it.isLive}} LIVE" else "NO LIVE GAMES")
-            val live=selectedEvents.filter{it.isLive}
-            if(live.isNotEmpty())FavoriteEventRow(live,tvMode)else FavoriteEmptyRow("None of your selected teams are live right now")
+        if(selected.isEmpty()) EmptyFavorites{picker=true} else {
+            LazyRow(horizontalArrangement=Arrangement.spacedBy(9.dp)){items(selected){t->TeamChip(t,t==active){active=t}}}
+            Spacer(Modifier.height(14.dp))
+            active?.let{t->TeamHero(t,matching.filter{e->teamMatches(t,e)},tvMode);Spacer(Modifier.height(14.dp))}
+            Section("LIVE NOW",if(matching.any{it.isLive})"${matching.count{it.isLive}} LIVE" else "NO LIVE GAMES")
+            val live=matching.filter{it.isLive}
+            if(live.isEmpty())EmptyRow("None of your selected teams are live right now")else EventRow(live,tvMode)
             Spacer(Modifier.height(12.dp))
-            FavoriteSection("UPCOMING GAMES","NEXT 30 DAYS")
-            val upcoming=selectedEvents.filter{it.isUpcoming}.take(24)
-            if(upcoming.isNotEmpty())FavoriteEventRow(upcoming,tvMode)else FavoriteEmptyRow("No upcoming games found")
+            Section("UPCOMING GAMES","NEXT 30 DAYS")
+            val upcoming=matching.filter{it.isUpcoming}.take(24)
+            if(upcoming.isEmpty())EmptyRow(if(loading)"Loading schedules…" else "No upcoming games found")else EventRow(upcoming,tvMode)
             Spacer(Modifier.height(12.dp))
-            FavoriteSection("TEAM NEWS",if(loadingNews)"UPDATING" else "LATEST")
-            if(news.isNotEmpty())FavoriteNewsRow(news,tvMode)else FavoriteEmptyRow("No matching team news available yet")
+            Section("TEAM NEWS",if(loading)"UPDATING" else "LATEST")
+            if(news.isEmpty())EmptyRow("No matching team news available yet")else NewsRow(news,tvMode)
         }
     }
-    if(showPicker)TeamPickerDialog(selected){chosen->selected=chosen;FavoritesStore.save(context,chosen);activeTeam=chosen.firstOrNull();showPicker=false}
+    if(picker)TeamPickerDialog(selected){chosen->selected=chosen;FavoritesStore.save(context,chosen);active=chosen.firstOrNull();picker=false}
 }
 
 private fun teamMatches(team:FavoriteTeam,event:SportsEvent):Boolean{
-    val text=listOf(event.home,event.away,event.title).joinToString(" ").lowercase()
+    val text="${event.home} ${event.away} ${event.title}".lowercase()
     val name=team.name.lowercase();val abbr=team.abbr.lowercase()
-    return text.contains(name)||text.contains(abbr)||name.split(" ").filter{it.length>4}.any{text.contains(it)}
+    return text.contains(name)||text.contains(abbr)||name.split(" ").filter{it.length>5}.any{text.contains(it)}
 }
 
-@Composable private fun EmptyFavorites(onSelect:()->Unit){Column(Modifier.fillMaxWidth().padding(top=70.dp),horizontalAlignment=Alignment.CenterHorizontally){Text("★",color=FavRed,fontSize=54.sp);Spacer(Modifier.height(10.dp));Text("BUILD YOUR SPORTS FEED",color=Color.White,fontSize=20.sp,fontWeight=FontWeight.Black);Text("Pick your teams and XSportsX will put their live games, schedules and news here.",color=FavMuted,fontSize=12.sp,maxLines=2);Spacer(Modifier.height(16.dp));Button(onClick=onSelect,shape=RoundedCornerShape(13.dp)){Text("SELECT MY TEAMS",fontWeight=FontWeight.Black)}}}
-
-@Composable private fun FavoriteTeamChip(team:FavoriteTeam,active:Boolean,onClick:()->Unit){Column(Modifier.width(150.dp).clip(RoundedCornerShape(14.dp)).background(if(active)Color(0xFF251019)else FavPanel).border(1.dp,FavRed.copy(alpha=if(active)1f else .18f),RoundedCornerShape(14.dp)).clickable{onClick()}.padding(12.dp)){Text(team.league,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Text(team.abbr,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black);Text(team.name,color=FavMuted,fontSize=9.sp,maxLines=1,overflow=TextOverflow.Ellipsis)}}
-
-@Composable private fun FavoriteTeamHero(team:FavoriteTeam,events:List<SportsEvent>,tvMode:Boolean){Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF320913),Color(0xFF111923),Color(0xFF10131A)))).padding(18.dp),verticalAlignment=Alignment.CenterVertically){Column(Modifier.weight(1f)){Text(team.league,color=FavRed,fontSize=9.sp,fontWeight=FontWeight.Black,letterSpacing=1.2.sp);Text(team.name,color=Color.White,fontSize=if(tvMode)25.sp else 19.sp,fontWeight=FontWeight.Black);Text(if(events.isEmpty())"No scheduled events in the current feed" else "${events.count{it.isLive}} live • ${events.count{it.isUpcoming}} upcoming",color=FavMuted,fontSize=11.sp)};Text(team.abbr,color=Color.White.copy(alpha=.15f),fontSize=48.sp,fontWeight=FontWeight.Black)}}
-
-@Composable private fun FavoriteSection(title:String,meta:String){Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.Bottom){Text(title,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.1.sp);Spacer(Modifier.width(8.dp));Text(meta,color=FavMuted,fontSize=8.sp,fontWeight=FontWeight.Black)}}
-
-@Composable private fun FavoriteEventRow(events:List<SportsEvent>,tvMode:Boolean){LazyRow(horizontalArrangement=Arrangement.spacedBy(12.dp),contentPadding=PaddingValues(top=9.dp,bottom=4.dp)){items(events){event->Column(Modifier.width(if(tvMode)300.dp else 245.dp).clip(RoundedCornerShape(16.dp)).background(FavPanel).padding(14.dp)){Row{Text(event.league,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Spacer(Modifier.weight(1f));Text(if(event.isLive)"LIVE" else "UPCOMING",color=if(event.isLive)FavRed else FavMuted,fontSize=8.sp,fontWeight=FontWeight.Black)};Spacer(Modifier.height(7.dp));Text(event.title.ifBlank{"${event.away} vs ${event.home}"},color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold,maxLines=2,overflow=TextOverflow.Ellipsis);Spacer(Modifier.height(6.dp));Text(event.status.ifBlank{"Scheduled"},color=FavMuted,fontSize=9.sp);if(event.broadcast.isNotBlank())Text("📺 ${event.broadcast}",color=Color(0xFFB6BFCC),fontSize=9.sp,maxLines=1,overflow=TextOverflow.Ellipsis)}}}}
-
-@Composable private fun FavoriteEmptyRow(text:String){Box(Modifier.fillMaxWidth().padding(vertical=10.dp).clip(RoundedCornerShape(14.dp)).background(FavPanel).padding(15.dp)){Text(text,color=FavMuted,fontSize=11.sp)}}
-
-@Composable private fun FavoriteNewsRow(items:List<FavoriteNews>,tvMode:Boolean){LazyRow(horizontalArrangement=Arrangement.spacedBy(12.dp),contentPadding=PaddingValues(top=9.dp,bottom=4.dp)){items(items){n->Column(Modifier.width(if(tvMode)330.dp else 260.dp).clip(RoundedCornerShape(16.dp)).background(FavPanel).padding(14.dp)){Text(n.team,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(6.dp));Text(n.headline,color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold,maxLines=3,overflow=TextOverflow.Ellipsis);Spacer(Modifier.height(6.dp));Text(n.published,color=FavMuted,fontSize=8.sp);if(n.description.isNotBlank())Text(n.description,color=Color(0xFF9AA3B1),fontSize=9.sp,maxLines=3,overflow=TextOverflow.Ellipsis)}}}}
-
-@Composable private fun TeamPickerDialog(current:List<FavoriteTeam>,onDone:(List<FavoriteTeam>)->Unit){var selected by remember(current){mutableStateOf(current.toSet())};var query by remember{mutableStateOf("")};AlertDialog(onDismissRequest={onDone(current)},containerColor=FavPanel,title={Text("SELECT YOUR TEAMS",color=Color.White,fontWeight=FontWeight.Black)},text={Column(Modifier.fillMaxWidth()){OutlinedTextField(value=query,onValueChange={query=it},modifier=Modifier.fillMaxWidth(),singleLine=true,label={Text("Search teams")});Spacer(Modifier.height(8.dp));LazyColumn(Modifier.heightIn(max=390.dp)){items(favoriteTeams.filter{query.isBlank()||it.name.contains(query,true)||it.league.contains(query,true)||it.abbr.contains(query,true)}){team->val checked=selected.contains(team);Row(Modifier.fillMaxWidth().clickable{selected=if(checked)selected-team else selected+team}.padding(vertical=7.dp),verticalAlignment=Alignment.CenterVertically){Checkbox(checked=checked,onCheckedChange={selected=if(checked)selected-team else selected+team},colors=CheckboxDefaults.colors(checkedColor=FavRed));Column{Text(team.name,color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold);Text("${team.league} • ${team.abbr}",color=FavMuted,fontSize=9.sp)}}}}}},confirmButton={Button(onClick={onDone(selected.sortedBy{it.name})}){Text("SAVE ${selected.size}",fontWeight=FontWeight.Black)}},dismissButton={TextButton(onClick={onDone(current)}){Text("CANCEL")}})}
+@Composable private fun EmptyFavorites(onSelect:()->Unit){Column(Modifier.fillMaxWidth().padding(top=70.dp),horizontalAlignment=Alignment.CenterHorizontally){Text("★",color=FavRed,fontSize=54.sp);Text("BUILD YOUR SPORTS FEED",color=Color.White,fontSize=20.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(8.dp));Text("Pick your teams for live games, schedules and news.",color=FavMuted,fontSize=12.sp);Spacer(Modifier.height(16.dp));Button(onClick=onSelect){Text("SELECT MY TEAMS",fontWeight=FontWeight.Black)}}}
+@Composable private fun TeamChip(t:FavoriteTeam,active:Boolean,onClick:()->Unit){Column(Modifier.width(150.dp).clip(RoundedCornerShape(14.dp)).background(if(active)Color(0xFF251019)else FavPanel).border(1.dp,FavRed.copy(alpha=if(active)1f else .18f),RoundedCornerShape(14.dp)).clickable{onClick()}.padding(12.dp)){Text(t.league,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Text(t.abbr,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black);Text(t.name,color=FavMuted,fontSize=9.sp,maxLines=1,overflow=TextOverflow.Ellipsis)}}
+@Composable private fun TeamHero(t:FavoriteTeam,games:List<SportsEvent>,tv:Boolean){Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF320913),Color(0xFF111923),Color(0xFF10131A)))).padding(18.dp),verticalAlignment=Alignment.CenterVertically){Column(Modifier.weight(1f)){Text(t.league,color=FavRed,fontSize=9.sp,fontWeight=FontWeight.Black);Text(t.name,color=Color.White,fontSize=if(tv)25.sp else 19.sp,fontWeight=FontWeight.Black);Text("${games.count{it.isLive}} live • ${games.count{it.isUpcoming}} upcoming",color=FavMuted,fontSize=11.sp)};Text(t.abbr,color=Color.White.copy(alpha=.15f),fontSize=48.sp,fontWeight=FontWeight.Black)}}
+@Composable private fun Section(title:String,meta:String){Row(verticalAlignment=Alignment.Bottom){Text(title,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.1.sp);Spacer(Modifier.width(8.dp));Text(meta,color=FavMuted,fontSize=8.sp,fontWeight=FontWeight.Black)}}
+@Composable private fun EventRow(games:List<SportsEvent>,tv:Boolean){LazyRow(horizontalArrangement=Arrangement.spacedBy(12.dp),contentPadding=PaddingValues(top=8.dp,bottom=4.dp)){items(games){g->Column(Modifier.width(if(tv)300.dp else 245.dp).clip(RoundedCornerShape(16.dp)).background(FavPanel).padding(14.dp)){Row{Text(g.league,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Spacer(Modifier.weight(1f));Text(if(g.isLive)"LIVE" else "UPCOMING",color=if(g.isLive)FavRed else FavMuted,fontSize=8.sp,fontWeight=FontWeight.Black)};Spacer(Modifier.height(7.dp));Text(g.title.ifBlank{"${g.away} vs ${g.home}"},color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold,maxLines=2,overflow=TextOverflow.Ellipsis);Text(g.status.ifBlank{"Scheduled"},color=FavMuted,fontSize=9.sp);if(g.broadcast.isNotBlank())Text("📺 ${g.broadcast}",color=Color(0xFFB6BFCC),fontSize=9.sp,maxLines=1,overflow=TextOverflow.Ellipsis)}}}}
+@Composable private fun EmptyRow(text:String){Box(Modifier.fillMaxWidth().padding(vertical=8.dp).clip(RoundedCornerShape(14.dp)).background(FavPanel).padding(15.dp)){Text(text,color=FavMuted,fontSize=11.sp)}}
+@Composable private fun NewsRow(itemsList:List<FavoriteNews>,tv:Boolean){LazyRow(horizontalArrangement=Arrangement.spacedBy(12.dp),contentPadding=PaddingValues(top=8.dp)){items(itemsList){n->Column(Modifier.width(if(tv)330.dp else 260.dp).clip(RoundedCornerShape(16.dp)).background(FavPanel).padding(14.dp)){Text(n.team,color=FavRed,fontSize=8.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(6.dp));Text(n.headline,color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold,maxLines=3,overflow=TextOverflow.Ellipsis);Spacer(Modifier.height(5.dp));Text(n.published,color=FavMuted,fontSize=8.sp);if(n.description.isNotBlank())Text(n.description,color=Color(0xFF9AA3B1),fontSize=9.sp,maxLines=3,overflow=TextOverflow.Ellipsis)}}}}
+@Composable private fun TeamPickerDialog(current:List<FavoriteTeam>,onDone:(List<FavoriteTeam>)->Unit){var chosen by remember(current){mutableStateOf(current.toSet())};var query by remember{mutableStateOf("")};AlertDialog(onDismissRequest={onDone(current)},containerColor=FavPanel,title={Text("SELECT YOUR TEAMS",color=Color.White,fontWeight=FontWeight.Black)},text={Column(Modifier.fillMaxWidth()){OutlinedTextField(value=query,onValueChange={query=it},modifier=Modifier.fillMaxWidth(),singleLine=true,label={Text("Search teams")});Spacer(Modifier.height(8.dp));LazyColumn(Modifier.heightIn(max=390.dp)){items(favoriteTeams.filter{query.isBlank()||it.name.contains(query,true)||it.league.contains(query,true)||it.abbr.contains(query,true)}){team->val checked=team in chosen;Row(Modifier.fillMaxWidth().clickable{chosen=if(checked)chosen-team else chosen+team}.padding(vertical=6.dp),verticalAlignment=Alignment.CenterVertically){Checkbox(checked=checked,onCheckedChange={chosen=if(checked)chosen-team else chosen+team},colors=CheckboxDefaults.colors(checkedColor=FavRed));Column{Text(team.name,color=Color.White,fontSize=12.sp,fontWeight=FontWeight.Bold);Text("${team.league} • ${team.abbr}",color=FavMuted,fontSize=9.sp)}}}}}},confirmButton={Button(onClick={onDone(chosen.sortedBy{it.name})}){Text("SAVE ${chosen.size}",fontWeight=FontWeight.Black)}},dismissButton={TextButton(onClick={onDone(current)}){Text("CANCEL")}})}
 
 private suspend fun loadFavoriteNews(teams:List<FavoriteTeam>):List<FavoriteNews>=withContext(Dispatchers.IO){teams.flatMap{team->runCatching{fetchNews(team)}.getOrDefault(emptyList())}.sortedByDescending{it.published}.take(18)}
-
 private fun fetchNews(team:FavoriteTeam):List<FavoriteNews>{
-    val league=when(team.league){"NFL"->"football/nfl";"NBA"->"basketball/nba";"MLB"->"baseball/mlb";"NHL"->"hockey/nhl";else->return emptyList()}
-    val c=try{URL("https://site.api.espn.com/apis/site/v2/sports/$league/news?limit=50").openConnection() as HttpURLConnection}catch(_:Exception){return emptyList()}
-    c.connectTimeout=2200;c.readTimeout=4500;c.requestMethod="GET";c.setRequestProperty("User-Agent","XSportsX/1.7")
-    return try{
-        if(c.responseCode !in 200..299)return emptyList()
-        val root=JSONObject(c.inputStream.bufferedReader().use{it.readText()});val articles=root.optJSONArray("articles")?:return emptyList();val out=ArrayList<FavoriteNews>();val tokens=listOf(team.name.lowercase(),team.abbr.lowercase())
-        for(i in 0 until articles.length()){
-            val a=articles.optJSONObject(i)?:continue;val headline=a.optString("headline");val desc=a.optString("description");val text="$headline $desc".lowercase()
-            if(tokens.any{text.contains(it)}){val web=a.optJSONObject("links")?.optString("web").orEmpty();out+=FavoriteNews(team.abbr,headline,desc,a.optString("published"),web)}
-            if(out.size>=6)break
-        }
-        out
-    }catch(_:Exception){emptyList()}finally{c.disconnect()}
+    val path=when(team.league){"NFL"->"football/nfl";"NBA"->"basketball/nba";"MLB"->"baseball/mlb";"NHL"->"hockey/nhl";else->return emptyList()}
+    val c=try{URL("https://site.api.espn.com/apis/site/v2/sports/$path/news?limit=50").openConnection() as HttpURLConnection}catch(_:Exception){return emptyList()}
+    return try{c.connectTimeout=2200;c.readTimeout=4500;c.requestMethod="GET";c.setRequestProperty("User-Agent","XSportsX/1.7");if(c.responseCode !in 200..299)return emptyList();val a=JSONObject(c.inputStream.bufferedReader().use{it.readText()}).optJSONArray("articles")?:return emptyList();val out=ArrayList<FavoriteNews>();val tokens=listOf(team.name.lowercase(),team.abbr.lowercase());for(i in 0 until a.length()){val x=a.optJSONObject(i)?:continue;val h=x.optString("headline");val d=x.optString("description");if(tokens.any{"$h $d".lowercase().contains(it)})out+=FavoriteNews(team.abbr,h,d,x.optString("published"),x.optJSONObject("links")?.optString("web").orEmpty());if(out.size>=6)break};out}catch(_:Exception){emptyList()}finally{c.disconnect()}
 }
