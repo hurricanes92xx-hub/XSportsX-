@@ -51,6 +51,7 @@ jobs:
           [ ! -f scripts/patch_tv_navigation.py ] || python3 scripts/patch_tv_navigation.py
           [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
+          python3 scripts/patch_league_routing.py
           python3 scripts/patch_verified_sports_logos_wwe.py
           python3 scripts/patch_ncaavb_badge.py
           python3 scripts/patch_public_free_sources.py
