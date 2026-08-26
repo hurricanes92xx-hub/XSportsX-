@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "updated": "2026-08-26",
+  "policy": "official-or-authorized-public-events-only",
+  "sources": [
+    {"id":"ncaa-champs-pass","name":"NCAA Championships Pass","sports":["ncaa-football","ncaa-basketball","ncaa-other"],"url":"https://www.ncaa.com/championships","type":"official-event-hub"},
+    {"id":"ncaa-live","name":"NCAA Live","sports":["ncaa-basketball","ncaa-other"],"url":"https://www.ncaa.com/watch-live","type":"official-event-hub"},
+    {"id":"mlb-milb-free","name":"MLB / MiLB Free Live","sports":["baseball"],"url":"https://www.mlb.com/watch/free-games","type":"official-event-hub"},
+    {"id":"official-youtube","name":"Official YouTube Live Discovery","sports":["ncaa-football","ncaa-basketball","baseball","soccer","other"],"type":"official-account-discovery"},
+    {"id":"official-school-streams","name":"College Athletics Official Streams","sports":["ncaa-football","ncaa-basketball","ncaa-other"],"type":"official-school-discovery"},
+    {"id":"official-local-stations","name":"Local Broadcaster Live Discovery","sports":["ncaa-football","ncaa-basketball","baseball","soccer","other"],"type":"official-broadcaster-discovery"}
+  ]
+}
