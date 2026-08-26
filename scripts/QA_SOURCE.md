@@ -1,0 +1,1 @@
+Source QA is isolated: local deterministic Xtream/M3U fixture, debug-only APKs, no release signing or provider credentials.
