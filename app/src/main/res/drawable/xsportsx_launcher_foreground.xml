@@ -4,14 +4,29 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:fillColor="#55FF1744" android:pathData="M13,13L20,6 60,46 53,53z" />
-    <path android:fillColor="#FFFF1744" android:pathData="M13,13L20,6 58,44 51,51z" />
-    <path android:fillColor="#55FF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
-    <path android:fillColor="#FFFF1744" android:pathData="M13,95L20,102 58,64 51,57z" />
-    <path android:fillColor="#5532B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
-    <path android:fillColor="#FF32B7FF" android:pathData="M95,13L88,6 50,44 57,51z" />
-    <path android:fillColor="#5532B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
-    <path android:fillColor="#FF32B7FF" android:pathData="M95,95L88,102 50,64 57,57z" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M17,13L20,10 55,45 52,48z" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M91,95L88,98 53,63 56,60z" />
+
+    <!-- Adaptive-icon safe-zone: compact neon red X, centered so Android/Google TV masks do not crop it. -->
+    <!-- Soft glow layer -->
+    <path
+        android:fillColor="#44FF102F"
+        android:pathData="M22,25 L30,17 L54,41 L78,17 L86,25 L62,49 L86,73 L78,81 L54,57 L30,81 L22,73 L46,49 Z" />
+
+    <!-- Main fractured X -->
+    <path
+        android:fillColor="#FFFF102F"
+        android:pathData="M25,27 L32,20 L54,42 L76,20 L83,27 L61,49 L83,71 L76,78 L54,56 L32,78 L25,71 L47,49 Z" />
+
+    <!-- Hot white inner edge -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M31,31 L35,27 L54,46 L73,27 L77,31 L58,50 L77,69 L73,73 L54,54 L35,73 L31,69 L50,50 Z" />
+
+    <!-- Neon red core -->
+    <path
+        android:fillColor="#FFFF102F"
+        android:pathData="M36,35 L39,32 L54,47 L69,32 L72,35 L57,50 L72,65 L69,68 L54,53 L39,68 L36,65 L51,50 Z" />
+
+    <!-- Small fracture highlights -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M31,38 L36,42 L43,49 L39,53 L33,47 Z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M77,62 L72,58 L65,51 L69,47 L75,53 Z" />
 </vector>
