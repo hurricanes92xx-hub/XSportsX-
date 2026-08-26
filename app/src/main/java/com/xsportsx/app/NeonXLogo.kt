@@ -18,111 +18,95 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * New XSportsX mark. This is a fresh implementation; it does not reuse the
- * previous XtremeLogo geometry or rendering code.
- */
+/** Premium XSportsX mark. Replaces the legacy logo completely. */
 @Composable
-fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 52.dp) {
-    val transition = rememberInfiniteTransition(label = "neon-x")
-    val rotation by transition.animateFloat(
+fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 58.dp) {
+    val motion = rememberInfiniteTransition(label = "xsportsx-main-logo")
+    val rotation by motion.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(18000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "neon-x-rotation"
+        animationSpec = infiniteRepeatable(tween(24000, easing = LinearEasing)),
+        label = "xsportsx-logo-rotation"
     )
-    val glow by transition.animateFloat(
-        initialValue = 0.72f,
+    val pulse by motion.animateFloat(
+        initialValue = 0.78f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
+            tween(900, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "neon-x-glow"
+        label = "xsportsx-logo-pulse"
     )
 
     Box(modifier.size(size)) {
         Canvas(Modifier.size(size).rotate(rotation)) {
             val w = this.size.width
             val h = this.size.height
-            val pad = w * 0.16f
-            val left = pad
-            val right = w - pad
-            val top = pad
-            val bottom = h - pad
-            val midX = w * 0.5f
-            val midY = h * 0.5f
+            val cx = w / 2f
+            val cy = h / 2f
+            val red = Color(0xFFFF163D)
+            val redHot = Color(0xFFFF5A73)
+            val blue = Color(0xFF168CFF)
+            val blueHot = Color(0xFF6BC4FF)
+            val white = Color(0xFFFFFFFF)
+            val core = Color(0xFF05080E)
 
-            val red = Color(0xFFFF1744)
-            val blue = Color(0xFF2196FF)
-            val white = Color.White
-
-            // Four separate tapered chevrons make the new X silhouette.
-            val redTop = Path().apply {
-                moveTo(left, top)
-                lineTo(midX - w * 0.035f, midY - h * 0.035f)
-                lineTo(midX - w * 0.115f, midY - h * 0.115f)
-                lineTo(left + w * 0.085f, top + h * 0.085f)
-                close()
-            }
-            val redBottom = Path().apply {
-                moveTo(left, bottom)
-                lineTo(midX - w * 0.035f, midY + h * 0.035f)
-                lineTo(midX - w * 0.115f, midY + h * 0.115f)
-                lineTo(left + w * 0.085f, bottom - h * 0.085f)
-                close()
-            }
-            val blueTop = Path().apply {
-                moveTo(right, top)
-                lineTo(midX + w * 0.035f, midY - h * 0.035f)
-                lineTo(midX + w * 0.115f, midY - h * 0.115f)
-                lineTo(right - w * 0.085f, top + h * 0.085f)
-                close()
-            }
-            val blueBottom = Path().apply {
-                moveTo(right, bottom)
-                lineTo(midX + w * 0.035f, midY + h * 0.035f)
-                lineTo(midX + w * 0.115f, midY + h * 0.115f)
-                lineTo(right - w * 0.085f, bottom - h * 0.085f)
+            // The same aggressive silhouette as the supplied X: four angular arms,
+            // red on the left, blue on the right, with a bright white-hot edge.
+            val xPath = Path().apply {
+                moveTo(w * .08f, h * .12f)
+                lineTo(w * .30f, h * .12f)
+                lineTo(cx, h * .39f)
+                lineTo(w * .70f, h * .12f)
+                lineTo(w * .92f, h * .12f)
+                lineTo(w * .63f, cy)
+                lineTo(w * .92f, h * .88f)
+                lineTo(w * .70f, h * .88f)
+                lineTo(cx, h * .61f)
+                lineTo(w * .30f, h * .88f)
+                lineTo(w * .08f, h * .88f)
+                lineTo(w * .37f, cy)
                 close()
             }
 
-            // Soft independent aura around each arm.
-            drawNeonArm(red, left, top, midX, midY, glow, w)
-            drawNeonArm(red, left, bottom, midX, midY, glow, w)
-            drawNeonArm(blue, right, top, midX, midY, glow, w)
-            drawNeonArm(blue, right, bottom, midX, midY, glow, w)
+            // Black inset keeps the mark crisp instead of looking like four blobs.
+            drawPath(xPath, core)
 
-            drawPath(redTop, Brush.linearGradient(listOf(red, Color(0xFFFF4D6D))))
-            drawPath(redBottom, Brush.linearGradient(listOf(red, Color(0xFFFF4D6D))))
-            drawPath(blueTop, Brush.linearGradient(listOf(blue, Color(0xFF64B5FF))))
-            drawPath(blueBottom, Brush.linearGradient(listOf(blue, Color(0xFF64B5FF))))
+            // Large atmospheric glow layers.
+            drawPath(
+                xPath,
+                brush = Brush.linearGradient(listOf(red.copy(alpha = .48f * pulse), white.copy(alpha = .16f), blue.copy(alpha = .48f * pulse))),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .13f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            )
+            drawPath(
+                xPath,
+                brush = Brush.linearGradient(listOf(red, white, blue)),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .055f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            )
+            drawPath(
+                xPath,
+                brush = Brush.linearGradient(listOf(redHot, white, blueHot)),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .018f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            )
 
-            // Bright center lock and two white highlights make the mark read cleanly at TV distance.
-            drawCircle(white.copy(alpha = 0.94f), radius = w * 0.045f, center = Offset(midX, midY))
-            drawLine(white.copy(alpha = 0.9f), Offset(left + w * 0.07f, top + h * 0.07f), Offset(midX - w * 0.06f, midY - h * 0.06f), w * 0.018f, StrokeCap.Round)
-            drawLine(white.copy(alpha = 0.9f), Offset(right - w * 0.07f, bottom - h * 0.07f), Offset(midX + w * 0.06f, midY + h * 0.06f), w * 0.018f, StrokeCap.Round)
+            // White-hot diagonal highlights on the inner faces.
+            drawLine(white.copy(alpha = .95f), Offset(w * .15f, h * .19f), Offset(cx - w * .10f, cy - h * .10f), w * .012f, StrokeCap.Round)
+            drawLine(white.copy(alpha = .95f), Offset(w * .85f, h * .81f), Offset(cx + w * .10f, cy + h * .10f), w * .012f, StrokeCap.Round)
+
+            // Central energy core.
+            drawCircle(white.copy(alpha = .30f * pulse), w * .105f, Offset(cx, cy))
+            drawCircle(white.copy(alpha = .95f), w * .026f, Offset(cx, cy))
+
+            // Small electric shards give the logo the high-energy sports-tech look.
+            val shardAlpha = .45f * pulse
+            drawLine(red.copy(alpha = shardAlpha), Offset(w * .05f, h * .27f), Offset(w * .15f, h * .31f), w * .012f, StrokeCap.Round)
+            drawLine(red.copy(alpha = shardAlpha), Offset(w * .08f, h * .73f), Offset(w * .18f, h * .69f), w * .010f, StrokeCap.Round)
+            drawLine(blue.copy(alpha = shardAlpha), Offset(w * .95f, h * .27f), Offset(w * .85f, h * .31f), w * .012f, StrokeCap.Round)
+            drawLine(blue.copy(alpha = shardAlpha), Offset(w * .92f, h * .73f), Offset(w * .82f, h * .69f), w * .010f, StrokeCap.Round)
         }
     }
-}
-
-private fun DrawScope.drawNeonArm(
-    color: Color,
-    startX: Float,
-    startY: Float,
-    endX: Float,
-    endY: Float,
-    intensity: Float,
-    width: Float
-) {
-    val aura = color.copy(alpha = 0.18f * intensity)
-    drawLine(aura, Offset(startX, startY), Offset(endX, endY), width * 0.28f, StrokeCap.Round)
-    drawLine(color.copy(alpha = 0.28f * intensity), Offset(startX, startY), Offset(endX, endY), width * 0.16f, StrokeCap.Round)
 }
