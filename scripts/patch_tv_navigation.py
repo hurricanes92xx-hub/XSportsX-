@@ -7,11 +7,6 @@ if not p.is_file():
 
 s = p.read_text(encoding="utf-8")
 
-# TvHome.kt is intentionally compacted. Keep this patch minimal and idempotent:
-# the previous version rewrote TvTopBar and accidentally created duplicate
-# composables, which broke Kotlin compilation. The base TV navigation is already
-# valid, so only normalize the malformed generic return syntax introduced by the
-# earlier patch chain.
 patterns = [
     (r'private suspend fun loadTvGames\(liveOnly:Boolean=true\):List<TvGame>=',
      'private suspend fun loadTvGames(liveOnly:Boolean=true): List<TvGame> ='),
@@ -24,8 +19,6 @@ for pattern, replacement in patterns:
     s, n = re.subn(pattern, replacement, s, count=1)
     fixed = fixed or n > 0
 
-# Remove only legacy TV-mode state/call additions if they were left in a source
-# produced by an older patch. Never touch the existing TvActionButton definition.
 s = s.replace(
     'var tvModeEnabled by remember{mutableStateOf(false)};',
     ''
@@ -35,8 +28,15 @@ s = s.replace(
     'TvTopBar{selectedNav="SETTINGS"}'
 )
 
-# The base source should contain exactly one TvActionButton. If an older patch
-# somehow duplicated it, fail loudly rather than producing another bad build.
+# The ticker must remain inside TvHome's Box scope so Modifier.align() resolves
+# against BoxScope. The previous compacted source closed Box one brace too early.
+# Normalize only this exact malformed boundary and keep the patch idempotent.
+old_boundary = '}}}}};HomeSportsTicker(Modifier.align(Alignment.BottomCenter).fillMaxWidth())}}'
+new_boundary = '}}}};HomeSportsTicker(Modifier.align(Alignment.BottomCenter).fillMaxWidth())}}'
+if old_boundary in s:
+    s = s.replace(old_boundary, new_boundary, 1)
+    fixed = True
+
 if len(re.findall(r'@Composable\s+private fun TvActionButton\s*\(', s)) > 1:
     raise SystemExit("Duplicate TvActionButton definitions detected; refusing to patch")
 
