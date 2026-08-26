@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node hotfix-entry.js",
     "dev": "node --watch hotfix-entry.js",
-    "check": "node --check server.js && node --check hotfix-entry.js && node --check bootstrap.js && node --check artwork.js && node --check xtream-health.js"
+    "check": "node --check server.js && node --check hotfix-entry.js && node --check bootstrap.js && node --check artwork.js && node --check xtream-health.js && node --check public-sources.js && node --check apply-public-sources.js"
   },
   "engines": { "node": ">=20" },
   "dependencies": {
