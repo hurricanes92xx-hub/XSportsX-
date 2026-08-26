@@ -52,6 +52,7 @@ jobs:
           [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
           python3 scripts/patch_ncaavb_badge.py
+          python3 scripts/patch_public_free_sources.py
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
