@@ -28,14 +28,15 @@ class PublicSourceResolver {
         private const val MAX_CANDIDATES = 160
         private const val MAX_HEALTH_CHECKS = 32
         private val REGISTRY_URLS = listOf(
-            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/public-sources-registry.json",
-            "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json",
-            "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/public-sources-registry.json",
-            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json"
+            "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/docs/public-sources-registry.json",
+            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json",
+            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@android-app/public-sources-registry.json",
+            "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json"
         )
         private val approvedHosts = setOf(
             "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
-            "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net",
+            "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net", "cloudfront.net",
+            "pluto.tv", "samsungcloud.tv", "plex.tv", "roku.com",
             "tjktv.org", "rtatv.akamaized.net", "jmp2.uk", "i.mjh.nz"
         )
         private val sportsTerms = Regex(
