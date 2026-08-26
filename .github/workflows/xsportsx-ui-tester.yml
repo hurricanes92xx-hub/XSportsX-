@@ -1,7 +1,8 @@
 name: XSportsX QA — Mobile + TV
 
 # Isolated QA pipeline. It NEVER signs, publishes, or modifies release APKs.
-# QA-only trigger marker: run the isolated emulator suite on this commit.
+# QA covers lifecycle, UI navigation, source fixtures, Xtream/M3U connection,
+# TV QR/manual login surfaces, source latency, and regression evidence.
 
 on:
   workflow_dispatch:
@@ -81,12 +82,12 @@ jobs:
           script: |
             APK=$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)
             test -n "$APK"
-            chmod +x scripts/ui_smoke_test.sh
-            ./scripts/ui_smoke_test.sh "$APK" test-output-mobile
+            chmod +x scripts/qa_regression_test.sh
+            QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: XSportsX-mobile-ui-evidence-${{ github.sha }}
+          name: XSportsX-mobile-regression-${{ github.sha }}
           path: |
             test-output-mobile
             qa-source.log
@@ -120,12 +121,12 @@ jobs:
           script: |
             APK=$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)
             test -n "$APK"
-            chmod +x scripts/ui_smoke_test.sh
-            ./scripts/ui_smoke_test.sh "$APK" test-output-tv
+            chmod +x scripts/qa_regression_test.sh
+            QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: XSportsX-tv-ui-evidence-${{ github.sha }}
+          name: XSportsX-tv-regression-${{ github.sha }}
           path: |
             test-output-tv
             qa-source.log
