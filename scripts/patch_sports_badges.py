@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 path = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
 text = path.read_text()
@@ -72,8 +73,6 @@ for name,glyph,domain in expanded:
         block += f',\n    TvSport("{name}","{glyph}","https://www.google.com/s2/favicons?domain={domain}&sz=128")'
 text = text[:start] + block + text[end:]
 
-# Use actual league/series logo files where verified. These are tiny remote SVGs,
-# so the APK stays light while the badges remain current and visually accurate.
 logo_overrides = {
     "MOTOGP": "https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg",
     "WRC": "https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg",
@@ -86,39 +85,56 @@ logo_overrides = {
     "VOLLEYBALL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg",
 }
 for name, url in logo_overrides.items():
-    import re
     pattern = rf'(TvSport\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
     text, count = re.subn(pattern, lambda m, u=url: m.group(1) + u + m.group(2), text, count=1)
     if count != 1:
-        raise SystemExit(f"Could not set verified logo for {name}")
+        raise SystemExit(f"Could not set verified TV logo for {name}")
 
 path.write_text(text)
 
-# Mobile Home uses the same patch step so Mobile and TV stay visually consistent.
+# Mobile uses the same verified logos. Missing entries are added instead of
+# failing the whole release build when the base mobile catalog has not yet
+# included one of the expanded motorsport leagues.
 mobile = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
-if mobile.exists():
-    m = mobile.read_text()
-    mobile_logos = {
-        "RUGBY": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_WXV.svg",
-        "VOLLEYBALL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg",
-        "MOTOGP": logo_overrides["MOTOGP"],
-        "WRC": logo_overrides["WRC"],
-        "WEC": logo_overrides["WEC"],
-        "FORMULA E": logo_overrides["FORMULA E"],
-        "MXGP": logo_overrides["MXGP"],
-        "FORMULA 1": logo_overrides["FORMULA 1"],
-        "NASCAR": logo_overrides["NASCAR"],
-        "DTM": logo_overrides["DTM"],
-    }
-    for name, url in mobile_logos.items():
-        pattern = rf'(SportVisual\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
-        m, count = re.subn(pattern, lambda x, u=url: x.group(1) + u + x.group(2), m, count=1)
-        if count != 1:
-            raise SystemExit(f"Could not set mobile logo for {name}")
-    # Fix the malformed lacrosse favicon URL and use the official governing-body domain as fallback.
-    m = m.replace('https://www.google.com/s2/favicons?domain:worldlacrosse.sport&sz=128', 'https://www.google.com/s2/favicons?domain=worldlacrosse.sport&sz=128')
-    mobile.write_text(m)
-else:
+if not mobile.exists():
     raise SystemExit("Mobile Home component not found")
+m = mobile.read_text()
+mobile_logos = {
+    "RUGBY": "https://www.google.com/s2/favicons?domain=rugbypass.tv&sz=128",
+    "VOLLEYBALL": logo_overrides["VOLLEYBALL"],
+    "MOTOGP": logo_overrides["MOTOGP"],
+    "WRC": logo_overrides["WRC"],
+    "WEC": logo_overrides["WEC"],
+    "FORMULA E": logo_overrides["FORMULA E"],
+    "MXGP": logo_overrides["MXGP"],
+    "FORMULA 1": logo_overrides["FORMULA 1"],
+    "NASCAR": logo_overrides["NASCAR"],
+    "DTM": logo_overrides["DTM"],
+}
+mobile_icons = {
+    "RUGBY":"RUGBY","VOLLEYBALL":"VB","MOTOGP":"MotoGP","WRC":"WRC","WEC":"WEC",
+    "FORMULA E":"FE","MXGP":"MXGP","FORMULA 1":"F1","NASCAR":"NASCAR","DTM":"DTM"
+}
+for name, url in mobile_logos.items():
+    pattern = rf'(SportVisual\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
+    m, count = re.subn(pattern, lambda x, u=url: x.group(1) + u + x.group(2), m, count=1)
+    if count == 0:
+        sports_marker = 'private val sports = listOf('
+        s = m.find(sports_marker)
+        if s < 0:
+            raise SystemExit("Mobile sports catalog not found")
+        e = m.find('\n)', s)
+        if e < 0:
+            raise SystemExit("Mobile sports catalog terminator not found")
+        entry = f',\n    SportVisual("{name}", "{mobile_icons[name]}", "{url}")'
+        m = m[:e] + entry + m[e:]
+    elif count != 1:
+        raise SystemExit(f"Unexpected duplicate mobile logo entries for {name}")
 
-print("Applied verified league/series logos to Mobile + TV and kept remote assets lightweight")
+m = m.replace('https://www.google.com/s2/favicons?domain:worldlacrosse.sport&sz=128', 'https://www.google.com/s2/favicons?domain=worldlacrosse.sport&sz=128')
+m = m.replace('https://www.google.com/s2/favicons?domain:fiawec.com&sz=128', 'https://www.google.com/s2/favicons?domain=fiawec.com&sz=128')
+m = m.replace('https://www.google.com/s2/favicons?domain:fiaformulae.com&sz=128', 'https://www.google.com/s2/favicons?domain=fiaformulae.com&sz=128')
+m = m.replace('https://www.google.com/s2/favicons?domain:worldlacrosse.sport&sz=128', 'https://www.google.com/s2/favicons?domain=worldlacrosse.sport&sz=128')
+mobile.write_text(m)
+
+print("Applied verified league/series logos to Mobile + TV without failing when a mobile catalog entry is absent")
