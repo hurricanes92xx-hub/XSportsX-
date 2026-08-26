@@ -1,10 +1,10 @@
 from pathlib import Path
 import re
+import subprocess
 
 source = Path("app/src/main/java/com/xsportsx/app/TeamFavorites.kt")
 text = source.read_text(encoding="utf-8")
 
-# TeamFavorites owns the picker list. Inject the college catalog exactly once.
 if "addAll(collegeFavoriteTeams())" not in text:
     text, count = re.subn(
         r"(private\s+val\s+favoriteTeams\s*=\s*buildList\s*\{)",
@@ -15,14 +15,9 @@ if "addAll(collegeFavoriteTeams())" not in text:
     if count != 1:
         raise SystemExit("favoriteTeams marker not found")
 
-# Kotlin tokenizes `>=` as a comparison operator. The compact favorites file
-# previously used `:List<T>=...`, which breaks compilation. Normalize these
-# expression-body declarations before compiling.
 text = text.replace(":List<FavoriteTeam>=", ":List<FavoriteTeam> =")
 text = text.replace(":List<FavoriteNews>=", ":List<FavoriteNews> =")
 
-# fetchNews uses a compact `val path=when(team.league)` mapping. Replace the
-# complete expression rather than depending on whitespace/newline formatting.
 league_pattern = r"val path=when\(team\.league\)\{.*?\}"
 league_replacement = 'val path=when(team.league){"NFL"->"football/nfl";"NBA"->"basketball/nba";"MLB"->"baseball/mlb";"NHL"->"hockey/nhl";"NCAAF"->"football/college-football";"NCAAM"->"basketball/mens-college-basketball";"NCAAW"->"basketball/womens-college-basketball";"NCAAB"->"baseball/college-baseball";else->return emptyList()}'
 text, count = re.subn(league_pattern, league_replacement, text, count=1, flags=re.DOTALL)
@@ -43,4 +38,5 @@ if missing:
     raise SystemExit("college favorites patch incomplete: " + ", ".join(missing))
 
 source.write_text(text, encoding="utf-8")
-print("College Favorites patch applied and verified")
+subprocess.run(["python3", "scripts/patch_favorites_feed.py"], check=True)
+print("College Favorites + team-specific feed patches applied and verified")
