@@ -54,7 +54,9 @@ jobs:
           python3 scripts/patch_verified_sports_logos_wwe.py
           python3 scripts/patch_ncaavb_badge.py
           python3 scripts/patch_public_free_sources.py
-          python3 scripts/patch_public_live_sources.py
+          # MainActivityFuture/LiveChannelsScreen already provide the public-first live flow.
+          # Do not run the legacy MainActivity patch: it targets the retired screen and can
+          # fail after other production UI patches have changed that file.
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
