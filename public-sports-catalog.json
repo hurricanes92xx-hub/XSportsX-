@@ -1,8 +1,8 @@
 {
-  "version": 2,
+  "version": 3,
   "policy": "official-or-authorized-public-events-only",
   "sports": [
-    "NFL","NBA","NCAA Football","NCAA Basketball","MLB","NHL","UFC","Boxing",
+    "NFL","NBA","NCAA Football","NCAA Basketball","NCAA Volleyball","MLB","NHL","UFC","Boxing",
     "Rugby","Volleyball","Beach Volleyball","Lacrosse","Wrestling","Grappling","Judo","Taekwondo",
     "Swimming","Diving","Water Polo","Gymnastics","Cycling","Darts","Snooker","Pool","Billiards",
     "Archery","Equestrian","Handball","Field Hockey","Cricket","Soccer",
@@ -13,9 +13,10 @@
     {"id":"redbull","name":"Red Bull TV","type":"official","url":"https://www.redbull.com/us-en/live-events","sports":["Motorsports","Action Sports","Esports"],"enabled":true},
     {"id":"monster-jam","name":"Monster Jam","type":"official","url":"https://www.monsterjam.com/en-us/watch/","sports":["Monster Jam"],"enabled":true},
     {"id":"rugbypass","name":"RugbyPass TV","type":"official","url":"https://www.rugbypass.tv/","sports":["Rugby"],"enabled":true},
-    {"id":"official-youtube","name":"Official YouTube Live","type":"official","sports":["Rugby","Volleyball","Lacrosse","Wrestling","Motorsports","Combat","Aquatics","Gymnastics","Cycling","Darts","Esports","Action Sports"],"enabled":true},
-    {"id":"school-team","name":"Official school/team streams","type":"official","sports":["NCAA Football","NCAA Basketball","Volleyball","Lacrosse","Wrestling","Soccer","Baseball","Softball","Basketball"],"enabled":true},
-    {"id":"official-broadcasters","name":"Official TV / FAST broadcasters","type":"official","sports":["NFL","NBA","MLB","NHL","NCAA Football","NCAA Basketball","Soccer","Motorsports","Rugby","Volleyball"],"enabled":true}
+    {"id":"ncaa-volleyball","name":"NCAA Volleyball","type":"official","url":"https://www.ncaa.com/sports/volleyball-women","sports":["NCAA Volleyball"],"enabled":true},
+    {"id":"official-youtube","name":"Official YouTube Live","type":"official","sports":["NCAA Volleyball","Rugby","Volleyball","Lacrosse","Wrestling","Motorsports","Combat","Aquatics","Gymnastics","Cycling","Darts","Esports","Action Sports"],"enabled":true},
+    {"id":"school-team","name":"Official school/team streams","type":"official","sports":["NCAA Football","NCAA Basketball","NCAA Volleyball","Volleyball","Lacrosse","Wrestling","Soccer","Baseball","Softball","Basketball"],"enabled":true},
+    {"id":"official-broadcasters","name":"Official TV / FAST broadcasters","type":"official","sports":["NFL","NBA","MLB","NHL","NCAA Football","NCAA Basketball","NCAA Volleyball","Soccer","Motorsports","Rugby","Volleyball"],"enabled":true}
   ],
   "artwork": {
     "teamSports": "team badge + team name; cache remotely; sport fallback",
