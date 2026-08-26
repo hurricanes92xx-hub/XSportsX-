@@ -1,0 +1,52 @@
+name: Wire public source API
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wire server public source endpoint
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('server.js')
+          s = p.read_text()
+          marker = "const {checkXtream}=require('./xtream-health');"
+          if "require('./public-api')" not in s:
+              s = s.replace(marker, marker + "\nconst {getPublicStreams}=require('./public-api');", 1)
+          route = """\napp.get('/public-sources.json',async(req,res)=>{\n  try{\n    const streams=await getPublicStreams();\n    res.set({'Cache-Control':'public,max-age=60','X-XSportsX-Public-Sources':'health-checked'}).json(streams);\n  }catch(e){\n    console.error('[public-sources]',e.message);\n    res.status(200).json([]);\n  }\n});\n"""
+          anchor = "app.get('/artwork/:league.svg'"
+          if "app.get('/public-sources.json'" not in s:
+              idx = s.find(anchor)
+              if idx < 0:
+                  raise SystemExit('Could not locate server route anchor')
+              s = s[:idx] + route + s[idx:]
+          p.write_text(s)
+
+      - name: Validate backend
+        shell: bash
+        run: |
+          node --check server.js
+          node --check public-api.js
+          node --check public-sources.js
+          node --check live-source-policy.js
+
+      - name: Commit server wiring
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add server.js
+          if git diff --cached --quiet; then echo 'Server already wired'; exit 0; fi
+          git commit -m 'Wire health-checked public source API'
+          git push
