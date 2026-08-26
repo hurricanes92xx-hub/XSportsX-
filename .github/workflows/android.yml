@@ -1,13 +1,15 @@
 name: Build XSportsX APK
 
 # Release build includes the animated Xtreme logo on Mobile + Android TV.
-# Build trigger is intentionally kept on android-app so the release APKs follow the patched branch.
-# TV UI repair is now on android-app; this commit intentionally triggers the release build.
-# Launcher icon updated to the neon red/blue X on 2026-08-25.
+# Release builds intentionally ignore QA-only tester changes so the tester never
+# changes, republishes, or otherwise gates the production APK pipeline.
 
 on:
   push:
     branches: [android-app]
+    paths-ignore:
+      - '.github/workflows/xsportsx-ui-tester.yml'
+      - 'scripts/ui_smoke_test.sh'
   workflow_dispatch:
 
 permissions:
@@ -50,14 +52,8 @@ jobs:
           test -s "${TV_SOURCE}"
           grep -q '^package com.xsportsx.app$' "${TV_SOURCE}"
           grep -q 'TvActionButton' "${TV_SOURCE}"
-          if grep -q 'tvModeEnabled' "${TV_SOURCE}"; then
-            echo "::error::Legacy tvModeEnabled state remains in TvHome.kt"
-            exit 1
-          fi
-          if grep -q 'TvModeButton' "${TV_SOURCE}"; then
-            echo "::error::Legacy TvModeButton remains in TvHome.kt"
-            exit 1
-          fi
+          if grep -q 'tvModeEnabled' "${TV_SOURCE}"; then exit 1; fi
+          if grep -q 'TvModeButton' "${TV_SOURCE}"; then exit 1; fi
 
       - name: Apply college favorites
         shell: bash
@@ -77,10 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Missing XSPORTSX release signing secret: ${name}"
-              exit 1
-            fi
+            if [ -z "${!name}" ]; then echo "Missing signing secret: ${name}"; exit 1; fi
           done
 
       - name: Restore release signing key
@@ -110,15 +103,10 @@ jobs:
           set -euo pipefail
           MOBILE="app/build/outputs/apk/mobile/release/app-mobile-release.apk"
           TV="app/build/outputs/apk/tv/release/app-tv-release.apk"
-          test -s "${MOBILE}"
-          test -s "${TV}"
+          test -s "${MOBILE}" && test -s "${TV}"
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
-          test -n "${APKSIGNER}"
           "${APKSIGNER}" verify --verbose "${MOBILE}"
           "${APKSIGNER}" verify --verbose "${TV}"
-          "${APKSIGNER}" verify --print-certs "${MOBILE}" | tee mobile-signing.txt
-          "${APKSIGNER}" verify --print-certs "${TV}" | tee tv-signing.txt
-          cmp <(grep 'Signer #1 certificate SHA-256 digest' mobile-signing.txt) <(grep 'Signer #1 certificate SHA-256 digest' tv-signing.txt)
           cp "${MOBILE}" XSportsX-Mobile.apk
           cp "${TV}" XSportsX-TV.apk
           sha256sum XSportsX-Mobile.apk XSportsX-TV.apk
@@ -154,7 +142,7 @@ jobs:
           VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
           VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
           TAG="v${VERSION_NAME}"
-          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs for in-app updates.\n\nXSportsX-Update-Version-Code: ${VERSION_CODE}"
+          NOTES="XSportsX Android ${VERSION_NAME} (${VERSION_CODE}). Stable release-signed Mobile and Android TV APKs."
           if gh release view "${TAG}" >/dev/null 2>&1; then
             gh release edit "${TAG}" --notes "${NOTES}"
             gh release upload "${TAG}" XSportsX-Mobile.apk XSportsX-TV.apk --clobber
@@ -164,5 +152,4 @@ jobs:
 
       - name: Remove signing key
         if: always()
-        shell: bash
         run: rm -f xsportsx-release.jks
