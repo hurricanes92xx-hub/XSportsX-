@@ -1,0 +1,2 @@
+export QA_SOURCE_BASE='http://127.0.0.1:8765'
+export QA_EMULATOR_SOURCE_BASE='http://10.0.2.2:8765'
