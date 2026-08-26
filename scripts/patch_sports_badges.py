@@ -47,5 +47,31 @@ components = '''@Composable private fun TvBadgeTile(sport:TvSport,onNetwork:(Str
 @Composable private fun TvNetworkTile(network:TvNetwork,onNetwork:(String)->Unit){var focused by remember{mutableStateOf(false)};Column(Modifier.width(142.dp).height(96.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel).border(1.dp,TvRed.copy(alpha=if(focused)1f else .25f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onNetwork(network.name)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){AsyncImage(model=network.logoUrl,contentDescription=network.name,modifier=Modifier.size(42.dp),contentScale=ContentScale.Fit);Spacer(Modifier.height(6.dp));Text(network.name,color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)}}
 '''
 text = text.replace(needle, components + needle, 1)
+
+# Expanded sports: appended to the same runtime list so the existing build step
+# remains the single source of truth for the production UI.
+expanded = [
+    ("RUGBY","RUGBY","rugbypass.tv"),("VOLLEYBALL","VB","volleyballworld.com"),("LACROSSE","LAX","usalacrosse.com"),("WRESTLING","WR","uww.org"),
+    ("JUDO","JUDO","ijf.org"),("TAEKWONDO","TKD","worldtaekwondo.org"),("SWIMMING","SWIM","worldaquatics.com"),("DIVING","DIVE","worldaquatics.com"),
+    ("WATER POLO","WP","worldaquatics.com"),("GYMNASTICS","GYM","gymnastics.sport"),("CYCLING","BIKE","uci.org"),("DARTS","DARTS","pdc.tv"),
+    ("SNOOKER","SNOOKER","wpbsa.com"),("ARCHERY","ARCH","worldarchery.sport"),("EQUESTRIAN","HORSE","fei.org"),
+    ("MOTORSPORTS","MOTO","redbull.com"),("FORMULA 1","F1","formula1.com"),("NASCAR","NASCAR","nascar.com"),("INDYCAR","INDY","indycar.com"),
+    ("MOTOGP","MotoGP","motogp.com"),("WRC","WRC","wrc.com"),("WEC","WEC","fiawec.com"),("IMSA","IMSA","imsa.com"),
+    ("FORMULA E","FE","fiaformulae.com"),("DTM","DTM","dtm.com"),("MXGP","MXGP","mxgp.com"),("MONSTER JAM","MJ","monsterjam.com"),
+    ("ESPORTS","ESPORTS","redbull.com"),("ACTION SPORTS","ACTION","redbull.com"),("HANDBALL","HAND","ihf.info"),
+    ("FIELD HOCKEY","FH","fih.ch"),("CRICKET","CRICKET","icc-cricket.com"),("SOCCER","SOCCER","fifa.com")
+]
+marker = 'private val tvSports = listOf('
+start = text.find(marker)
+if start < 0:
+    raise SystemExit("Expanded sports anchor not found")
+end = text.find('\n)', start)
+if end < 0:
+    raise SystemExit("Expanded sports list terminator not found")
+block = text[start:end]
+for name,glyph,domain in expanded:
+    if f'TvSport("{name}"' not in block:
+        block += f',\n    TvSport("{name}","{glyph}","https://www.google.com/s2/favicons?domain={domain}&sz=128")'
+text = text[:start] + block + text[end:]
 path.write_text(text)
-print("Applied shared badge/network UI to TvHome.kt")
+print(f"Applied sports badge/network UI and verified {len(expanded)} expanded sports")
