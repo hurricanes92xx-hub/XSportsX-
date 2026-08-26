@@ -46,14 +46,13 @@ class MainActivityFuture : ComponentActivity() {
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
 
+            // Public/free sources are always available; private Xtream/M3U remains optional.
             LaunchedEffect(Unit) {
-                if (connected) {
-                    scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
-                }
+                scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
             }
 
             LaunchedEffect(sourceVersion, connected) {
-                if (connected && sourceVersion > 0) {
+                if (sourceVersion > 0) {
                     runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
                 }
             }
@@ -79,9 +78,9 @@ class MainActivityFuture : ComponentActivity() {
                 else -> key(sourceVersion) {
                     if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(
                         onConnect = { tvConnectChooser = true },
-                        onNetwork = { network -> if (connected) liveFilter = network else tvConnectChooser = true }
+                        onNetwork = { network -> liveFilter = network }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true })
+                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> liveFilter = network.name })
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
                         HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
                     }
