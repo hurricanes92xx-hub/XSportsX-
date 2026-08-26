@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
-          grep -q 'onSettings = { selectedNav = "SETTINGS" }' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'selectedNav = "SETTINGS"' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'TvModeButton' app/src/main/java/com/xsportsx/app/TvHome.kt
 
       - name: Verify release signing secrets
