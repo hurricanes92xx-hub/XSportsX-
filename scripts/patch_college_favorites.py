@@ -15,6 +15,12 @@ if "addAll(collegeFavoriteTeams())" not in text:
     if count != 1:
         raise SystemExit("favoriteTeams marker not found")
 
+# Kotlin tokenizes `>=` as a comparison operator. The compact favorites file
+# previously used `:List<T>=...`, which breaks compilation. Normalize these
+# expression-body declarations before compiling.
+text = text.replace(":List<FavoriteTeam>=", ":List<FavoriteTeam> =")
+text = text.replace(":List<FavoriteNews>=", ":List<FavoriteNews> =")
+
 # fetchNews uses a compact `val path=when(team.league)` mapping. Replace the
 # complete expression rather than depending on whitespace/newline formatting.
 league_pattern = r"val path=when\(team\.league\)\{.*?\}"
@@ -29,6 +35,8 @@ required = [
     '"NCAAM"->"basketball/mens-college-basketball"',
     '"NCAAW"->"basketball/womens-college-basketball"',
     '"NCAAB"->"baseball/college-baseball"',
+    ":List<FavoriteTeam> =",
+    ":List<FavoriteNews> =",
 ]
 missing = [item for item in required if item not in text]
 if missing:
