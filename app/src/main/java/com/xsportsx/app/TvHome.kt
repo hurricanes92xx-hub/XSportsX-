@@ -1,5 +1,6 @@
 package com.xsportsx.app
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,6 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,7 +62,30 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame>=withContext(
 
 @Composable fun TvHome(onConnect:()->Unit={},onNetwork:(String)->Unit={}){var selectedNav by remember{mutableStateOf("HOME")};var liveGames by remember{mutableStateOf<List<TvGame>>(emptyList())};var upcomingGames by remember{mutableStateOf<List<TvGame>>(emptyList())};var loadingLive by remember{mutableStateOf(true)};var loadingUpcoming by remember{mutableStateOf(false)};val scroll=rememberScrollState();LaunchedEffect(Unit){while(isActive){loadingLive=liveGames.isEmpty();liveGames=runCatching{loadTvGames(true)}.getOrDefault(emptyList());loadingLive=false;delay(60_000)}};LaunchedEffect(selectedNav){if(selectedNav=="UPCOMING"&&upcomingGames.isEmpty()){loadingUpcoming=true;upcomingGames=runCatching{loadTvGames(false)}.getOrDefault(emptyList());loadingUpcoming=false}};Box(Modifier.fillMaxSize().background(TvBg)){TvBackdrop(Modifier.fillMaxSize());Row(Modifier.fillMaxSize()){TvNav(selectedNav){selectedNav=it};Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(scroll).padding(start=22.dp,end=30.dp,top=20.dp,bottom=76.dp)){TvTopBar{selectedNav="SETTINGS"};Spacer(Modifier.height(14.dp));when(selectedNav){"HOME"->{TvHero{selectedNav="LIVE NOW"};Spacer(Modifier.height(18.dp));TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE");if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive);Spacer(Modifier.height(16.dp));TvSection("TOP SPORTS","FAST ACCESS");TvSportRow(tvSports,onNetwork);Spacer(Modifier.height(16.dp));TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)};"LIVE NOW"->{TvSection("LIVE NOW",if(liveGames.isEmpty())"No games live right now" else "${liveGames.size} LIVE");if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive)};"UPCOMING"->{TvSection("UPCOMING",if(loadingUpcoming)"LOADING" else "${upcomingGames.size} EVENTS");if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames,onNetwork)else TvLiveEmpty(loadingUpcoming)};"NETWORKS"->{TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)};"FAVORITES"->{TvSection("FAVORITES","YOUR PICKS");TvEmpty("Your favorite leagues and networks will appear here")};"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->{TvSection(selectedNav,"LIVE FEED");val games=liveGames.filter{it.league==selectedNav};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)};"UFC","BOXING"->{TvSection(selectedNav,"EVENT FEED");TvSportRow(tvSports.filter{it.name==selectedNav},onNetwork);Spacer(Modifier.height(14.dp));TvEmpty("Select ${selectedNav} to browse available events")};"SETTINGS"->TvSettings{selectedNav="SETTINGS"}}}}};HomeSportsTicker(Modifier.align(Alignment.BottomCenter).fillMaxWidth())}}
 
-@Composable private fun TvBackdrop(modifier:Modifier){Box(modifier.background(Brush.verticalGradient(listOf(Color(0xFF071019),TvBg,Color(0xFF020306)))))}
+@Composable private fun TvBackdrop(modifier:Modifier){Box(modifier.background(Brush.verticalGradient(listOf(Color(0xFF071019),TvBg,Color(0xFF020306))))){TvCrackedGlass(Modifier.fillMaxSize())}}
+
+@Composable private fun TvCrackedGlass(modifier:Modifier){
+    val pulse=rememberInfiniteTransition(label="tvCrackPulse")
+    val glow by pulse.animateFloat(.52f,.95f,infiniteRepeatable(tween(1200),RepeatMode.Reverse),label="tvCrackGlow")
+    Canvas(modifier){
+        val w=size.width
+        val h=size.height
+        fun crack(points:List<Pair<Float,Float>>, core:Float, outer:Float){
+            val path=Path().apply{moveTo(w*points.first().first,h*points.first().second);points.drop(1).forEach{lineTo(w*it.first,h*it.second)}}
+            drawPath(path,TvRed.copy(alpha=.12f*glow),style=Stroke(width=outer))
+            drawPath(path,Color(0xFFFF001F).copy(alpha=.28f*glow),style=Stroke(width=core))
+            drawPath(path,Color(0xFFFF6A7A).copy(alpha=.9f*glow),style=Stroke(width=2.2f))
+        }
+        crack(listOf(.02f to .08f,.13f to .18f,.09f to .29f,.22f to .39f,.16f to .52f,.31f to .67f),18f,62f)
+        crack(listOf(.98f to .04f,.84f to .13f,.9f to .25f,.74f to .34f,.82f to .49f,.66f to .61f,.73f to .78f),16f,58f)
+        crack(listOf(.26f to .00f,.34f to .13f,.29f to .23f,.43f to .34f,.38f to .48f),13f,48f)
+        crack(listOf(.62f to .02f,.56f to .16f,.68f to .27f,.59f to .41f,.72f to .54f,.64f to .71f),14f,52f)
+        crack(listOf(.04f to .82f,.18f to .74f,.29f to .86f,.42f to .77f,.55f to .93f),17f,56f)
+        crack(listOf(.96f to .84f,.83f to .72f,.71f to .83f,.59f to .76f,.48f to .98f),15f,54f)
+        crack(listOf(.12f to .55f,.24f to .61f,.36f to .56f,.49f to .66f),10f,38f)
+        crack(listOf(.88f to .57f,.76f to .52f,.64f to .59f,.51f to .48f),10f,38f)
+    }
+}
 @Composable private fun TvNav(selected:String,onSelect:(String)->Unit){Column(Modifier.width(210.dp).fillMaxHeight().background(Brush.horizontalGradient(listOf(Color(0xFF071019),Color(0xFF04070C)))).padding(start=22.dp,top=22.dp,end=18.dp,bottom=72.dp)){Box(Modifier.fillMaxWidth(),contentAlignment=Alignment.CenterStart){XtremeLogo(size=52.dp)};Text("XSPORTSX",color=Color.White,fontSize=13.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(22.dp));listOf("⌂" to "HOME","●" to "LIVE NOW","▣" to "UPCOMING","▤" to "NETWORKS","★" to "FAVORITES","⚙" to "SETTINGS").forEach{(icon,label)->TvNavItem(icon,label,selected==label){onSelect(label)}};Spacer(Modifier.height(18.dp));Text("SPORTS",color=TvMuted,fontSize=9.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp);Spacer(Modifier.height(6.dp));tvSports.forEach{sport->TvSportNavItem(sport,selected==sport.name){onSelect(sport.name)}};Spacer(Modifier.weight(1f));Text("TV MODE",color=Color(0xFF596371),fontSize=10.sp,fontWeight=FontWeight.Bold)}}
 @Composable private fun TvNavItem(icon:String,label:String,active:Boolean,onClick:()->Unit){var focused by remember{mutableStateOf(false)};Row(Modifier.fillMaxWidth().padding(vertical=3.dp).clip(RoundedCornerShape(16.dp)).background(if(active)Color(0xFF1A0B10)else Color.Transparent).border(1.dp,TvRed.copy(alpha=if(active||focused)1f else 0f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onClick()},verticalAlignment=Alignment.CenterVertically){Text(icon,Modifier.padding(start=13.dp),color=if(active||focused)TvRed else Color.White,fontSize=19.sp);Text(label,Modifier.padding(horizontal=13.dp,vertical=11.dp),color=Color.White,fontSize=12.sp,fontWeight=if(active||focused)FontWeight.Black else FontWeight.Bold)}}
 @Composable private fun TvSportNavItem(sport:TvSport,active:Boolean,onClick:()->Unit){var focused by remember{mutableStateOf(false)};Row(Modifier.fillMaxWidth().padding(vertical=2.dp).clip(RoundedCornerShape(12.dp)).background(if(active||focused)TvPanel2 else Color.Transparent).border(1.dp,TvBlue.copy(alpha=if(active||focused)1f else 0f),RoundedCornerShape(12.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onClick()},verticalAlignment=Alignment.CenterVertically){Text(sport.glyph,Modifier.width(36.dp).padding(start=8.dp),color=if(active||focused)TvBlue else Color.White,fontSize=10.sp,fontWeight=FontWeight.Black);Text(sport.name,Modifier.padding(vertical=7.dp),color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold)}}
