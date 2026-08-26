@@ -26,6 +26,7 @@ class MainActivityFuture : ComponentActivity() {
         if (BuildConfig.IS_TV_BUILD) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         setContent {
             var connectSource by remember { mutableStateOf(false) }
+            var tvConnectChooser by remember { mutableStateOf(false) }
             var mobilePair by remember { mutableStateOf(false) }
             var tvPair by remember { mutableStateOf(false) }
             var liveFilter by remember { mutableStateOf<String?>(null) }
@@ -45,16 +46,12 @@ class MainActivityFuture : ComponentActivity() {
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
 
-            // Force a fresh provider catalog on every app launch, in the background.
             LaunchedEffect(Unit) {
                 if (connected) {
-                    scope.launch {
-                        runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
-                    }
+                    scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
                 }
             }
 
-            // Force a fresh catalog whenever a source is newly connected or paired.
             LaunchedEffect(sourceVersion, connected) {
                 if (connected && sourceVersion > 0) {
                     runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
@@ -69,14 +66,21 @@ class MainActivityFuture : ComponentActivity() {
             }
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
+                tvConnectChooser -> TvSourceChooser(
+                    onQr = { tvConnectChooser = false; tvPair = true },
+                    onManual = { tvConnectChooser = false; connectSource = true },
+                    onBack = { tvConnectChooser = false }
+                )
                 tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false }, onConnected = { sourceVersion++; tvPair = false })
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
                 schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> liveFilter = listOf(event.home, event.away, event.broadcast).filter { it.isNotBlank() }.joinToString("||"); schedules = false })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
-                    if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(onConnect = { tvPair = true }, onNetwork = { network -> if (connected) liveFilter = network else tvPair = true })
-                    else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
+                    if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(
+                        onConnect = { tvConnectChooser = true },
+                        onNetwork = { network -> if (connected) liveFilter = network else tvConnectChooser = true }
+                    ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> if (connected) liveFilter = network.name else connectSource = true })
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
                         HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
