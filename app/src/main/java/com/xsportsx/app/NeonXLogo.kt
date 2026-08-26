@@ -22,91 +22,42 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** Premium XSportsX mark. Replaces the legacy logo completely. */
+/** Aggressive XSportsX mark: thicker, jagged, fractured and red-hot. */
 @Composable
 fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 58.dp) {
     val motion = rememberInfiniteTransition(label = "xsportsx-main-logo")
-    val rotation by motion.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(tween(24000, easing = LinearEasing)),
-        label = "xsportsx-logo-rotation"
-    )
-    val pulse by motion.animateFloat(
-        initialValue = 0.78f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            tween(900, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "xsportsx-logo-pulse"
-    )
-
+    val rotation by motion.animateFloat(0f, 360f, infiniteRepeatable(tween(24000, easing = LinearEasing)), label = "xsportsx-logo-rotation")
+    val pulse by motion.animateFloat(.72f, 1f, infiniteRepeatable(tween(700, easing = LinearEasing), repeatMode = RepeatMode.Reverse), label = "xsportsx-logo-pulse")
     Box(modifier.size(size)) {
         Canvas(Modifier.size(size).rotate(rotation)) {
-            val w = this.size.width
-            val h = this.size.height
-            val cx = w / 2f
-            val cy = h / 2f
-            val red = Color(0xFFFF163D)
-            val redHot = Color(0xFFFF5A73)
-            val blue = Color(0xFF168CFF)
-            val blueHot = Color(0xFF6BC4FF)
-            val white = Color(0xFFFFFFFF)
-            val core = Color(0xFF05080E)
-
-            // The same aggressive silhouette as the supplied X: four angular arms,
-            // red on the left, blue on the right, with a bright white-hot edge.
+            val w = this.size.width; val h = this.size.height; val cx = w / 2f; val cy = h / 2f
+            val red = Color(0xFFFF102F); val redHot = Color(0xFFFF435C); val redDeep = Color(0xFF9D001D)
+            val blue = Color(0xFF168CFF); val blueHot = Color(0xFF72C8FF); val white = Color.White; val core = Color(0xFF030509)
             val xPath = Path().apply {
-                moveTo(w * .08f, h * .12f)
-                lineTo(w * .30f, h * .12f)
-                lineTo(cx, h * .39f)
-                lineTo(w * .70f, h * .12f)
-                lineTo(w * .92f, h * .12f)
-                lineTo(w * .63f, cy)
-                lineTo(w * .92f, h * .88f)
-                lineTo(w * .70f, h * .88f)
-                lineTo(cx, h * .61f)
-                lineTo(w * .30f, h * .88f)
-                lineTo(w * .08f, h * .88f)
-                lineTo(w * .37f, cy)
-                close()
+                moveTo(w*.045f,h*.08f); lineTo(w*.29f,h*.08f); lineTo(w*.43f,h*.27f); lineTo(w*.50f,h*.38f)
+                lineTo(w*.57f,h*.27f); lineTo(w*.71f,h*.08f); lineTo(w*.955f,h*.08f); lineTo(w*.70f,cy)
+                lineTo(w*.955f,h*.92f); lineTo(w*.70f,h*.92f); lineTo(w*.57f,h*.73f); lineTo(w*.50f,h*.62f)
+                lineTo(w*.43f,h*.73f); lineTo(w*.29f,h*.92f); lineTo(w*.045f,h*.92f); lineTo(w*.30f,cy); close()
             }
-
-            // Black inset keeps the mark crisp instead of looking like four blobs.
             drawPath(xPath, core)
-
-            // Large atmospheric glow layers.
-            drawPath(
-                xPath,
-                brush = Brush.linearGradient(listOf(red.copy(alpha = .48f * pulse), white.copy(alpha = .16f), blue.copy(alpha = .48f * pulse))),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .13f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawPath(xPath, Brush.linearGradient(listOf(redDeep.copy(alpha=.85f*pulse), red.copy(alpha=.72f*pulse), white.copy(alpha=.20f), blue.copy(alpha=.72f*pulse), blueHot.copy(alpha=.75f*pulse))), androidx.compose.ui.graphics.drawscope.Stroke(w*.19f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            drawPath(xPath, Brush.linearGradient(listOf(red, redHot, white, blueHot, blue)), androidx.compose.ui.graphics.drawscope.Stroke(w*.085f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            drawPath(xPath, Brush.linearGradient(listOf(white.copy(alpha=.95f), redHot, white, blueHot, white.copy(alpha=.95f))), androidx.compose.ui.graphics.drawscope.Stroke(w*.026f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            val cut = white.copy(alpha=.82f)
+            drawLine(cut, Offset(w*.12f,h*.17f), Offset(w*.32f,h*.34f), w*.014f, StrokeCap.Butt)
+            drawLine(cut, Offset(w*.88f,h*.83f), Offset(w*.68f,h*.66f), w*.014f, StrokeCap.Butt)
+            drawLine(redHot.copy(alpha=.9f), Offset(w*.18f,h*.48f), Offset(w*.36f,h*.42f), w*.010f, StrokeCap.Butt)
+            drawLine(blueHot.copy(alpha=.9f), Offset(w*.82f,h*.52f), Offset(w*.64f,h*.58f), w*.010f, StrokeCap.Butt)
+            drawCircle(white.copy(alpha=.34f*pulse), w*.13f, Offset(cx,cy))
+            drawCircle(white, w*.032f, Offset(cx,cy))
+            val shard = .60f * pulse
+            val shards = listOf(
+                Triple(red, Offset(w*.02f,h*.23f), Offset(w*.16f,h*.28f)), Triple(red, Offset(w*.04f,h*.78f), Offset(w*.18f,h*.71f)),
+                Triple(redHot, Offset(w*.18f,h*.03f), Offset(w*.23f,h*.12f)), Triple(redHot, Offset(w*.18f,h*.97f), Offset(w*.25f,h*.87f)),
+                Triple(blue, Offset(w*.98f,h*.23f), Offset(w*.84f,h*.28f)), Triple(blue, Offset(w*.96f,h*.78f), Offset(w*.82f,h*.71f)),
+                Triple(blueHot, Offset(w*.82f,h*.03f), Offset(w*.77f,h*.12f)), Triple(blueHot, Offset(w*.82f,h*.97f), Offset(w*.75f,h*.87f))
             )
-            drawPath(
-                xPath,
-                brush = Brush.linearGradient(listOf(red, white, blue)),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .055f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            )
-            drawPath(
-                xPath,
-                brush = Brush.linearGradient(listOf(redHot, white, blueHot)),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(w * .018f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            )
-
-            // White-hot diagonal highlights on the inner faces.
-            drawLine(white.copy(alpha = .95f), Offset(w * .15f, h * .19f), Offset(cx - w * .10f, cy - h * .10f), w * .012f, StrokeCap.Round)
-            drawLine(white.copy(alpha = .95f), Offset(w * .85f, h * .81f), Offset(cx + w * .10f, cy + h * .10f), w * .012f, StrokeCap.Round)
-
-            // Central energy core.
-            drawCircle(white.copy(alpha = .30f * pulse), w * .105f, Offset(cx, cy))
-            drawCircle(white.copy(alpha = .95f), w * .026f, Offset(cx, cy))
-
-            // Small electric shards give the logo the high-energy sports-tech look.
-            val shardAlpha = .45f * pulse
-            drawLine(red.copy(alpha = shardAlpha), Offset(w * .05f, h * .27f), Offset(w * .15f, h * .31f), w * .012f, StrokeCap.Round)
-            drawLine(red.copy(alpha = shardAlpha), Offset(w * .08f, h * .73f), Offset(w * .18f, h * .69f), w * .010f, StrokeCap.Round)
-            drawLine(blue.copy(alpha = shardAlpha), Offset(w * .95f, h * .27f), Offset(w * .85f, h * .31f), w * .012f, StrokeCap.Round)
-            drawLine(blue.copy(alpha = shardAlpha), Offset(w * .92f, h * .73f), Offset(w * .82f, h * .69f), w * .010f, StrokeCap.Round)
+            shards.forEach { (c,a,b) -> drawLine(c.copy(alpha=shard), a, b, w*.018f, StrokeCap.Butt) }
         }
     }
 }
