@@ -40,9 +40,7 @@ jobs:
           GRADLE_VERSION="8.13"
           GRADLE_HOME="$RUNNER_TEMP/gradle-$GRADLE_VERSION"
           if [ ! -x "$GRADLE_HOME/bin/gradle" ]; then
-            curl --fail --silent --show-error --location \
-              "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
-              --output "$RUNNER_TEMP/gradle.zip"
+            curl --fail --silent --show-error --location "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" --output "$RUNNER_TEMP/gradle.zip"
             rm -rf "$GRADLE_HOME"
             unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
           fi
@@ -65,18 +63,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f scripts/patch_tv_navigation.py ]; then
-            python3 scripts/patch_tv_navigation.py
-          fi
+          if [ -f scripts/patch_tv_navigation.py ]; then python3 scripts/patch_tv_navigation.py; fi
           test -s app/src/main/java/com/xsportsx/app/TvHome.kt
 
       - name: Apply production college favorites patch
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f scripts/patch_college_favorites.py ]; then
-            python3 scripts/patch_college_favorites.py
-          fi
+          if [ -f scripts/patch_college_favorites.py ]; then python3 scripts/patch_college_favorites.py; fi
           test -s app/src/main/java/com/xsportsx/app/TeamFavorites.kt
 
       - name: Apply sports badge and network UI patch
@@ -94,6 +88,56 @@ jobs:
           python3 scripts/patch_ncaavb_badge.py
           grep -q 'TvSport("NCAA VB"' app/src/main/java/com/xsportsx/app/TvHome.kt
 
+      - name: Fix verified sports and network logo assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          urls = {
+              'f1': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_One_logo.svg',
+              'nascar': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg',
+              'dtm': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg',
+              'motogp': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg',
+              'wrc': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg',
+              'wec': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg',
+              'formulae': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg',
+              'mxgp': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg',
+              'volleyball': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg',
+              'boxing': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/World_Boxing_logo_2023.svg',
+              'acc': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/ACC_Network_logo_fc_db.svg',
+          }
+          files = [
+              Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),
+              Path('app/src/main/java/com/xsportsx/app/TvHome.kt'),
+          ]
+          replacements = {
+              'https://www.google.com/s2/favicons?domain=formula1.com&sz=128': urls['f1'],
+              'https://www.google.com/s2/favicons?domain=nascar.com&sz=128': urls['nascar'],
+              'https://www.google.com/s2/favicons?domain=dtm.com&sz=128': urls['dtm'],
+              'https://www.google.com/s2/favicons?domain=motogp.com&sz=128': urls['motogp'],
+              'https://www.google.com/s2/favicons?domain=wrc.com&sz=128': urls['wrc'],
+              'https://www.google.com/s2/favicons?domain=fiawec.com&sz=128': urls['wec'],
+              'https://www.google.com/s2/favicons?domain=fiaformulae.com&sz=128': urls['formulae'],
+              'https://www.google.com/s2/favicons?domain=mxgp.com&sz=128': urls['mxgp'],
+              'https://www.google.com/s2/favicons?domain=fivb.com&sz=128': urls['volleyball'],
+              'https://www.google.com/s2/favicons?domain=volleyballworld.com&sz=128': urls['volleyball'],
+              'https://www.google.com/s2/favicons?domain=espn.com&sz=128': urls['boxing'],
+              'https://www.google.com/s2/favicons?domain=accnetwork.com&sz=128': urls['acc'],
+              'https://www.google.com/s2/favicons?domain=acc.com&sz=128': urls['acc'],
+          }
+          for p in files:
+              s = p.read_text()
+              for old, new in replacements.items():
+                  s = s.replace(old, new)
+              p.write_text(s)
+          print('verified logo overrides applied')
+          PY
+          grep -q 'ACC_Network_logo_fc_db.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'Formula_One_logo.svg' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'MotoGP_logo_(2024).svg' app/src/main/java/com/xsportsx/app/TvHome.kt
+
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
@@ -104,10 +148,7 @@ jobs:
         run: |
           set -euo pipefail
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            if [ -z "${!name}" ]; then
-              echo "Missing required release signing secret: ${name}"
-              exit 1
-            fi
+            if [ -z "${!name}" ]; then echo "Missing required release signing secret: ${name}"; exit 1; fi
           done
 
       - name: Restore release keystore
