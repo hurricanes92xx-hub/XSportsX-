@@ -40,20 +40,20 @@ private val Muted = Color(0xFF727B8B)
 
 data class XNetwork(val name: String, val type: String, val icon: String, val logoUrl: String = "")
 private val xNetworks = listOf(
-    XNetwork("ESPN", "SPORTS", "ESPN", "https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    XNetwork("ESPN2", "SPORTS", "ESPN2", "https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    XNetwork("ESPNU", "SPORTS", "ESPNU", "https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    XNetwork("NFL Network", "SPORTS", "NFL", "https://www.google.com/s2/favicons?domain=nfl.com&sz=128"),
-    XNetwork("FS1", "SPORTS", "FS1", "https://www.google.com/s2/favicons?domain=foxsports.com&sz=128"),
-    XNetwork("CBS Sports", "SPORTS", "CBS", "https://www.google.com/s2/favicons?domain=cbssports.com&sz=128"),
-    XNetwork("SEC Network", "SPORTS", "SEC", "https://www.google.com/s2/favicons?domain=secnetwork.com&sz=128"),
-    XNetwork("ACC Network", "SPORTS", "ACC", "https://www.google.com/s2/favicons?domain=accnetwork.com&sz=128"),
-    XNetwork("Big Ten Network", "SPORTS", "B1G", "https://www.google.com/s2/favicons?domain=btn.com&sz=128"),
-    XNetwork("ESPN+", "SPORTS", "ESPN+", "https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    XNetwork("Pac-12 Network", "SPORTS", "PAC12", "https://www.google.com/s2/favicons?domain=pac-12.com&sz=128"),
-    XNetwork("Red Bull TV", "ACTION", "RED BULL", "https://www.google.com/s2/favicons?domain=redbull.com&sz=128"),
-    XNetwork("Monster Jam", "MOTORSPORT", "MJ", "https://www.google.com/s2/favicons?domain=monsterjam.com&sz=128"),
-    XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "https://www.google.com/s2/favicons?domain=rugbypass.tv&sz=128")
+    XNetwork("ESPN", "SPORTS", "ESPN", ""),
+    XNetwork("ESPN2", "SPORTS", "ESPN2", ""),
+    XNetwork("ESPNU", "SPORTS", "ESPNU", ""),
+    XNetwork("NFL Network", "SPORTS", "NFL", ""),
+    XNetwork("FS1", "SPORTS", "FS1", ""),
+    XNetwork("CBS Sports", "SPORTS", "CBS", ""),
+    XNetwork("SEC Network", "SPORTS", "SEC", ""),
+    XNetwork("ACC Network", "SPORTS", "ACC", ""),
+    XNetwork("Big Ten Network", "SPORTS", "B1G", ""),
+    XNetwork("ESPN+", "SPORTS", "ESPN+", ""),
+    XNetwork("Pac-12 Network", "SPORTS", "PAC12", ""),
+    XNetwork("Red Bull TV", "ACTION", "RED BULL", ""),
+    XNetwork("Monster Jam", "MOTORSPORT", "MJ", ""),
+    XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "")
 )
 
 private data class SportVisual(val name: String, val icon: String, val logoUrl: String)
@@ -64,32 +64,49 @@ private val sports = listOf(
     SportVisual("NCAA BB", "NCAA", "https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png"),
     SportVisual("MLB", "MLB", "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"),
     SportVisual("NHL", "NHL", "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"),
-    SportVisual("UFC", "UFC", "https://www.google.com/s2/favicons?domain=ufc.com&sz=128"),
-    SportVisual("BOXING", "BOX", "https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    SportVisual("RUGBY", "RUGBY", "https://www.google.com/s2/favicons?domain=rugbypass.tv&sz=128"),
-    SportVisual("VOLLEYBALL", "VB", "https://www.google.com/s2/favicons?domain=fivb.com&sz=128"),
-    SportVisual("LACROSSE", "LAX", "https://www.google.com/s2/favicons?domain:worldlacrosse.sport&sz=128"),
-    SportVisual("WRESTLING", "WWE", "https://www.google.com/s2/favicons?domain=wwe.com&sz=128"),
-    SportVisual("MOTOGP", "GP", "https://www.google.com/s2/favicons?domain=motogp.com&sz=128"),
-    SportVisual("WRC", "WRC", "https://www.google.com/s2/favicons?domain=wrc.com&sz=128"),
-    SportVisual("WEC", "WEC", "https://www.google.com/s2/favicons?domain:fiawec.com&sz=128"),
-    SportVisual("IMSA", "IMSA", "https://www.google.com/s2/favicons?domain=imsa.com&sz=128"),
-    SportVisual("FORMULA E", "FE", "https://www.google.com/s2/favicons?domain:fiaformulae.com&sz=128"),
-    SportVisual("MXGP", "MX", "https://www.google.com/s2/favicons?domain=mxgp.com&sz=128"),
-    SportVisual("MONSTER JAM", "MJ", "https://www.google.com/s2/favicons?domain=monsterjam.com&sz=128"),
-    SportVisual("ESPORTS", "ESPORTS", "https://www.google.com/s2/favicons?domain=esports.com&sz=128"),
-    SportVisual("ACTION SPORTS", "ACTION", "https://www.google.com/s2/favicons?domain=redbull.com&sz=128")
+    SportVisual("UFC", "UFC", ""),
+    SportVisual("BOXING", "BOX", ""),
+    SportVisual("RUGBY", "RUGBY", ""),
+    SportVisual("VOLLEYBALL", "VB", ""),
+    SportVisual("LACROSSE", "LAX", ""),
+    SportVisual("WRESTLING", "WWE", ""),
+    SportVisual("MOTOGP", "GP", ""),
+    SportVisual("WRC", "WRC", ""),
+    SportVisual("WEC", "WEC", ""),
+    SportVisual("IMSA", "IMSA", ""),
+    SportVisual("FORMULA E", "FE", ""),
+    SportVisual("MXGP", "MX", ""),
+    SportVisual("MONSTER JAM", "MJ", ""),
+    SportVisual("ESPORTS", "ESPORTS", ""),
+    SportVisual("ACTION SPORTS", "ACTION", "")
 )
 
 @Composable private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) { Box(Modifier.size(size).clip(RoundedCornerShape(size / 3)).background(Brush.linearGradient(listOf(Color(0xFF202A38), Color(0xFF10141D)))), contentAlignment = Alignment.Center) { Text(label, color = Color.White, fontSize = if (label.length > 3) 7.sp else 8.sp, fontWeight = FontWeight.Black, letterSpacing = .2.sp, maxLines = 1) } }
 
-@Composable private fun BadgeImage(url: String, fallback: String, modifier: Modifier = Modifier) {
-    var failed by remember(url) { mutableStateOf(false) }
-    if (!failed && url.isNotBlank()) {
-        AsyncImage(model = url, contentDescription = fallback, modifier = modifier, contentScale = ContentScale.Fit, onError = { failed = true })
-    } else {
-        SportGlyph(fallback, 38.dp)
+@Composable private fun LockedLogo(label:String,name:String=label,size:androidx.compose.ui.unit.Dp=62.dp){
+    val k=name.uppercase()
+    val bg=when{
+        k.contains("ESPN")||k.contains("F1") -> Color(0xFFE50920)
+        k.contains("SEC") -> Color(0xFF174A7E)
+        k.contains("ACC") -> Color(0xFF0066A1)
+        k.contains("B1G") -> Color(0xFF151A20)
+        k.contains("NFL") -> Color(0xFF013369)
+        k.contains("NBA") -> Color(0xFF17408B)
+        k.contains("NASCAR") -> Color(0xFF101318)
+        k.contains("DTM") -> Color(0xFF28384A)
+        k.contains("MONSTER") -> Color(0xFF151515)
+        k.contains("RUGBY") -> Color(0xFF0B5E45)
+        else -> Color(0xFF202A38)
     }
+    Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(bg),contentAlignment=Alignment.Center){
+        Text(label,color=Color.White,fontSize=if(label.length>6)8.sp else 14.sp,fontWeight=FontWeight.Black,maxLines=1,overflow=TextOverflow.Ellipsis)
+    }
+}
+
+@Composable private fun BadgeImage(url:String,fallback:String,modifier:Modifier=Modifier){
+    var failed by remember(url){mutableStateOf(false)}
+    if(!failed && url.isNotBlank()) AsyncImage(model=url,contentDescription=fallback,modifier=modifier,contentScale=ContentScale.Fit,onError={failed=true})
+    else LockedLogo(fallback,fallback,72.dp)
 }
 
 @Composable
@@ -128,7 +145,13 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
 @Composable private fun ActionPanel(title: String, body: String, button: String, onClick: () -> Unit) { Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF111722), Color(0xFF2A0D14)))).padding(18.dp)) { Text(title, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black); Spacer(Modifier.height(6.dp)); Text(body, color = Color(0xFF8F98A7), fontSize = 11.sp, lineHeight = 16.sp); Spacer(Modifier.height(13.dp)); Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).clickable { onClick() }.padding(horizontal = 14.dp, vertical = 9.dp)) { Text(button, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) } } }
 @Composable private fun SportPill(sport: SportVisual, onClick: () -> Unit) { Row(Modifier.clip(RoundedCornerShape(15.dp)).background(Panel2).clickable { onClick() }.padding(horizontal = 13.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) { SportGlyph(sport.icon, 26.dp); Spacer(Modifier.width(7.dp)); Text(sport.name, color = Color(0xFFDCE1E9), fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1) } }
 @Composable private fun SportBadgeCard(sport: SportVisual, onClick: () -> Unit) { Column(Modifier.width(118.dp).height(142.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick() }.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) { Box(Modifier.fillMaxWidth().height(88.dp), contentAlignment = Alignment.Center) { BadgeImage(sport.logoUrl, sport.icon, Modifier.size(72.dp)) }; Spacer(Modifier.height(5.dp)); Text(sport.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
-@Composable private fun NetworkCard(network: XNetwork, onClick: (XNetwork) -> Unit) { Column(Modifier.width(132.dp).height(124.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick(network) }.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) { Box(Modifier.fillMaxWidth().height(70.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF0A0F17)), contentAlignment = Alignment.Center) { if (network.logoUrl.isNotBlank()) AsyncImage(model = network.logoUrl, contentDescription = network.name, modifier = Modifier.size(52.dp), contentScale = ContentScale.Fit) else BrandPill(network.icon, Color.White) }; Spacer(Modifier.height(7.dp)); Text(network.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
+@Composable private fun NetworkCard(network:XNetwork,onClick:(XNetwork)->Unit){
+    Column(Modifier.width(132.dp).height(124.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable{onClick(network)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){
+        Box(Modifier.fillMaxWidth().height(70.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF0A0F17)),contentAlignment=Alignment.Center){LockedLogo(network.icon,network.name,52.dp)}
+        Spacer(Modifier.height(7.dp))
+        Text(network.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)
+    }
+}
 @Composable private fun BrandPill(text: String, foreground: Color, background: Color = Color(0xFF202A38)) { Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) { Text(text, color = foreground, fontSize = if (text.length > 7) 8.sp else 14.sp, fontWeight = FontWeight.Black, letterSpacing = .4.sp, maxLines = 1) } }
 @Composable private fun UpcomingStrip() { val items = listOf("NFL", "NBA", "UFC", "MLB"); Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) { items.take(3).forEach { sport -> Box(Modifier.weight(1f).clip(RoundedCornerShape(14.dp)).background(Panel).padding(vertical = 13.dp), contentAlignment = Alignment.Center) { Row(verticalAlignment = Alignment.CenterVertically) { SportGlyph(sport, 22.dp); Spacer(Modifier.width(5.dp)); Text(sport, color = Color(0xFFDCE1E9), fontSize = 9.sp, fontWeight = FontWeight.Black) } } } } }
 @Composable private fun MobileBottomNav(selected: String, onSelect: (String) -> Unit) { Row(Modifier.fillMaxWidth().height(70.dp).background(Color(0xF2090B10)).padding(horizontal = 10.dp, vertical = 7.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) { MobileNavItem("⌂", "HOME", selected, onSelect); MobileNavItem("●", "LIVE", selected, onSelect); MobileNavItem("▦", "NETWORKS", selected, onSelect); MobileNavItem("★", "FAVORITES", selected, onSelect) } }

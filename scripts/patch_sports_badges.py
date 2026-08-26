@@ -14,21 +14,21 @@ replacements = {
     TvSport("NCAA BB","NCAA","https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png"),
     TvSport("MLB","MLB","https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"),
     TvSport("NHL","NHL","https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"),
-    TvSport("UFC","UFC","https://www.google.com/s2/favicons?domain=ufc.com&sz=128"),
-    TvSport("BOXING","BOX","https://www.google.com/s2/favicons?domain=espn.com&sz=128")
+    TvSport("UFC","UFC",""),
+    TvSport("BOXING","BOX","")
 )''',
     'private val tvNetworks = listOf(TvNetwork("ESPN","ESPN"),TvNetwork("ESPN2","ESPN2"),TvNetwork("ESPNU","ESPNU"),TvNetwork("NFL NETWORK","NFL"),TvNetwork("FS1","FS1"),TvNetwork("CBS SPORTS","CBS"),TvNetwork("SEC NETWORK","SEC"),TvNetwork("ACC NETWORK","ACC"),TvNetwork("BIG TEN NETWORK","B1G"),TvNetwork("ESPN+","ESPN+"))': '''private val tvNetworks = listOf(
-    TvNetwork("ESPN","ESPN","https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    TvNetwork("ESPN2","ESPN2","https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    TvNetwork("ESPNU","ESPNU","https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    TvNetwork("NFL NETWORK","NFL","https://www.google.com/s2/favicons?domain=nfl.com&sz=128"),
-    TvNetwork("FS1","FS1","https://www.google.com/s2/favicons?domain=foxsports.com&sz=128"),
-    TvNetwork("CBS SPORTS","CBS","https://www.google.com/s2/favicons?domain=cbssports.com&sz=128"),
-    TvNetwork("SEC NETWORK","SEC","https://www.google.com/s2/favicons?domain=secnetwork.com&sz=128"),
-    TvNetwork("ACC NETWORK","ACC","https://www.google.com/s2/favicons?domain=accnetwork.com&sz=128"),
-    TvNetwork("BIG TEN NETWORK","B1G","https://www.google.com/s2/favicons?domain=btn.com&sz=128"),
-    TvNetwork("ESPN+","ESPN+","https://www.google.com/s2/favicons?domain=espn.com&sz=128"),
-    TvNetwork("PAC-12 NETWORK","PAC12","https://www.google.com/s2/favicons?domain=pac-12.com&sz=128")
+    TvNetwork("ESPN","ESPN",""),
+    TvNetwork("ESPN2","ESPN2",""),
+    TvNetwork("ESPNU","ESPNU",""),
+    TvNetwork("NFL NETWORK","NFL",""),
+    TvNetwork("FS1","FS1",""),
+    TvNetwork("CBS SPORTS","CBS",""),
+    TvNetwork("SEC NETWORK","SEC",""),
+    TvNetwork("ACC NETWORK","ACC",""),
+    TvNetwork("BIG TEN NETWORK","B1G",""),
+    TvNetwork("ESPN+","ESPN+",""),
+    TvNetwork("PAC-12 NETWORK","PAC12","")
 )''',
     'TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)': 'TvSection("NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)',
     '@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(sports,key={it.name}){TvTile(it.name,it.glyph,TvBlue){onNetwork(it.name)}}}}': '@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(sports,key={it.name}){TvBadgeTile(it,onNetwork)}}}',
@@ -70,19 +70,19 @@ if end < 0:
 block = text[start:end]
 for name,glyph,domain in expanded:
     if f'TvSport("{name}"' not in block:
-        block += f',\n    TvSport("{name}","{glyph}","https://www.google.com/s2/favicons?domain={domain}&sz=128")'
+        block += f',\n    TvSport("{name}","{glyph}","")'
 text = text[:start] + block + text[end:]
 
 logo_overrides = {
-    "MOTOGP": "https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg",
-    "WRC": "https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg",
-    "WEC": "https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg",
-    "FORMULA E": "https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg",
-    "MXGP": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg",
-    "FORMULA 1": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_1_logo.svg",
-    "NASCAR": "https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg",
-    "DTM": "https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg",
-    "VOLLEYBALL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg",
+    "MOTOGP": "",
+    "WRC": "",
+    "WEC": "",
+    "FORMULA E": "",
+    "MXGP": "",
+    "FORMULA 1": "",
+    "NASCAR": "",
+    "DTM": "",
+    "VOLLEYBALL": "",
 }
 for name, url in logo_overrides.items():
     pattern = rf'(TvSport\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
@@ -100,7 +100,7 @@ if not mobile.exists():
     raise SystemExit("Mobile Home component not found")
 m = mobile.read_text()
 mobile_logos = {
-    "RUGBY": "https://www.google.com/s2/favicons?domain=rugbypass.tv&sz=128",
+    "RUGBY": "",
     "VOLLEYBALL": logo_overrides["VOLLEYBALL"],
     "MOTOGP": logo_overrides["MOTOGP"],
     "WRC": logo_overrides["WRC"],
