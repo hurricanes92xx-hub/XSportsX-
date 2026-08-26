@@ -43,11 +43,22 @@ async function events(league){const primary=await (async()=>{try{const d=await g
 `;
 source=source.slice(0,eventFnStart)+scheduleCode+source.slice(providerFnStart);
 
+// Preserve venue, competition status and team records for the pre-source event details screen.
+source=source.replace(
+  "broadcast:(c?.broadcasts||[]).flatMap(x=>x.names||[])};",
+  "broadcast:(c?.broadcasts||[]).flatMap(x=>x.names||[]),venue:c?.venue?.fullName||c?.venue?.address?.city||'',venueCity:c?.venue?.address?.city||'',venueState:c?.venue?.address?.state||'',homeRecord:cs.find(x=>x.homeAway==='home')?.records?.[0]?.summary||'',awayRecord:cs.find(x=>x.homeAway==='away')?.records?.[0]?.summary||'',notes:(c?.notes||[]).map(x=>x.headline||x.text).filter(Boolean),links:(e?.links||[]).map(x=>({href:x.href,text:x.text||x.shortText||''})).filter(x=>x.href)};"
+);
+
 // Keep UI aliases interchangeable with the server catalog ids.
 const configFn='function config(req){return decrypt(tokenFrom(req));}';
 if(source.includes(configFn)){
   source=source.replace(configFn,`const SPORT_ALIASES={volleyball_w:'ncaav',volleyball_m:'ncaav'};function config(req){const c=decrypt(tokenFrom(req));if(c&&Array.isArray(c.sports))c.sports=c.sports.map(x=>SPORT_ALIASES[x]||x);return c;}`);
 }
+
+// Return rich event details before the client asks for streams. This endpoint never touches provider playlists.
+const streamMarker='const sm=p.match(/^\\/stream\\/tv\\/sport:([^:]+):([^/]+)\\.json$/);';
+const metaRoute=`const md=p.match(/^\\/meta\\/tv\\/sport:([^:]+):([^/]+)\\.json$/);if(md&&c){const league=md[1],eventId=md[2];if(!(Array.isArray(c.sports)?c.sports:[]).includes(league))return json(res,200,{meta:null});const list=await events(league);const e=list.find(x=>x.id===eventId);if(!e)return json(res,200,{meta:null});return json(res,200,{meta:{id:\`sport:\${e.league}:\${e.id}\`,type:'tv',name:\`\${e.away.short||e.away.name} vs \${e.home.short||e.home.name}\`,league:e.leagueName,sport:e.league,start:e.start,state:e.state,detail:e.detail,home:e.home,away:e.away,venue:e.venue||'',venueCity:e.venueCity||'',venueState:e.venueState||'',records:{home:e.homeRecord||'',away:e.awayRecord||''},broadcasts:e.broadcast||[],notes:e.notes||[],officialUrl:e.officialUrl||'',links:e.links||[],sourceStatus:'ready-to-match'}});}if(!e){} `;
+if(source.includes(streamMarker))source=source.replace(streamMarker,metaRoute+streamMarker);
 
 const runner=new Function('require','process','__dirname','__filename','crypto',source);
 runner(require,process,__dirname,target,require('crypto'));
