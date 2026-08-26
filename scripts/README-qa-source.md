@@ -1,0 +1,1 @@
+The QA source is deliberately local-only. It provides deterministic Xtream and M3U fixtures on the GitHub runner. Android emulators reach the runner at 10.0.2.2. No production credentials or provider endpoints are used.
