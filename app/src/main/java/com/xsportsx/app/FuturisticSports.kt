@@ -24,12 +24,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 
 private val XRed = Color(0xFFFF102F)
 private val XOrange = Color(0xFFFF6D00)
@@ -39,14 +37,11 @@ private val Panel2 = Color(0xFF141A24)
 private val Muted = Color(0xFF727B8B)
 
 data class XNetwork(val name: String, val type: String, val icon: String)
-private val xNetworks = listOf(
-    XNetwork("ESPN", "SPORTS", "ESPN"), XNetwork("ESPN2", "SPORTS", "ESPN2"), XNetwork("ESPNU", "COLLEGE", "ESPNU"), XNetwork("NFL Network", "NFL", "NFL"), XNetwork("FS1", "SPORTS", "FS1"), XNetwork("CBS Sports", "SPORTS", "CBS"), XNetwork("SEC Network", "COLLEGE", "SEC"), XNetwork("ACC Network", "COLLEGE", "ACC"), XNetwork("Big Ten Network", "COLLEGE", "B1G"), XNetwork("Big 12", "COLLEGE", "B12")
-)
+private val xNetworks = listOf(XNetwork("ESPN", "SPORTS", "ESPN"), XNetwork("ESPN2", "SPORTS", "ESPN2"), XNetwork("ESPNU", "COLLEGE", "ESPNU"), XNetwork("NFL Network", "NFL", "NFL"), XNetwork("FS1", "SPORTS", "FS1"), XNetwork("CBS Sports", "SPORTS", "CBS"), XNetwork("SEC Network", "COLLEGE", "SEC"), XNetwork("ACC Network", "COLLEGE", "ACC"), XNetwork("Big Ten Network", "COLLEGE", "B1G"), XNetwork("Big 12", "COLLEGE", "B12"))
 private data class SportVisual(val name: String, val icon: String)
 private val sports = listOf(SportVisual("NFL", "NFL"), SportVisual("NBA", "NBA"), SportVisual("NCAA", "NCAA"), SportVisual("MLB", "MLB"), SportVisual("NHL", "NHL"), SportVisual("UFC", "UFC"), SportVisual("BOXING", "BOX"), SportVisual("SOCCER", "FC"))
 
-@Composable
-private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) { Box(Modifier.size(size).clip(RoundedCornerShape(size / 3)).background(Brush.linearGradient(listOf(Color(0xFF202A38), Color(0xFF10141D)))), contentAlignment = Alignment.Center) { Text(label, color = Color.White, fontSize = if (label.length > 3) 7.sp else 8.sp, fontWeight = FontWeight.Black, letterSpacing = .2.sp) } }
+@Composable private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) { Box(Modifier.size(size).clip(RoundedCornerShape(size / 3)).background(Brush.linearGradient(listOf(Color(0xFF202A38), Color(0xFF10141D)))), contentAlignment = Alignment.Center) { Text(label, color = Color.White, fontSize = if (label.length > 3) 7.sp else 8.sp, fontWeight = FontWeight.Black, letterSpacing = .2.sp) } }
 
 @Composable
 fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {}) {
@@ -71,7 +66,6 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
 }
 
 @Composable private fun MobileHeader(sourceConfigured: Boolean, pulseAlpha: Float, onConnect: () -> Unit) { Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) { XtremeLogo(size = 56.dp); Spacer(Modifier.width(10.dp)); Column(Modifier.weight(1f)) { Text("XSPORTS", color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp); Text("NEXT-GEN SPORTS COMMAND", color = Color(0xFF687180), fontSize = 8.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.8.sp) }; Box(Modifier.clip(RoundedCornerShape(18.dp)).background(if (sourceConfigured) Color(0x2219FF72) else Color(0x22FF1744)).clickable { onConnect() }.padding(horizontal = 10.dp, vertical = 7.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Box(Modifier.size(7.dp).alpha(pulseAlpha).clip(RoundedCornerShape(50)).background(if (sourceConfigured) Color(0xFF22FF7A) else XRed)); Spacer(Modifier.width(6.dp)); Text(if (sourceConfigured) "SOURCE READY" else "ADD SOURCE", color = if (sourceConfigured) Color(0xFF74FFAA) else Color(0xFFFF7185), fontSize = 8.sp, fontWeight = FontWeight.Black) } } } }
-
 @Composable private fun MobileHomeContent(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) { Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).clickable { onConnect() }.background(Brush.horizontalGradient(listOf(Color(0xFF3A0812), Color(0xFF111827), Color(0xFF30100A)))).padding(20.dp), verticalAlignment = Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Row(verticalAlignment = Alignment.CenterVertically) { Box(Modifier.clip(RoundedCornerShape(7.dp)).background(XRed).padding(horizontal = 8.dp, vertical = 5.dp)) { Text("LIVE", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) }; Spacer(Modifier.width(8.dp)); Text("LIVE CENTER", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.2.sp) }; Spacer(Modifier.height(10.dp)); Text("YOUR GAMES.\nONE COMMAND CENTER.", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black, lineHeight = 28.sp); Spacer(Modifier.height(7.dp)); Text(if (sourceConfigured) "Source connected. Browse events and networks." else "Connect your authorized source to unlock live event matching and network streams.", color = Color(0xFF9BA4B2), fontSize = 11.sp, lineHeight = 16.sp); Spacer(Modifier.height(12.dp)); Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).padding(horizontal = 13.dp, vertical = 8.dp)) { Text(if (sourceConfigured) "BROWSE LIVE →" else "CONNECT NOW →", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) } }; Text("◈", color = XRed, fontSize = 58.sp, fontWeight = FontWeight.Black) }; Spacer(Modifier.height(20.dp)); MobileSectionLabel("SPORTS", null); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(end = 6.dp)) { items(sports) { sport -> SportPill(sport) { if (!sourceConfigured) onConnect() } } }; Spacer(Modifier.height(20.dp)); MobileSectionLabel("NETWORKS", "SMART ROW"); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(xNetworks.take(6)) { NetworkCard(it, onNetwork) } }; Spacer(Modifier.height(20.dp)); MobileSectionLabel("COLLEGE NETWORKS", null); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(xNetworks.filter { it.type == "COLLEGE" }) { NetworkCard(it, onNetwork) } }; Spacer(Modifier.height(20.dp)); MobileSectionLabel("UP NEXT", "SPORTS FEED"); Spacer(Modifier.height(8.dp)); UpcomingStrip() }
 @Composable private fun MobileLiveCenter(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) { MobileSectionLabel("LIVE CENTER", if (sourceConfigured) "SOURCE READY" else "CONNECT SOURCE"); Spacer(Modifier.height(10.dp)); if (!sourceConfigured) ActionPanel("CONNECT YOUR SOURCE", "Connect Xtream/M3U, then XSportsX can match your live events and networks.", "CONNECT SOURCE →", onConnect) else { ActionPanel("LIVE EVENT MATCHING", "Your source is connected. Choose a network to browse matched streams.", "REFRESH LIVE →", onConnect); Spacer(Modifier.height(18.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(xNetworks.take(8)) { NetworkCard(it, onNetwork) } } } }
 @Composable private fun MobileNetworks(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) { MobileSectionLabel("NETWORKS", "SOURCE MATCH"); Spacer(Modifier.height(10.dp)); if (!sourceConfigured) { ActionPanel("NETWORKS ARE READY", "Connect your authorized source to turn these cards into playable source matches.", "ADD SOURCE →", onConnect); Spacer(Modifier.height(16.dp)) }; LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(xNetworks) { NetworkCard(it, onNetwork) } }; Spacer(Modifier.height(20.dp)); MobileSectionLabel("COLLEGE NETWORKS", null); Spacer(Modifier.height(10.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(xNetworks.filter { it.type == "COLLEGE" }) { NetworkCard(it, onNetwork) } } }
@@ -109,8 +103,7 @@ private fun GlowingCracks(modifier: Modifier, intensity: Float) {
                 drawLine(Color.White.copy(alpha = intensity*.20f), Offset(a.first*w,a.second*h), Offset(b.first*w,b.second*h), strokeWidth = 0.8f)
             }
         }
-        // Broken-glass splinters around the edges.
-        val shards = listOf(.05f to .29f to .12f to .34f, .15f to .58f to .22f to .51f, .86f to .29f to .95f to .25f, .78f to .62f to .90f to .68f, .33f to .16f to .38f to .08f, .67f to .84f to .72f to .94f)
-        shards.forEach { q -> drawLine(XRed.copy(alpha=intensity*.8f), Offset(q.first*w,q.second*h), Offset(q.third*w,q.fourth*h), strokeWidth=2.2f) }
+        val shards = listOf(floatArrayOf(.05f,.29f,.12f,.34f), floatArrayOf(.15f,.58f,.22f,.51f), floatArrayOf(.86f,.29f,.95f,.25f), floatArrayOf(.78f,.62f,.90f,.68f), floatArrayOf(.33f,.16f,.38f,.08f), floatArrayOf(.67f,.84f,.72f,.94f))
+        shards.forEach { q -> drawLine(XRed.copy(alpha=intensity*.8f), Offset(q[0]*w,q[1]*h), Offset(q[2]*w,q[3]*h), strokeWidth=2.2f) }
     }
 }
