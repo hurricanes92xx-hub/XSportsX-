@@ -79,6 +79,14 @@ jobs:
           fi
           test -s app/src/main/java/com/xsportsx/app/TeamFavorites.kt
 
+      - name: Apply sports badge and network UI patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/patch_sports_badges.py
+          test -s app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'TvBadgeTile' app/src/main/java/com/xsportsx/app/TvHome.kt
+
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
