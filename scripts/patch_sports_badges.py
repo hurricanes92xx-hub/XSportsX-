@@ -48,10 +48,8 @@ components = '''@Composable private fun TvBadgeTile(sport:TvSport,onNetwork:(Str
 '''
 text = text.replace(needle, components + needle, 1)
 
-# Expanded sports: appended to the same runtime list so the existing build step
-# remains the single source of truth for the production UI.
 expanded = [
-    ("RUGBY","RUGBY","rugbypass.tv"),("VOLLEYBALL","VB","volleyballworld.com"),("LACROSSE","LAX","usalacrosse.com"),("WRESTLING","WR","uww.org"),
+    ("RUGBY","RUGBY","rugbypass.tv"),("VOLLEYBALL","VB","volleyballworld.com"),("LACROSSE","LAX","worldlacrosse.sport"),("WRESTLING","WR","uww.org"),
     ("JUDO","JUDO","ijf.org"),("TAEKWONDO","TKD","worldtaekwondo.org"),("SWIMMING","SWIM","worldaquatics.com"),("DIVING","DIVE","worldaquatics.com"),
     ("WATER POLO","WP","worldaquatics.com"),("GYMNASTICS","GYM","gymnastics.sport"),("CYCLING","BIKE","uci.org"),("DARTS","DARTS","pdc.tv"),
     ("SNOOKER","SNOOKER","wpbsa.com"),("ARCHERY","ARCH","worldarchery.sport"),("EQUESTRIAN","HORSE","fei.org"),
@@ -73,5 +71,54 @@ for name,glyph,domain in expanded:
     if f'TvSport("{name}"' not in block:
         block += f',\n    TvSport("{name}","{glyph}","https://www.google.com/s2/favicons?domain={domain}&sz=128")'
 text = text[:start] + block + text[end:]
+
+# Use actual league/series logo files where verified. These are tiny remote SVGs,
+# so the APK stays light while the badges remain current and visually accurate.
+logo_overrides = {
+    "MOTOGP": "https://commons.wikimedia.org/wiki/Special:Redirect/file/MotoGP_logo_(2024).svg",
+    "WRC": "https://commons.wikimedia.org/wiki/Special:Redirect/file/WRC_logo.svg",
+    "WEC": "https://commons.wikimedia.org/wiki/Special:Redirect/file/WEC_Logo.svg",
+    "FORMULA E": "https://commons.wikimedia.org/wiki/Special:Redirect/file/FIA_Formula_E_World_Championship_Logo.svg",
+    "MXGP": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_MXGP.svg",
+    "FORMULA 1": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Formula_1_logo.svg",
+    "NASCAR": "https://commons.wikimedia.org/wiki/Special:Redirect/file/NASCAR_logo_2017.svg",
+    "DTM": "https://commons.wikimedia.org/wiki/Special:Redirect/file/DTM_logo_2023.svg",
+    "VOLLEYBALL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg",
+}
+for name, url in logo_overrides.items():
+    import re
+    pattern = rf'(TvSport\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
+    text, count = re.subn(pattern, lambda m, u=url: m.group(1) + u + m.group(2), text, count=1)
+    if count != 1:
+        raise SystemExit(f"Could not set verified logo for {name}")
+
 path.write_text(text)
-print(f"Applied sports badge/network UI and verified {len(expanded)} expanded sports")
+
+# Mobile Home uses the same patch step so Mobile and TV stay visually consistent.
+mobile = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
+if mobile.exists():
+    m = mobile.read_text()
+    mobile_logos = {
+        "RUGBY": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_WXV.svg",
+        "VOLLEYBALL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg",
+        "MOTOGP": logo_overrides["MOTOGP"],
+        "WRC": logo_overrides["WRC"],
+        "WEC": logo_overrides["WEC"],
+        "FORMULA E": logo_overrides["FORMULA E"],
+        "MXGP": logo_overrides["MXGP"],
+        "FORMULA 1": logo_overrides["FORMULA 1"],
+        "NASCAR": logo_overrides["NASCAR"],
+        "DTM": logo_overrides["DTM"],
+    }
+    for name, url in mobile_logos.items():
+        pattern = rf'(SportVisual\("{re.escape(name)}"\s*,\s*"[^"]+"\s*,\s*")[^"]*("\))'
+        m, count = re.subn(pattern, lambda x, u=url: x.group(1) + u + x.group(2), m, count=1)
+        if count != 1:
+            raise SystemExit(f"Could not set mobile logo for {name}")
+    # Fix the malformed lacrosse favicon URL and use the official governing-body domain as fallback.
+    m = m.replace('https://www.google.com/s2/favicons?domain:worldlacrosse.sport&sz=128', 'https://www.google.com/s2/favicons?domain=worldlacrosse.sport&sz=128')
+    mobile.write_text(m)
+else:
+    raise SystemExit("Mobile Home component not found")
+
+print("Applied verified league/series logos to Mobile + TV and kept remote assets lightweight")
