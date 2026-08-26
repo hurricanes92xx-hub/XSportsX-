@@ -35,6 +35,23 @@ jobs:
         with:
           gradle-version: '8.13'
           cache-read-only: false
+      - name: Apply the same source fixes used by release builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/patch_tv_navigation.py
+          python3 scripts/patch_college_favorites.py
+          TV_SOURCE="app/src/main/java/com/xsportsx/app/TvHome.kt"
+          TEAM_SOURCE="app/src/main/java/com/xsportsx/app/TeamFavorites.kt"
+          test -s "${TV_SOURCE}"
+          test -s "${TEAM_SOURCE}"
+          grep -q '^package com.xsportsx.app$' "${TV_SOURCE}"
+          grep -q 'TvActionButton' "${TV_SOURCE}"
+          grep -q 'addAll(collegeFavoriteTeams())' "${TEAM_SOURCE}"
+          grep -q '"NCAAF"->"football/college-football"' "${TEAM_SOURCE}"
+          grep -q ':List<FavoriteTeam> =' "${TEAM_SOURCE}"
+          grep -q ':List<FavoriteNews> =' "${TEAM_SOURCE}"
+          grep -q '): List<TvGame> =' "${TV_SOURCE}"
       - name: Build debug APKs
         shell: bash
         run: |
