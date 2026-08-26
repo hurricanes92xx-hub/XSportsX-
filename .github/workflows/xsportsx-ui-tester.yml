@@ -1,7 +1,7 @@
 name: XSportsX UI Tester
 
 # Isolated QA pipeline. It NEVER signs, publishes, or modifies the release APKs.
-# It builds unsigned debug variants solely for emulator testing.
+# It builds debug variants solely for emulator testing.
 
 on:
   workflow_dispatch:
@@ -35,8 +35,18 @@ jobs:
         with:
           gradle-version: '8.13'
           cache-read-only: false
-      - name: Build unsigned debug APKs only
-        run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+      - name: Build debug APKs
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-debug-build.log
+      - name: Upload Gradle failure log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-debug-gradle-log-${{ github.sha }}
+          path: gradle-debug-build.log
+          if-no-files-found: ignore
       - id: paths
         shell: bash
         run: |
