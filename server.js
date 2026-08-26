@@ -5,6 +5,7 @@ const QRCode=require('qrcode');
 const {AsyncLocalStorage}=require('async_hooks');
 const {artworkSvg,eventArtworkSvg,THEMES}=require('./artwork');
 const {checkXtream}=require('./xtream-health');
+const {getPublicStreams}=require('./public-api');
 
 const app=express();
 app.disable('x-powered-by');
@@ -99,6 +100,16 @@ app.get('/manifest.json',(req,res)=>res.set({'Cache-Control':'no-store, no-cache
 app.get('/meta/tv/:id.json',async(req,res)=>{try{const id=req.params.id;if(id.startsWith('sport:')){const [,league,eventId]=id.split(':');const e=await eventById(league,eventId);return e?res.json(metaForEvent(req,e)):res.status(404).json({error:'Event not found'});}if(id.startsWith('xtream:')){const sid=id.split(':')[1];const ch=(await providerChannels()).find(x=>x.streamId===sid);if(!ch)return res.status(404).json({error:'Channel not found'});return res.json({meta:{id,type:'tv',name:ch.name,poster:ch.logo||`${baseUrl(req)}/artwork/other.svg`,background:ch.logo||`${baseUrl(req)}/artwork/other.svg`,description:ch.category,behaviorHints:{isPlayable:true}}});}res.status(404).json({error:'Unknown meta'});}catch(e){res.status(404).json({error:e.message});}});
 function xtreamUrl(c,sid){return`${c.baseUrl}/live/${encodeURIComponent(c.username)}/${encodeURIComponent(c.password)}/${encodeURIComponent(sid)}.ts`;}
 app.get('/stream/tv/:id.json',async(req,res)=>{try{const id=req.params.id,c=config();if(id.startsWith('xtream:')){const sid=id.split(':')[1];const ch=(await providerChannels()).find(x=>x.streamId===sid);if(!ch)return res.json({streams:[]});return res.json({streams:[{title:`${ch.name} • IPTV`,url:c.source==='m3u'?ch.url:xtreamUrl(c.xtream,sid),behaviorHints:{notWebReady:true}}]});}if(!id.startsWith('sport:'))return res.json({streams:[]});const [,league,eventId]=id.split(':');const e=await eventById(league,eventId);if(!e)return res.json({streams:[]});const matches=matchChannels({...e,leagueName:e.leagueName},await providerChannels());const streams=matches.map(ch=>({title:`${ch.name} • ${ch.score}% match`,url:c.source==='m3u'?ch.url:xtreamUrl(c.xtream,ch.streamId),behaviorHints:{notWebReady:true}}));res.set('Cache-Control','no-store').json({streams});}catch(err){console.error('[stream]',err.message);res.json({streams:[]});}});
+
+app.get('/public-sources.json',async(req,res)=>{
+  try{
+    const streams=await getPublicStreams();
+    res.set({'Cache-Control':'public,max-age=60','X-XSportsX-Public-Sources':'health-checked'}).json(streams);
+  }catch(e){
+    console.error('[public-sources]',e.message);
+    res.status(200).json([]);
+  }
+});
 app.get('/artwork/:league.svg',(req,res)=>res.type('image/svg+xml').send(artworkSvg(req.params.league)));app.get('/artwork/event/:league/:id.svg',async(req,res)=>{const e=await eventById(req.params.league,req.params.id);if(!e)return res.type('image/svg+xml').send(artworkSvg(req.params.league));res.type('image/svg+xml').send(eventArtworkSvg(e.league,e.away.name,e.home.name,e.state,e.start,e.away.logo,e.home.logo,e.away.short,e.home.short));});app.get('/qr',async(req,res)=>{try{const data=String(req.query.data||'');if(!data)return res.status(400).end();res.type('png').send(await QRCode.toBuffer(data,{width:420,margin:2,dark:'#050811',light:'#ffffff'}));}catch(e){res.status(400).end();}});
 function setupHtml(req){
   const b=baseUrl(req);
