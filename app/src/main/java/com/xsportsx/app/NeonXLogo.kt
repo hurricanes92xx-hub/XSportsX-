@@ -40,9 +40,9 @@ fun XtremeLogo(modifier: Modifier = Modifier, size: Dp = 58.dp) {
                 lineTo(w*.43f,h*.73f); lineTo(w*.29f,h*.92f); lineTo(w*.045f,h*.92f); lineTo(w*.30f,cy); close()
             }
             drawPath(xPath, core)
-            drawPath(xPath, Brush.linearGradient(listOf(redDeep.copy(alpha=.85f*pulse), red.copy(alpha=.72f*pulse), white.copy(alpha=.20f), blue.copy(alpha=.72f*pulse), blueHot.copy(alpha=.75f*pulse))), androidx.compose.ui.graphics.drawscope.Stroke(w*.19f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
-            drawPath(xPath, Brush.linearGradient(listOf(red, redHot, white, blueHot, blue)), androidx.compose.ui.graphics.drawscope.Stroke(w*.085f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
-            drawPath(xPath, Brush.linearGradient(listOf(white.copy(alpha=.95f), redHot, white, blueHot, white.copy(alpha=.95f))), androidx.compose.ui.graphics.drawscope.Stroke(w*.026f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            drawPath(xPath, Brush.linearGradient(listOf(redDeep.copy(alpha=.85f*pulse), red.copy(alpha=.72f*pulse), white.copy(alpha=.20f), blue.copy(alpha=.72f*pulse), blueHot.copy(alpha=.75f*pulse))), style = androidx.compose.ui.graphics.drawscope.Stroke(w*.19f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            drawPath(xPath, Brush.linearGradient(listOf(red, redHot, white, blueHot, blue)), style = androidx.compose.ui.graphics.drawscope.Stroke(w*.085f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
+            drawPath(xPath, Brush.linearGradient(listOf(white.copy(alpha=.95f), redHot, white, blueHot, white.copy(alpha=.95f))), style = androidx.compose.ui.graphics.drawscope.Stroke(w*.026f, cap=StrokeCap.Butt, join=StrokeJoin.Miter))
             val cut = white.copy(alpha=.82f)
             drawLine(cut, Offset(w*.12f,h*.17f), Offset(w*.32f,h*.34f), w*.014f, StrokeCap.Butt)
             drawLine(cut, Offset(w*.88f,h*.83f), Offset(w*.68f,h*.66f), w*.014f, StrokeCap.Butt)
