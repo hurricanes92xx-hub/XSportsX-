@@ -1,6 +1,7 @@
 name: XSportsX QA — Mobile + TV
 
 # Isolated QA pipeline. It NEVER signs, publishes, or modifies release APKs.
+# QA-only trigger marker: run the isolated emulator suite on this commit.
 
 on:
   workflow_dispatch:
