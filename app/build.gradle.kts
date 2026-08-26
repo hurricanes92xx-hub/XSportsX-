@@ -46,6 +46,10 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            // QA builds are deliberately unsigned here; never require release credentials.
+            signingConfig = signingConfigs.getByName("debug")
+        }
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
