@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "checkedAt": 1787773660,
+  "channels": [
+    {
+      "sourceId": "iptv-org-sports",
+      "name": "IPTV-org Sports",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 99,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "iptv-org-us",
+      "name": "IPTV-org USA",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 75,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "iptv-org-us-fl",
+      "name": "IPTV-org Florida",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 100,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "free-tv-usa",
+      "name": "Free-TV USA",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 93,
+      "hls": true,
+      "contentType": "application/vnd.apple.mpegurl"
+    },
+    {
+      "sourceId": "samsung-tv-plus-us",
+      "name": "Samsung TV Plus US",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 104,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "pluto-tv-us",
+      "name": "Pluto TV US",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 77,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "plex-tv-us",
+      "name": "Plex TV US",
+      "status": "healthy",
+      "score": 70,
+      "latencyMs": 1309,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "roku-tv-us",
+      "name": "Roku TV US",
+      "status": "healthy",
+      "score": 70,
+      "latencyMs": 2163,
+      "hls": true,
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "sourceId": "freecasthub-news",
+      "name": "FreeCastHub News",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 174,
+      "hls": true,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "sourceId": "freecasthub-weather",
+      "name": "FreeCastHub Weather",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 162,
+      "hls": true,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "sourceId": "free-tv",
+      "name": "Free-TV/IPTV",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 84,
+      "hls": true,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "sourceId": "freecasthub-sports",
+      "name": "FreeCastHub Sports",
+      "status": "healthy",
+      "score": 90,
+      "latencyMs": 145,
+      "hls": true,
+      "contentType": "text/plain; charset=utf-8"
+    }
+  ]
+}
