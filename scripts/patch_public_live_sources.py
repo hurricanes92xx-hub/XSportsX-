@@ -4,27 +4,24 @@ import re
 p = Path('app/src/main/java/com/xsportsx/app/MainActivity.kt')
 s = p.read_text(encoding='utf-8')
 
-live_old = '''@Composable
+# Earlier production patches may already have changed the LiveScreen body.
+live_pattern = re.compile(r'@Composable\s+fun LiveScreen\(onGame: \(Game\) -> Unit\)\s*\{.*?\n\}\s*\n\n@Composable\s+fun LiveRow', re.DOTALL)
+live_replacement = '''@Composable
 fun LiveScreen(onGame: (Game) -> Unit) {
-    Column(Modifier.fillMaxSize()) {
-        Header("LIVE NOW", "Streams become available when your connected source matches the event")
-        val live = games.filter { it.league == "NFL" || it.league == "MLB" }
-        if (live.isEmpty()) EmptyState("Nothing live right now") else LazyColumn(contentPadding = PaddingValues(34.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) { items(live) { LiveRow(it, onGame) } }
-    }
-}
-'''
-live_new = '''@Composable
-fun LiveScreen(onGame: (Game) -> Unit) {
-    // Public/authorized sources are always checked first. Xtream/M3U remains optional.
+    // Public/authorized sources are checked first. Xtream/M3U remains optional.
     LiveChannelsScreen(filter = null, onBack = { })
 }
-'''
-if live_old not in s:
-    raise SystemExit('LiveScreen block not found')
-s = s.replace(live_old, live_new, 1)
 
-pattern = re.compile(r'@Composable\nfun EventSheet\(game: Game, onClose: \(\) -> Unit\) \{.*\}\s*$', re.DOTALL)
-replacement = '''@Composable
+@Composable
+fun LiveRow'''
+if 'LiveChannelsScreen(filter = null' not in s:
+    s, count = live_pattern.subn(live_replacement, s, count=1)
+    if count != 1:
+        raise SystemExit('LiveScreen function not found after production patches')
+
+# Replace only the EventSheet function, wherever it currently ends.
+event_pattern = re.compile(r'@Composable\s+fun EventSheet\(game: Game, onClose: \(\) -> Unit\)\s*\{.*?\n\}\s*$', re.DOTALL)
+event_replacement = '''@Composable
 fun EventSheet(game: Game, onClose: () -> Unit) {
     var browsePublic by remember { mutableStateOf(false) }
     if (browsePublic) {
@@ -56,9 +53,10 @@ fun EventSheet(game: Game, onClose: () -> Unit) {
     }
 }
 '''
-s, count = pattern.subn(replacement, s, count=1)
-if count != 1:
-    raise SystemExit('EventSheet block not found')
+if 'LIVE SOURCE MATCHING' not in s:
+    s, count = event_pattern.subn(event_replacement, s, count=1)
+    if count != 1:
+        raise SystemExit('EventSheet function not found after production patches')
 
 p.write_text(s, encoding='utf-8')
-print('Public-first live source flow applied: Live tab and event sheet no longer require Xtream/M3U login.')
+print('Public-first live source flow applied safely.')
