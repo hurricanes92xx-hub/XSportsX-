@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "updated": "2026-08-26",
+  "policy": "official-or-authorized-public-events-only",
+  "sources": [
+    {"id":"ncaa-champs-pass","name":"NCAA Championships Pass","sports":["ncaa-football","ncaa-basketball","ncaa-other"],"url":"https://www.ncaa.com/championships","type":"official-event-hub"},
+    {"id":"ncaa-live","name":"NCAA Live","sports":["ncaa-basketball","ncaa-other"],"url":"https://www.ncaa.com/watch-live","type":"official-event-hub"},
+    {"id":"mlb-milb-free","name":"MLB / MiLB Free Live","sports":["baseball"],"url":"https://www.mlb.com/watch/free-games","type":"official-event-hub"},
+    {"id":"official-youtube","name":"Official YouTube Live Discovery","sports":["ncaa-football","ncaa-basketball","baseball","soccer","other"],"type":"official-account-discovery"},
+    {"id":"official-school-streams","name":"College Athletics Official Streams","sports":["ncaa-football","ncaa-basketball","ncaa-other"],"type":"official-school-discovery"},
+    {"id":"official-local-stations","name":"Local Broadcaster Live Discovery","sports":["ncaa-football","ncaa-basketball","baseball","soccer","other"],"type":"official-broadcaster-discovery"},
+    {"id":"victory-plus","name":"Victory+","sports":["hockey","wnba","basketball","volleyball","football","soccer","other"],"url":"https://victoryplus.com/launch","type":"official-event-hub","access":"free-account;territory-restrictions"},
+    {"id":"nfhs-network","name":"NFHS Network","sports":["high-school-football","high-school-volleyball","high-school-basketball","high-school-soccer","high-school-baseball","high-school-softball","high-school-wrestling","high-school-other"],"url":"https://www.nfhsnetwork.com/watch-events","type":"official-event-hub","access":"free-or-paid-by-event"},
+    {"id":"hudl-fan","name":"Hudl Fan","sports":["high-school-football","high-school-volleyball","high-school-basketball","high-school-soccer","high-school-baseball","high-school-softball","high-school-other"],"url":"https://fan.hudl.com/","type":"official-event-hub","access":"free-or-paid-by-event"},
+    {"id":"fifa-plus","name":"FIFA+","sports":["soccer","futsal"],"url":"https://www.plus.fifa.com/en","type":"official-event-hub","access":"free-live-events;territory-restrictions"},
+    {"id":"cfl-plus","name":"CFL+","sports":["cfl"],"url":"https://www.cfl.ca/plus/","type":"official-event-hub","access":"free;territory-restrictions"},
+    {"id":"nll-plus","name":"NLL+","sports":["lacrosse"],"url":"https://plus.nll.com/","type":"official-event-hub","access":"free-global-with-territory-restrictions"},
+    {"id":"mountain-west-plus","name":"MW+","sports":["ncaa-football","ncaa-basketball","ncaa-volleyball","ncaa-other"],"url":"https://www.themw.com/","type":"official-conference-discovery","access":"subscription-or-event-dependent"},
+    {"id":"varsity-network","name":"Varsity Network","sports":["ncaa-football","ncaa-basketball","ncaa-volleyball","ncaa-other"],"url":"https://www.varsitynetwork.com/","type":"official-event-hub","access":"varies-by-event"},
+    {"id":"ballertv","name":"BallerTV","sports":["basketball","volleyball","other"],"url":"https://www.ballertv.com/","type":"official-event-hub","access":"varies-by-event"}
+  ]
+}
