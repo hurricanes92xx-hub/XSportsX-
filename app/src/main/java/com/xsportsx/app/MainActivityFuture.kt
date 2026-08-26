@@ -45,9 +45,20 @@ class MainActivityFuture : ComponentActivity() {
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
 
-            // Warm the channel cache immediately after a source is connected/paired.
+            // Force a fresh provider catalog on every app launch, in the background.
+            LaunchedEffect(Unit) {
+                if (connected) {
+                    scope.launch {
+                        runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
+                    }
+                }
+            }
+
+            // Force a fresh catalog whenever a source is newly connected or paired.
             LaunchedEffect(sourceVersion, connected) {
-                if (connected) runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams() }
+                if (connected && sourceVersion > 0) {
+                    runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
+                }
             }
 
             if (availableUpdate != null) {
