@@ -46,8 +46,18 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
-          grep -q 'TvTopBar(onSettings=' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'TvModeButton' app/src/main/java/com/xsportsx/app/TvHome.kt
+          TV_SOURCE="app/src/main/java/com/xsportsx/app/TvHome.kt"
+          test -s "${TV_SOURCE}"
+          grep -q '^package com.xsportsx.app$' "${TV_SOURCE}"
+          grep -q 'TvActionButton' "${TV_SOURCE}"
+          if grep -q 'tvModeEnabled' "${TV_SOURCE}"; then
+            echo "::error::Legacy tvModeEnabled state remains in TvHome.kt"
+            exit 1
+          fi
+          if grep -q 'TvModeButton' "${TV_SOURCE}"; then
+            echo "::error::Legacy TvModeButton remains in TvHome.kt"
+            exit 1
+          fi
 
       - name: Verify release signing secrets
         env:
