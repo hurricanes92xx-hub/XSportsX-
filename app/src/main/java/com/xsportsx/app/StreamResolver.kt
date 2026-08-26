@@ -19,6 +19,7 @@ private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loade
 
 class StreamResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
+    private val publicResolver = PublicSourceResolver()
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
         private val cache = LruCache<String, StreamCacheEntry>(2)
@@ -28,7 +29,6 @@ class StreamResolver(context: Context) {
 
     suspend fun preloadLiveStreams(force: Boolean = false): Int = withContext(Dispatchers.IO) {
         val config = store.load()
-        if (!config.isConfigured()) return@withContext 0
         val key = cacheKey(config)
         val now = System.currentTimeMillis()
         cache.get(key)?.let { if (!force && now - it.loadedAt < CACHE_TTL_MS) return@withContext it.streams.size }
@@ -36,9 +36,15 @@ class StreamResolver(context: Context) {
             val fresh = cache.get(key)
             if (!force && fresh != null && System.currentTimeMillis() - fresh.loadedAt < CACHE_TTL_MS) fresh.streams
             else {
-                val loaded = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
-                cache.put(key, StreamCacheEntry(loaded, System.currentTimeMillis()))
-                loaded
+                val privateStreams = if (config.isConfigured()) {
+                    if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
+                } else emptyList()
+                val publicStreams = runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map {
+                    ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl)
+                }
+                val merged = dedupe(privateStreams + publicStreams)
+                cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis()))
+                merged
             }
         }
         streams.size
@@ -46,7 +52,6 @@ class StreamResolver(context: Context) {
 
     suspend fun loadLiveStreams(force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load()
-        if (!config.isConfigured()) return@withContext emptyList()
         val key = cacheKey(config)
         val now = System.currentTimeMillis()
         cache.get(key)?.takeIf { !force && now - it.loadedAt < CACHE_TTL_MS }?.streams?.let { return@withContext it }
@@ -64,7 +69,12 @@ class StreamResolver(context: Context) {
         }
     }
 
-    private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl).joinToString("|")
+    private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl, BuildConfig.PAIRING_BASE_URL).joinToString("|")
+
+    private fun dedupe(streams: List<ResolvedStream>): List<ResolvedStream> {
+        val seen = HashSet<String>()
+        return streams.filter { seen.add(it.url) }
+    }
 
     private fun loadXtream(config: SourceConfig): List<ResolvedStream> {
         val base = config.server.trim().removeSuffix("/")
