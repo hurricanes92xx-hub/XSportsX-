@@ -1,6 +1,10 @@
 package com.xsportsx.app
 
+import android.util.LruCache
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -8,13 +12,157 @@ import java.io.BufferedInputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-private data class PublicResolvedStream(val url:String,val title:String,val group:String,val latencyMs:Int=0)
+data class PublicResolvedStream(
+    val name: String,
+    val group: String,
+    val url: String,
+    val iconUrl: String = "",
+    val sourceName: String = "Public source",
+    val latencyMs: Int = 0
+)
 
-object PublicSourceResolver {
-    private const val MAX_PLAYLIST_BYTES = 4_000_000
-    private val registryHosts = setOf("raw.githubusercontent.com", "github.com", "gist.githubusercontent.com")
-    private val REGISTRY_URLS = listOf<String>()
-    private val sportsTerms = Regex("football|basketball|baseball|hockey|soccer|ufc|boxing|rugby|volleyball|wrestling|motogp|formula|nascar|racing|sports", RegexOption.IGNORE_CASE)
+class PublicSourceResolver {
+    companion object {
+        private const val CACHE_TTL_MS = 15 * 60 * 1000L
+        private const val MAX_PLAYLIST_BYTES = 8_000_000
+        private const val MAX_CANDIDATES = 240
+        private const val PER_SOURCE_CANDIDATES = 60
+        private const val MAX_HEALTH_CHECKS = 96
+        private const val HEALTH_CONCURRENCY = 12
+        private const val MAX_TARGETED_BYTES = 8_000_000
+        private const val TARGETED_CONCURRENCY = 6
+        private val REGISTRY_URLS = listOf(
+            "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/docs/public-sources-registry.json",
+            "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/docs/public-sources-registry.json",
+            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@android-app/docs/public-sources-registry.json",
+            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json",
+            "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json"
+        )
+        private val registryHosts = setOf(
+            "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
+            "dearbulut.github.io", "i.mjh.nz"
+        )
+        private val sportsTerms = Regex(
+            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|accdn|big ten|btn|pac 12|pac-12|baseball|basketball|football|hockey|soccer|cbs sports|nbc sports|fubo sports|fanduel|sportsgrid|stadium|fifa\\+|real madrid tv|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|lacrosse|wrestling|mavtv|tvs sports|dazn combat|glory kickboxing|l\\'equipe|teledeporte|rta sport|rtsh sport|san marino rtv sport|trace sports stars|unbeaten|world of freesports|more than sports|fuel tv|w14dk)\\b",
+            RegexOption.IGNORE_CASE
+        )
+    }
+
+    private val cache = LruCache<String, Pair<Long, List<PublicResolvedStream>>>(1)
+
+    suspend fun load(force: Boolean = false): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
+        val key = "static-public-registry"
+        val now = System.currentTimeMillis()
+        val hit = cache.get(key)
+        if (!force && hit != null && now - hit.first < CACHE_TTL_MS) return@withContext hit.second
+        val registryText = fetchRegistry() ?: return@withContext hit?.second.orEmpty()
+        val registry = runCatching { JSONObject(registryText) }.getOrNull() ?: return@withContext hit?.second.orEmpty()
+        val sources = registry.optJSONArray("sources") ?: JSONArray()
+        val candidates = ArrayList<PublicResolvedStream>(MAX_CANDIDATES)
+        for (i in 0 until sources.length()) {
+            if (candidates.size >= MAX_CANDIDATES) break
+            val source = sources.optJSONObject(i) ?: continue
+            if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
+            val playlist = source.optString("playlist").trim()
+            val sourceName = source.optString("name").ifBlank { "Public source" }
+            val allowlist = source.optString("allowlist").trim()
+            if (!isAllowedRegistryUrl(playlist)) continue
+            val body = fetchText(playlist, MAX_PLAYLIST_BYTES, registryOnly = true) ?: continue
+            val remaining = MAX_CANDIDATES - candidates.size
+            candidates += parseM3u(body, sourceName, allowlist, minOf(PER_SOURCE_CANDIDATES, remaining))
+        }
+        val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
+        if (unique.isEmpty()) { cache.put(key, now to emptyList()); return@withContext emptyList() }
+        val checked = coroutineScope {
+            unique.take(MAX_HEALTH_CHECKS).chunked(HEALTH_CONCURRENCY).flatMap { batch ->
+                batch.map { stream -> async(Dispatchers.IO) { health(stream) } }.awaitAll().filterNotNull()
+            }
+        }
+        val healthyUrls = checked.map { it.url }.toSet()
+        val ordered = if (checked.isNotEmpty()) checked + unique.filterNot { it.url in healthyUrls } else unique
+        val result = ordered.distinctBy { it.url }.take(MAX_CANDIDATES)
+        cache.put(key, now to result)
+        result
+    }
+
+    suspend fun searchTargeted(terms: List<String>): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
+        val normalized = terms.map(::normalize).filter { it.length >= 2 }.distinct()
+        if (normalized.isEmpty()) return@withContext emptyList()
+        val registryText = fetchRegistry() ?: return@withContext emptyList()
+        val registry = runCatching { JSONObject(registryText) }.getOrNull() ?: return@withContext emptyList()
+        val sources = registry.optJSONArray("sources") ?: JSONArray()
+        val sourceConfigs = buildList {
+            for (i in 0 until sources.length()) {
+                val source = sources.optJSONObject(i) ?: continue
+                if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
+                val playlist = source.optString("playlist").trim()
+                if (!isAllowedRegistryUrl(playlist)) continue
+                add(Triple(playlist, source.optString("name").ifBlank { "Public source" }, source.optString("allowlist").trim()))
+            }
+        }
+        coroutineScope {
+            sourceConfigs.chunked(TARGETED_CONCURRENCY).flatMap { batch ->
+                batch.map { (playlist, sourceName, allowlist) ->
+                    async(Dispatchers.IO) {
+                        runCatching {
+                            val body = fetchText(playlist, MAX_TARGETED_BYTES, registryOnly = true) ?: return@runCatching emptyList<PublicResolvedStream>()
+                            parseTargetedM3u(body, sourceName, allowlist, normalized)
+                        }.getOrDefault(emptyList())
+                    }
+                }.awaitAll().flatten()
+            }
+        }.distinctBy { it.url }.sortedByDescending { targetedScore(it.name, it.group, normalized) }
+    }
+
+    private fun parseM3u(text: String, sourceName: String, allowlist: String, maxResults: Int): List<PublicResolvedStream> {
+        val result = ArrayList<PublicResolvedStream>(); var name = ""; var group = "LIVE"; var icon = ""
+        for (line in text.lineSequence()) {
+            val value = line.trim()
+            when {
+                value.startsWith("#EXTINF", true) -> { name = value.substringAfterLast(',', "Unnamed").trim(); group = attr(value, "group-title").ifBlank { "LIVE" }; icon = attr(value, "tvg-logo") }
+                value.isNotBlank() && !value.startsWith("#") -> {
+                    if (name.isNotBlank() && isAllowedStream(value) && isSports(name, group) && matchesAllowlist(name, allowlist)) result += PublicResolvedStream(name, group, value, icon, sourceName)
+                    name = ""; group = "LIVE"; icon = ""
+                }
+            }
+            if (result.size >= maxResults) break
+        }
+        return result
+    }
+
+    private fun parseTargetedM3u(text: String, sourceName: String, allowlist: String, terms: List<String>): List<PublicResolvedStream> {
+        val result = ArrayList<PublicResolvedStream>(); var name = ""; var group = "LIVE"; var icon = ""
+        for (line in text.lineSequence()) {
+            val value = line.trim()
+            when {
+                value.startsWith("#EXTINF", true) -> { name = value.substringAfterLast(',', "Unnamed").trim(); group = attr(value, "group-title").ifBlank { "LIVE" }; icon = attr(value, "tvg-logo") }
+                value.isNotBlank() && !value.startsWith("#") -> {
+                    val score = targetedScore(name, group, terms)
+                    if (name.isNotBlank() && isAllowedStream(value) && matchesAllowlist(name, allowlist) && score > 0) result += PublicResolvedStream(name, group, value, icon, sourceName, score)
+                    name = ""; group = "LIVE"; icon = ""
+                }
+            }
+        }
+        return result
+    }
+
+    private fun targetedScore(name: String, group: String, terms: List<String>): Int {
+        val hay = normalize("$name $group")
+        var best = 0
+        for (term in terms) {
+            if (hay == term) best = maxOf(best, 100)
+            else if (hay.contains(term)) best = maxOf(best, 90)
+            else {
+                val tokens = term.split(' ').filter { it.length >= 2 }
+                val hits = tokens.count { hay.contains(it) }
+                if (tokens.isNotEmpty() && hits == tokens.size) best = maxOf(best, 80)
+                else if (hits > 0) best = maxOf(best, 55)
+            }
+        }
+        return best
+    }
+
+    private fun matchesAllowlist(name: String, allowlist: String): Boolean = allowlist.isBlank() || allowlist.split('|').any { it.isNotBlank() && name.contains(it.trim(), true) }
 
     private suspend fun health(stream: PublicResolvedStream): PublicResolvedStream? = withContext(Dispatchers.IO) {
         runCatching {
@@ -34,7 +182,6 @@ object PublicSourceResolver {
     private fun isSports(name: String, group: String): Boolean = sportsTerms.containsMatchIn("$name $group")
     private fun isAllowedRegistryUrl(target: String): Boolean = runCatching { val uri = URL(target); uri.protocol.equals("https", true) && registryHosts.any { host -> uri.host.equals(host, true) || uri.host.endsWith(".$host", true) } }.getOrDefault(false)
     private fun isAllowedStream(target: String): Boolean = runCatching { URL(target).protocol.equals("https", true) }.getOrDefault(false)
-
     private suspend fun fetchRegistry(): String? {
         for (target in REGISTRY_URLS) {
             val value = fetchText(target, 256_000, registryOnly = true)
@@ -42,7 +189,6 @@ object PublicSourceResolver {
         }
         return null
     }
-
     private suspend fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES, registryOnly: Boolean = false): String? = withContext(Dispatchers.IO) {
         runCatching {
             if (registryOnly && !isAllowedRegistryUrl(target)) return@runCatching null
@@ -56,4 +202,6 @@ object PublicSourceResolver {
             input.close(); c.disconnect(); out.toString()
         }.getOrNull()
     }
+    private fun attr(line: String, key: String): String = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
+    private fun normalize(value: String): String = value.lowercase().replace("’", "'").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
 }
