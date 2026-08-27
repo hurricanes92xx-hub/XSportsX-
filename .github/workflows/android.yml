@@ -47,12 +47,14 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
           test -f app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           test -f data/schedule_auto_update_policy.json
+          test -f data/schedule_backup_sources.json
           test -f data/brand_logo_catalog.json
           test -f data/schedule_feed.json
           test -f scripts/fetch_brand_logo_pack.py
           test -f scripts/patch_canonical_logo_ui.py
           test -f scripts/patch_yearly_schedule_window.py
           test -f scripts/patch_special_schedule_feed.py
+          test -f scripts/patch_schedule_backup_sources.py
           test -f scripts/patch_pro_wrestling_schedule.py
           test -f scripts/finalize_wrestling_build.py
           test -f scripts/patch_schedule_coverage.py
@@ -88,6 +90,7 @@ jobs:
           python3 scripts/patch_pro_wrestling_schedule.py
           python3 scripts/patch_schedule_coverage.py
           python3 scripts/patch_official_ncaa_schedule_sources.py
+          python3 scripts/patch_schedule_backup_sources.py
           python3 scripts/fix_schedule_ui_build.py
           python3 scripts/patch_remove_unbacked_sports.py
           python3 scripts/fetch_brand_logo_pack.py
@@ -105,6 +108,7 @@ jobs:
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
