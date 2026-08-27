@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "description": "Normalized relationships used to rank event-to-stream matches.",
+  "nodes": ["event","team","league","sport","network","channel","source","region","epg"],
+  "edges": [
+    "event:belongs_to_league",
+    "event:has_team",
+    "event:broadcasts_on",
+    "network:alias_of",
+    "network:available_in",
+    "channel:belongs_to_network",
+    "channel:listed_by_source",
+    "channel:has_epg",
+    "channel:currently_carrying",
+    "source:reports_event"
+  ],
+  "confidence": {
+    "exact_event_and_healthy_stream": 100,
+    "exact_teams_and_time": 95,
+    "exact_teams_and_network": 90,
+    "league_network_time": 80,
+    "epg_and_network_match": 75,
+    "network_only": 35,
+    "generic_search_result": 5
+  },
+  "rules": [
+    "Exact event matches always outrank network-only matches.",
+    "A source must pass health validation before it can become playable.",
+    "EPG, Google, Telegram and schedule data corroborate; none alone proves playback availability.",
+    "Region and broadcast rights are part of matching.",
+    "Duplicate channels collapse by canonical network, xmltv_id, normalized URL and region."
+  ]
+}
