@@ -13,7 +13,6 @@ if 'private const val SPECIAL_FEED_URL' not in s:
         raise SystemExit('schedule constants anchor not found')
     s = s.replace(anchor, anchor + inject, 1)
 
-# Do not explicitly request gzip; Android HttpURLConnection can transparently decompress it.
 s = s.replace('            setRequestProperty("Accept-Encoding", "gzip")\n', '', 1)
 
 if 'fetchSpecialScheduleFeed()' not in s:
@@ -29,15 +28,13 @@ s = s.replace(
     1,
 )
 
-# Add backed NCAA sports feeds. groups=50 asks ESPN for the full Division I slate.
 anchor = '        ScheduleLeague("BOXING", "Boxing", "boxing/boxing", "https://www.boxing.com/")\n'
 college = '''        ScheduleLeague("NCAA VB", "Volleyball", "volleyball/womens-college-volleyball", "https://www.ncaa.com/sports/volleyball-women", "groups=50"),\n        ScheduleLeague("NCAA MVB", "Volleyball", "volleyball/mens-college-volleyball", "https://www.ncaa.com/sports/volleyball-men", "groups=50"),\n        ScheduleLeague("NCAA BASEBALL", "Baseball", "baseball/college-baseball", "https://www.ncaa.com/sports/baseball", "groups=50"),\n        ScheduleLeague("NCAA SOFTBALL", "Softball", "softball/college-softball", "https://www.ncaa.com/sports/softball", "groups=50"),\n        ScheduleLeague("NCAA MEN HOCKEY", "Hockey", "hockey/mens-college-hockey", "https://www.ncaa.com/sports/icehockey-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN HOCKEY", "Hockey", "hockey/womens-college-hockey", "https://www.ncaa.com/sports/icehockey-women", "groups=50"),\n        ScheduleLeague("NCAA MEN SOCCER", "Soccer", "soccer/usa.ncaa.m.1", "https://www.ncaa.com/sports/soccer-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN SOCCER", "Soccer", "soccer/usa.ncaa.w.1", "https://www.ncaa.com/sports/soccer-women", "groups=50"),\n        ScheduleLeague("NCAA MEN LAX", "Lacrosse", "lacrosse/mens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN LAX", "Lacrosse", "lacrosse/womens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-women", "groups=50"),\n'''
 if 'ScheduleLeague("NCAA VB", "Volleyball"' not in s and anchor in s:
     s = s.replace(anchor, anchor + college, 1)
 
-# Combat endpoints can return event cards without team-style competitors. Keep those events.
 old = '''            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue\n            val competitors = competition.optJSONArray("competitors") ?: continue\n\n            var home = ""\n'''
-new = '''            val competition = event.optJSONArray("competitions")?.optJSONObject(0)\n            val competitors = competition?.optJSONArray("competitors")\n\n            var home = ""\n'''
+new = '''            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: JSONObject()\n            val competitors = competition.optJSONArray("competitors")\n\n            var home = ""\n'''
 if old in s:
     s = s.replace(old, new, 1)
 
@@ -47,7 +44,7 @@ if old in s:
     s = s.replace(old, new, 1)
 
 old = '''            val start = event.optString("date")\n                .ifBlank { competition.optString("startDate") }\n            if (start.isBlank() || home.isBlank() || away.isBlank()) continue\n\n            val rawName = event.optString("name")\n'''
-new = '''            val start = event.optString("date")\n                .ifBlank { competition?.optString("startDate").orEmpty() }\n            if (start.isBlank()) continue\n\n            val rawName = event.optString("name")\n'''
+new = '''            val start = event.optString("date")\n                .ifBlank { competition.optString("startDate") }\n            if (start.isBlank()) continue\n\n            val rawName = event.optString("name")\n'''
 if old in s:
     s = s.replace(old, new, 1)
 
@@ -68,28 +65,23 @@ SERVICE.write_text(s, encoding='utf-8')
 if SCREEN.exists():
     t = SCREEN.read_text(encoding='utf-8')
     t = t.replace('SportsScheduleService.load(leagueFilter)', 'SportsScheduleService.load()')
-
     old_choices = 'val leagueChoices = listOf("ALL", "NFL", "NCAA FB", "NBA", "NCAA BB", "MLB", "NHL", "UFC", "BOXING")'
     new_choices = 'val leagueChoices = SportsScheduleService.uiLeagueChoices.let { listOf("ALL") + it.filter { choice -> choice != "ALL" }.distinct() }'
     if old_choices in t:
         t = t.replace(old_choices, new_choices, 1)
-
     old_label = '''                    Text(when { event.league.equals("UFC", true) -> "UFC • FIGHT EVENT"; event.league.equals("BOXING", true) -> "BOXING • EVENT NIGHT"; else -> "F1 • GRAND PRIX" }, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
     new_label = '''                    Text(specialCardKicker(event), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
     if old_label in t:
         t = t.replace(old_label, new_label, 1)
-
     old_text = 'Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'
     new_text = 'Text(event.league.uppercase(), color = Color.White, fontSize = if (event.league.length > 8) 9.sp else 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.0.sp)'
     if old_text in t:
         t = t.replace(old_text, new_text, 1)
-
     if 'private fun specialCardKicker(event: SportsEvent)' not in t:
         marker = '@Composable\nprivate fun EventArtBadge'
         helper = '''private fun specialCardKicker(event: SportsEvent): String = when (event.league.uppercase()) {\n    "UFC" -> "UFC • FIGHT EVENT"\n    "BOXING" -> "BOXING • EVENT NIGHT"\n    "FORMULA E" -> "FORMULA E • ePRIX"\n    "MXGP" -> "MXGP • GRAND PRIX"\n    "MONSTER JAM" -> "MONSTER JAM • EVENT"\n    "MOTOGP" -> "MOTOGP • GRAND PRIX"\n    "WRC" -> "WRC • RALLY"\n    "WEC" -> "WEC • ENDURANCE"\n    "IMSA" -> "IMSA • SPORTS CAR"\n    "F1" -> "F1 • GRAND PRIX"\n    "WRESTLING" -> "WRESTLING • EVENT"\n    else -> "${event.league.uppercase()} • EVENT"\n}\n\n'''
         if marker in t:
             t = t.replace(marker, helper + marker, 1)
-
     SCREEN.write_text(t, encoding='utf-8')
 
 print('Schedule patch updated: combat events without team competitors, NCAA volleyball/college feeds, and correct special-event card labels.')
