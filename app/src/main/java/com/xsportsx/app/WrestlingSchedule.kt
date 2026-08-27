@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 data class WrestlingEvent(val brand:String,val title:String,val date:String,val location:String,val kind:String,val time:String="")
 
 private val fallbackWrestlingEvents = listOf(
@@ -31,7 +30,10 @@ private val fallbackWrestlingEvents = listOf(
     WrestlingEvent("AEW","Grand Slam: France","OCT 6, 2026","Paris, France","SPECIAL","TBA"),
     WrestlingEvent("AEW","WrestleDream","OCT 17, 2026","Orlando, FL","PPV","7:00 PM ET"),
     WrestlingEvent("AEW","Full Gear","NOV 14, 2026","Phoenix, AZ","PPV","4:00 PM PT"),
-    WrestlingEvent("TNA","Bound for Glory","OCT 11, 2026","Tampa, FL","PPV","4:00 PM Local")
+    WrestlingEvent("NXT","NXT • Weekly/Special","UPCOMING","","SPECIAL","TBA"),
+    WrestlingEvent("ROH","ROH • Weekly/Events","UPCOMING","","EVENT","TBA"),
+    WrestlingEvent("TNA","Bound for Glory","OCT 11, 2026","Tampa, FL","PPV","4:00 PM Local"),
+    WrestlingEvent("NJPW","NJPW • Event Schedule","UPCOMING","","EVENT","TBA")
 )
 
 private val wrestlingWeekly = listOf(
@@ -42,16 +44,27 @@ private val wrestlingWeekly = listOf(
     "WWE SmackDown • Fridays",
     "AEW Dynamite • Wednesdays",
     "AEW Collision • Saturdays",
-    "TNA iMPACT! • Thursdays"
+    "ROH • Weekly/Events",
+    "TNA iMPACT! • Thursdays",
+    "NJPW • Event Schedule"
 )
 
-private fun remoteWrestlingEvents(games: List<Game>): List<WrestlingEvent> = games.filter { it.league in setOf("WWE","AEW","TNA") }.map {
+private val wrestlingPromotions = listOf(
+    "WWE" to Color(0xFF2E8BFF),
+    "AEW" to Color(0xFFFF102F),
+    "NXT" to Color(0xFFFFB000),
+    "ROH" to Color(0xFF8A63D2),
+    "TNA" to Color(0xFFFF6D00),
+    "NJPW" to Color(0xFFDD2222)
+)
+
+private fun remoteWrestlingEvents(games: List<Game>): List<WrestlingEvent> = games.filter { it.league in setOf("WWE","AEW","NXT","ROH","TNA","NJPW") }.map {
     WrestlingEvent(
         brand = it.league,
-        title = it.matchup,
+        title = it.matchup.ifBlank { "${it.league} • Event" },
         date = it.time.substringBefore(" • ").ifBlank { "UPCOMING" },
         location = "",
-        kind = it.tag,
+        kind = it.tag.ifBlank { "EVENT" },
         time = it.time.substringAfter(" • ", it.time)
     )
 }
@@ -72,12 +85,14 @@ fun WrestlingScheduleSection(onWatch:()->Unit={}) {
         Row(verticalAlignment=Alignment.CenterVertically) {
             Text("WRESTLING",color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp)
             Spacer(Modifier.width(8.dp))
-            Text("WWE • AEW • TNA",color=Color(0xFF727B8B),fontSize=8.sp,fontWeight=FontWeight.Black,letterSpacing=.8.sp)
+            Text("WWE • AEW • NXT • ROH • TNA • NJPW",color=Color(0xFF727B8B),fontSize=8.sp,fontWeight=FontWeight.Black,letterSpacing=.8.sp)
         }
         Spacer(Modifier.height(9.dp))
-        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-            listOf("WWE" to Color(0xFF2E8BFF),"AEW" to Color(0xFFFF102F),"TNA" to Color(0xFFFF6D00)).forEach { (brand,color) ->
-                Box(Modifier.clip(RoundedCornerShape(10.dp)).background(color.copy(alpha=.16f)).padding(horizontal=9.dp,vertical=6.dp)) { Text(brand,color=color,fontSize=9.sp,fontWeight=FontWeight.Black) }
+        LazyRow(horizontalArrangement=Arrangement.spacedBy(8.dp),contentPadding=PaddingValues(end=8.dp)) {
+            items(wrestlingPromotions, key={it.first}) { (brand,color) ->
+                Box(Modifier.clip(RoundedCornerShape(10.dp)).background(color.copy(alpha=.16f)).padding(horizontal=9.dp,vertical=6.dp)) {
+                    Text(brand,color=color,fontSize=9.sp,fontWeight=FontWeight.Black)
+                }
             }
         }
         Spacer(Modifier.height(9.dp))
@@ -88,13 +103,23 @@ fun WrestlingScheduleSection(onWatch:()->Unit={}) {
         Text("WEEKLY",color=Color(0xFF727B8B),fontSize=8.sp,fontWeight=FontWeight.Black,letterSpacing=1.sp)
         Spacer(Modifier.height(6.dp))
         LazyRow(horizontalArrangement=Arrangement.spacedBy(7.dp),contentPadding=PaddingValues(end=8.dp)) {
-            items(wrestlingWeekly) { Text(it,color=Color(0xFFDCE1E9),fontSize=9.sp,fontWeight=FontWeight.Bold,modifier=Modifier.clip(RoundedCornerShape(9.dp)).background(Color(0xFF141A24)).padding(horizontal=9.dp,vertical=7.dp)) }
+            items(wrestlingWeekly) { item ->
+                Text(item,color=Color(0xFFDCE1E9),fontSize=9.sp,fontWeight=FontWeight.Bold,modifier=Modifier.clip(RoundedCornerShape(9.dp)).background(Color(0xFF141A24)).padding(horizontal=9.dp,vertical=7.dp))
+            }
         }
     }
 }
 
 @Composable private fun WrestlingEventCard(event:WrestlingEvent,onWatch:()->Unit) {
-    val brandColor=when(event.brand){"WWE"->Color(0xFF2E8BFF);"AEW"->Color(0xFFFF102F);else->Color(0xFFFF6D00)}
+    val brandColor=when(event.brand){
+        "WWE"->Color(0xFF2E8BFF)
+        "AEW"->Color(0xFFFF102F)
+        "NXT"->Color(0xFFFFB000)
+        "ROH"->Color(0xFF8A63D2)
+        "TNA"->Color(0xFFFF6D00)
+        "NJPW"->Color(0xFFDD2222)
+        else->Color(0xFFFF6D00)
+    }
     Column(Modifier.width(178.dp).height(154.dp).clip(RoundedCornerShape(17.dp)).background(Color(0xFF0D1119)).clickable{onWatch()}.padding(12.dp)) {
         Row(verticalAlignment=Alignment.CenterVertically) {
             Text(event.brand,color=brandColor,fontSize=9.sp,fontWeight=FontWeight.Black)
