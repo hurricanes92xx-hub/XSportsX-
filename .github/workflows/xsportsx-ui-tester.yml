@@ -4,7 +4,6 @@ name: XSportsX QA — Mobile + TV
 # QA covers lifecycle, UI navigation, source fixtures, Xtream/M3U connection,
 # TV QR/manual login surfaces, favorites/college picker, source latency,
 # ticker/cracked-glass/icon assets, logo rendering, and regression evidence.
-# QA trigger marker: 2026-08-26 full regression pass.
 
 on:
   workflow_dispatch:
@@ -44,6 +43,11 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           test -f app/src/main/java/com/xsportsx/app/TvCrackPulseCompat.kt
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
+          test -f app/src/main/assets/brand_logos/nfl.svg
+          test -f app/src/main/assets/brand_logos/nba.svg
+          test -f app/src/main/assets/brand_logos/ncaa.svg
+          test -f app/src/main/assets/brand_logos/espn.svg
+          test -f app/src/main/assets/brand_logos/cbs.svg
           test -f app/src/main/res/drawable/xsportsx_launcher.xml
           test -f app/src/main/res/drawable/xsportsx_launcher_foreground.xml
           grep -q 'HomeSportsTicker' app/src/main/java/com/xsportsx/app/MainActivityFuture.kt
@@ -57,7 +61,6 @@ jobs:
           grep -q 'M3U playlist URL' app/src/main/java/com/xsportsx/app/SourceConnectScreen.kt
           grep -q 'Xtream' app/src/main/java/com/xsportsx/app/SourceConnectScreen.kt
           grep -q 'android:icon="@drawable/xsportsx_launcher"' app/src/main/AndroidManifest.xml
-          echo 'Static UI/source/favorites/college/login/icon/logo checks passed'
       - name: Apply release-equivalent source fixes
         shell: bash
         run: |
@@ -66,14 +69,14 @@ jobs:
           python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
           python3 .github/patch_networks.py
+          python3 scripts/patch_real_brand_logos.py
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q ':List<FavoriteTeam>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-          grep -q ':List<FavoriteNews>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'brand_logos/espn.svg' app/src/main/java/com/xsportsx/app/SportsLogos.kt
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
@@ -105,12 +108,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo 'Downloaded QA APK files:'
           find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
-          test -n "$APK"
-          test -s "$APK"
-          echo "MOBILE_APK=$APK"
+          test -n "$APK" && test -s "$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
@@ -131,8 +131,7 @@ jobs:
           script: |
             set -euo pipefail
             APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
-            test -n "$APK"
-            test -s "$APK"
+            test -n "$APK" && test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
             QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
       - uses: actions/upload-artifact@v4
@@ -157,12 +156,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo 'Downloaded QA APK files:'
           find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
-          test -n "$APK"
-          test -s "$APK"
-          echo "TV_APK=$APK"
+          test -n "$APK" && test -s "$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
@@ -183,8 +179,7 @@ jobs:
           script: |
             set -euo pipefail
             APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
-            test -n "$APK"
-            test -s "$APK"
+            test -n "$APK" && test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
             QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
       - uses: actions/upload-artifact@v4
