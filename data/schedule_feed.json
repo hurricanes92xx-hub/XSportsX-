@@ -1,84 +1,32 @@
 {
-  "schema": 2,
-  "generatedAt": "2026-08-27T11:00:57.494117+00:00",
+  "schema": 3,
+  "generatedAt": "2026-08-27T19:30:00Z",
   "refreshHours": 6,
   "events": [
-    {
-      "league": "AEW",
-      "title": "All In: London",
-      "start": "2026-08-30T15:30:00Z",
-      "tag": "PPV",
-      "icon": "🤼"
-    },
-    {
-      "league": "WWE",
-      "title": "NXT Heatwave",
-      "start": "2026-08-30T17:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🏆"
-    },
-    {
-      "league": "WWE",
-      "title": "Sunday Night's Main Event",
-      "start": "2026-09-07T00:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🏆"
-    },
-    {
-      "league": "AEW",
-      "title": "All Out",
-      "start": "2026-09-26T23:00:00Z",
-      "tag": "PPV",
-      "icon": "🤼"
-    },
-    {
-      "league": "WWE",
-      "title": "Worlds Collide",
-      "start": "2026-09-27T00:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🏆"
-    },
-    {
-      "league": "AEW",
-      "title": "Grand Slam: France",
-      "start": "2026-10-06T00:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🤼"
-    },
-    {
-      "league": "WWE",
-      "title": "Money in the Bank",
-      "start": "2026-10-10T22:00:00Z",
-      "tag": "PLE",
-      "icon": "🏆"
-    },
-    {
-      "league": "TNA",
-      "title": "Bound for Glory",
-      "start": "2026-10-11T20:00:00Z",
-      "tag": "PPV",
-      "icon": "🤼"
-    },
-    {
-      "league": "AEW",
-      "title": "WrestleDream",
-      "start": "2026-10-17T23:00:00Z",
-      "tag": "PPV",
-      "icon": "🤼"
-    },
-    {
-      "league": "AEW",
-      "title": "Full Gear",
-      "start": "2026-11-14T23:00:00Z",
-      "tag": "PPV",
-      "icon": "🤼"
-    },
-    {
-      "league": "WWE",
-      "title": "Survivor Series: WarGames",
-      "start": "2026-11-29T00:00:00Z",
-      "tag": "PLE",
-      "icon": "🏆"
-    }
+    {"league":"AEW","title":"All In: London","start":"2026-08-30T15:30:00Z","tag":"PPV","icon":"🤼"},
+    {"league":"WWE","title":"NXT Heatwave","start":"2026-08-30T17:00:00Z","tag":"SPECIAL","icon":"🏆"},
+    {"league":"WRC","title":"Rally del Paraguay","start":"2026-08-27T12:01:00Z","tag":"RALLY","icon":"🏁"},
+    {"league":"WRC","title":"Rally Chile Bio Bío","start":"2026-09-10T00:00:00Z","tag":"RALLY","icon":"🏁"},
+    {"league":"WEC","title":"Lone Star Le Mans","start":"2026-09-06T00:00:00Z","tag":"RACE","icon":"🏎️"},
+    {"league":"MXGP","title":"MXGP Turkiye","start":"2026-09-06T00:00:00Z","tag":"RACE","icon":"🏍️"},
+    {"league":"WRC","title":"Rally Italia Sardegna","start":"2026-10-01T00:00:00Z","tag":"RALLY","icon":"🏁"},
+    {"league":"WEC","title":"6 Hours of Fuji","start":"2026-09-27T00:00:00Z","tag":"RACE","icon":"🏎️"},
+    {"league":"IMSA","title":"Indianapolis Motor Speedway","start":"2026-09-20T00:00:00Z","tag":"RACE","icon":"🏎️"},
+    {"league":"IMSA","title":"Motul Petit Le Mans","start":"2026-10-03T00:00:00Z","tag":"RACE","icon":"🏎️"},
+    {"league":"MXGP","title":"MXGP China","start":"2026-09-13T00:00:00Z","tag":"RACE","icon":"🏍️"},
+    {"league":"MXGP","title":"MXGP Australia","start":"2026-09-20T00:00:00Z","tag":"RACE","icon":"🏍️"},
+    {"league":"WRC","title":"Rally Saudi Arabia","start":"2026-11-11T00:00:00Z","tag":"RALLY","icon":"🏁"},
+    {"league":"WEC","title":"8 Hours of Bahrain","start":"2026-11-07T00:00:00Z","tag":"RACE","icon":"🏎️"},
+    {"league":"FORMULA E","title":"Jeddah ePrix","start":"2026-12-18T00:00:00Z","tag":"RACE","icon":"⚡"},
+    {"league":"MONSTER JAM","title":"Jacksonville, FL","start":"2026-09-05T00:00:00Z","tag":"EVENT","icon":"🚚"},
+    {"league":"WWE","title":"Sunday Night's Main Event","start":"2026-09-07T00:00:00Z","tag":"SPECIAL","icon":"🏆"},
+    {"league":"AEW","title":"All Out","start":"2026-09-26T23:00:00Z","tag":"PPV","icon":"🤼"},
+    {"league":"WWE","title":"Worlds Collide","start":"2026-09-27T00:00:00Z","tag":"SPECIAL","icon":"🏆"},
+    {"league":"AEW","title":"Grand Slam: France","start":"2026-10-06T00:00:00Z","tag":"SPECIAL","icon":"🤼"},
+    {"league":"WWE","title":"Money in the Bank","start":"2026-10-10T22:00:00Z","tag":"PLE","icon":"🏆"},
+    {"league":"TNA","title":"Bound for Glory","start":"2026-10-11T20:00:00Z","tag":"PPV","icon":"🤼"},
+    {"league":"AEW","title":"WrestleDream","start":"2026-10-17T23:00:00Z","tag":"PPV","icon":"🤼"},
+    {"league":"AEW","title":"Full Gear","start":"2026-11-14T23:00:00Z","tag":"PPV","icon":"🤼"},
+    {"league":"WWE","title":"Survivor Series: WarGames","start":"2026-11-29T00:00:00Z","tag":"PLE","icon":"🏆"}
   ]
 }
