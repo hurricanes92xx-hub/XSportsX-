@@ -51,6 +51,7 @@ jobs:
           [ ! -f scripts/patch_tv_navigation.py ] || python3 scripts/patch_tv_navigation.py
           [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
+          python3 .github/patch_networks.py
           python3 scripts/patch_league_routing.py
           python3 scripts/patch_verified_sports_logos_wwe.py
           python3 scripts/patch_ncaavb_badge.py
@@ -59,6 +60,8 @@ jobs:
           # MainActivityFuture/LiveChannelsScreen already provide the public-first live flow.
           # Do not run the legacy MainActivity patch: it targets the retired screen and can
           # fail after other production UI patches have changed that file.
+          # Logo regression guard: static league/network cards must not depend on a remote CDN.
+          ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
