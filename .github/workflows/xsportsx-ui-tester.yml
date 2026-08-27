@@ -62,14 +62,19 @@ jobs:
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
           python3 scripts/patch_college_favorites.py
-          # These are structural checks, not formatting checks. The TV navigation
-          # patch intentionally normalizes the loader signature.
           grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q ':List<FavoriteTeam>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
           grep -q ':List<FavoriteNews>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+      - name: Verify debug APK outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+          test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
+          ls -lh app/build/outputs/apk/mobile/debug/app-mobile-debug.apk app/build/outputs/apk/tv/debug/app-tv-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
@@ -87,9 +92,20 @@ jobs:
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
           path: test-apks
+      - name: Verify downloaded mobile APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Downloaded QA APK files:'
+          find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
+          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
+          test -n "$APK"
+          test -s "$APK"
+          echo "MOBILE_APK=$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
+          set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
           echo $! > qa-source.pid
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0; sleep 1; done
@@ -104,8 +120,10 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            APK=$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)
+            set -euo pipefail
+            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
             test -n "$APK"
+            test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
             QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
       - uses: actions/upload-artifact@v4
@@ -126,9 +144,20 @@ jobs:
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
           path: test-apks
+      - name: Verify downloaded TV APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Downloaded QA APK files:'
+          find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
+          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
+          test -n "$APK"
+          test -s "$APK"
+          echo "TV_APK=$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
+          set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
           echo $! > qa-source.pid
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0; sleep 1; done
@@ -143,8 +172,10 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            APK=$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)
+            set -euo pipefail
+            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
             test -n "$APK"
+            test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
             QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
       - uses: actions/upload-artifact@v4
