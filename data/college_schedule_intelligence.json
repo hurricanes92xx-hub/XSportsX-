@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "sports": ["baseball","softball","hockey","volleyball","soccer","lacrosse","wrestling"],
+  "strategy": "official conference and school schedules corroborate the primary schedule",
+  "refreshMinutes": 360,
+  "matching": {"preferOfficialEventId":true,"preferTeamPair":true,"requireSportAndLeagueContext":true,"preserveConferenceAndLeagueSeparation":true},
+  "failurePolicy":"use_existing_schedule_cache"
+}
