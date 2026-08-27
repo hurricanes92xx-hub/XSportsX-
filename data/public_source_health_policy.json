@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "purpose": "Keep public sports source selection fast by scoring sources in the background and using the index at event click time.",
+  "background": {
+    "refreshMinutes": 15,
+    "healthCheckConcurrency": 12,
+    "maxChecksPerRefresh": 96,
+    "retainLastGood": true,
+    "neverBlockPlayback": true
+  },
+  "score": {
+    "weights": {"availability": 0.45, "latency": 0.25, "recentSuccess": 0.20, "eventMatch": 0.10},
+    "decayHours": 24,
+    "promoteAfterSuccesses": 2,
+    "demoteAfterFailures": 2
+  },
+  "clickPath": {
+    "useHealthIndexFirst": true,
+    "maxCandidates": 8,
+    "recheckOnlySelectedCandidate": true,
+    "parallelFallbacks": 2,
+    "timeoutMs": 2500
+  },
+  "keys": ["normalizedChannel", "network", "sport", "league", "eventId"],
+  "privacy": {"storeCredentials": false, "storeUserStreamUrls": false}
+}
