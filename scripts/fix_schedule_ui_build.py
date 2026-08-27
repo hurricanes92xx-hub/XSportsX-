@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import subprocess
 
 SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 s = SCREEN.read_text(encoding='utf-8')
@@ -117,4 +118,10 @@ fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEv
 '''
 s = s[:start] + screen + s[end:]
 SCREEN.write_text(s, encoding='utf-8')
-print('Schedule UI build repair applied: rebuilt only SportsScheduleScreen with valid Compose structure and complete league catalog.')
+
+# This UI rewrite runs immediately before the official NCAA patch in the
+# production workflow. Re-apply the NCAA source patch here so this rewrite
+# cannot erase the authoritative college-schedule integration.
+subprocess.run(['python3', 'scripts/patch_official_ncaa_schedule_sources.py'], check=True)
+
+print('Schedule UI build repair applied and official NCAA schedule patch reapplied after the UI rewrite.')
