@@ -28,8 +28,6 @@ data class SportsEvent(
 data class ScheduleLeague(val sport:String,val league:String,val path:String,val officialUrl:String="")
 
 object SportsScheduleService {
-    // Every UI tile gets its own immutable league key. A generic sport label
-    // must never be used as the key for two different competitions.
     private val leagues=listOf(
         ScheduleLeague("Football","NFL","football/nfl","https://www.nfl.com/schedules/"),
         ScheduleLeague("College Football","NCAA FB","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
@@ -57,7 +55,6 @@ object SportsScheduleService {
         ScheduleLeague("Boxing","BOXING","boxing/boxing","https://www.wbcboxing.com/en/eventos/list/")
     )
 
-    /** Maps every Top Sports card to one stable schedule key. */
     fun canonicalLeagueFor(label:String):String = when(label.trim().uppercase()) {
         "NCAA FB","NCAAF","COLLEGE FOOTBALL" -> "NCAA FB"
         "NCAA BB","NCAAB","COLLEGE BASKETBALL" -> "NCAA BB"
@@ -73,7 +70,6 @@ object SportsScheduleService {
         else -> label.trim().uppercase()
     }
 
-    /** All labels shown by the mobile/TV Top Sports catalogs. */
     val uiLeagueChoices:List<String> = listOf(
         "NFL","NBA","NCAA FB","NCAA BB","MLB","NHL","UFC","BOXING","RUGBY",
         "VOLLEYBALL","LACROSSE","WRESTLING","MOTOGP","WRC","WEC","IMSA","FORMULA E",
@@ -90,24 +86,22 @@ object SportsScheduleService {
                 leagues.map { league -> async { limiter.withPermit { fetchLeagueWithFallbacks(league,dates,today,end) } } }.awaitAll()
             }
         }
-        results.flatten()
-            .distinctBy { it.id.ifBlank { it.title+it.startUtc+it.league } }
+        results.flatten().distinctBy { it.id.ifBlank { it.title+it.startUtc+it.league } }
             .filter { it.isLive || it.isUpcoming }
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
     }
 
     private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String,from:LocalDate,to:LocalDate):List<SportsEvent> {
-        val sources=mutableListOf<List<SportsEvent>>()
-        runCatching { sources += fetchEspn(league,dates) }
-        if(sources.lastOrNull().isNullOrEmpty()) runCatching { sources += fetchEspnV3(league,dates) }
-        when(league.league){
-            "MLB" -> runCatching { sources += fetchMlbOfficial(from,to) }
-            "NHL" -> runCatching { sources += fetchNhlOfficial(from,to) }
-            "F1" -> runCatching { sources += fetchF1Fallback(from,to) }
+        val primary=runCatching { fetchEspn(league,dates) }.getOrDefault(emptyList())
+        val fallback=if(primary.isEmpty()) runCatching { fetchEspnV3(league,dates) }.getOrDefault(emptyList()) else emptyList()
+        val extras=when(league.league){
+            "MLB" -> runCatching { fetchMlbOfficial(from,to) }.getOrDefault(emptyList())
+            "NHL" -> runCatching { fetchNhlOfficial(from,to) }.getOrDefault(emptyList())
+            "F1" -> runCatching { fetchF1Fallback(from,to) }.getOrDefault(emptyList())
+            else -> emptyList()
         }
-        return sources.flatten()
-            .filter { it.league.equals(league.league,true) }
-            .map { it.copy(sourceUrl = it.sourceUrl.ifBlank { league.officialUrl }) }
+        return (primary+fallback+extras).filter { it.league.equals(league.league,true) }
+            .map { it.copy(sourceUrl=it.sourceUrl.ifBlank { league.officialUrl }) }
             .distinctBy { canonicalKey(it) }
     }
 
@@ -138,7 +132,12 @@ object SportsScheduleService {
             val state=type.optString("state").ifBlank { status.optString("state") }
             val detail=type.optString("shortDetail").ifBlank { type.optString("detail") }.ifBlank { status.optString("displayClock") }
             val broadcasts=competition.optJSONArray("broadcasts")
-            val broadcast=buildString { if(broadcasts!=null) for(j in 0 until broadcasts.length()){ val names=broadcasts.optJSONObject(j)?.optJSONArray("names"); if(names!=null) for(k in 0 until names.length()){if(isNotEmpty())append(", ");append(names.optString(k))} } }
+            val broadcast=buildString {
+                if(broadcasts!=null) for(j in 0 until broadcasts.length()){
+                    val names=broadcasts.optJSONObject(j)?.optJSONArray("names")
+                    if(names!=null) for(k in 0 until names.length()) { if(isNotEmpty()) append(", "); append(names.optString(k)) }
+                }
+            }
             val start=e.optString("date").ifBlank { competition.optString("startDate") }
             val title=rawName.ifBlank { listOf(home,away).filter { it.isNotBlank() }.joinToString(" vs ") }
             out += SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),league.officialUrl)
@@ -148,19 +147,47 @@ object SportsScheduleService {
 
     private fun fetchMlbOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val root=JSONObject(http("https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=$from&endDate=$to&hydrate=team,venue"));val days=root.optJSONArray("dates") ?: return emptyList();val out=ArrayList<SportsEvent>()
-        for(i in 0 until days.length()){ val games=days.optJSONObject(i)?.optJSONArray("games") ?: continue; for(j in 0 until games.length()){ val g=games.optJSONObject(j) ?: continue;val teams=g.optJSONObject("teams") ?: continue;val h=teams.optJSONObject("home")?.optJSONObject("team");val a=teams.optJSONObject("away")?.optJSONObject("team");val state=g.optJSONObject("status")?.optString("abstractGameState").orEmpty().lowercase();val detail=g.optJSONObject("status")?.optString("detailedState").orEmpty();val home=h?.optString("name").orEmpty();val away=a?.optString("name").orEmpty();out += SportsEvent("mlb-${g.optInt("gamePk")}","Baseball","MLB","$away vs $home",g.optString("gameDate"),detail,if(state=="live")"in" else if(state=="preview")"pre" else state,home,away,"","","","https://www.mlb.com/schedule","https://www.mlb.com/schedule") } }
+        for(i in 0 until days.length()){
+            val games=days.optJSONObject(i)?.optJSONArray("games") ?: continue
+            for(j in 0 until games.length()){
+                val g=games.optJSONObject(j) ?: continue;val teams=g.optJSONObject("teams") ?: continue
+                val h=teams.optJSONObject("home")?.optJSONObject("team");val a=teams.optJSONObject("away")?.optJSONObject("team")
+                val state=g.optJSONObject("status")?.optString("abstractGameState").orEmpty().lowercase();val detail=g.optJSONObject("status")?.optString("detailedState").orEmpty()
+                val home=h?.optString("name").orEmpty();val away=a?.optString("name").orEmpty();val mapped=when(state){"live"->"in";"preview"->"pre";else->state}
+                if(mapped=="post") continue
+                out += SportsEvent("mlb-${g.optInt("gamePk")}","Baseball","MLB","$away vs $home",g.optString("gameDate"),detail,mapped,home,away,"","","","https://www.mlb.com/schedule","https://www.mlb.com/schedule")
+            }
+        }
         return out
     }
 
     private fun fetchNhlOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val out=ArrayList<SportsEvent>();var d=from
-        while(!d.isAfter(to)){ runCatching { val root=JSONObject(http("https://api-web.nhle.com/v1/schedule/$d"));val days=root.optJSONArray("gameWeek") ?: return@runCatching;for(i in 0 until days.length()){val day=days.optJSONObject(i) ?: continue;val games=day.optJSONArray("games") ?: continue;for(j in 0 until games.length()){val g=games.optJSONObject(j) ?: continue;val h=g.optJSONObject("homeTeam");val a=g.optJSONObject("awayTeam");val state=g.optString("gameState").lowercase();val mapped=when(state){"live","critical"->"in";"future","preview"->"pre";else->"post"};if(mapped=="post")continue;out += SportsEvent("nhl-${g.optInt("id")}","Hockey","NHL","${a?.optString("place","Away")} ${a?.optString("commonName","")} vs ${h?.optString("place","Home")} ${h?.optString("commonName","")}",g.optString("startTimeUTC"),g.optString("gameScheduleState"),mapped,h?.optString("place","").orEmpty(),a?.optString("place","").orEmpty(),h?.optString("logo","").orEmpty(),a?.optString("logo","").orEmpty(),"","https://www.nhl.com/schedule")}}}};d=d.plusDays(1)}
+        while(!d.isAfter(to)){
+            runCatching {
+                val root=JSONObject(http("https://api-web.nhle.com/v1/schedule/$d"));val days=root.optJSONArray("gameWeek") ?: return@runCatching
+                for(i in 0 until days.length()){
+                    val day=days.optJSONObject(i) ?: continue;val games=day.optJSONArray("games") ?: continue
+                    for(j in 0 until games.length()){
+                        val g=games.optJSONObject(j) ?: continue;val h=g.optJSONObject("homeTeam");val a=g.optJSONObject("awayTeam");val state=g.optString("gameState").lowercase()
+                        val mapped=when(state){"live","critical"->"in";"future","preview"->"pre";else->"post"};if(mapped=="post")continue
+                        val home=h?.optString("place").orEmpty();val away=a?.optString("place").orEmpty();val homeName=h?.optString("commonName").orEmpty();val awayName=a?.optString("commonName").orEmpty()
+                        out += SportsEvent("nhl-${g.optInt("id")}","Hockey","NHL","$away $awayName vs $home $homeName",g.optString("startTimeUTC"),g.optString("gameScheduleState"),mapped,home,away,h?.optString("logo").orEmpty(),a?.optString("logo").orEmpty(),"","https://www.nhl.com/schedule")
+                    }
+                }
+            }
+            d=d.plusDays(1)
+        }
         return out
     }
 
     private fun fetchF1Fallback(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val root=JSONObject(http("https://api.jolpi.ca/ergast/f1/${from.year}.json"));val races=root.optJSONObject("MRData")?.optJSONObject("RaceTable")?.optJSONArray("Races") ?: return emptyList();val out=ArrayList<SportsEvent>()
-        for(i in 0 until races.length()){val r=races.optJSONObject(i) ?: continue;val date=r.optString("date");if(date.isBlank())continue;val local=runCatching{LocalDate.parse(date)}.getOrNull() ?: continue;if(local.isBefore(from)||local.isAfter(to))continue;val circuit=r.optJSONObject("Circuit")?.optString("circuitName").orEmpty();val name=r.optString("raceName");out += SportsEvent("f1-${r.optString("round")}","Racing","F1",name,"${date}T${r.optString("time","12:00:00Z")}","Scheduled","pre",circuit,"","","","","https://www.formula1.com/en/racing/${from.year}","https://www.formula1.com/en/racing/${from.year}")}
+        for(i in 0 until races.length()){
+            val r=races.optJSONObject(i) ?: continue;val date=r.optString("date");if(date.isBlank())continue;val local=runCatching{LocalDate.parse(date)}.getOrNull() ?: continue;if(local.isBefore(from)||local.isAfter(to))continue
+            val circuit=r.optJSONObject("Circuit")?.optString("circuitName").orEmpty();val name=r.optString("raceName")
+            out += SportsEvent("f1-${r.optString("round")}","Racing","F1",name,"${date}T${r.optString("time","12:00:00Z")}","Scheduled","pre",circuit,"","","","","https://www.formula1.com/en/racing/${from.year}","https://www.formula1.com/en/racing/${from.year}")
+        }
         return out
     }
 
