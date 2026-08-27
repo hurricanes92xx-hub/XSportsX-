@@ -30,6 +30,7 @@ class MainActivityFuture : ComponentActivity() {
             var mobilePair by remember { mutableStateOf(false) }
             var tvPair by remember { mutableStateOf(false) }
             var liveFilter by remember { mutableStateOf<String?>(null) }
+            var selectedScheduleLeague by remember { mutableStateOf<String?>(null) }
             var selectedEvent by remember { mutableStateOf<SportsEvent?>(null) }
             var schedules by remember { mutableStateOf(false) }
             var sourceVersion by remember { mutableIntStateOf(0) }
@@ -46,17 +47,8 @@ class MainActivityFuture : ComponentActivity() {
                 checkForUpdate()
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
-
-            // Public/free sources are always available; private Xtream/M3U remains optional.
-            LaunchedEffect(Unit) {
-                scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
-            }
-
-            LaunchedEffect(sourceVersion, connected) {
-                if (sourceVersion > 0) {
-                    runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
-                }
-            }
+            LaunchedEffect(Unit) { scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } } }
+            LaunchedEffect(sourceVersion, connected) { if (sourceVersion > 0) runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
 
             if (availableUpdate != null) {
                 val update = availableUpdate!!
@@ -66,23 +58,38 @@ class MainActivityFuture : ComponentActivity() {
             }
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
-                tvConnectChooser -> TvSourceChooser(
-                    onQr = { tvConnectChooser = false; tvPair = true },
-                    onManual = { tvConnectChooser = false; connectSource = true },
-                    onBack = { tvConnectChooser = false }
-                )
+                tvConnectChooser -> TvSourceChooser(onQr = { tvConnectChooser = false; tvPair = true }, onManual = { tvConnectChooser = false; connectSource = true }, onBack = { tvConnectChooser = false })
                 tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false }, onConnected = { sourceVersion++; tvPair = false })
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
-                schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
+                schedules -> SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
                 selectedEvent != null -> LiveChannelsScreen(event = selectedEvent, onBack = { selectedEvent = null })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
                     if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(
                         onConnect = { tvConnectChooser = true },
-                        onNetwork = { network -> selectedEvent = null; liveFilter = network }
+                        onNetwork = { network ->
+                            if (network.startsWith("LEAGUE:")) {
+                                selectedScheduleLeague = network.removePrefix("LEAGUE:")
+                                schedules = true
+                            } else {
+                                selectedEvent = null
+                                liveFilter = network
+                            }
+                        }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })
+                        FuturisticHome(
+                            onConnect = { if (connected) schedules = true else connectSource = true },
+                            onNetwork = { network ->
+                                if (network.type == "LEAGUE") {
+                                    selectedScheduleLeague = network.name
+                                    schedules = true
+                                } else {
+                                    selectedEvent = null
+                                    liveFilter = network.name
+                                }
+                            }
+                        )
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
                         HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
                     }
