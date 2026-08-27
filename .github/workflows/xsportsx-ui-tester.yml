@@ -3,7 +3,7 @@ name: XSportsX QA — Mobile + TV
 # Isolated QA pipeline. It NEVER signs, publishes, or modifies release APKs.
 # QA covers lifecycle, UI navigation, source fixtures, Xtream/M3U connection,
 # TV QR/manual login surfaces, favorites/college picker, source latency,
-# ticker/cracked-glass/icon assets, and regression evidence.
+# ticker/cracked-glass/icon assets, logo rendering, and regression evidence.
 # QA trigger marker: 2026-08-26 full regression pass.
 
 on:
@@ -13,6 +13,7 @@ on:
     paths:
       - 'app/**'
       - 'scripts/**'
+      - '.github/patch_networks.py'
       - '.github/workflows/xsportsx-ui-tester.yml'
 
 permissions:
@@ -42,6 +43,7 @@ jobs:
           set -euo pipefail
           test -f app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           test -f app/src/main/java/com/xsportsx/app/TvCrackPulseCompat.kt
+          test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
           test -f app/src/main/res/drawable/xsportsx_launcher.xml
           test -f app/src/main/res/drawable/xsportsx_launcher_foreground.xml
           grep -q 'HomeSportsTicker' app/src/main/java/com/xsportsx/app/MainActivityFuture.kt
@@ -55,16 +57,23 @@ jobs:
           grep -q 'M3U playlist URL' app/src/main/java/com/xsportsx/app/SourceConnectScreen.kt
           grep -q 'Xtream' app/src/main/java/com/xsportsx/app/SourceConnectScreen.kt
           grep -q 'android:icon="@drawable/xsportsx_launcher"' app/src/main/AndroidManifest.xml
-          echo 'Static UI/source/favorites/college/login/icon checks passed'
+          echo 'Static UI/source/favorites/college/login/icon/logo checks passed'
       - name: Apply release-equivalent source fixes
         shell: bash
         run: |
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
           python3 scripts/patch_college_favorites.py
+          python3 scripts/patch_sports_badges.py
+          python3 .github/patch_networks.py
+          ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q ':List<FavoriteTeam>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
           grep -q ':List<FavoriteNews>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
+          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
