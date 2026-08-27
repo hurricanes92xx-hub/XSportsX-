@@ -7,60 +7,45 @@ SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 
 s = SERVICE.read_text(encoding='utf-8')
 
-# Keep the schedule horizon finite and lightweight. Match whitespace variants so
-# CI patch ordering cannot make this step fail after another patch rewrites the file.
+# Keep the schedule horizon finite and lightweight. This patch is deliberately
+# idempotent because earlier schedule patches may already have rewritten load().
 s = re.sub(r'(const\s+val\s+DAYS_AHEAD\s*=\s*)\d+L?', r'\g<1>30L', s, count=1)
 if 'const val DAYS_AHEAD' not in s:
     s = s.replace('object SportsScheduleService {', 'object SportsScheduleService {\n    private const val DAYS_AHEAD = 30L', 1)
 
-# Replace any existing load implementation with one stable implementation. This
-# is deliberately tolerant of formatting/signature changes from earlier patches.
-load_re = re.compile(r'(?ms)^\s*suspend\s+fun\s+load\s*\([^)]*\)\s*:\s*List<SportsEvent>\s*=\s*withContext\(Dispatchers\.IO\)\s*\{.*?^\s*\}\s*\n\s*private\s+suspend\s+fun\s+fetchLeagueWithFallbacks')
-new_load = '''
-    suspend fun load(leagueFilter: String? = null): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val today = LocalDate.now(ZoneId.systemDefault())
-        val end = today.plusDays(DAYS_AHEAD)
-        val dates = "${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
+# The current service already has the newer window/fallback implementation.
+# Do not try to replace that whole function (which caused CI failure when its
+# shape changed). Instead, make its existing loader league-aware in-place.
+if 'suspend fun load(leagueFilter:' not in s:
+    old_sig = 'suspend fun load(): List<SportsEvent> = withContext(Dispatchers.IO) {'
+    new_sig = 'suspend fun load(leagueFilter: String? = null): List<SportsEvent> = withContext(Dispatchers.IO) {'
+    if old_sig not in s:
+        raise SystemExit('schedule load signature not found: refusing unsafe rewrite')
+    s = s.replace(old_sig, new_sig, 1)
+
+    anchor = '        val today = LocalDate.now(ZoneId.systemDefault())\n'
+    routing = '''        val today = LocalDate.now(ZoneId.systemDefault())
         val selected = leagueFilter?.trim().orEmpty()
         val canonical = if (selected.isBlank() || selected.equals("ALL", true)) "" else canonicalLeagueFor(selected)
         val targetLeagues = if (canonical.isBlank()) leagues else leagues.filter { it.league.equals(canonical, true) }
         if (targetLeagues.isEmpty()) return@withContext emptyList()
+'''
+    if anchor not in s:
+        raise SystemExit('schedule load anchor not found: refusing unsafe rewrite')
+    s = s.replace(anchor, routing, 1)
+    s = s.replace('            leagues.map { league ->', '            targetLeagues.map { league ->', 1)
 
-        val limiter = Semaphore(6)
-        val results = coroutineScope {
-            targetLeagues.map { league ->
-                async {
-                    runCatching {
-                        withTimeout(7_000L) {
-                            limiter.withPermit { fetchLeagueWithFallbacks(league, dates) }
-                        }
-                    }.getOrDefault(emptyList())
-                }
-            }.awaitAll()
-        }
-
-        results.flatten()
-            .distinctBy { it.id.ifBlank { it.title + it.startUtc + it.league } }
-            .filter { it.isLive || it.isPregame() || it.isUpcoming }
-            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
-    }
-
-    private suspend fun fetchLeagueWithFallbacks'''
-
-match = load_re.search(s)
-if not match:
-    raise SystemExit('schedule load block not found: refusing to modify generated source')
-s = s[:match.start()] + new_load + s[match.end():]
-
-# Preserve exact display names for mixed-case soccer labels.
-marker = '        "MONSTER JAM","MONSTERJAM" -> "MONSTER JAM"\n'
+# Preserve exact display names for common soccer labels when upstream sends caps.
+marker = '        "MONSTER JAM", "MONSTERJAM" -> "MONSTER JAM"\n'
 if '"LALIGA" -> "LaLiga"' not in s and marker in s:
     s = s.replace(marker, marker + '        "LALIGA" -> "LaLiga"\n        "SERIE A" -> "Serie A"\n        "BUNDESLIGA" -> "Bundesliga"\n        "LIGUE 1" -> "Ligue 1"\n', 1)
 
 SERVICE.write_text(s, encoding='utf-8')
 
 t = SCREEN.read_text(encoding='utf-8')
+# Selected league screens must request only that league, rather than loading
+# every league and filtering after the network calls.
 t = t.replace('SportsScheduleService.load()', 'SportsScheduleService.load(leagueFilter)', 1)
 SCREEN.write_text(t, encoding='utf-8')
 
-print('30-day schedule window, independent league loading, and pregame-safe filtering applied')
+print('30-day schedule window and league-specific loading applied safely')
