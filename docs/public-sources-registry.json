@@ -1,19 +1,18 @@
 {
-  "version": 3,
+  "version": 4,
   "updated": "2026-08-26",
   "cacheTtlMinutes": 15,
   "sources": [
     {"id":"iptv-org-sports","name":"IPTV-org Sports","playlist":"https://iptv-org.github.io/iptv/categories/sports.m3u","enabled":true,"public":true,"kind":"sports"},
     {"id":"iptv-org-us","name":"IPTV-org USA","playlist":"https://iptv-org.github.io/iptv/countries/us.m3u","enabled":true,"public":true,"kind":"local-us"},
     {"id":"iptv-org-us-fl","name":"IPTV-org Florida","playlist":"https://iptv-org.github.io/iptv/subdivisions/us-fl.m3u","enabled":true,"public":true,"kind":"local-us"},
+    {"id":"dearbulut-sports","name":"DearBulut Sports (health-checked)","playlist":"https://dearbulut.github.io/iptv/playlists/category/sports.m3u","enabled":true,"public":true,"kind":"sports-health-checked"},
     {"id":"free-tv-usa","name":"Free-TV USA","playlist":"https://cdn.jsdelivr.net/gh/Free-TV/IPTV@master/playlists/playlist_usa.m3u8","enabled":true,"public":true,"kind":"local-us"},
+    {"id":"free-tv","name":"Free-TV/IPTV","playlist":"https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8","enabled":true,"public":true,"kind":"general-free"},
+    {"id":"freecasthub-sports","name":"FreeCastHub Sports","playlist":"https://raw.githubusercontent.com/freecasthub/public-iptv/main/sports.m3u","enabled":true,"public":true,"kind":"sports-official"},
     {"id":"samsung-tv-plus-us","name":"Samsung TV Plus US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/samsungtvplus_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
     {"id":"pluto-tv-us","name":"Pluto TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plutotv_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
     {"id":"plex-tv-us","name":"Plex TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plex_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"roku-tv-us","name":"Roku TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"freecasthub-news","name":"FreeCastHub News","playlist":"https://raw.githubusercontent.com/freecasthub/public-iptv/main/news.m3u","enabled":true,"public":true,"kind":"news"},
-    {"id":"freecasthub-weather","name":"FreeCastHub Weather","playlist":"https://raw.githubusercontent.com/freecasthub/public-iptv/main/weather.m3u","enabled":true,"public":true,"kind":"weather"},
-    {"id":"free-tv","name":"Free-TV/IPTV","playlist":"https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8","enabled":true,"public":true,"kind":"general"},
-    {"id":"freecasthub-sports","name":"FreeCastHub Sports","playlist":"https://raw.githubusercontent.com/freecasthub/public-iptv/main/sports.m3u","enabled":true,"public":true,"kind":"sports"}
+    {"id":"roku-tv-us","name":"Roku TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us"}
   ]
 }
