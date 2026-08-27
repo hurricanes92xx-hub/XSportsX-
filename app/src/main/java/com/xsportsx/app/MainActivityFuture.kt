@@ -79,7 +79,9 @@ class MainActivityFuture : ComponentActivity() {
                         }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(
-                            onConnect = { if (connected) schedules = true else connectSource = true },
+                            // LIVE/SCHEDULE entry must never require a private source.
+                            // Xtream/M3U is optional and is opened only through ADD SOURCE.
+                            onConnect = { schedules = true },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") {
                                     selectedScheduleLeague = network.name
