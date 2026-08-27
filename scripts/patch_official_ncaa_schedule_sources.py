@@ -20,9 +20,10 @@ model = '''private data class OfficialNCAAFeed(
 
 '''
 anchor = 'private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {'
-if anchor not in s:
-    raise SystemExit('schedule window model not found')
-s = s.replace(anchor, model + anchor, 1)
+if 'private data class OfficialNCAAFeed' not in s:
+    if anchor not in s:
+        raise SystemExit('schedule window model not found')
+    s = s.replace(anchor, model + anchor, 1)
 
 anchor = '    private const val CONNECT_TIMEOUT_MS = 1_800\n'
 constants = '''    // NCAA_OFFICIAL_SCOREBOARD_V2
@@ -62,13 +63,7 @@ if 'private val officialNCAAFeeds' not in s:
         raise SystemExit('league catalog not found')
     s = s.replace(anchor, feeds + anchor, 1)
 
-old = '''        results.flatten()
-            .filter { event ->
-                val league = normalizeLeague(event.league)
-                val knownLeague = leagues.any { it.league == league }
-                knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)
-            }'''
-new = '''        val officialToday = coroutineScope {
+official_today = '''        val officialToday = coroutineScope {
             val officialLimiter = Semaphore(6)
             officialNCAAFeeds.map { feed ->
                 async {
@@ -81,15 +76,34 @@ new = '''        val officialToday = coroutineScope {
             }.awaitAll().flatten()
         }
 
-        (results.flatten() + officialToday)
+'''
+old = '''        results.flatten()
+            .filter { event ->
+                val league = normalizeLeague(event.league)
+                val knownLeague = leagues.any { it.league == league }
+                knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)
+            }'''
+new = official_today + '''        (results.flatten() + officialToday)
             .filter { event ->
                 val league = normalizeLeague(event.league)
                 val knownLeague = leagues.any { it.league == league } || officialNCAAFeeds.any { it.league == league }
                 knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)
             }'''
-if old not in s:
-    raise SystemExit('schedule result block not found')
-s = s.replace(old, new, 1)
+if old in s:
+    s = s.replace(old, new, 1)
+else:
+    # Other schedule patches can legitimately change the result block before
+    # this script runs. Do not fail the entire APK build just because the old
+    # text anchor moved; inject the same official merge at the stable marker.
+    if 'val officialToday = coroutineScope {' not in s:
+        marker = '        results.flatten()'
+        if marker not in s:
+            raise SystemExit('schedule result marker not found')
+        s = s.replace(marker, official_today + '        (results.flatten() + officialToday)', 1)
+    if 'officialNCAAFeeds.any { it.league == league }' not in s:
+        old_known = 'val knownLeague = leagues.any { it.league == league }'
+        if old_known in s:
+            s = s.replace(old_known, 'val knownLeague = leagues.any { it.league == league } || officialNCAAFeeds.any { it.league == league }', 1)
 
 old = '''            .distinctBy { event ->
                 event.id.ifBlank {
@@ -100,9 +114,8 @@ if old in s:
     s = s.replace(old, '            .distinctBy { event -> canonicalKey(event) }', 1)
 
 implementation = r'''    private fun fetchOfficialNCAAFeed(feed: OfficialNCAAFeed, date: LocalDate): List<SportsEvent> {
-        // NCAA's persisted scoreboard query supports contestDate for the
-        // non-football sports. Football remains protected by the ESPN source
-        // if the NCAA endpoint rejects a date request.
+        // NCAA's persisted scoreboard query supplies authoritative same-day
+        // college results while ESPN remains the broad future schedule source.
         val contestDate = date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
         val seasonYear = if (date.monthValue < 8) date.year - 1 else date.year
         val variables = JSONObject()
@@ -175,4 +188,4 @@ if 'private fun fetchOfficialNCAAFeed' not in s:
     s = s.replace(anchor, implementation + anchor, 1)
 
 SERVICE.write_text(s, encoding='utf-8')
-print('Installed NCAA first-party same-day scoreboard fallback across supported college sports.')
+print('Installed resilient NCAA first-party same-day scoreboard fallback across supported college sports.')
