@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "strategy": "official_first_then_primary_api_then_specialized_backup",
+  "runtime": {
+    "backupOnly": true,
+    "neverReplacePrimary": true,
+    "neverBlockPlayback": true,
+    "cacheMinutes": 15,
+    "dedupeBy": ["league", "home", "away", "startUtc"]
+  },
+  "sources": [
+    {"league":"F1","primary":"https://www.formula1.com/","backup":"TheSportsDB","backupLeagueId":4370,"season":"2026"},
+    {"league":"FORMULA E","primary":"https://www.fiaformulae.com/","backup":"TheSportsDB","backupLeagueId":4371,"season":"2025-2026"},
+    {"league":"INDYCAR","primary":"https://www.indycar.com/","backup":"TheSportsDB","backupLeagueId":4373,"season":"2026"},
+    {"league":"MOTOGP","primary":"https://www.motogp.com/","backup":"TheSportsDB","backupLeagueId":4407,"season":"2026"},
+    {"league":"WRC","primary":"https://www.fia.com/events/world-rally-championship/season-2026/events-calendar","backup":"TheSportsDB","backupLeagueId":4409,"season":"2026"},
+    {"league":"WEC","primary":"https://www.fiawec.com/","backup":"TheSportsDB","backupLeagueId":4413,"season":"2026"},
+    {"league":"IMSA","primary":"https://www.imsa.com/","backup":"TheSportsDB","backupLeagueId":4488,"season":"2026"},
+    {"league":"NASCAR","primary":"https://www.nascar.com/","backup":"TheSportsDB","backupLeagueId":4393,"season":"2026"},
+    {"league":"MXGP","primary":"https://www.mxgp.com/calendar","backup":"TheSportsDB","backupLeagueId":4587,"season":"2026"},
+    {"league":"UFC","primary":"https://www.ufc.com/watch/schedule","backup":"TheSportsDB","backupLeagueId":4443,"season":"2026"},
+    {"league":"BOXING","primary":"https://www.espn.com/boxing/story/_/id/12508267/boxing-schedule","backup":"TheSportsDB","backupLeagueId":4445,"season":"2026"},
+    {"league":"WRESTLING","primary":"https://www.wwe.com/article/wwe-upcoming-events","backup":"TheSportsDB","backupLeagueId":4444,"season":"2026"},
+    {"league":"WRESTLING","primary":"https://www.allelitewrestling.com/","backup":"TheSportsDB","backupLeagueId":4448,"season":"2026","promotion":"ROH"},
+    {"league":"WRESTLING","primary":"https://www.njpw.co.jp/event-calendar","backup":"TheSportsDB","backupLeagueId":4449,"season":"2026","promotion":"NJPW"},
+    {"league":"WRESTLING","primary":"https://tnawrestling.com/events/","backup":"TheSportsDB","backupLeagueId":4455,"season":"2026","promotion":"TNA"}
+  ],
+  "officialSpecialFeeds": [
+    {"league":"MONSTER JAM","url":"https://www.monsterjam.com/en-us/tickets/","mode":"official_special_event_feed"},
+    {"league":"WWE","url":"https://www.wwe.com/article/wwe-upcoming-events","mode":"official_special_event_feed"},
+    {"league":"AEW","url":"https://www.allelitewrestling.com/","mode":"official_special_event_feed"},
+    {"league":"TNA","url":"https://tnawrestling.com/events/","mode":"official_special_event_feed"}
+  ]
+}
