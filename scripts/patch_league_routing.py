@@ -11,7 +11,10 @@ loader = """private suspend fun loadTvGames():List<TvGame> = withContext(Dispatc
     runCatching { SportsScheduleService.load() }.getOrDefault(emptyList()).mapNotNull { event ->
         val start = runCatching { java.time.Instant.parse(event.startUtc).toEpochMilli() }.getOrDefault(0L)
         if (start == 0L) return@mapNotNull null
-        val league = if (event.sport.equals("Soccer", true)) "SOCCER" else event.league.uppercase()
+        // Preserve the canonical league from SportsScheduleService. Do not collapse
+        // soccer leagues into a generic SOCCER bucket: EPL, LaLiga, Bundesliga,
+        // Serie A, Ligue 1, UCL, UEL, MLS and NWSL must remain independently routable.
+        val league = SportsScheduleService.canonicalLeagueFor(event.league)
         TvGame(
             league = league,
             home = event.home.ifBlank { event.title.ifBlank { "TBD" } },
