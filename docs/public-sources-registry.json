@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "updated": "2026-08-26",
+  "version": 5,
+  "updated": "2026-08-27",
   "cacheTtlMinutes": 15,
   "sources": [
     {"id":"iptv-org-sports","name":"IPTV-org Sports","playlist":"https://iptv-org.github.io/iptv/categories/sports.m3u","enabled":true,"public":true,"kind":"sports"},
@@ -13,6 +13,7 @@
     {"id":"samsung-tv-plus-us","name":"Samsung TV Plus US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/samsungtvplus_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
     {"id":"pluto-tv-us","name":"Pluto TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plutotv_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
     {"id":"plex-tv-us","name":"Plex TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plex_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"roku-tv-us","name":"Roku TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us"}
+    {"id":"roku-tv-us","name":"Roku TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us"},
+    {"id":"maximmur-curated-sports","name":"Curated Supplemental Sports (public FAST)","playlist":"https://raw.githubusercontent.com/maximmur/iptvlist/cur/sport.m3u8","enabled":true,"public":true,"kind":"sports-supplemental-curated","allowlist":"Pac 12 Insider|ACCDN|Fubo Sports Network|FanDuel TV|FanDuel Racing|NBC Sports NOW|SportsGrid|FIFA+|Real Madrid TV|Fox Sports en Espanol|Red Bull TV|World of Freesports|CBS Sports HQ|CBS Sports Golazo Network|MAVTV|TVS Sports|TVS Sports Bureau|TVS Women Sports|DAZN Combat|Glory Kickboxing|L'Equipe|Teledeporte|RTA Sport|RTSH Sport|San Marino RTV Sport|Trace Sports Stars|Unbeaten|More Than Sports TV|Fuel TV|W14DK-D 14.5 All Sports Television Network"}
   ]
 }
