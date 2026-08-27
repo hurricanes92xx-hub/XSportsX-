@@ -44,7 +44,6 @@ constants = '''    // TSDB_LONG_TAIL_BACKUP_V1
         TsdbFallbackLeague("IMSA", 4488, "2026", "https://www.imsa.com/"),
         TsdbFallbackLeague("NASCAR", 4393, "2026", "https://www.nascar.com/"),
         TsdbFallbackLeague("MXGP", 4587, "2026", "https://www.mxgp.com/calendar"),
-        TsdbFallbackLeague("MONSTER JAM", 5412, "2026", "https://www.monsterjam.com/en-us/tickets/"),
         TsdbFallbackLeague("UFC", 4443, "2026", "https://www.ufc.com/watch/schedule"),
         TsdbFallbackLeague("BOXING", 4445, "2026", "https://www.espn.com/boxing/story/_/id/12508267/boxing-schedule"),
         TsdbFallbackLeague("WRESTLING", 4444, "2026", "https://www.wwe.com/article/wwe-upcoming-events"),
@@ -57,8 +56,6 @@ if constants_anchor not in s:
     raise SystemExit('schedule timeout constants anchor not found')
 s = s.replace(constants_anchor, constants_anchor + constants, 1)
 
-# Merge the long-tail feed into the existing schedule pipeline. The special-event patch may
-# already have inserted fetchSpecialScheduleFeed(), so handle both forms safely.
 if 'fetchTheSportsDbLongTailFallbacks()' not in s:
     if '(results.flatten() + fetchSpecialScheduleFeed())' in s:
         s = s.replace(
@@ -75,12 +72,11 @@ if 'fetchTheSportsDbLongTailFallbacks()' not in s:
     else:
         raise SystemExit('schedule result merge anchor not found')
 
-# Keep long-tail leagues selectable even when ESPN does not expose them.
 if 'TSDB_LONG_TAIL_LEAGUES' not in s:
     anchor = '    val uiLeagueChoices: List<String> = listOf(\n'
     inject = '''    private val TSDB_LONG_TAIL_LEAGUES = setOf(
         "F1", "FORMULA E", "INDYCAR", "MOTOGP", "WRC", "WEC", "IMSA", "NASCAR",
-        "MXGP", "MONSTER JAM", "UFC", "BOXING", "WRESTLING"
+        "MXGP", "UFC", "BOXING", "WRESTLING"
     )
 
 '''
@@ -153,7 +149,7 @@ implementation = r'''    private suspend fun fetchTheSportsDbLongTailFallbacks()
 
             out += SportsEvent(
                 "tsdb-${fallback.leagueId}-${event.optString("idEvent").ifBlank { i.toString() }}",
-                if (canonical in setOf("F1", "FORMULA E", "INDYCAR", "MOTOGP", "WRC", "WEC", "IMSA", "NASCAR", "MXGP", "MONSTER JAM")) "Racing" else if (canonical == "WRESTLING") "Wrestling" else fallback.canonicalLeague,
+                if (canonical in setOf("F1", "FORMULA E", "INDYCAR", "MOTOGP", "WRC", "WEC", "IMSA", "NASCAR", "MXGP")) "Racing" else if (canonical == "WRESTLING") "Wrestling" else fallback.canonicalLeague,
                 canonical,
                 eventName,
                 start,
