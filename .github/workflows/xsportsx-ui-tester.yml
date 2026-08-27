@@ -72,15 +72,34 @@ jobs:
           python3 .github/patch_networks.py
           python3 scripts/patch_real_brand_logos.py
           python3 scripts/patch_college_schedule_ui.py
-          ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'brand_logos/espn.svg' app/src/main/java/com/xsportsx/app/SportsLogos.kt
-          grep -q 'TeamLogo(event.homeLogo' app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
-          grep -q 'TeamLogo(event.awayLogo' app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
+      - name: Validate patched sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt; then
+            echo 'ERROR: legacy ESPN league-logo URL remains in patched UI source'
+            grep -Rn 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
+            exit 1
+          fi
+          checks=(
+            'loadTvGames|app/src/main/java/com/xsportsx/app/TvHome.kt'
+            'XSportsLeagueLogo|app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
+            'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
+            'XSportsLeagueLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
+            'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
+            'brand_logos/espn.svg|app/src/main/java/com/xsportsx/app/SportsLogos.kt'
+            'TeamLogo(event.homeLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
+            'TeamLogo(event.awayLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
+          )
+          for check in "${checks[@]}"; do
+            pattern="${check%%|*}"
+            file="${check#*|}"
+            if ! grep -q "$pattern" "$file"; then
+              echo "ERROR: validation failed: [$pattern] missing from $file"
+              exit 1
+            fi
+          done
+          echo 'Patched-source validation passed.'
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
