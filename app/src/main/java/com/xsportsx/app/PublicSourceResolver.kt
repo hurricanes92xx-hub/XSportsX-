@@ -29,8 +29,8 @@ class PublicSourceResolver {
         private const val PER_SOURCE_CANDIDATES = 60
         private const val MAX_HEALTH_CHECKS = 96
         private const val HEALTH_CONCURRENCY = 12
-        private const val TARGETED_PER_SOURCE = 12
-        private const val TARGETED_TOTAL = 48
+        private const val MAX_TARGETED_BYTES = 8_000_000
+        private const val TARGETED_CONCURRENCY = 6
         private val REGISTRY_URLS = listOf(
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/docs/public-sources-registry.json",
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/docs/public-sources-registry.json",
@@ -50,7 +50,6 @@ class PublicSourceResolver {
 
     private val cache = LruCache<String, Pair<Long, List<PublicResolvedStream>>>(1)
 
-    /** Existing global catalog path, retained for non-click-path callers. */
     suspend fun load(force: Boolean = false): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
         val key = "static-public-registry"
         val now = System.currentTimeMillis()
@@ -87,9 +86,10 @@ class PublicSourceResolver {
     }
 
     /**
-     * Click-path public discovery. Every enabled public playlist gets the same
-     * small per-source quota, and only entries matching the requested terms are
-     * returned. No global public catalog is built.
+     * Targeted click-path discovery. Sources are fetched concurrently with a
+     * bounded worker pool. Every source is isolated so one failure cannot cancel
+     * the other sources. There is no arbitrary result-count cap; only the playlist
+     * byte limit and source concurrency limit protect memory/network usage.
      */
     suspend fun searchTargeted(terms: List<String>): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
         val normalized = terms.map(::normalize).filter { it.length >= 2 }.distinct()
@@ -97,18 +97,35 @@ class PublicSourceResolver {
         val registryText = fetchRegistry() ?: return@withContext emptyList()
         val registry = runCatching { JSONObject(registryText) }.getOrNull() ?: return@withContext emptyList()
         val sources = registry.optJSONArray("sources") ?: JSONArray()
-        val perSource = ArrayList<PublicResolvedStream>()
-        for (i in 0 until sources.length()) {
-            val source = sources.optJSONObject(i) ?: continue
-            if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
-            val playlist = source.optString("playlist").trim()
-            val sourceName = source.optString("name").ifBlank { "Public source" }
-            val allowlist = source.optString("allowlist").trim()
-            if (!isAllowedRegistryUrl(playlist)) continue
-            val body = fetchText(playlist, MAX_PLAYLIST_BYTES, registryOnly = true) ?: continue
-            perSource += parseTargetedM3u(body, sourceName, allowlist, normalized, TARGETED_PER_SOURCE)
+        val sourceConfigs = buildList {
+            for (i in 0 until sources.length()) {
+                val source = sources.optJSONObject(i) ?: continue
+                if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
+                val playlist = source.optString("playlist").trim()
+                if (!isAllowedRegistryUrl(playlist)) continue
+                add(
+                    Triple(
+                        playlist,
+                        source.optString("name").ifBlank { "Public source" },
+                        source.optString("allowlist").trim()
+                    )
+                )
+            }
         }
-        perSource.distinctBy { it.url }.sortedByDescending { targetedScore(it.name, it.group, normalized) }.take(TARGETED_TOTAL)
+
+        coroutineScope {
+            sourceConfigs.chunked(TARGETED_CONCURRENCY).flatMap { batch ->
+                batch.map { (playlist, sourceName, allowlist) ->
+                    async(Dispatchers.IO) {
+                        runCatching {
+                            val body = fetchText(playlist, MAX_TARGETED_BYTES, registryOnly = true) ?: return@runCatching emptyList<PublicResolvedStream>()
+                            parseTargetedM3u(body, sourceName, allowlist, normalized)
+                        }.getOrDefault(emptyList())
+                    }
+                }.awaitAll().flatten()
+            }
+        }.distinctBy { it.url }
+            .sortedByDescending { targetedScore(it.name, it.group, normalized) }
     }
 
     private fun parseM3u(text: String, sourceName: String, allowlist: String, maxResults: Int): List<PublicResolvedStream> {
@@ -127,7 +144,7 @@ class PublicSourceResolver {
         return result
     }
 
-    private fun parseTargetedM3u(text: String, sourceName: String, allowlist: String, terms: List<String>, maxResults: Int): List<PublicResolvedStream> {
+    private fun parseTargetedM3u(text: String, sourceName: String, allowlist: String, terms: List<String>): List<PublicResolvedStream> {
         val result = ArrayList<PublicResolvedStream>(); var name = ""; var group = "LIVE"; var icon = ""
         for (line in text.lineSequence()) {
             val value = line.trim()
@@ -139,7 +156,6 @@ class PublicSourceResolver {
                     name = ""; group = "LIVE"; icon = ""
                 }
             }
-            if (result.size >= maxResults) break
         }
         return result
     }
@@ -181,17 +197,19 @@ class PublicSourceResolver {
     private fun isAllowedRegistryUrl(target: String): Boolean = runCatching { val uri = URL(target); uri.protocol.equals("https", true) && registryHosts.any { host -> uri.host.equals(host, true) || uri.host.endsWith(".$host", true) } }.getOrDefault(false)
     private fun isAllowedStream(target: String): Boolean = runCatching { URL(target).protocol.equals("https", true) }.getOrDefault(false)
     private suspend fun fetchRegistry(): String? = REGISTRY_URLS.asSequence().mapNotNull { fetchText(it, 256_000, registryOnly = true) }.firstOrNull()
-    private fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES, registryOnly: Boolean = false): String? = runCatching {
-        if (registryOnly && !isAllowedRegistryUrl(target)) return null
-        if (!registryOnly && !isAllowedStream(target)) return null
-        val c = URL(target).openConnection() as HttpURLConnection
-        c.requestMethod = "GET"; c.connectTimeout = 5000; c.readTimeout = 10000; c.instanceFollowRedirects = true
-        c.setRequestProperty("User-Agent", "XSportsX-public-registry/1.0"); c.setRequestProperty("Accept", "application/json,application/vnd.apple.mpegurl,application/x-mpegURL,text/plain,*/*")
-        val code = c.responseCode; if (code !in 200..299) { c.disconnect(); return null }
-        val input = BufferedInputStream(c.inputStream); val out = StringBuilder(); val buffer = ByteArray(8192); var total = 0
-        while (true) { val n = input.read(buffer); if (n <= 0) break; total += n; if (total > maxBytes) break; out.append(String(buffer, 0, n, Charsets.UTF_8)) }
-        input.close(); c.disconnect(); out.toString()
-    }.getOrNull()
+    private suspend fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES, registryOnly: Boolean = false): String? = withContext(Dispatchers.IO) {
+        runCatching {
+            if (registryOnly && !isAllowedRegistryUrl(target)) return@runCatching null
+            if (!registryOnly && !isAllowedStream(target)) return@runCatching null
+            val c = URL(target).openConnection() as HttpURLConnection
+            c.requestMethod = "GET"; c.connectTimeout = 5000; c.readTimeout = 10000; c.instanceFollowRedirects = true
+            c.setRequestProperty("User-Agent", "XSportsX-public-registry/1.0"); c.setRequestProperty("Accept", "application/json,application/vnd.apple.mpegurl,application/x-mpegURL,text/plain,*/*")
+            val code = c.responseCode; if (code !in 200..299) { c.disconnect(); return@runCatching null }
+            val input = BufferedInputStream(c.inputStream); val out = StringBuilder(); val buffer = ByteArray(8192); var total = 0
+            while (true) { val n = input.read(buffer); if (n <= 0) break; total += n; if (total > maxBytes) break; out.append(String(buffer, 0, n, Charsets.UTF_8)) }
+            input.close(); c.disconnect(); out.toString()
+        }.getOrNull()
+    }
     private fun attr(line: String, key: String): String = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
     private fun normalize(value: String): String = value.lowercase().replace("’", "'").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
 }
