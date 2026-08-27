@@ -18,7 +18,8 @@ import java.time.format.DateTimeFormatter
 data class SportsEvent(
     val id:String,val sport:String,val league:String,val title:String,val startUtc:String,
     val status:String,val state:String,val home:String,val away:String,val homeLogo:String,
-    val awayLogo:String,val broadcast:String,val artUrl:String="",val sourceUrl:String=""
+    val awayLogo:String,val broadcast:String,val artUrl:String="",val sourceUrl:String="",
+    val youtubeVideoId:String=""
 ) {
     val isLive:Boolean get()=state.equals("in",true)||state.equals("live",true)||status.contains("live",true)
     val isUpcoming:Boolean get()=state.equals("pre",true)||state.equals("scheduled",true)||state.equals("upcoming",true)
@@ -49,7 +50,7 @@ object SportsScheduleService {
         ScheduleLeague("Soccer","Serie A","soccer/ita.1","https://www.legaseriea.it/en"),
         ScheduleLeague("Soccer","Ligue 1","soccer/fra.1","https://www.ligue1.com/"),
         ScheduleLeague("Soccer","UCL","soccer/uefa.champions","https://www.uefa.com/uefachampionsleague/fixtures-results/"),
-        ScheduleLeague("Soccer","UEL","soccer/uefa.europa","https://www.uefa.com/uefaeuropaleague/fixtures-results/"),
+        ScheduleLeague("Soccer","UEL","soccer/uefa.europa","https://www.uefa.com/uefaeuropa league/fixtures-results/"),
         ScheduleLeague("Soccer","NWSL","soccer/usa.nwsl","https://www.nwslsoccer.com/schedule"),
         ScheduleLeague("College Soccer","NCAA MEN SOCCER","soccer/college-soccer-men","https://www.ncaa.com/sports/soccer-men/d1"),
         ScheduleLeague("College Soccer","NCAA WOMEN SOCCER","soccer/college-soccer-women","https://www.ncaa.com/sports/soccer-women/d1"),
@@ -110,9 +111,14 @@ object SportsScheduleService {
             val status=competition.optJSONObject("status")?:e.optJSONObject("status")?:JSONObject();val type=status.optJSONObject("type")?:JSONObject();val state=type.optString("state").ifBlank{status.optString("state")};val detail=type.optString("shortDetail").ifBlank{type.optString("detail")}
             val broadcasts=competition.optJSONArray("broadcasts");val broadcast=buildString{if(broadcasts!=null)for(j in 0 until broadcasts.length()){val names=broadcasts.optJSONObject(j)?.optJSONArray("names");if(names!=null)for(k in 0 until names.length()){if(isNotEmpty())append(", ");append(names.optString(k))}}}
             val start=e.optString("date").ifBlank{competition.optString("startDate")};val rawName=e.optString("name").ifBlank{e.optString("shortName")};val title=rawName.ifBlank{listOf(home,away).filter{it.isNotBlank()}.joinToString(" vs ")}
-            out+=SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),league.officialUrl)
+            val youtube = e.optString("youtubeVideoId").ifBlank { e.optString("youtubeUrl") }.let { extractYouTubeId(it) }
+            out+=SportsEvent(e.optString("id"),league.sport,league.league,title,start,detail,state,home,away,homeLogo,awayLogo,broadcast,e.optString("image"),league.officialUrl,youtube)
         }
         return out
+    }
+    private fun extractYouTubeId(value:String):String{
+        val v=value.trim(); if(v.matches(Regex("[A-Za-z0-9_-]{11}"))) return v
+        return Regex("(?:v=|youtu\\.be/|youtube\\.com/(?:embed/|shorts/))([A-Za-z0-9_-]{11})").find(v)?.groupValues?.getOrNull(1).orEmpty()
     }
     private fun http(target:String):String{val c=(URL(target).openConnection()as HttpURLConnection).apply{requestMethod="GET";connectTimeout=2200;readTimeout=4500;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5 (Android)");setRequestProperty("Accept","application/json,text/plain,*/*")};return try{val code=c.responseCode;if(code !in 200..299)error("Schedule HTTP $code");c.inputStream.bufferedReader(Charsets.UTF_8).use{it.readText()}}finally{c.disconnect()}}
 }
