@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "policy": "official-or-authorized-public-content-only",
+  "provider": "Google / YouTube / Google TV",
+  "purpose": "Use Google's public sports discovery ecosystem as metadata and official-source discovery, not as a scraped/private stream backend.",
+  "sources": [
+    {
+      "id": "youtube-official-sports",
+      "name": "YouTube official sports channels",
+      "type": "official-video-discovery",
+      "url": "https://www.youtube.com/",
+      "enabled": true,
+      "useFor": ["official live links", "highlights", "replays", "event discovery"]
+    },
+    {
+      "id": "youtube-fifa",
+      "name": "FIFA on YouTube",
+      "type": "official-channel",
+      "url": "https://www.youtube.com/@fifa",
+      "enabled": true,
+      "useFor": ["World Cup coverage", "official matches where authorized", "highlights", "historical matches"]
+    },
+    {
+      "id": "google-tv-freeplay",
+      "name": "Google TV Freeplay",
+      "type": "FAST-discovery",
+      "url": "https://tv.google/",
+      "enabled": true,
+      "useFor": ["free channel discovery", "sports channel metadata", "where-to-watch hints"]
+    },
+    {
+      "id": "google-search-sports",
+      "name": "Google Search sports data",
+      "type": "metadata",
+      "url": "https://www.google.com/search?q=sports",
+      "enabled": true,
+      "useFor": ["scores", "standings", "brackets", "lineups", "stories", "where-to-watch metadata"]
+    }
+  ],
+  "integrationRules": {
+    "doNotScrapeGoogleTvStreams": true,
+    "doNotEmbedPaidOrAuthenticatedStreams": true,
+    "preferOfficialYoutubeChannels": true,
+    "preferDirectOfficialLinks": true,
+    "useMetadataForEventMatching": true,
+    "cacheTtlMinutes": 10
+  }
+}
