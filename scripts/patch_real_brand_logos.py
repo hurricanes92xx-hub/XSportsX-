@@ -7,6 +7,8 @@ MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 for target in (TV, MOBILE):
     if target.exists():
         source = target.read_text(encoding="utf-8")
+        # Correctly remove legacy ESPN CDN league-logo URLs while preserving
+        # the surrounding Kotlin string/constructor syntax.
         cleaned = re.sub(r'https://a\.espncdn\.com/i/teamlogos/leagues[^\"]*', '', source)
         if cleaned != source:
             target.write_text(cleaned, encoding="utf-8")
