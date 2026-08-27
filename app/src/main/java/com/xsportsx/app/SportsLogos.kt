@@ -2,8 +2,8 @@ package com.xsportsx.app
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.RectF
+import android.graphics.Canvas as AndroidCanvas
+import android.graphics.RectF as AndroidRectF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -81,9 +83,9 @@ private fun networkSpec(key: String): BrandSpec = when (key) {
 
 private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
     val bitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
+    val canvas = AndroidCanvas(bitmap)
     val svg = SVG.getFromAsset(context.assets, "brand_logos/$asset.svg")
-    svg.renderToCanvas(canvas, RectF(0f, 0f, width.toFloat(), height.toFloat()))
+    svg.renderToCanvas(canvas, AndroidRectF(0f, 0f, width.toFloat(), height.toFloat()))
     bitmap
 }.getOrNull()
 
@@ -101,18 +103,18 @@ private fun VectorBrandMark(spec: BrandSpec, size: Dp) {
         Canvas(Modifier.fillMaxSize()) {
             val w = size.toPx(); val h = size.toPx(); val c = center
             when (spec.mark) {
-                "F1" -> { drawLine(spec.accent, c.copy(x = w*.18f, y = h*.30f), c.copy(x=w*.82f,y=h*.30f), 8f); drawLine(spec.accent,c.copy(x=w*.18f,y=h*.30f),c.copy(x=w*.18f,y=h*.70f),8f); drawLine(spec.accent,c.copy(x=w*.18f,y=h*.50f),c.copy(x=w*.65f,y=h*.50f),7f); drawLine(Color.White,c.copy(x=w*.64f,y=h*.30f),c.copy(x=w*.82f,y=h*.70f),7f) }
-                "NASCAR" -> { val colors=listOf(Color(0xFFFFC400),Color(0xFFFF6A00),Color(0xFFE31B23),Color(0xFF6B6B6B),Color.White); colors.forEachIndexed{i,col->drawLine(col,c.copy(x=w*.18f+i*8,y=h*.25f),c.copy(x=w*.42f+i*8,y=h*.75f),7f)} }
-                "DTM" -> { drawRect(spec.accent,RectF(w*.16f,h*.28f,w*.43f,h*.72f)); drawRect(Color.White,RectF(w*.43f,h*.28f,w*.58f,h*.72f)); drawRect(Color(0xFF1E6CFF),RectF(w*.58f,h*.28f,w*.84f,h*.72f)) }
-                "WRC" -> { drawLine(spec.accent,c.copy(x=w*.18f,y=h*.35f),c.copy(x=w*.82f,y=h*.35f),6f); drawLine(Color.White,c.copy(x=w*.22f,y=h*.55f),c.copy(x=w*.78f,y=h*.55f),5f); drawLine(spec.accent,c.copy(x=w*.30f,y=h*.75f),c.copy(x=w*.70f,y=h*.75f),4f) }
-                "WEC" -> { drawCircle(spec.accent, radius=w*.30f, center=c, style=Stroke(width=6f)); drawLine(Color.White,c.copy(x=w*.28f,y=h*.50f),c.copy(x=w*.72f,y=h*.50f),6f) }
-                "FE" -> { drawLine(spec.accent,c.copy(x=w*.20f,y=h*.68f),c.copy(x=w*.80f,y=h*.32f),9f); drawLine(Color.White,c.copy(x=w*.30f,y=h*.70f),c.copy(x=w*.65f,y=h*.30f),4f) }
+                "F1" -> { drawLine(spec.accent, Offset(w*.18f,h*.30f), Offset(w*.82f,h*.30f), 8f); drawLine(spec.accent,Offset(w*.18f,h*.30f),Offset(w*.18f,h*.70f),8f); drawLine(spec.accent,Offset(w*.18f,h*.50f),Offset(w*.65f,h*.50f),7f); drawLine(Color.White,Offset(w*.64f,h*.30f),Offset(w*.82f,h*.70f),7f) }
+                "NASCAR" -> { val colors=listOf(Color(0xFFFFC400),Color(0xFFFF6A00),Color(0xFFE31B23),Color(0xFF6B6B6B),Color.White); colors.forEachIndexed{i,col->drawLine(col,Offset(w*.18f+i*8,h*.25f),Offset(w*.42f+i*8,h*.75f),7f)} }
+                "DTM" -> { drawRect(spec.accent,Offset(w*.16f,h*.28f),Size(w*.27f,h*.44f)); drawRect(Color.White,Offset(w*.43f,h*.28f),Size(w*.15f,h*.44f)); drawRect(Color(0xFF1E6CFF),Offset(w*.58f,h*.28f),Size(w*.26f,h*.44f)) }
+                "WRC" -> { drawLine(spec.accent,Offset(w*.18f,h*.35f),Offset(w*.82f,h*.35f),6f); drawLine(Color.White,Offset(w*.22f,h*.55f),Offset(w*.78f,h*.55f),5f); drawLine(spec.accent,Offset(w*.30f,h*.75f),Offset(w*.70f,h*.75f),4f) }
+                "WEC" -> { drawCircle(spec.accent,radius=w*.30f,center=c,style=Stroke(width=6f)); drawLine(Color.White,Offset(w*.28f,h*.50f),Offset(w*.72f,h*.50f),6f) }
+                "FE" -> { drawLine(spec.accent,Offset(w*.20f,h*.68f),Offset(w*.80f,h*.32f),9f); drawLine(Color.White,Offset(w*.30f,h*.70f),Offset(w*.65f,h*.30f),4f) }
                 "SOCCER" -> { drawCircle(Color.White,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.10f,center=c) }
                 "SEC" -> { drawCircle(spec.accent,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.20f,center=c,style=Stroke(width=5f)) }
-                "ACC" -> { drawLine(spec.accent,c.copy(x=w*.18f,y=h*.72f),c.copy(x=w*.82f,y=h*.28f),9f); drawLine(Color.White,c.copy(x=w*.18f,y=h*.50f),c.copy(x=w*.58f,y=h*.50f),6f) }
-                "B1G" -> { drawRect(spec.accent,RectF(w*.14f,h*.28f,w*.86f,h*.72f),style=Stroke(width=6f)) }
-                "PAC-12" -> { drawLine(spec.accent,c.copy(x=w*.20f,y=h*.68f),c.copy(x=w*.50f,y=h*.30f),7f); drawLine(Color.White,c.copy(x=w*.50f,y=h*.30f),c.copy(x=w*.80f,y=h*.68f),7f) }
-                "FS1" -> { drawOval(Color.White,RectF(w*.13f,h*.27f,w*.87f,h*.73f),style=Stroke(width=5f)) }
+                "ACC" -> { drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),9f); drawLine(Color.White,Offset(w*.18f,h*.50f),Offset(w*.58f,h*.50f),6f) }
+                "B1G" -> { drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),cornerRadius=8f,style=Stroke(width=6f)) }
+                "PAC-12" -> { drawLine(spec.accent,Offset(w*.20f,h*.68f),Offset(w*.50f,h*.30f),7f); drawLine(Color.White,Offset(w*.50f,h*.30f),Offset(w*.80f,h*.68f),7f) }
+                "FS1" -> { drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f)) }
                 else -> { drawCircle(spec.accent,radius=w*.30f,center=c); drawCircle(spec.bg,radius=w*.21f,center=c,style=Stroke(width=5f)) }
             }
         }
