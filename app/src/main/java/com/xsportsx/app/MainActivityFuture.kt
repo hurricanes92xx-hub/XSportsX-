@@ -30,6 +30,7 @@ class MainActivityFuture : ComponentActivity() {
             var mobilePair by remember { mutableStateOf(false) }
             var tvPair by remember { mutableStateOf(false) }
             var liveFilter by remember { mutableStateOf<String?>(null) }
+            var selectedEvent by remember { mutableStateOf<SportsEvent?>(null) }
             var schedules by remember { mutableStateOf(false) }
             var sourceVersion by remember { mutableIntStateOf(0) }
             var availableUpdate by remember { mutableStateOf<AppUpdate?>(null) }
@@ -73,14 +74,15 @@ class MainActivityFuture : ComponentActivity() {
                 tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false }, onConnected = { sourceVersion++; tvPair = false })
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
-                schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> liveFilter = listOf(event.home, event.away, event.broadcast).filter { it.isNotBlank() }.joinToString("||"); schedules = false })
+                schedules -> SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
+                selectedEvent != null -> LiveChannelsScreen(event = selectedEvent, onBack = { selectedEvent = null })
                 liveFilter != null -> LiveChannelsScreen(filter = liveFilter, onBack = { liveFilter = null })
                 else -> key(sourceVersion) {
                     if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(
                         onConnect = { tvConnectChooser = true },
-                        onNetwork = { network -> liveFilter = network }
+                        onNetwork = { network -> selectedEvent = null; liveFilter = network }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> liveFilter = network.name })
+                        FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
                         HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
                     }
