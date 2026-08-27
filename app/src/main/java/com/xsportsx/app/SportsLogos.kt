@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 private data class BrandSpec(val bg: Color,val fg: Color,val accent: Color,val asset: String? = null,val mark: String,val remote: String? = null)
@@ -101,6 +102,19 @@ private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: I
     SVG.getFromAsset(context.assets,"brand_logos/$asset.svg").renderToCanvas(AndroidCanvas(bitmap)); bitmap
 }.getOrNull()
 
+private fun fitBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
+    val outW=width.coerceAtLeast(1); val outH=height.coerceAtLeast(1)
+    val scale=min(outW.toFloat()/source.width.toFloat(),outH.toFloat()/source.height.toFloat())
+    val drawW=(source.width*scale).roundToInt().coerceAtLeast(1)
+    val drawH=(source.height*scale).roundToInt().coerceAtLeast(1)
+    val scaled=Bitmap.createScaledBitmap(source,drawW,drawH,true)
+    if(drawW==outW && drawH==outH) return scaled
+    val canvasBitmap=Bitmap.createBitmap(outW,outH,Bitmap.Config.ARGB_8888)
+    AndroidCanvas(canvasBitmap).drawBitmap(scaled,((outW-drawW)/2f),((outH-drawH)/2f),null)
+    if(scaled!==source) scaled.recycle()
+    return canvasBitmap
+}
+
 private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=withContext(Dispatchers.IO){runCatching{
     val c=(URL(url).openConnection() as HttpURLConnection).apply{connectTimeout=2500;readTimeout=5000;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5");setRequestProperty("Accept","image/avif,image/webp,image/png,image/svg+xml,image/*,*/*")}
     try{
@@ -110,7 +124,7 @@ private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=wi
         val bitmap=if(type.contains("svg")||bytes.take(512).toByteArray().toString(Charsets.UTF_8).contains("<svg",true)){
             val svg=SVG.getFromString(bytes.toString(Charsets.UTF_8));val b=Bitmap.createBitmap(width.coerceAtLeast(1),height.coerceAtLeast(1),Bitmap.Config.ARGB_8888);svg.renderToCanvas(AndroidCanvas(b));b
         }else BitmapFactory.decodeByteArray(bytes,0,bytes.size)
-        bitmap?.let{if(it.width!=width||it.height!=height)Bitmap.createScaledBitmap(it,width.coerceAtLeast(1),height.coerceAtLeast(1),true)else it}
+        bitmap?.let{fitBitmap(it,width,height)}
     }finally{c.disconnect()}
 }.getOrNull()}
 
@@ -119,6 +133,6 @@ private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=wi
 
 @Composable private fun VectorBrandMark(spec:BrandSpec,size:Dp){Box(Modifier.size(size),contentAlignment=Alignment.Center){Canvas(Modifier.fillMaxSize()){val w=size.toPx();val h=size.toPx();val c=center;when(spec.mark){"SEC"->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.22f,c,style=Stroke(width=5f))};"ACC"->drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),8f);"B1G"->drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),CornerRadius(8f,8f),style=Stroke(width=6f));"FS1"->drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f));else->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.21f,c,style=Stroke(width=5f))}}};Text(spec.mark,color=spec.fg,fontSize=if(spec.mark.length>6)7.sp else 14.sp,fontWeight=FontWeight.Black,textAlign=TextAlign.Center,maxLines=1)}}
 
-@Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.78f,description);spec.remote!=null->RemoteBrandLogo(spec.remote,Modifier,size*.82f,description);else->VectorBrandMark(spec,size*.78f)}}}
+@Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.70f,description);spec.remote!=null->RemoteBrandLogo(spec.remote,Modifier,size*.72f,description);else->VectorBrandMark(spec,size*.70f)}}}
 @Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}
-@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name);if(key=="ESPN2"||key=="ESPNU"||key=="ESPN+")Text(key.removePrefix("ESPN"),color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black,modifier=Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal=2.dp,vertical=1.dp))}}
+@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name);if(key=="ESPN2"||key=="ESPNU"||key=="ESPN+"){Text(key.removePrefix("ESPN"),color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black,modifier=Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal=2.dp,vertical=1.dp))}}}
