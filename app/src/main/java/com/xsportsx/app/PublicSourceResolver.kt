@@ -25,9 +25,10 @@ class PublicSourceResolver {
     companion object {
         private const val CACHE_TTL_MS = 15 * 60 * 1000L
         private const val MAX_PLAYLIST_BYTES = 8_000_000
-        private const val MAX_CANDIDATES = 160
-        private const val PER_SOURCE_CANDIDATES = 20
-        private const val MAX_HEALTH_CHECKS = 48
+        private const val MAX_CANDIDATES = 240
+        private const val PER_SOURCE_CANDIDATES = 60
+        private const val MAX_HEALTH_CHECKS = 96
+        private const val HEALTH_CONCURRENCY = 12
         private val REGISTRY_URLS = listOf(
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/docs/public-sources-registry.json",
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/docs/public-sources-registry.json",
@@ -35,11 +36,12 @@ class PublicSourceResolver {
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json",
             "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json"
         )
-        private val approvedHosts = setOf(
+        // Only playlist/registry hosts are pinned. Public playlists commonly
+        // point at many different broadcaster/CDN hosts, so stream URLs must
+        // not be rejected merely because their final CDN host is not known.
+        private val registryHosts = setOf(
             "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
-            "dearbulut.github.io", "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net", "cloudfront.net",
-            "pluto.tv", "samsungcloud.tv", "plex.tv", "roku.com",
-            "tjktv.org", "rtatv.akamaized.net", "jmp2.uk", "i.mjh.nz"
+            "dearbulut.github.io", "i.mjh.nz"
         )
         private val sportsTerms = Regex(
             "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|btn|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|motorsport)\\b",
@@ -55,32 +57,33 @@ class PublicSourceResolver {
         val hit = cache.get(key)
         if (!force && hit != null && now - hit.first < CACHE_TTL_MS) return@withContext hit.second
 
-        val registryText = REGISTRY_URLS.asSequence().mapNotNull { fetchText(it) }.firstOrNull()
+        val registryText = REGISTRY_URLS.asSequence().mapNotNull { fetchText(it, 256_000, registryOnly = true) }.firstOrNull()
             ?: return@withContext hit?.second.orEmpty()
         val registry = runCatching { JSONObject(registryText) }.getOrNull()
             ?: return@withContext hit?.second.orEmpty()
         val sources = registry.optJSONArray("sources") ?: JSONArray()
         val candidates = ArrayList<PublicResolvedStream>(MAX_CANDIDATES)
 
-        // Every enabled public source gets its own quota. The old implementation
-        // let the first large playlist consume all 160 slots, so later sources
-        // were technically configured but never reached the app UI.
+        // Give every source its own quota. More importantly, keep scanning past
+        // dead/unsupported entries instead of allowing the first few playlist
+        // rows to decide whether a whole source is considered usable.
         for (i in 0 until sources.length()) {
             if (candidates.size >= MAX_CANDIDATES) break
             val source = sources.optJSONObject(i) ?: continue
             if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
             val playlist = source.optString("playlist").trim()
             val sourceName = source.optString("name").ifBlank { "Public source" }
-            if (!isAllowed(playlist)) continue
-            val body = fetchText(playlist, MAX_PLAYLIST_BYTES) ?: continue
+            if (!isAllowedRegistryUrl(playlist)) continue
+            val body = fetchText(playlist, MAX_PLAYLIST_BYTES, registryOnly = true) ?: continue
             val remaining = MAX_CANDIDATES - candidates.size
             candidates += parseM3u(body, sourceName, minOf(PER_SOURCE_CANDIDATES, remaining))
         }
 
         val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
         val checked = coroutineScope {
-            unique.take(MAX_HEALTH_CHECKS).map { stream -> async { health(stream) } }
-                .awaitAll().filterNotNull()
+            unique.take(MAX_HEALTH_CHECKS).chunked(HEALTH_CONCURRENCY).flatMap { batch ->
+                batch.map { stream -> async(Dispatchers.IO) { health(stream) } }.awaitAll().filterNotNull()
+            }
         }
         val result = checked.sortedWith(compareBy<PublicResolvedStream> { it.sourceName }.thenBy { it.latencyMs })
         cache.put(key, now to result)
@@ -99,7 +102,10 @@ class PublicSourceResolver {
                     icon = attr(value, "tvg-logo")
                 }
                 value.isNotBlank() && !value.startsWith("#") -> {
-                    if (name.isNotBlank() && isAllowed(value) && isSports(name, group)) {
+                    // Playlist membership is the trust boundary. The final
+                    // stream host can legitimately be a broadcaster/CDN not
+                    // present in our small registry-host allowlist.
+                    if (name.isNotBlank() && isAllowedStream(value) && isSports(name, group)) {
                         result += PublicResolvedStream(name, group, value, icon, sourceName)
                     }
                     name = ""; group = "LIVE"; icon = ""
@@ -133,15 +139,18 @@ class PublicSourceResolver {
 
     private fun isSports(name: String, group: String): Boolean = sportsTerms.containsMatchIn("$name $group")
 
-    private fun isAllowed(target: String): Boolean = runCatching {
+    private fun isAllowedRegistryUrl(target: String): Boolean = runCatching {
         val uri = URL(target)
-        uri.protocol.equals("https", true) && approvedHosts.any { host ->
-            uri.host.equals(host, true) || uri.host.endsWith(".$host", true)
-        }
+        uri.protocol.equals("https", true) && registryHosts.any { host -> uri.host.equals(host, true) || uri.host.endsWith(".$host", true) }
     }.getOrDefault(false)
 
-    private fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES): String? = runCatching {
-        if (!isAllowed(target)) return null
+    private fun isAllowedStream(target: String): Boolean = runCatching {
+        URL(target).protocol.equals("https", true)
+    }.getOrDefault(false)
+
+    private fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES, registryOnly: Boolean = false): String? = runCatching {
+        if (registryOnly && !isAllowedRegistryUrl(target)) return null
+        if (!registryOnly && !isAllowedStream(target)) return null
         val c = URL(target).openConnection() as HttpURLConnection
         c.requestMethod = "GET"; c.connectTimeout = 5000; c.readTimeout = 10000; c.instanceFollowRedirects = true
         c.setRequestProperty("User-Agent", "XSportsX-public-registry/1.0")
