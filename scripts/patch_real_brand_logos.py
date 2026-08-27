@@ -9,7 +9,7 @@ MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 for target in (TV, MOBILE):
     if target.exists():
         source = target.read_text()
-        cleaned = re.sub(r'https://a\\.espncdn\\.com/i/teamlogos/leagues[^\"]*', '', source)
+        cleaned = re.sub(r'https://a\.espncdn\.com/i/teamlogos/leagues[^\"]*', '', source)
         if cleaned != source:
             target.write_text(cleaned)
             print(f"Removed legacy ESPN CDN league logo URLs from {target}")
