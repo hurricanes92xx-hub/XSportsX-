@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -112,7 +113,7 @@ private fun VectorBrandMark(spec: BrandSpec, size: Dp) {
                 "SOCCER" -> { drawCircle(Color.White,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.10f,center=c) }
                 "SEC" -> { drawCircle(spec.accent,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.20f,center=c,style=Stroke(width=5f)) }
                 "ACC" -> { drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),9f); drawLine(Color.White,Offset(w*.18f,h*.50f),Offset(w*.58f,h*.50f),6f) }
-                "B1G" -> { drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),cornerRadius=8f,style=Stroke(width=6f)) }
+                "B1G" -> { drawRoundRect(color=spec.accent, topLeft=Offset(w*.14f,h*.28f), size=Size(w*.72f,h*.44f), cornerRadius=CornerRadius(8f,8f), style=Stroke(width=6f)) }
                 "PAC-12" -> { drawLine(spec.accent,Offset(w*.20f,h*.68f),Offset(w*.50f,h*.30f),7f); drawLine(Color.White,Offset(w*.50f,h*.30f),Offset(w*.80f,h*.68f),7f) }
                 "FS1" -> { drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f)) }
                 else -> { drawCircle(spec.accent,radius=w*.30f,center=c); drawCircle(spec.bg,radius=w*.21f,center=c,style=Stroke(width=5f)) }
