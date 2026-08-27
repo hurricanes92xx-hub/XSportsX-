@@ -3,6 +3,7 @@ import re
 
 TV = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
 MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
+FUTURE_MAIN = Path("app/src/main/java/com/xsportsx/app/MainActivityFuture.kt")
 
 def tv_patch():
     text = TV.read_text()
@@ -17,28 +18,13 @@ def tv_patch():
     TvSport("UFC","UFC",""),TvSport("BOXING","BOX",""),TvSport("RUGBY","RUGBY",""),TvSport("VOLLEYBALL","VB",""),TvSport("LACROSSE","LAX",""),TvSport("WRESTLING","WR",""),
     TvSport("FORMULA 1","F1",""),TvSport("NASCAR","NASCAR",""),TvSport("DTM","DTM",""),TvSport("MOTOGP","MotoGP",""),TvSport("WRC","WRC",""),TvSport("WEC","WEC",""),TvSport("FORMULA E","FE",""),TvSport("MXGP","MXGP",""),TvSport("MONSTER JAM","MJ",""),TvSport("SOCCER","SOCCER","")
 )'''
-    # Replace from the declaration through the next catalog declaration. Do not
-    # stop at the first nested TvSport(...) constructor's closing parenthesis.
-    text, sports_count = re.subn(
-        r'private val tvSports = listOf\(.*?\nprivate val tvNetworks',
-        sports + '\nprivate val tvNetworks',
-        text,
-        count=1,
-        flags=re.S,
-    )
+    text, sports_count = re.subn(r'private val tvSports = listOf\(.*?\nprivate val tvNetworks', sports + '\nprivate val tvNetworks', text, count=1, flags=re.S)
     if sports_count != 1:
         raise SystemExit('Could not locate tvSports catalog')
     networks='''private val tvNetworks = listOf(
     TvNetwork("ESPN","ESPN",""),TvNetwork("ESPN2","ESPN2",""),TvNetwork("ESPNU","ESPNU",""),TvNetwork("NFL NETWORK","NFL",""),TvNetwork("FS1","FS1",""),TvNetwork("CBS SPORTS","CBS",""),TvNetwork("SEC NETWORK","SEC",""),TvNetwork("ACC NETWORK","ACC",""),TvNetwork("BIG TEN NETWORK","B1G",""),TvNetwork("ESPN+","ESPN+",""),TvNetwork("PAC-12 NETWORK","PAC12",""),TvNetwork("NBA TV","NBA TV",""),TvNetwork("MLB NETWORK","MLB",""),TvNetwork("NHL NETWORK","NHL",""),TvNetwork("UFC FIGHT PASS","UFC",""),TvNetwork("RED BULL TV","RED BULL",""),TvNetwork("MONSTER JAM","MJ",""),TvNetwork("RUGBYPASS TV","RUGBY","")
 )'''
-    # Same rule for networks: stop at the next top-level function declaration.
-    text, network_count = re.subn(
-        r'private val tvNetworks = listOf\(.*?\nprivate fun dateRange',
-        networks + '\nprivate fun dateRange',
-        text,
-        count=1,
-        flags=re.S,
-    )
+    text, network_count = re.subn(r'private val tvNetworks = listOf\(.*?\nprivate fun dateRange', networks + '\nprivate fun dateRange', text, count=1, flags=re.S)
     if network_count != 1:
         raise SystemExit('Could not locate tvNetworks catalog')
     text=text.replace('TvSection("SPORTS NETWORKS","LIVE SOURCES")','TvSection("NETWORKS","LIVE SOURCES")')
@@ -59,6 +45,26 @@ def mobile_patch():
     if not MOBILE.exists(): return
     text=MOBILE.read_text()
     text=text.replace('MobileSectionLabel("FREE SPORTS SOURCES", null)','MobileSectionLabel("NETWORKS", null)')
+    # Top Sports cards must open the matching league schedule, not the generic source/connect flow.
+    old='SportBadgeCard(sport) { onConnect() }'
+    new='SportBadgeCard(sport) { onNetwork(XNetwork(sport.name, "LEAGUE", sport.icon, sport.logoUrl)) }'
+    text=text.replace(old,new)
     MOBILE.write_text(text)
 
-tv_patch();mobile_patch();print('Sports/network logo patch applied; hardwired fallback is always rendered and the section title is NETWORKS.')
+def future_main_patch():
+    if not FUTURE_MAIN.exists(): return
+    text=FUTURE_MAIN.read_text()
+    # A league tile is a schedule navigation event; a network tile remains a live-source filter.
+    old='''FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })'''
+    new='''FuturisticHome(
+                            onConnect = { if (connected) schedules = true else connectSource = true },
+                            onSport = { league -> selectedScheduleLeague = league; schedules = true },
+                            onNetwork = { network -> selectedEvent = null; liveFilter = network.name }
+                        )'''
+    text=text.replace(old,new)
+    text=text.replace('''var schedules by remember { mutableStateOf(false) }''','''var schedules by remember { mutableStateOf(false) }
+            var selectedScheduleLeague by remember { mutableStateOf<String?>(null) }''')
+    text=text.replace('''SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''','''SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''')
+    FUTURE_MAIN.write_text(text)
+
+tv_patch();mobile_patch();future_main_patch();print('Sports/network UI patch applied; top sport tiles now route to league schedules.')
