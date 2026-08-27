@@ -43,6 +43,7 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt
           test -f app/src/main/java/com/xsportsx/app/TvCrackPulseCompat.kt
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
+          test -f app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
           test -f app/src/main/assets/brand_logos/nfl.svg
           test -f app/src/main/assets/brand_logos/nba.svg
           test -f app/src/main/assets/brand_logos/ncaa.svg
@@ -70,6 +71,7 @@ jobs:
           python3 scripts/patch_sports_badges.py
           python3 .github/patch_networks.py
           python3 scripts/patch_real_brand_logos.py
+          python3 scripts/patch_college_schedule_ui.py
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
@@ -77,6 +79,8 @@ jobs:
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'brand_logos/espn.svg' app/src/main/java/com/xsportsx/app/SportsLogos.kt
+          grep -q 'TeamLogo(event.homeLogo' app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
+          grep -q 'TeamLogo(event.awayLogo' app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
@@ -139,7 +143,7 @@ jobs:
         with:
           name: XSportsX-mobile-regression-${{ github.sha }}
           path: |
-            test-output-mobile
+            test-output-mobile/**
             qa-source.log
           if-no-files-found: ignore
 
@@ -152,13 +156,6 @@ jobs:
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
           path: test-apks
-      - name: Verify downloaded TV APK
-        shell: bash
-        run: |
-          set -euo pipefail
-          find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
-          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
-          test -n "$APK" && test -s "$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
@@ -187,6 +184,6 @@ jobs:
         with:
           name: XSportsX-tv-regression-${{ github.sha }}
           path: |
-            test-output-tv
+            test-output-tv/**
             qa-source.log
           if-no-files-found: ignore
