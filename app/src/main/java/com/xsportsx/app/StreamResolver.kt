@@ -19,6 +19,7 @@ private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loade
 
 class StreamResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
+    private val publicHealthIndex = PublicSourceHealthIndex(context.applicationContext)
     private val publicResolver = PublicSourceResolver()
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
     companion object {
@@ -62,11 +63,29 @@ class StreamResolver(context: Context) {
             val private = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
             matchEventAgainstStreams(event, private)
         } else emptyList()
-        val publicMatches = runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList())
-            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
 
-        // Official event video IDs are first-class event sources. They are not
-        // downloaded/extracted; the player hands them to YouTube's own player.
+        // Fast path: reuse public candidates that were already health-checked for
+        // this exact event, league, sport, or broadcast network. This avoids a
+        // full public discovery pass on every click.
+        val indexed = publicHealthIndex.rankResolved(
+            eventId = event.id,
+            sport = event.sport,
+            league = event.league,
+            network = event.broadcast,
+            limit = 8
+        ).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+
+        // Cold/warm discovery path: only run the existing event matcher when the
+        // index does not already have enough candidates, or when explicitly forced.
+        val discovered = if (force || indexed.size < 2) {
+            runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList())
+        } else emptyList()
+
+        // Feed successfully health-checked discoveries back into the persistent
+        // index so future clicks become progressively faster.
+        discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
+
+        val publicMatches = (indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) })
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let {
             ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it")
         }
