@@ -28,11 +28,6 @@ data class SportsEvent(
 data class ScheduleLeague(val sport:String,val league:String,val path:String,val officialUrl:String="")
 
 object SportsScheduleService {
-    // Keep only college sports with meaningful recurring live coverage. ESPN's current
-    // college offering covers football, men's/women's basketball, baseball, softball,
-    // soccer, volleyball, lacrosse, wrestling, hockey and other college events through
-    // ESPN/ESPN+/conference networks. The removed low-broadcast catalog is intentionally
-    // not queried so the schedule stays useful and lightweight.
     private val leagues=listOf(
         ScheduleLeague("Football","NFL","football/nfl","https://www.nfl.com/schedules/"),
         ScheduleLeague("College Football","NCAA FB","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
@@ -90,31 +85,18 @@ object SportsScheduleService {
         else -> label.trim().uppercase()
     }
 
-    val uiLeagueChoices:List<String> = listOf(
-        "NFL","NBA","NCAA FB","NCAA FCS","NCAA BB","NCAA WBB","MLB","NCAA BASEBALL","NHL",
-        "NCAA MEN HOCKEY","NCAA WOMEN HOCKEY","NCAA SOFTBALL","UFC","BOXING","NCAA VB",
-        "NCAA MEN SOCCER","NCAA WOMEN SOCCER","NCAA MEN LAX","NCAA WOMEN LAX","NCAA WRESTLING",
-        "MLS","EPL","LaLiga","Bundesliga","Serie A","Ligue 1","UCL","UEL","NWSL","RUGBY",
-        "WRESTLING","MOTOGP","WRC","WEC","IMSA","FORMULA E","MXGP","MONSTER JAM","F1","NASCAR","INDYCAR"
-    )
+    val uiLeagueChoices:List<String> = listOf("NFL","NBA","NCAA FB","NCAA FCS","NCAA BB","NCAA WBB","MLB","NCAA BASEBALL","NHL","NCAA MEN HOCKEY","NCAA WOMEN HOCKEY","NCAA SOFTBALL","UFC","BOXING","NCAA VB","NCAA MEN SOCCER","NCAA WOMEN SOCCER","NCAA MEN LAX","NCAA WOMEN LAX","NCAA WRESTLING","MLS","EPL","LaLiga","Bundesliga","Serie A","Ligue 1","UCL","UEL","NWSL","RUGBY","WRESTLING","MOTOGP","WRC","WEC","IMSA","FORMULA E","MXGP","MONSTER JAM","F1","NASCAR","INDYCAR")
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
-        val today=LocalDate.now(ZoneId.systemDefault());val end=today.plusDays(30)
-        val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
-        val limiter=Semaphore(8)
+        val today=LocalDate.now(ZoneId.systemDefault());val end=today.plusDays(30);val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}";val limiter=Semaphore(8)
         val results=withTimeout(28_000L){coroutineScope{leagues.map{league->async{limiter.withPermit{fetchLeagueWithFallbacks(league,dates)}}}.awaitAll()}}
         results.flatten().distinctBy{it.id.ifBlank{it.title+it.startUtc+it.league}}.filter{it.isLive||it.isUpcoming}.sortedWith(compareBy<SportsEvent>{!it.isLive}.thenBy{it.startUtc})
     }
-
-    private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String):List<SportsEvent>{
-        val primary=runCatching{fetchEspn(league,dates)}.getOrDefault(emptyList())
-        val fallback=if(primary.isEmpty())runCatching{fetchEspnV3(league,dates)}.getOrDefault(emptyList())else emptyList()
-        return (primary+fallback).filter{it.league.equals(league.league,true)}.map{it.copy(sourceUrl=it.sourceUrl.ifBlank{league.officialUrl})}.distinctBy{canonicalKey(it)}
-    }
+    private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String):List<SportsEvent>{val primary=runCatching{fetchEspn(league,dates)}.getOrDefault(emptyList());val fallback=if(primary.isEmpty())runCatching{fetchEspnV3(league,dates)}.getOrDefault(emptyList())else emptyList();return (primary+fallback).filter{it.league.equals(league.league,true)}.map{it.copy(sourceUrl=it.sourceUrl.ifBlank{league.officialUrl})}.distinctBy{canonicalKey(it)}}
     private fun canonicalKey(e:SportsEvent):String=listOf(e.league,normalize(e.home),normalize(e.away),e.startUtc.take(10)).joinToString("|")
     private fun normalize(v:String):String=v.lowercase().replace("fc"," ").replace("  "," ").trim()
-    private fun fetchEspn(league:ScheduleLeague,dates:String):List<SportsEvent>=parseEspn(JSONObject(http("https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000")),league)
-    private fun fetchEspnV3(league:ScheduleLeague,dates:String):List<SportsEvent>=parseEspn(JSONObject(http("https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dates&limit=1000")),league)
+    private fun fetchEspn(league:ScheduleLeague,dates:String):List<SportsEvent> = parseEspn(JSONObject(http("https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000")),league)
+    private fun fetchEspnV3(league:ScheduleLeague,dates:String):List<SportsEvent> = parseEspn(JSONObject(http("https://site.api.espn.com/apis/site/v3/sports/${league.path}/scoreboard?dates=$dates&limit=1000")),league)
 
     private fun parseEspn(root:JSONObject,league:ScheduleLeague):List<SportsEvent>{
         val events=root.optJSONArray("events")?:root.optJSONObject("content")?.optJSONArray("events")?:return emptyList();val out=ArrayList<SportsEvent>(events.length())
