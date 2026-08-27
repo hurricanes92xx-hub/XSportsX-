@@ -1,8 +1,13 @@
 from pathlib import Path
 
 TV = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
-
 text = TV.read_text()
+
+# patch_sports_badges.py may already have installed the shared TV badge/grid.
+# Treat that state as success instead of trying to replace an older source shape.
+if "XSportsLeagueLogo" in text and "XSportsNetworkLogo" in text:
+    print("TV already uses bundled league/network logo renderer")
+    raise SystemExit(0)
 
 old_sport = '@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(sports,key={it.name}){TvTile(it.name,it.glyph,TvBlue){onNetwork(it.name)}}}}'
 new_sport = '''@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){
@@ -36,6 +41,5 @@ new_net = '''@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNe
 if old_net not in text:
     raise SystemExit("TvNetworkGrid source changed; refusing unsafe replacement")
 text = text.replace(old_net, new_net, 1)
-
 TV.write_text(text)
 print("TV sport/network cards now use bundled logo renderer")
