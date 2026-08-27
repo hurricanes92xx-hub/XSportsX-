@@ -24,16 +24,16 @@ data class AuthorizedSource(val id: String, val type: Type, val endpoint: String
 data class TargetedStream(val name: String, val group: String, val url: String, val sourceId: String, val sourceType: String, val userAgent: String = "", val referer: String = "", val score: Int = 0)
 
 class TargetedSourceResolver {
-    companion object { private const val MAX_RESULTS_PER_SOURCE = 12; private const val MAX_TOTAL_RESULTS = 40; private const val MAX_PLAYLIST_BYTES = 8_000_000; private const val TIMEOUT_MS = 7_000 }
+    companion object { private const val MAX_PLAYLIST_BYTES = 8_000_000; private const val TIMEOUT_MS = 7_000 }
     private val publicResolver = PublicSourceResolver()
 
     suspend fun search(query: TargetQuery, authorizedSources: List<AuthorizedSource> = emptyList()): List<TargetedStream> = withContext(Dispatchers.IO) {
         val terms = query.terms(); if (terms.isEmpty()) return@withContext emptyList()
         val publicResults = runCatching { publicResolver.searchTargeted(terms) }.getOrDefault(emptyList()).map { s ->
             TargetedStream(s.name, s.group, s.url, "public:${s.sourceName}", "PUBLIC", score = s.latencyMs)
-        }.take(MAX_TOTAL_RESULTS)
+        }
         val privateResults = coroutineScope { authorizedSources.map { source -> async(Dispatchers.IO) { searchAuthorizedSource(source, terms) } }.awaitAll().flatten() }
-        (publicResults + privateResults).distinctBy { it.url }.sortedByDescending { it.score }.take(MAX_TOTAL_RESULTS)
+        (publicResults + privateResults).distinctBy { it.url }.sortedWith(compareByDescending<TargetedStream> { it.score }.thenBy { it.sourceType })
     }
 
     private suspend fun searchAuthorizedSource(source: AuthorizedSource, terms: List<String>): List<TargetedStream> = when (source.type) {
@@ -49,7 +49,7 @@ class TargetedSourceResolver {
             val item = array.optJSONObject(i) ?: continue; val name = item.optString("name"); val category = item.optString("category_name"); val score = score(name, category, "XTREAM", terms)
             if (score <= 0) continue; val streamId = item.optString("stream_id"); if (streamId.isBlank()) continue
             val ext = item.optString("container_extension").ifBlank { "ts" }; val streamUrl = "$base/live/${enc(source.username)}/${enc(source.password)}/$streamId.$ext"
-            result += TargetedStream(name, category, streamUrl, source.id, "XTREAM", score = score); if (result.size >= MAX_RESULTS_PER_SOURCE) break
+            result += TargetedStream(name, category, streamUrl, source.id, "XTREAM", score = score)
         }
         return result
     }
@@ -62,7 +62,7 @@ class TargetedSourceResolver {
                 value.startsWith("#EXTINF", true) -> { name = value.substringAfterLast(',', "Unnamed").trim(); group = attr(value, "group-title").ifBlank { "LIVE" }; userAgent = attr(value, "http-user-agent"); referer = attr(value, "http-referrer") }
                 value.startsWith("#EXTVLCOPT:http-user-agent=", true) -> userAgent = value.substringAfter('=')
                 value.startsWith("#EXTVLCOPT:http-referrer=", true) -> referer = value.substringAfter('=')
-                value.isNotBlank() && !value.startsWith("#") -> { val score = score(name, group, source.id, terms); if (score > 0 && value.startsWith("http", true)) result += TargetedStream(name, group, value, source.id, "M3U", userAgent, referer, score); name = ""; group = "LIVE"; userAgent = ""; referer = ""; if (result.size >= MAX_RESULTS_PER_SOURCE) break }
+                value.isNotBlank() && !value.startsWith("#") -> { val score = score(name, group, source.id, terms); if (score > 0 && value.startsWith("http", true)) result += TargetedStream(name, group, value, source.id, "M3U", userAgent, referer, score); name = ""; group = "LIVE"; userAgent = ""; referer = "" }
             }
         }
         return result
