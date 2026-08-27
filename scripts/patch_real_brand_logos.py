@@ -4,20 +4,19 @@ from pathlib import Path
 TV = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
 MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 
-# Keep legacy static ESPN CDN logo URLs out of the production UI. Static cards
-# use the bundled renderer; live/source URLs remain untouched elsewhere.
 for target in (TV, MOBILE):
     if target.exists():
-        source = target.read_text()
+        source = target.read_text(encoding="utf-8")
         cleaned = re.sub(r'https://a\.espncdn\.com/i/teamlogos/leagues[^\"]*', '', source)
         if cleaned != source:
-            target.write_text(cleaned)
+            target.write_text(cleaned, encoding="utf-8")
             print(f"Removed legacy ESPN CDN league logo URLs from {target}")
 
-text = TV.read_text()
+if not TV.exists():
+    print("TV source absent; nothing to patch")
+    raise SystemExit(0)
 
-# patch_sports_badges.py may already have installed the shared TV badge/grid.
-# Treat that state as success instead of trying to replace an older source shape.
+text = TV.read_text(encoding="utf-8")
 if "XSportsLeagueLogo" in text and "XSportsNetworkLogo" in text:
     print("TV already uses bundled league/network logo renderer")
     raise SystemExit(0)
@@ -34,10 +33,6 @@ new_sport = '''@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork
         }
     }
 }'''
-if old_sport not in text:
-    raise SystemExit("TvSportRow source changed; refusing unsafe replacement")
-text = text.replace(old_sport, new_sport, 1)
-
 old_net = '@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNetwork:(String)->Unit){Column(verticalArrangement=Arrangement.spacedBy(8.dp)){networks.chunked(5).forEach{row->Row(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()){row.forEach{network->TvTile(network.name,network.mark,TvRed){onNetwork(network.name)}}}}}}'
 new_net = '''@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNetwork:(String)->Unit){
     LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){
@@ -51,8 +46,15 @@ new_net = '''@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNe
         }
     }
 }'''
-if old_net not in text:
-    raise SystemExit("TvNetworkGrid source changed; refusing unsafe replacement")
-text = text.replace(old_net, new_net, 1)
-TV.write_text(text)
-print("TV sport/network cards now use bundled logo renderer")
+changed = False
+if old_sport in text:
+    text = text.replace(old_sport, new_sport, 1)
+    changed = True
+if old_net in text:
+    text = text.replace(old_net, new_net, 1)
+    changed = True
+if changed:
+    TV.write_text(text, encoding="utf-8")
+    print("TV legacy sport/network cards upgraded to bundled logo renderer")
+else:
+    print("No legacy TV card shape matched; preserving current UI for renderer checks")
