@@ -4,7 +4,7 @@ from pathlib import Path
 SERVICE = Path('app/src/main/java/com/xsportsx/app/SportsScheduleService.kt')
 s = SERVICE.read_text(encoding='utf-8')
 
-# NCAA's current scoreboard backend is a first-party data source.  Keep ESPN as
+# NCAA's current scoreboard backend is a first-party data source. Keep ESPN as
 # the broad schedule source, then use NCAA's own scoreboard data for today's
 # college slate so missing/incorrect college cards can be filled authoritatively.
 if 'NCAA_GRAPHQL_HASH' not in s:
@@ -23,22 +23,17 @@ if 'private data class OfficialNCAAFeed' not in s:
 
 if 'OFFICIAL_NCAA_FEEDS' not in s:
     anchor = '    private val leagues = listOf(\n'
-    # Insert the first-party feed catalog immediately before the ESPN catalog.
     feeds = '''    private val OFFICIAL_NCAA_FEEDS = listOf(\n        OfficialNCAAFeed("NCAA BB", "Basketball", "MBB", 1, "https://www.ncaa.com/sports/basketball-men/d1"),\n        OfficialNCAAFeed("NCAA WBB", "Basketball", "WBB", 1, "https://www.ncaa.com/sports/basketball-women/d1"),\n        OfficialNCAAFeed("NCAA BASEBALL", "Baseball", "MBA", 1, "https://www.ncaa.com/sports/baseball/d1"),\n        OfficialNCAAFeed("NCAA SOFTBALL", "Softball", "WSB", 1, "https://www.ncaa.com/sports/softball/d1"),\n        OfficialNCAAFeed("NCAA MEN HOCKEY", "Hockey", "MIH", 1, "https://www.ncaa.com/sports/icehockey-men/d1"),\n        OfficialNCAAFeed("NCAA WOMEN HOCKEY", "Hockey", "WIH", 1, "https://www.ncaa.com/sports/icehockey-women/d1"),\n        OfficialNCAAFeed("NCAA VB", "Volleyball", "WVB", 1, "https://www.ncaa.com/sports/volleyball-women/d1"),\n        OfficialNCAAFeed("NCAA MVB", "Volleyball", "MVB", 1, "https://www.ncaa.com/sports/volleyball-men/d1"),\n        OfficialNCAAFeed("NCAA MEN SOCCER", "Soccer", "MSO", 1, "https://www.ncaa.com/sports/soccer-men/d1"),\n        OfficialNCAAFeed("NCAA WOMEN SOCCER", "Soccer", "WSO", 1, "https://www.ncaa.com/sports/soccer-women/d1"),\n        OfficialNCAAFeed("NCAA MEN LAX", "Lacrosse", "MLA", 1, "https://www.ncaa.com/sports/lacrosse-men/d1"),\n        OfficialNCAAFeed("NCAA WOMEN LAX", "Lacrosse", "WLA", 1, "https://www.ncaa.com/sports/lacrosse-women/d1")\n    )\n\n'''
     if anchor not in s:
         raise SystemExit('leagues catalog anchor not found')
     s = s.replace(anchor, feeds + anchor, 1)
 
-# Let the final event filter accept the first-party college leagues even though
-# they are not part of the smaller ESPN catalog.
 if 'OFFICIAL_NCAA_FEEDS.any' not in s:
     old = '                val knownLeague = leagues.any { it.league == league }\n                knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)'
     new = '                val knownLeague = leagues.any { it.league == league } || OFFICIAL_NCAA_FEEDS.any { it.league == league }\n                knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)'
     if old in s:
         s = s.replace(old, new, 1)
 
-# Merge NCAA data into the normal result set, but only for today's college slate.
-# This avoids adding 30-day NCAA traffic and keeps the APK lightweight.
 if 'fetchOfficialNCAAToday' not in s:
     old = '''        results.flatten()\n            .filter { event ->'''
     new = '''        val officialToday = fetchOfficialNCAAToday(limiter)\n\n        (results.flatten() + officialToday)\n            .filter { event ->'''
@@ -46,8 +41,6 @@ if 'fetchOfficialNCAAToday' not in s:
         raise SystemExit('schedule result merge anchor not found')
     s = s.replace(old, new, 1)
 
-# Deduplicate by canonical matchup/time instead of provider event ID. ESPN and
-# NCAA assign different IDs to the same contest.
 old = '''            .distinctBy { event ->\n                event.id.ifBlank {\n                    listOf(event.league, normalize(event.home), normalize(event.away), event.startUtc).joinToString("|")\n                }\n            }'''
 new = '''            .distinctBy { event -> canonicalKey(event) }'''
 if old in s:
@@ -165,4 +158,14 @@ if 'private suspend fun fetchOfficialNCAAToday' not in s:
     s = s.replace(anchor, inject + anchor, 1)
 
 SERVICE.write_text(s, encoding='utf-8')
+
+# fix_schedule_ui_build.py rewrites the stable screen after this patch. Run this
+# script after that rewrite and make sure the NCAA men's volleyball catalog is visible.
+SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
+if SCREEN.exists():
+    t = SCREEN.read_text(encoding='utf-8')
+    if '"NCAA MVB"' not in t:
+        t = t.replace('"NCAA VB", "NCAA MEN SOCCER"', '"NCAA VB", "NCAA MVB", "NCAA MEN SOCCER"', 1)
+    SCREEN.write_text(t, encoding='utf-8')
+
 print('Added first-party NCAA GraphQL scoreboard fallback for today across DI college sports; ESPN remains the future-schedule source.')
