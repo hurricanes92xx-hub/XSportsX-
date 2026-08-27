@@ -20,7 +20,7 @@ object ScheduleFeed {
         val fresh = runCatching { download() }.getOrNull()
         if (fresh != null) {
             runCatching { context.openFileOutput(CACHE_NAME, Context.MODE_PRIVATE).use { it.write(fresh.toByteArray()) } }
-            parse(fresh).ifEmpty { cached }
+            parse(fresh).ifEmpty { cached?.let { parse(it.second) } ?: emptyList() }
         } else if (cached != null && System.currentTimeMillis() - cached.first < MAX_AGE_MS * 7) {
             parse(cached.second)
         } else {
@@ -66,7 +66,7 @@ object ScheduleFeed {
     private fun formatTime(start: String, fallback: String): String = runCatching {
         val instant = Instant.parse(start)
         val local = java.time.ZonedDateTime.ofInstant(instant, java.time.ZoneId.systemDefault())
-        val formatter = java.time.format.DateTimeFormatter.ofPattern("EEE • h:mm a z")
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("MMM d • h:mm a z")
         formatter.format(local)
     }.getOrDefault(fallback)
 }
