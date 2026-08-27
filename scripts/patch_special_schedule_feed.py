@@ -37,7 +37,7 @@ if 'ScheduleLeague("NCAA VB", "Volleyball"' not in s and anchor in s:
 # Keep every newly backed category selectable in the schedule UI.
 ui_anchor = '        "NCAA VB", "NCAA MEN SOCCER",'
 ui_add = '        "NCAA VB", "NCAA MVB", "NCAA BASEBALL", "NCAA SOFTBALL", "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER", "NCAA MEN LAX", "NCAA WOMEN LAX",'
-if '"NCAA MVB"' not in s and ui_anchor in s:
+if ui_anchor in s and ui_add not in s:
     s = s.replace(ui_anchor, ui_add, 1)
 
 # Combat endpoints can return event cards without team-style competitors. Keep those events.
