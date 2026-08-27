@@ -50,23 +50,23 @@ private fun spec(key: String): BrandSpec = when (key) {
     "NCAA FB", "NCAA BB", "NCAA VB" -> BrandSpec(Color(0xFF102B55), Color.White, Color(0xFFFFC72C), "ncaa", "NCAA")
     "MLB" -> BrandSpec(Color(0xFF041E42), Color.White, Color(0xFFE31837), "mlb", "MLB")
     "NHL" -> BrandSpec(Color(0xFF111820), Color.White, Color(0xFFB8C7D9), "nhl", "NHL")
-    "UFC" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), "ufc", "UFC")
+    "UFC" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), null, "UFC", "https://commons.wikimedia.org/wiki/Special:FilePath/UFC_Logo.svg?width=256")
     "WRESTLING", "WWE" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31B23), "wwe", "WWE")
     "AEW" -> BrandSpec(Color(0xFF101010), Color.White, Color.White, "aew", "AEW")
     "TNA" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE61B1F), "tna", "TNA")
-    "BOXING" -> BrandSpec(Color(0xFF171717), Color.White, Color(0xFFE53935), null, "BOXING", remote("worldboxing.org"))
-    "RUGBY" -> BrandSpec(Color(0xFF063B2B), Color.White, Color(0xFF49D17D), null, "RUGBY", remote("world.rugby"))
-    "VOLLEYBALL" -> BrandSpec(Color(0xFF073A66), Color.White, Color(0xFFF7B500), null, "VB", remote("volleyballworld.com"))
-    "LACROSSE" -> BrandSpec(Color(0xFF102A43), Color.White, Color(0xFF55B6FF), null, "LAX", remote("usalacrosse.com"))
+    "BOXING" -> BrandSpec(Color(0xFF171717), Color.White, Color(0xFFE53935), null, "BOXING", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Boxing_logo_2023.svg?width=256")
+    "RUGBY" -> BrandSpec(Color(0xFF063B2B), Color.White, Color(0xFF49D17D), null, "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256")
+    "VOLLEYBALL" -> BrandSpec(Color(0xFF073A66), Color.White, Color(0xFFF7B500), null, "VB", "https://commons.wikimedia.org/wiki/Special:FilePath/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg?width=256")
+    "LACROSSE" -> BrandSpec(Color(0xFF102A43), Color.White, Color(0xFF55B6FF), null, "LAX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Lacrosse_logo.png?width=256")
     "FORMULA 1" -> BrandSpec(Color(0xFF050505), Color.White, Color(0xFFE10600), null, "F1", remote("formula1.com"))
     "NASCAR" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFF1E8BFF), null, "NASCAR", remote("nascar.com"))
     "DTM" -> BrandSpec(Color(0xFF101010), Color.White, Color(0xFFEC1C24), null, "DTM", remote("dtm.com"))
-    "MOTOGP" -> BrandSpec(Color(0xFF050505), Color.White, Color(0xFFE10600), null, "MotoGP", remote(WIKI + "MotoGP_logo_(2024).svg"))
-    "WRC" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFF2E73FF), null, "WRC", remote(WIKI + "WRC_(2023)_logo_official_(SGDB_111749).png"))
-    "WEC" -> BrandSpec(Color(0xFF071A35), Color.White, Color(0xFF3BB8FF), null, "WEC", remote(WIKI + "WEC_Logo.svg"))
-    "IMSA" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFFE31B23), null, "IMSA", remote(WIKI + "International_Motor_Sports_Association_logo_(2014-present).svg"))
-    "FORMULA E" -> BrandSpec(Color(0xFF061B2A), Color.White, Color(0xFF20E0D0), null, "FE", remote(WIKI + "Formula-e-logo-championship_2023.svg"))
-    "MXGP" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE30613), null, "MXGP", remote(WIKI + "Logo_MXGP.svg"))
+    "MOTOGP" -> BrandSpec(Color(0xFF050505), Color.White, Color(0xFFE10600), null, "MotoGP", "https://commons.wikimedia.org/wiki/Special:FilePath/MotoGP_logo_%282024%29.svg?width=256")
+    "WRC" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFF2E73FF), null, "WRC", "https://commons.wikimedia.org/wiki/Special:FilePath/WRC_logo.svg?width=256")
+    "WEC" -> BrandSpec(Color(0xFF071A35), Color.White, Color(0xFF3BB8FF), null, "WEC", "https://commons.wikimedia.org/wiki/Special:FilePath/WEC_Logo.svg?width=256")
+    "IMSA" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFFE31B23), null, "IMSA", "https://commons.wikimedia.org/wiki/Special:FilePath/IMSA_SportsCar_Championship_logo.svg?width=256")
+    "FORMULA E" -> BrandSpec(Color(0xFF061B2A), Color.White, Color(0xFF20E0D0), null, "FE", "https://commons.wikimedia.org/wiki/Special:FilePath/Formula-e-logo-championship_2023.svg?width=256")
+    "MXGP" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE30613), null, "MXGP", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_MXGP.svg?width=256")
     "MONSTER JAM" -> BrandSpec(Color(0xFF080808), Color.White, Color(0xFFE31B23), null, "MONSTER JAM", remote("monsterjam.com"))
     "SOCCER" -> BrandSpec(Color(0xFF0C2C45), Color.White, Color(0xFF5ED0FF), null, "SOCCER")
     "MLS" -> BrandSpec(Color(0xFF071A35), Color.White, Color(0xFF9CC7FF), null, "MLS", remote("mlssoccer.com"))
@@ -76,9 +76,12 @@ private fun spec(key: String): BrandSpec = when (key) {
 }
 
 private fun networkSpec(key: String): BrandSpec = when (key) {
-    "ESPN", "ESPN2", "ESPNU", "ESPN+" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), "espn", key)
-    "CBS SPORTS", "CBS" -> BrandSpec(Color(0xFF101A28), Color.White, Color(0xFF4AA3FF), "cbs", "CBS SPORTS")
-    "NFL NETWORK" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), "nfl", "NFL NETWORK")
+    "ESPN" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), null, "ESPN", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/960px-ESPN_wordmark.svg.png")
+    "ESPN2" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), null, "ESPN2", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/ESPN2_logo.svg/960px-ESPN2_logo.svg.png")
+    "ESPNU" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), null, "ESPNU", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN_U_logo.svg?width=256")
+    "ESPN+" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), null, "ESPN+", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN%2B_logo.svg?width=256")
+    "CBS SPORTS", "CBS" -> BrandSpec(Color(0xFF101A28), Color.White, Color(0xFF4AA3FF), null, "CBS SPORTS", "https://commons.wikimedia.org/wiki/Special:FilePath/CBS_Sports_%282021%29.svg?width=512")
+    "NFL NETWORK" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), null, "NFL NETWORK", "https://static.cdnlogo.com/logos/n/50/nfl-network.svg")
     "NBA TV" -> BrandSpec(Color(0xFF17408B), Color.White, Color(0xFFE31837), "nba", "NBA TV")
     "MLB NETWORK" -> BrandSpec(Color(0xFF041E42), Color.White, Color(0xFFE31837), "mlb", "MLB NETWORK")
     "NHL NETWORK" -> BrandSpec(Color(0xFF111820), Color.White, Color(0xFFB8C7D9), "nhl", "NHL NETWORK")
@@ -86,12 +89,12 @@ private fun networkSpec(key: String): BrandSpec = when (key) {
     "WWE" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31B23), "wwe", "WWE")
     "AEW" -> BrandSpec(Color(0xFF101010), Color.White, Color.White, "aew", "AEW")
     "TNA" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE61B1F), "tna", "TNA")
-    "FS1" -> BrandSpec(Color(0xFF07101D), Color.White, Color(0xFF2E7DFF), null, "FS1", remote("foxsports.com"))
-    "SEC NETWORK" -> BrandSpec(Color(0xFF123C2C), Color.White, Color(0xFFFFC72C), null, "SEC", remote("secsports.com"))
-    "ACC NETWORK" -> BrandSpec(Color(0xFF071A3B), Color.White, Color(0xFF2E8BFF), null, "ACC", remote("theacc.com"))
-    "BIG TEN NETWORK" -> BrandSpec(Color(0xFF082B55), Color.White, Color(0xFF7CC8FF), null, "B1G", remote("bigten.org"))
-    "PAC-12 NETWORK" -> BrandSpec(Color(0xFF10233F), Color.White, Color(0xFF00A6CE), null, "PAC-12", remote("pac-12.com"))
-    "RED BULL TV" -> BrandSpec(Color(0xFF071A3A), Color.White, Color(0xFFE31B23), null, "RED BULL", remote("redbull.com"))
+    "FS1" -> BrandSpec(Color(0xFF07101D), Color.White, Color(0xFF2E7DFF), null, "FS1", "https://commons.wikimedia.org/wiki/Special:FilePath/2015_Fox_Sports_1_logo.svg?width=256")
+    "SEC NETWORK" -> BrandSpec(Color(0xFF123C2C), Color.White, Color(0xFFFFC72C), null, "SEC", "https://commons.wikimedia.org/wiki/Special:FilePath/SEC_Network_%282024%29.svg?width=256")
+    "ACC NETWORK" -> BrandSpec(Color(0xFF071A3B), Color.White, Color(0xFF2E8BFF), null, "ACC", "https://commons.wikimedia.org/wiki/Special:FilePath/ACC_Network_ESPN_logo.svg?width=256")
+    "BIG TEN NETWORK" -> BrandSpec(Color(0xFF082B55), Color.White, Color(0xFF7CC8FF), null, "B1G", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256")
+    "PAC-12 NETWORK" -> BrandSpec(Color(0xFF10233F), Color.White, Color(0xFF00A6CE), null, "PAC-12", "https://commons.wikimedia.org/wiki/Special:FilePath/Pac-12_Network_logo.svg?width=256")
+    "RED BULL TV" -> BrandSpec(Color(0xFF071A3A), Color.White, Color(0xFFE31B23), null, "RED BULL", "https://img.logokit.com/redbull.tv")
     "MONSTER JAM" -> BrandSpec(Color(0xFF080808), Color.White, Color(0xFFE31B23), null, "MONSTER JAM", remote("monsterjam.com"))
     "RUGBYPASS TV" -> BrandSpec(Color(0xFF073B2A), Color.White, Color(0xFF49D17D), null, "RUGBYPASS", remote("rugbypass.com"))
     else -> BrandSpec(Color(0xFF151A22), Color.White, Color(0xFFFF1838), null, key.take(10))
@@ -116,7 +119,7 @@ private fun fitBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
 }
 
 private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=withContext(Dispatchers.IO){runCatching{
-    val c=(URL(url).openConnection() as HttpURLConnection).apply{connectTimeout=2500;readTimeout=5000;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5");setRequestProperty("Accept","image/avif,image/webp,image/png,image/svg+xml,image/*,*/*")}
+    val c=(URL(url).openConnection() as HttpURLConnection).apply{connectTimeout=3500;readTimeout=6000;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5");setRequestProperty("Accept","image/avif,image/webp,image/png,image/svg+xml,image/*,*/*")}
     try{
         if(c.responseCode !in 200..299)return@runCatching null
         val type=c.contentType.orEmpty().lowercase()
@@ -135,4 +138,4 @@ private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=wi
 
 @Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.70f,description);spec.remote!=null->RemoteBrandLogo(spec.remote,Modifier,size*.72f,description);else->VectorBrandMark(spec,size*.70f)}}}
 @Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}
-@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name);if(key=="ESPN2"||key=="ESPNU"||key=="ESPN+"){Text(key.removePrefix("ESPN"),color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black,modifier=Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal=2.dp,vertical=1.dp))}}}
+@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name)}}
