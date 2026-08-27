@@ -36,15 +36,12 @@ class PublicSourceResolver {
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json",
             "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json"
         )
-        // Only playlist/registry hosts are pinned. Public playlists commonly
-        // point at many different broadcaster/CDN hosts, so stream URLs must
-        // not be rejected merely because their final CDN host is not known.
         private val registryHosts = setOf(
             "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
             "dearbulut.github.io", "i.mjh.nz"
         )
         private val sportsTerms = Regex(
-            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|btn|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|motorsport)\\b",
+            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|accdn|big ten|btn|pac 12|pac-12|baseball|basketball|football|hockey|soccer|cbs sports|nbc sports|fubo sports|fanduel|sportsgrid|stadium|fifa\\+|real madrid tv|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|lacrosse|wrestling|mavtv|tvs sports|dazn combat|glory kickboxing|l\\'equipe|teledeporte|rta sport|rtsh sport|san marino rtv sport|trace sports stars|unbeaten|world of freesports|more than sports|fuel tv|w14dk)\\b",
             RegexOption.IGNORE_CASE
         )
     }
@@ -64,19 +61,17 @@ class PublicSourceResolver {
         val sources = registry.optJSONArray("sources") ?: JSONArray()
         val candidates = ArrayList<PublicResolvedStream>(MAX_CANDIDATES)
 
-        // Give every source its own quota. More importantly, keep scanning past
-        // dead/unsupported entries instead of allowing the first few playlist
-        // rows to decide whether a whole source is considered usable.
         for (i in 0 until sources.length()) {
             if (candidates.size >= MAX_CANDIDATES) break
             val source = sources.optJSONObject(i) ?: continue
             if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
             val playlist = source.optString("playlist").trim()
             val sourceName = source.optString("name").ifBlank { "Public source" }
+            val allowlist = source.optString("allowlist").trim()
             if (!isAllowedRegistryUrl(playlist)) continue
             val body = fetchText(playlist, MAX_PLAYLIST_BYTES, registryOnly = true) ?: continue
             val remaining = MAX_CANDIDATES - candidates.size
-            candidates += parseM3u(body, sourceName, minOf(PER_SOURCE_CANDIDATES, remaining))
+            candidates += parseM3u(body, sourceName, allowlist, minOf(PER_SOURCE_CANDIDATES, remaining))
         }
 
         val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
@@ -90,7 +85,7 @@ class PublicSourceResolver {
         result
     }
 
-    private fun parseM3u(text: String, sourceName: String, maxResults: Int): List<PublicResolvedStream> {
+    private fun parseM3u(text: String, sourceName: String, allowlist: String, maxResults: Int): List<PublicResolvedStream> {
         val result = ArrayList<PublicResolvedStream>()
         var name = ""; var group = "LIVE"; var icon = ""
         for (line in text.lineSequence()) {
@@ -102,18 +97,19 @@ class PublicSourceResolver {
                     icon = attr(value, "tvg-logo")
                 }
                 value.isNotBlank() && !value.startsWith("#") -> {
-                    // Playlist membership is the trust boundary. The final
-                    // stream host can legitimately be a broadcaster/CDN not
-                    // present in our small registry-host allowlist.
-                    if (name.isNotBlank() && isAllowedStream(value) && isSports(name, group)) {
-                        result += PublicResolvedStream(name, group, value, icon, sourceName)
-                    }
+                    val selected = name.isNotBlank() && isAllowedStream(value) && isSports(name, group) && matchesAllowlist(name, allowlist)
+                    if (selected) result += PublicResolvedStream(name, group, value, icon, sourceName)
                     name = ""; group = "LIVE"; icon = ""
                 }
             }
             if (result.size >= maxResults) break
         }
         return result
+    }
+
+    private fun matchesAllowlist(name: String, allowlist: String): Boolean {
+        if (allowlist.isBlank()) return true
+        return allowlist.split('|').any { token -> token.isNotBlank() && name.contains(token.trim(), ignoreCase = true) }
     }
 
     private suspend fun health(stream: PublicResolvedStream): PublicResolvedStream? = withContext(Dispatchers.IO) {
@@ -144,9 +140,7 @@ class PublicSourceResolver {
         uri.protocol.equals("https", true) && registryHosts.any { host -> uri.host.equals(host, true) || uri.host.endsWith(".$host", true) }
     }.getOrDefault(false)
 
-    private fun isAllowedStream(target: String): Boolean = runCatching {
-        URL(target).protocol.equals("https", true)
-    }.getOrDefault(false)
+    private fun isAllowedStream(target: String): Boolean = runCatching { URL(target).protocol.equals("https", true) }.getOrDefault(false)
 
     private fun fetchText(target: String, maxBytes: Int = MAX_PLAYLIST_BYTES, registryOnly: Boolean = false): String? = runCatching {
         if (registryOnly && !isAllowedRegistryUrl(target)) return null
@@ -162,6 +156,5 @@ class PublicSourceResolver {
         input.close(); c.disconnect(); out.toString()
     }.getOrNull()
 
-    private fun attr(line: String, key: String): String =
-        Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
+    private fun attr(line: String, key: String): String = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
 }
