@@ -1,10 +1,5 @@
 name: XSportsX QA — Mobile + TV
 
-# Isolated QA pipeline. It NEVER signs, publishes, or modifies release APKs.
-# QA covers lifecycle, UI navigation, source fixtures, Xtream/M3U connection,
-# TV QR/manual login surfaces, favorites/college picker, source latency,
-# ticker/cracked-glass/icon assets, logo rendering, and regression evidence.
-
 on:
   workflow_dispatch:
   push:
@@ -87,7 +82,6 @@ jobs:
             'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
             'XSportsLeagueLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
             'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
-            'brand_logos/espn.svg|app/src/main/java/com/xsportsx/app/SportsLogos.kt'
             'TeamLogo(event.homeLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
             'TeamLogo(event.awayLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
           )
