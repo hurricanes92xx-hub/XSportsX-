@@ -1,8 +1,10 @@
 package com.xsportsx.app
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -27,42 +30,56 @@ import androidx.compose.ui.unit.sp
 import com.caverock.androidsvg.SVG
 import kotlin.math.roundToInt
 
-private data class LogoPalette(val bg: Color, val fg: Color, val accent: Color)
+private data class BrandSpec(val bg: Color, val fg: Color, val accent: Color, val asset: String? = null, val mark: String)
 
-private fun palette(key: String): LogoPalette = when {
-    key.contains("NFL") -> LogoPalette(Color(0xFF013369), Color.White, Color(0xFFD50A0A))
-    key == "NBA" -> LogoPalette(Color(0xFF17408B), Color.White, Color(0xFFE31837))
-    key.contains("NCAA") -> LogoPalette(Color(0xFF0B2D5C), Color.White, Color(0xFF8FB9E8))
-    key == "MLB" -> LogoPalette(Color(0xFF041E42), Color.White, Color(0xFFE31837))
-    key == "NHL" -> LogoPalette(Color(0xFF10151D), Color.White, Color(0xFFB8C7D9))
-    key.contains("UFC") -> LogoPalette(Color(0xFF151515), Color.White, Color(0xFFD20A0A))
-    key.contains("BOX") -> LogoPalette(Color(0xFF24130C), Color.White, Color(0xFFFF6D00))
-    key.contains("RUGBY") -> LogoPalette(Color(0xFF0B5E45), Color.White, Color(0xFF7BE0B6))
-    else -> LogoPalette(Color(0xFF202A38), Color.White, Color(0xFFFF1838))
+private fun spec(key: String): BrandSpec = when (key) {
+    "NFL" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), "nfl", "NFL")
+    "NBA" -> BrandSpec(Color(0xFF17408B), Color.White, Color(0xFFE31837), "nba", "NBA")
+    "NCAA FB", "NCAA BB", "NCAA VB" -> BrandSpec(Color(0xFF102B55), Color.White, Color(0xFFFFC72C), "ncaa", "NCAA")
+    "MLB" -> BrandSpec(Color(0xFF041E42), Color.White, Color(0xFFE31837), "mlb", "MLB")
+    "NHL" -> BrandSpec(Color(0xFF111820), Color.White, Color(0xFFB8C7D9), "nhl", "NHL")
+    "UFC" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), "ufc", "UFC")
+    "BOXING" -> BrandSpec(Color(0xFF171717), Color.White, Color(0xFFE53935), null, "BOXING")
+    "RUGBY" -> BrandSpec(Color(0xFF063B2B), Color.White, Color(0xFF49D17D), null, "RUGBY")
+    "VOLLEYBALL" -> BrandSpec(Color(0xFF073A66), Color.White, Color(0xFFF7B500), null, "VB")
+    "LACROSSE" -> BrandSpec(Color(0xFF102A43), Color.White, Color(0xFF55B6FF), null, "LAX")
+    "WRESTLING" -> BrandSpec(Color(0xFF1A1A1A), Color.White, Color(0xFFE31B23), null, "WR")
+    "FORMULA 1" -> BrandSpec(Color(0xFF050505), Color.White, Color(0xFFE10600), null, "F1")
+    "NASCAR" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFF1E8BFF), null, "NASCAR")
+    "DTM" -> BrandSpec(Color(0xFF101010), Color.White, Color(0xFFEC1C24), null, "DTM")
+    "MOTOGP" -> BrandSpec(Color(0xFF050505), Color.White, Color(0xFFE10600), null, "MotoGP")
+    "WRC" -> BrandSpec(Color(0xFF0A0A0A), Color.White, Color(0xFF2E73FF), null, "WRC")
+    "WEC" -> BrandSpec(Color(0xFF071A35), Color.White, Color(0xFF3BB8FF), null, "WEC")
+    "FORMULA E" -> BrandSpec(Color(0xFF061B2A), Color.White, Color(0xFF20E0D0), null, "FE")
+    "MXGP" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE30613), null, "MXGP")
+    "MONSTER JAM" -> BrandSpec(Color(0xFF080808), Color.White, Color(0xFFE31B23), null, "MONSTER JAM")
+    "SOCCER" -> BrandSpec(Color(0xFF0C2C45), Color.White, Color(0xFF5ED0FF), null, "SOCCER")
+    "MLS" -> BrandSpec(Color(0xFF071A35), Color.White, Color(0xFF9CC7FF), null, "MLS")
+    "EPL" -> BrandSpec(Color(0xFF38003C), Color.White, Color(0xFF00FF85), "premierleague", "EPL")
+    "WNBA" -> BrandSpec(Color(0xFF24134F), Color.White, Color(0xFFFF4B6E), null, "WNBA")
+    else -> BrandSpec(Color(0xFF151A22), Color.White, Color(0xFFFF1838), null, key.take(10))
 }
 
-private fun leagueAsset(key: String): String? = when {
-    key == "NFL" -> "nfl"
-    key == "NBA" -> "nba"
-    key == "MLB" -> "mlb"
-    key == "NHL" -> "nhl"
-    key == "UFC" -> "ufc"
-    key.startsWith("NCAA") -> "ncaa"
-    else -> null
+private fun networkSpec(key: String): BrandSpec = when (key) {
+    "ESPN", "ESPN2", "ESPNU", "ESPN+" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31837), "espn", key)
+    "CBS SPORTS", "CBS" -> BrandSpec(Color(0xFF101A28), Color.White, Color(0xFF4AA3FF), "cbs", "CBS SPORTS")
+    "NFL NETWORK" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), "nfl", "NFL NETWORK")
+    "NBA TV" -> BrandSpec(Color(0xFF17408B), Color.White, Color(0xFFE31837), "nba", "NBA TV")
+    "MLB NETWORK" -> BrandSpec(Color(0xFF041E42), Color.White, Color(0xFFE31837), "mlb", "MLB NETWORK")
+    "NHL NETWORK" -> BrandSpec(Color(0xFF111820), Color.White, Color(0xFFB8C7D9), "nhl", "NHL NETWORK")
+    "UFC FIGHT PASS" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), "ufc", "FIGHT PASS")
+    "FS1" -> BrandSpec(Color(0xFF07101D), Color.White, Color(0xFF2E7DFF), null, "FS1")
+    "SEC NETWORK" -> BrandSpec(Color(0xFF123C2C), Color.White, Color(0xFFFFC72C), null, "SEC")
+    "ACC NETWORK" -> BrandSpec(Color(0xFF071A3B), Color.White, Color(0xFF2E8BFF), null, "ACC")
+    "BIG TEN NETWORK" -> BrandSpec(Color(0xFF082B55), Color.White, Color(0xFF7CC8FF), null, "B1G")
+    "PAC-12 NETWORK" -> BrandSpec(Color(0xFF10233F), Color.White, Color(0xFF00A6CE), null, "PAC-12")
+    "RED BULL TV" -> BrandSpec(Color(0xFF071A3A), Color.White, Color(0xFFE31B23), "redbull", "RED BULL")
+    "MONSTER JAM" -> BrandSpec(Color(0xFF080808), Color.White, Color(0xFFE31B23), null, "MONSTER JAM")
+    "RUGBYPASS TV" -> BrandSpec(Color(0xFF073B2A), Color.White, Color(0xFF49D17D), null, "RUGBYPASS")
+    else -> BrandSpec(Color(0xFF151A22), Color.White, Color(0xFFFF1838), null, key.take(10))
 }
 
-private fun networkAsset(key: String): String? = when {
-    key == "ESPN" || key == "ESPN2" || key == "ESPNU" || key == "ESPN+" -> "espn"
-    key == "CBS SPORTS" || key == "CBS" -> "cbs"
-    key == "NFL NETWORK" -> "nfl"
-    key == "NBA TV" -> "nba"
-    key == "MLB NETWORK" -> "mlb"
-    key == "NHL NETWORK" -> "nhl"
-    key == "UFC FIGHT PASS" -> "ufc"
-    else -> null
-}
-
-private fun loadSvgBitmap(context: android.content.Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
+private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
     val bitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     val svg = SVG.getFromAsset(context.assets, "brand_logos/$asset.svg")
@@ -75,56 +92,50 @@ private fun LocalSvgLogo(asset: String, modifier: Modifier, size: Dp, descriptio
     val context = LocalContext.current
     val px = with(LocalDensity.current) { size.toPx().roundToInt().coerceAtLeast(1) }
     val bitmap = remember(asset, px) { loadSvgBitmap(context, asset, px, px) }
-    if (bitmap != null) {
-        Image(bitmap = bitmap.asImageBitmap(), contentDescription = description, modifier = modifier.size(size), contentScale = ContentScale.Fit)
+    if (bitmap != null) Image(bitmap = bitmap.asImageBitmap(), contentDescription = description, modifier = modifier.size(size), contentScale = ContentScale.Fit)
+}
+
+@Composable
+private fun VectorBrandMark(spec: BrandSpec, size: Dp) {
+    Box(Modifier.size(size), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.fillMaxSize()) {
+            val w = size.toPx(); val h = size.toPx(); val c = center
+            when (spec.mark) {
+                "F1" -> { drawLine(spec.accent, c.copy(x = w*.18f, y = h*.30f), c.copy(x=w*.82f,y=h*.30f), 8f); drawLine(spec.accent,c.copy(x=w*.18f,y=h*.30f),c.copy(x=w*.18f,y=h*.70f),8f); drawLine(spec.accent,c.copy(x=w*.18f,y=h*.50f),c.copy(x=w*.65f,y=h*.50f),7f); drawLine(Color.White,c.copy(x=w*.64f,y=h*.30f),c.copy(x=w*.82f,y=h*.70f),7f) }
+                "NASCAR" -> { val colors=listOf(Color(0xFFFFC400),Color(0xFFFF6A00),Color(0xFFE31B23),Color(0xFF6B6B6B),Color.White); colors.forEachIndexed{i,col->drawLine(col,c.copy(x=w*.18f+i*8,y=h*.25f),c.copy(x=w*.42f+i*8,y=h*.75f),7f)} }
+                "DTM" -> { drawRect(spec.accent,RectF(w*.16f,h*.28f,w*.43f,h*.72f)); drawRect(Color.White,RectF(w*.43f,h*.28f,w*.58f,h*.72f)); drawRect(Color(0xFF1E6CFF),RectF(w*.58f,h*.28f,w*.84f,h*.72f)) }
+                "WRC" -> { drawLine(spec.accent,c.copy(x=w*.18f,y=h*.35f),c.copy(x=w*.82f,y=h*.35f),6f); drawLine(Color.White,c.copy(x=w*.22f,y=h*.55f),c.copy(x=w*.78f,y=h*.55f),5f); drawLine(spec.accent,c.copy(x=w*.30f,y=h*.75f),c.copy(x=w*.70f,y=h*.75f),4f) }
+                "WEC" -> { drawCircle(spec.accent, radius=w*.30f, center=c, style=Stroke(width=6f)); drawLine(Color.White,c.copy(x=w*.28f,y=h*.50f),c.copy(x=w*.72f,y=h*.50f),6f) }
+                "FE" -> { drawLine(spec.accent,c.copy(x=w*.20f,y=h*.68f),c.copy(x=w*.80f,y=h*.32f),9f); drawLine(Color.White,c.copy(x=w*.30f,y=h*.70f),c.copy(x=w*.65f,y=h*.30f),4f) }
+                "SOCCER" -> { drawCircle(Color.White,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.10f,center=c) }
+                "SEC" -> { drawCircle(spec.accent,radius=w*.28f,center=c); drawCircle(spec.bg,radius=w*.20f,center=c,style=Stroke(width=5f)) }
+                "ACC" -> { drawLine(spec.accent,c.copy(x=w*.18f,y=h*.72f),c.copy(x=w*.82f,y=h*.28f),9f); drawLine(Color.White,c.copy(x=w*.18f,y=h*.50f),c.copy(x=w*.58f,y=h*.50f),6f) }
+                "B1G" -> { drawRect(spec.accent,RectF(w*.14f,h*.28f,w*.86f,h*.72f),style=Stroke(width=6f)) }
+                "PAC-12" -> { drawLine(spec.accent,c.copy(x=w*.20f,y=h*.68f),c.copy(x=w*.50f,y=h*.30f),7f); drawLine(Color.White,c.copy(x=w*.50f,y=h*.30f),c.copy(x=w*.80f,y=h*.68f),7f) }
+                "FS1" -> { drawOval(Color.White,RectF(w*.13f,h*.27f,w*.87f,h*.73f),style=Stroke(width=5f)) }
+                else -> { drawCircle(spec.accent,radius=w*.30f,center=c); drawCircle(spec.bg,radius=w*.21f,center=c,style=Stroke(width=5f)) }
+            }
+        }
+        Text(spec.mark, color=spec.fg, fontSize=if(spec.mark.length>6) 7.sp else 14.sp, fontWeight=FontWeight.Black, textAlign=TextAlign.Center, maxLines=1)
+    }
+}
+
+@Composable
+private fun BrandBox(spec: BrandSpec, size: Dp, description: String) {
+    Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center) {
+        if (spec.asset != null) LocalSvgLogo(spec.asset,Modifier,size*.78f,description) else VectorBrandMark(spec,size*.78f)
     }
 }
 
 @Composable
 fun XSportsLeagueLogo(name: String, modifier: Modifier = Modifier, size: Dp = 72.dp) {
-    val key = name.uppercase()
-    val asset = leagueAsset(key)
-    if (asset != null) {
-        val frame = Modifier.size(size).clip(RoundedCornerShape(size / 3)).background(palette(key).bg).border(1.dp, palette(key).accent.copy(alpha = .9f), RoundedCornerShape(size / 3)).then(modifier)
-        Box(frame, contentAlignment = Alignment.Center) { LocalSvgLogo(asset, Modifier, size * .82f, name) }
-    } else {
-        val p = palette(key)
-        val main = when {
-            key == "FORMULA 1" -> "F1"
-            key == "MOTOGP" -> "MotoGP"
-            key == "FORMULA E" -> "FE"
-            key == "MONSTER JAM" -> "MJ"
-            else -> key.replace(" NETWORK", "").take(8)
-        }
-        Box(modifier.size(size).clip(RoundedCornerShape(size / 3)).background(p.bg).border(1.dp, p.accent.copy(alpha = .8f), RoundedCornerShape(size / 3)), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Text(main, color = p.fg, fontSize = if (main.length > 5) 9.sp else 15.sp, fontWeight = FontWeight.Black, maxLines = 1, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(2.dp)); Box(Modifier.width(size * .52f).height(2.dp).background(p.accent))
-                Spacer(Modifier.height(2.dp)); Text(when (key) { "NCAA FB" -> "FOOTBALL"; "NCAA BB" -> "BASKETBALL"; "NCAA VB" -> "VOLLEYBALL"; else -> "SPORTS" }, color = p.fg.copy(alpha = .72f), fontSize = 5.sp, fontWeight = FontWeight.Bold, letterSpacing = .45.sp, maxLines = 1)
-            }
-        }
-    }
+    val key=name.uppercase()
+    Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}
 }
 
 @Composable
 fun XSportsNetworkLogo(name: String, modifier: Modifier = Modifier, size: Dp = 52.dp) {
-    val key = name.uppercase()
-    val asset = networkAsset(key)
-    if (asset != null) {
-        val p = palette(key)
-        Box(modifier.size(size).clip(RoundedCornerShape(size / 4)).background(if (key.startsWith("ESPN")) Color(0xFF090909) else p.bg).border(1.dp, p.accent.copy(alpha = .85f), RoundedCornerShape(size / 4)), contentAlignment = Alignment.Center) {
-            Box(Modifier.fillMaxSize().padding(6.dp), contentAlignment = Alignment.Center) {
-                LocalSvgLogo(asset, Modifier, if (key.startsWith("ESPN")) size * .82f else size * .72f, name)
-                if (key == "ESPN2" || key == "ESPNU" || key == "ESPN+") {
-                    Text(key.removePrefix("ESPN"), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, modifier = Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal = 2.dp, vertical = 1.dp))
-                }
-                if (key == "CBS SPORTS") Text("SPORTS", color = Color.White, fontSize = 6.sp, fontWeight = FontWeight.Black, modifier = Modifier.align(Alignment.BottomCenter))
-            }
-        }
-    } else {
-        val p = palette(key)
-        Box(modifier.size(size).clip(RoundedCornerShape(size / 4)).background(p.bg).border(1.dp, p.accent.copy(alpha = .8f), RoundedCornerShape(size / 4)), contentAlignment = Alignment.Center) {
-            Text(when { key.contains("BIG TEN") -> "B1G"; key.contains("PAC-12") -> "PAC-12"; key.contains("RED BULL") -> "RED BULL"; else -> key.take(8) }, color = p.fg, fontSize = if (key.length > 6) 7.sp else 12.sp, fontWeight = FontWeight.Black, letterSpacing = .25.sp, maxLines = 1, textAlign = TextAlign.Center)
-        }
-    }
+    val key=name.uppercase()
+    val s=networkSpec(key)
+    Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name);if(key=="ESPN2"||key=="ESPNU"||key=="ESPN+"){Text(key.removePrefix("ESPN"),color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black,modifier=Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal=2.dp,vertical=1.dp))}}
 }
