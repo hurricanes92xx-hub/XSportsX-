@@ -14,6 +14,11 @@ if 'private const val SPECIAL_FEED_URL' not in s:
         raise SystemExit('schedule constants anchor not found')
     s = s.replace(anchor, anchor + inject, 1)
 
+# Let Android HttpURLConnection perform its normal transparent gzip handling.
+# The old code explicitly requested gzip, which can disable that transparent
+# decompression path on Android.
+s = s.replace('            setRequestProperty("Accept-Encoding", "gzip")\n', '', 1)
+
 if 'fetchSpecialScheduleFeed()' not in s:
     anchor = '        results.flatten()\n'
     replacement = '''        (results.flatten() + fetchSpecialScheduleFeed())
