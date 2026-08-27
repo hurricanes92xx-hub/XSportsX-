@@ -54,7 +54,9 @@ class PublicSourceResolver {
         val hit = cache.get(key)
         if (!force && hit != null && now - hit.first < CACHE_TTL_MS) return@withContext hit.second
 
-        val registryText = REGISTRY_URLS.asSequence().mapNotNull { fetchText(it, 256_000, registryOnly = true) }.firstOrNull()
+        val registryText = REGISTRY_URLS.asSequence()
+            .mapNotNull { fetchText(it, 256_000, registryOnly = true) }
+            .firstOrNull()
             ?: return@withContext hit?.second.orEmpty()
         val registry = runCatching { JSONObject(registryText) }.getOrNull()
             ?: return@withContext hit?.second.orEmpty()
@@ -75,12 +77,29 @@ class PublicSourceResolver {
         }
 
         val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
-        val checked = coroutineScope {
-            unique.take(MAX_HEALTH_CHECKS).chunked(HEALTH_CONCURRENCY).flatMap { batch ->
-                batch.map { stream -> async(Dispatchers.IO) { health(stream) } }.awaitAll().filterNotNull()
-            }
+        if (unique.isEmpty()) {
+            cache.put(key, now to emptyList())
+            return@withContext emptyList()
         }
-        val result = checked.sortedWith(compareBy<PublicResolvedStream> { it.sourceName }.thenBy { it.latencyMs })
+
+        // Health-check a bounded subset, but never hide the public catalog just because
+        // a provider blocks HEAD/GET probes, is geo-restricted, or is temporarily slow.
+        val checked = coroutineScope {
+            unique.take(MAX_HEALTH_CHECKS)
+                .chunked(HEALTH_CONCURRENCY)
+                .flatMap { batch ->
+                    batch.map { stream -> async(Dispatchers.IO) { health(stream) } }
+                        .awaitAll()
+                        .filterNotNull()
+                }
+        }
+        val healthyUrls = checked.map { it.url }.toSet()
+        val ordered = if (checked.isNotEmpty()) {
+            checked + unique.filterNot { healthyUrls.contains(it.url) }
+        } else {
+            unique
+        }
+        val result = ordered.distinctBy { it.url }.take(MAX_CANDIDATES)
         cache.put(key, now to result)
         result
     }
@@ -128,7 +147,7 @@ class PublicSourceResolver {
             input.close(); c.disconnect()
             if (count <= 0) return@withContext null
             val prefix = String(buffer, 0, count, Charsets.UTF_8)
-            if (!(type.contains("mpegurl", true) || type.contains("video", true) || prefix.contains("#EXTM3U", true))) return@withContext null
+            if (!(type.contains("mpegurl", true) || type.contains("video", true) || type.contains("octet-stream", true) || prefix.contains("#EXTM3U", true))) return@withContext null
             stream.copy(latencyMs = (System.currentTimeMillis() - started).toInt())
         }.getOrNull()
     }
