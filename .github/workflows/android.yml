@@ -49,9 +49,11 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           test -f data/schedule_auto_update_policy.json
           test -f data/brand_logo_catalog.json
+          test -f data/schedule_feed.json
           test -f scripts/fetch_brand_logo_pack.py
           test -f scripts/patch_canonical_logo_ui.py
           test -f scripts/patch_yearly_schedule_window.py
+          test -f scripts/patch_special_schedule_feed.py
           test -f scripts/verify_yearly_schedule_policy.py
           test -f app/src/main/assets/brand_logos/nfl.svg
           test -f app/src/main/assets/brand_logos/nba.svg
@@ -77,6 +79,7 @@ jobs:
           python3 scripts/patch_wrestling_schedule.py
           python3 scripts/patch_college_schedule_ui.py
           python3 scripts/patch_yearly_schedule_window.py
+          python3 scripts/patch_special_schedule_feed.py
           python3 scripts/fetch_brand_logo_pack.py
           python3 scripts/patch_canonical_logo_ui.py
           python3 scripts/verify_yearly_schedule_policy.py
