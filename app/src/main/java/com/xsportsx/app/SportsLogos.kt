@@ -97,54 +97,28 @@ private fun networkSpec(key: String): BrandSpec = when (key) {
 }
 
 private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
-    val bitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
-    SVG.getFromAsset(context.assets, "brand_logos/$asset.svg").renderToCanvas(AndroidCanvas(bitmap))
-    bitmap
+    val bitmap=Bitmap.createBitmap(width.coerceAtLeast(1),height.coerceAtLeast(1),Bitmap.Config.ARGB_8888)
+    SVG.getFromAsset(context.assets,"brand_logos/$asset.svg").renderToCanvas(AndroidCanvas(bitmap)); bitmap
 }.getOrNull()
 
-private suspend fun loadRemoteBitmap(url: String, width: Int, height: Int): Bitmap? = withContext(Dispatchers.IO) {
-    runCatching {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply { connectTimeout=2500; readTimeout=5000; instanceFollowRedirects=true; setRequestProperty("User-Agent","XSportsX/1.5") }
-        try { if(connection.responseCode !in 200..299) return@runCatching null; val source=connection.inputStream.use{BitmapFactory.decodeStream(it)} ?: return@runCatching null; Bitmap.createScaledBitmap(source,width.coerceAtLeast(1),height.coerceAtLeast(1),true) } finally { connection.disconnect() }
-    }.getOrNull()
-}
+private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=withContext(Dispatchers.IO){runCatching{
+    val c=(URL(url).openConnection() as HttpURLConnection).apply{connectTimeout=2500;readTimeout=5000;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5");setRequestProperty("Accept","image/avif,image/webp,image/png,image/svg+xml,image/*,*/*")}
+    try{
+        if(c.responseCode !in 200..299)return@runCatching null
+        val type=c.contentType.orEmpty().lowercase()
+        val bytes=c.inputStream.use{it.readBytes()}
+        val bitmap=if(type.contains("svg")||bytes.take(512).toByteArray().toString(Charsets.UTF_8).contains("<svg",true)){
+            val svg=SVG.getFromString(bytes.toString(Charsets.UTF_8));val b=Bitmap.createBitmap(width.coerceAtLeast(1),height.coerceAtLeast(1),Bitmap.Config.ARGB_8888);svg.renderToCanvas(AndroidCanvas(b));b
+        }else BitmapFactory.decodeByteArray(bytes,0,bytes.size)
+        bitmap?.let{if(it.width!=width||it.height!=height)Bitmap.createScaledBitmap(it,width.coerceAtLeast(1),height.coerceAtLeast(1),true)else it}
+    }finally{c.disconnect()}
+}.getOrNull()}
 
-@Composable
-private fun LocalSvgLogo(asset: String, modifier: Modifier, size: Dp, description: String) {
-    val context=LocalContext.current; val px=with(LocalDensity.current){size.toPx().roundToInt().coerceAtLeast(1)}; val bitmap=remember(asset,px){loadSvgBitmap(context,asset,px,px)}
-    if(bitmap!=null) Image(bitmap.asImageBitmap(),description,modifier.size(size),contentScale=ContentScale.Fit)
-}
+@Composable private fun LocalSvgLogo(asset:String,modifier:Modifier,size:Dp,description:String){val context=LocalContext.current;val px=with(LocalDensity.current){size.toPx().roundToInt().coerceAtLeast(1)};val bitmap=remember(asset,px){loadSvgBitmap(context,asset,px,px)};if(bitmap!=null)Image(bitmap.asImageBitmap(),description,modifier.size(size),contentScale=ContentScale.Fit)}
+@Composable private fun RemoteBrandLogo(url:String,modifier:Modifier,size:Dp,description:String){val px=with(LocalDensity.current){size.toPx().roundToInt().coerceAtLeast(1)};val state=produceState<Bitmap?>(null,url,px){value=loadRemoteBitmap(url,px,px)};state.value?.let{Image(it.asImageBitmap(),description,modifier.size(size),contentScale=ContentScale.Fit)}}
 
-@Composable
-private fun RemoteBrandLogo(url: String, modifier: Modifier, size: Dp, description: String) {
-    val px=with(LocalDensity.current){size.toPx().roundToInt().coerceAtLeast(1)}; val state=produceState<Bitmap?>(null,url,px){value=loadRemoteBitmap(url,px,px)}
-    state.value?.let{Image(it.asImageBitmap(),description,modifier.size(size),contentScale=ContentScale.Fit)}
-}
+@Composable private fun VectorBrandMark(spec:BrandSpec,size:Dp){Box(Modifier.size(size),contentAlignment=Alignment.Center){Canvas(Modifier.fillMaxSize()){val w=size.toPx();val h=size.toPx();val c=center;when(spec.mark){"SEC"->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.22f,c,style=Stroke(width=5f))};"ACC"->drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),8f);"B1G"->drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),CornerRadius(8f,8f),style=Stroke(width=6f));"FS1"->drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f));else->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.21f,c,style=Stroke(width=5f))}}};Text(spec.mark,color=spec.fg,fontSize=if(spec.mark.length>6)7.sp else 14.sp,fontWeight=FontWeight.Black,textAlign=TextAlign.Center,maxLines=1)}}
 
-@Composable
-private fun VectorBrandMark(spec: BrandSpec, size: Dp) {
-    Box(Modifier.size(size),contentAlignment=Alignment.Center){
-        Canvas(Modifier.fillMaxSize()) {
-            val w=size.toPx(); val h=size.toPx(); val c=center
-            when(spec.mark){
-                "SEC"->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.22f,c,style=Stroke(width=5f))}
-                "ACC"->drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),8f)
-                "B1G"->drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),CornerRadius(8f,8f),style=Stroke(width=6f))
-                "FS1"->drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f))
-                else->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.21f,c,style=Stroke(width=5f))}
-            }
-        }
-        Text(spec.mark,color=spec.fg,fontSize=if(spec.mark.length>6)7.sp else 14.sp,fontWeight=FontWeight.Black,textAlign=TextAlign.Center,maxLines=1)
-    }
-}
-
-@Composable
-private fun BrandBox(spec: BrandSpec, size: Dp, description: String) {
-    Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){
-        when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.78f,description);spec.remote!=null->RemoteBrandLogo(spec.remote,Modifier,size*.82f,description);else->VectorBrandMark(spec,size*.78f)}
-    }
-}
-
+@Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.78f,description);spec.remote!=null->RemoteBrandLogo(spec.remote,Modifier,size*.82f,description);else->VectorBrandMark(spec,size*.78f)}}}
 @Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}
-
 @Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name);if(key=="ESPN2"||key=="ESPNU"||key=="ESPN+")Text(key.removePrefix("ESPN"),color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black,modifier=Modifier.align(Alignment.BottomEnd).background(Color(0xFF090909)).padding(horizontal=2.dp,vertical=1.dp))}}
