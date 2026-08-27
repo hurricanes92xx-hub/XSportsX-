@@ -3,6 +3,7 @@ from pathlib import Path
 MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 MAIN = Path("app/src/main/java/com/xsportsx/app/MainActivityFuture.kt")
 TV = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
+SCHEDULE = Path("app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt")
 
 # Mobile: Top Sports cards select an exact league and open the filtered schedule.
 text = MOBILE.read_text()
@@ -41,6 +42,13 @@ if old not in text:
 text = text.replace(old, new, 1)
 MAIN.write_text(text)
 
+# Schedule screen: expose every Top Sports league in the manual filter row too.
+text = SCHEDULE.read_text()
+old_choices = 'val leagueChoices = listOf("ALL", "NFL", "NCAA FB", "NBA", "NCAA BB", "MLB", "NHL", "UFC", "BOXING")'
+if old_choices in text:
+    text = text.replace(old_choices, 'val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices', 1)
+SCHEDULE.write_text(text)
+
 # TV: keep Top Sports inside the TV UI and select the exact league tab. Do not
 # send a sport click through the generic network/live-channel callback.
 text = TV.read_text()
@@ -54,4 +62,5 @@ new_case = '"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","UFC","BOXING","R
 if old_case in text:
     text = text.replace(old_case, new_case, 1)
 TV.write_text(text)
+
 print("Top Sports cards route to exact league schedules on mobile and TV")
