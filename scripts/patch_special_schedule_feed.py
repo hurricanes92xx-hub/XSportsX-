@@ -8,7 +8,7 @@ s = SERVICE.read_text(encoding='utf-8')
 if 'private const val SPECIAL_FEED_URL' not in s:
     anchor = '    private const val CONNECT_TIMEOUT_MS = 1_800\n'
     inject = '''    private const val SPECIAL_FEED_URL = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/data/schedule_feed.json"
-    private val SPECIAL_FEED_LEAGUES = setOf("WRESTLING", "WWE", "AEW", "TNA", "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM")
+    private val SPECIAL_FEED_LEAGUES = setOf("WRESTLING", "WWE", "AEW", "TNA", "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM", "MOTOGP", "F1")
 '''
     if anchor not in s:
         raise SystemExit('schedule constants anchor not found')
@@ -22,7 +22,6 @@ if 'fetchSpecialScheduleFeed()' not in s:
         raise SystemExit('schedule result anchor not found')
     s = s.replace(anchor, replacement, 1)
 
-# Allow special-feed events through the final canonical-league gate.
 s = s.replace(
     'knownLeague && (event.isLive || event.isPregame() || event.isUpcoming)',
     '(knownLeague || SPECIAL_FEED_LEAGUES.contains(league)) && (event.isLive || event.isPregame() || event.isUpcoming)',
@@ -37,7 +36,11 @@ if 'private fun fetchSpecialScheduleFeed()' not in s:
         buildList {
             for (i in 0 until events.length()) {
                 val e = events.optJSONObject(i) ?: continue
-                val league = normalizeLeague(e.optString("league"))
+                val rawLeague = e.optString("league").trim().uppercase()
+                val league = when (rawLeague) {
+                    "WWE", "AEW", "TNA" -> "WRESTLING"
+                    else -> normalizeLeague(rawLeague)
+                }
                 if (!SPECIAL_FEED_LEAGUES.contains(league)) continue
                 val title = e.optString("title").trim()
                 val start = e.optString("start").trim()
@@ -45,8 +48,8 @@ if 'private fun fetchSpecialScheduleFeed()' not in s:
                 add(SportsEvent(
                     "special-${league}-${i}-${start}",
                     when (league) {
-                        "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM" -> "Racing"
-                        "WRESTLING", "WWE", "AEW", "TNA" -> "Wrestling"
+                        "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM", "MOTOGP", "F1" -> "Racing"
+                        "WRESTLING" -> "Wrestling"
                         else -> league
                     },
                     league,
