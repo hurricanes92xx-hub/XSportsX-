@@ -1,6 +1,5 @@
 package com.xsportsx.app
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,10 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+
 
 data class WrestlingEvent(val brand:String,val title:String,val date:String,val location:String,val kind:String,val time:String="")
 
@@ -50,21 +46,25 @@ private val wrestlingWeekly = listOf(
 )
 
 private fun remoteWrestlingEvents(games: List<Game>): List<WrestlingEvent> = games.filter { it.league in setOf("WWE","AEW","TNA") }.map {
-    val parsed = runCatching { Instant.parse(it.time.substringAfter("• ", "")) }.getOrNull()
-    WrestlingEvent(it.league, it.matchup, parsed?.let { instant -> DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US).format(instant.atZone(ZoneId.systemDefault())) } ?: "UPCOMING", "", it.tag, it.time)
+    WrestlingEvent(
+        brand = it.league,
+        title = it.matchup,
+        date = it.time.substringBefore(" • ").ifBlank { "UPCOMING" },
+        location = "",
+        kind = it.tag,
+        time = it.time.substringAfter(" • ", it.time)
+    )
 }
 
 @Composable
 fun WrestlingScheduleSection(onWatch:()->Unit={}) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var wrestlingEvents by remember { mutableStateOf(fallbackWrestlingEvents) }
-    var lastRefresh by remember { mutableLongStateOf(0L) }
     LaunchedEffect(Unit) {
         while (true) {
             val remote = runCatching { ScheduleFeed.load(context) }.getOrDefault(emptyList())
             val mapped = remoteWrestlingEvents(remote)
             if (mapped.isNotEmpty()) wrestlingEvents = mapped
-            lastRefresh = System.currentTimeMillis()
             kotlinx.coroutines.delay(6L * 60L * 60L * 1000L)
         }
     }
