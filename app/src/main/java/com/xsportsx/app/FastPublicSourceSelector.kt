@@ -5,8 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Fast click-path selector. It searches only the selected event/network across
- * public and user-connected sources instead of preloading a global catalog.
+ * Fast click-path selector. Cached health results are only a fast head start;
+ * they never prevent a fresh targeted search across public and user-connected
+ * sources. This prevents the health index from masking newly discovered public feeds.
  */
 class FastPublicSourceSelector(context: Context) {
     private val index = PublicSourceHealthIndex(context)
@@ -18,7 +19,7 @@ class FastPublicSourceSelector(context: Context) {
         limit: Int = 8
     ): List<TargetedStream> = withContext(Dispatchers.IO) {
         val known = index.rank(event.id, event.sport, event.league, event.broadcast, limit)
-        val knownUrls = known.map { it.url }.toSet()
+        val knownUrls = known.map { normalizeUrl(it.url) }.toSet()
         val knownResults = known.map { h ->
             TargetedStream(
                 name = h.channel,
@@ -30,15 +31,15 @@ class FastPublicSourceSelector(context: Context) {
             )
         }
 
-        if (knownResults.size >= limit) return@withContext knownResults.take(limit)
-
+        // Always perform a fresh targeted search. A stale/overconfident health
+        // index must never short-circuit public, M3U, or Xtream discovery.
         val discovered = runCatching {
             resolver.search(TargetQuery(event = event), authorizedSources)
         }.getOrDefault(emptyList())
 
-        (knownResults + discovered.filterNot { it.url in knownUrls })
-            .distinctBy { it.url }
-            .sortedWith(compareByDescending<TargetedStream> { it.score })
+        (knownResults + discovered.filterNot { normalizeUrl(it.url) in knownUrls })
+            .distinctBy { normalizeUrl(it.url) }
+            .sortedWith(compareByDescending<TargetedStream> { it.score }.thenBy { it.sourceType })
             .take(limit)
     }
 
@@ -70,4 +71,6 @@ class FastPublicSourceSelector(context: Context) {
             success
         )
     }
+
+    private fun normalizeUrl(value: String): String = value.trim().trimEnd('/').lowercase()
 }
