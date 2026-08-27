@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "sources": [
+    {
+      "name": "Matchcast",
+      "type": "broadcast_rights_intelligence",
+      "role": "metadata_only",
+      "confidence": true,
+      "notes": "Use broadcast listings/confidence as corroboration; never ingest streams."
+    },
+    {
+      "name": "Eurovision Sport",
+      "type": "official_free_sports",
+      "role": "discovery",
+      "publicCandidate": true,
+      "regionAware": true,
+      "notes": "Discover free official live/on-demand events and federations; validate availability before surfacing."
+    },
+    {
+      "name": "EPGShare",
+      "type": "epg",
+      "role": "metadata_only",
+      "regionAware": true,
+      "notes": "Use XMLTV channel/program data for regional and national sports-network corroboration."
+    }
+  ],
+  "matchingPolicy": {
+    "exactEvent": 1.0,
+    "teamPair": 0.9,
+    "broadcastNetwork": 0.75,
+    "epgProgram": 0.8,
+    "networkOnly": 0.45,
+    "requireHealthyPlayableSource": true,
+    "neverTreatMetadataAsPlayable": true
+  }
+}
