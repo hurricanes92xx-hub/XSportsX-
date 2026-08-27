@@ -6,7 +6,6 @@ SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 WRESTLING = Path('app/src/main/java/com/xsportsx/app/WrestlingSchedule.kt')
 
 HELPER_NAME = 'specialCardKicker'
-HELPER_SIGNATURE = 'private fun specialCardKicker(event: SportsEvent): String'
 
 HELPER = '''private fun specialCardKicker(event: SportsEvent): String {
     if (event.league.equals("WRESTLING", true)) {
@@ -33,16 +32,19 @@ HELPER = '''private fun specialCardKicker(event: SportsEvent): String {
 
 '''
 
+# Match the function by its Kotlin name rather than one exact whitespace/signature
+# spelling. Older patches produced harmless-looking variants that Kotlin still
+# treats as conflicting overloads.
+FUNCTION_RE = re.compile(
+    r'(?m)^[ \t]*(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\s+)*'
+    r'fun\s+specialCardKicker\s*\([^)]*\)\s*(?::\s*[^=\n{]+)?\s*\{'
+)
 
-def remove_all_function_declarations(source: str, signature: str) -> tuple[str, int]:
-    """Remove every declaration matching signature, using balanced braces.
 
-    Regex alone is unsafe here because Kotlin string templates contain braces.
-    We locate the signature, find its opening brace, then walk balanced braces.
-    """
+def remove_all_named_functions(source: str) -> tuple[str, int]:
     removed = 0
     while True:
-        match = re.search(re.escape(signature) + r'\s*\{', source)
+        match = FUNCTION_RE.search(source)
         if not match:
             break
 
@@ -63,7 +65,6 @@ def remove_all_function_declarations(source: str, signature: str) -> tuple[str, 
 
         start = match.start()
         end = close_brace
-        # Also consume the blank lines immediately following the declaration.
         while end < len(source) and source[end] in ' \t\r\n':
             end += 1
         source = source[:start] + source[end:]
@@ -72,9 +73,9 @@ def remove_all_function_declarations(source: str, signature: str) -> tuple[str, 
     return source, removed
 
 
-# Normalize SportsScheduleScreen.kt after all earlier release patches have run.
+# This is the final source normalization step, after every other release patch.
 s = SCREEN.read_text(encoding='utf-8')
-s, removed = remove_all_function_declarations(s, HELPER_SIGNATURE)
+s, removed = remove_all_named_functions(s)
 
 marker = '@Composable\nprivate fun EventArtBadge'
 if marker not in s:
@@ -93,7 +94,7 @@ s = s.replace(
     1,
 )
 
-count = len(re.findall(re.escape(HELPER_SIGNATURE) + r'\s*\{', s))
+count = len(FUNCTION_RE.findall(s))
 if count != 1:
     raise RuntimeError(f'Release source normalization failed: expected exactly 1 {HELPER_NAME} declaration, found {count}')
 SCREEN.write_text(s, encoding='utf-8')
@@ -122,4 +123,4 @@ if old in w:
 w = w.replace('setOf("WWE","AEW","TNA")', 'setOf("WWE","AEW","NXT","ROH","TNA","NJPW")')
 WRESTLING.write_text(w, encoding='utf-8')
 
-print(f'Final wrestling build normalization applied: removed {removed} prior helper declaration(s), installed exactly one helper, fixed LazyRow DSL, enabled six pro promotions, no UWW/amateur wrestling.')
+print(f'Final wrestling build normalization applied: removed {removed} prior {HELPER_NAME} declaration(s), installed exactly one helper, fixed LazyRow DSL, enabled six pro promotions, no UWW/amateur wrestling.')
