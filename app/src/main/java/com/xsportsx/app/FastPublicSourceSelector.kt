@@ -4,33 +4,70 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Selects already-known public candidates first; discovery stays off the click path. */
+/**
+ * Fast click-path selector. It searches only the selected event/network across
+ * public and user-connected sources instead of preloading a global catalog.
+ */
 class FastPublicSourceSelector(context: Context) {
     private val index = PublicSourceHealthIndex(context)
-    private val resolver = PublicSourceResolver()
+    private val resolver = TargetedSourceResolver()
 
-    suspend fun candidates(event: SportsEvent, limit: Int = 8): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
+    suspend fun candidates(
+        event: SportsEvent,
+        authorizedSources: List<AuthorizedSource> = emptyList(),
+        limit: Int = 8
+    ): List<TargetedStream> = withContext(Dispatchers.IO) {
         val known = index.rank(event.id, event.sport, event.league, event.broadcast, limit)
         val knownUrls = known.map { it.url }.toSet()
-        val ranked = known.map { h -> PublicResolvedStream(h.channel, h.league, h.url, sourceName = "Public source (known healthy)", latencyMs = h.latencyMs) }.toMutableList()
-        if (ranked.size >= limit) return@withContext ranked.take(limit)
+        val knownResults = known.map { h ->
+            TargetedStream(
+                name = h.channel,
+                group = h.league,
+                url = h.url,
+                sourceId = "health-index",
+                sourceType = "KNOWN",
+                score = 100
+            )
+        }
 
-        // Cold-start only: populate from the cached/public registry, never from the UI thread.
-        val discovered = runCatching { resolver.load() }.getOrDefault(emptyList())
-        ranked += discovered.filterNot { it.url in knownUrls }
-            .filter { matchesEvent(it, event) }
-            .sortedBy { it.latencyMs }
-            .take(limit - ranked.size)
-        ranked.distinctBy { it.url }.take(limit)
+        if (knownResults.size >= limit) return@withContext knownResults.take(limit)
+
+        val discovered = runCatching {
+            resolver.search(TargetQuery(event = event), authorizedSources)
+        }.getOrDefault(emptyList())
+
+        (knownResults + discovered.filterNot { it.url in knownUrls })
+            .distinctBy { it.url }
+            .sortedWith(compareByDescending<TargetedStream> { it.score })
+            .take(limit)
     }
 
-    fun record(stream: PublicResolvedStream, event: SportsEvent, success: Boolean) {
-        index.record(stream, event.sport, event.league, event.id, event.broadcast, success)
+    suspend fun candidatesForNetwork(
+        network: String,
+        event: SportsEvent? = null,
+        authorizedSources: List<AuthorizedSource> = emptyList(),
+        limit: Int = 8
+    ): List<TargetedStream> = withContext(Dispatchers.IO) {
+        runCatching {
+            resolver.search(TargetQuery(event = event, network = network), authorizedSources)
+        }.getOrDefault(emptyList())
+            .take(limit)
     }
 
-    private fun matchesEvent(stream: PublicResolvedStream, event: SportsEvent): Boolean {
-        val hay = "${stream.name} ${stream.group} ${stream.sourceName}"
-        val terms = listOf(event.league, event.broadcast, event.home, event.away).filter { it.isNotBlank() }
-        return terms.any { term -> hay.contains(term, true) } || hay.contains(event.sport, true)
+    fun record(stream: TargetedStream, event: SportsEvent, success: Boolean) {
+        index.record(
+            PublicResolvedStream(
+                name = stream.name,
+                group = stream.group,
+                url = stream.url,
+                sourceName = stream.sourceId,
+                latencyMs = 0
+            ),
+            event.sport,
+            event.league,
+            event.id,
+            event.broadcast,
+            success
+        )
     }
 }
