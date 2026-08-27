@@ -7,7 +7,6 @@ on:
       - 'update.json'
       - 'README.md'
       - 'docs/**'
-      - 'data/schedule_feed.json'
   workflow_dispatch:
 
 permissions:
