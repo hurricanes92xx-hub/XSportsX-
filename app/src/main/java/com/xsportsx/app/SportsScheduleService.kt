@@ -28,6 +28,11 @@ data class SportsEvent(
 data class ScheduleLeague(val sport:String,val league:String,val path:String,val officialUrl:String="")
 
 object SportsScheduleService {
+    // Keep only college sports with meaningful recurring live coverage. ESPN's current
+    // college offering covers football, men's/women's basketball, baseball, softball,
+    // soccer, volleyball, lacrosse, wrestling, hockey and other college events through
+    // ESPN/ESPN+/conference networks. The removed low-broadcast catalog is intentionally
+    // not queried so the schedule stays useful and lightweight.
     private val leagues=listOf(
         ScheduleLeague("Football","NFL","football/nfl","https://www.nfl.com/schedules/"),
         ScheduleLeague("College Football","NCAA FB","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
@@ -55,21 +60,9 @@ object SportsScheduleService {
         ScheduleLeague("College Soccer","NCAA WOMEN SOCCER","soccer/college-soccer-women","https://www.ncaa.com/sports/soccer-women/d1"),
         ScheduleLeague("Rugby","RUGBY","rugby/rugby-union","https://www.world.rugby/fixtures"),
         ScheduleLeague("College Volleyball","NCAA VB","volleyball/womens-college-volleyball","https://www.ncaa.com/scoreboard/volleyball-women"),
-        ScheduleLeague("College Volleyball","NCAA MEN VB","volleyball/mens-college-volleyball","https://www.ncaa.com/sports/volleyball-men"),
         ScheduleLeague("College Lacrosse","NCAA MEN LAX","lacrosse/college-men","https://www.ncaa.com/sports/lacrosse-men/d1"),
         ScheduleLeague("College Lacrosse","NCAA WOMEN LAX","lacrosse/college-women","https://www.ncaa.com/sports/lacrosse-women/d1"),
         ScheduleLeague("College Wrestling","NCAA WRESTLING","wrestling/college-wrestling","https://www.ncaa.com/sports/wrestling/d1"),
-        ScheduleLeague("College Tennis","NCAA MEN TENNIS","tennis/college-men","https://www.ncaa.com/sports/tennis-men/d1"),
-        ScheduleLeague("College Tennis","NCAA WOMEN TENNIS","tennis/college-women","https://www.ncaa.com/sports/tennis-women/d1"),
-        ScheduleLeague("College Golf","NCAA MEN GOLF","golf/college-men","https://www.ncaa.com/sports/golf-men/d1"),
-        ScheduleLeague("College Golf","NCAA WOMEN GOLF","golf/college-women","https://www.ncaa.com/sports/golf-women/d1"),
-        ScheduleLeague("College Track","NCAA TRACK","track-field/college","https://www.ncaa.com/sports/track-field-outdoor/d1"),
-        ScheduleLeague("College Field Hockey","NCAA FIELD HOCKEY","field-hockey/college","https://www.ncaa.com/sports/field-hockey/d1"),
-        ScheduleLeague("College Cross Country","NCAA CROSS COUNTRY","cross-country/college","https://www.ncaa.com/sports/cross-country-men/d1"),
-        ScheduleLeague("College Swimming","NCAA SWIMMING","swimming/college","https://www.ncaa.com/sports/swimming-and-diving/d1"),
-        ScheduleLeague("College Gymnastics","NCAA GYMNASTICS","gymnastics/college","https://www.ncaa.com/sports/gymnastics-women/d1"),
-        ScheduleLeague("College Rowing","NCAA ROWING","rowing/college","https://www.ncaa.com/sports/rowing"),
-        ScheduleLeague("College Water Polo","NCAA WATER POLO","water-polo/college","https://www.ncaa.com/sports/water-polo"),
         ScheduleLeague("Racing","F1","racing/f1","https://www.formula1.com/en/racing/2026"),
         ScheduleLeague("Racing","NASCAR","racing/nascar-premier","https://www.nascar.com/schedule/"),
         ScheduleLeague("Racing","INDYCAR","racing/irl","https://www.indycar.com/schedule"),
@@ -85,7 +78,6 @@ object SportsScheduleService {
         "COLLEGE BASEBALL" -> "NCAA BASEBALL"
         "COLLEGE SOFTBALL" -> "NCAA SOFTBALL"
         "COLLEGE VOLLEYBALL","NCAA WOMEN'S VOLLEYBALL" -> "NCAA VB"
-        "COLLEGE MEN'S VOLLEYBALL" -> "NCAA MEN VB"
         "COLLEGE MEN'S LACROSSE" -> "NCAA MEN LAX"
         "COLLEGE WOMEN'S LACROSSE" -> "NCAA WOMEN LAX"
         "COLLEGE WRESTLING" -> "NCAA WRESTLING"
@@ -100,10 +92,8 @@ object SportsScheduleService {
 
     val uiLeagueChoices:List<String> = listOf(
         "NFL","NBA","NCAA FB","NCAA FCS","NCAA BB","NCAA WBB","MLB","NCAA BASEBALL","NHL",
-        "NCAA MEN HOCKEY","NCAA WOMEN HOCKEY","NCAA SOFTBALL","UFC","BOXING","NCAA VB","NCAA MEN VB",
+        "NCAA MEN HOCKEY","NCAA WOMEN HOCKEY","NCAA SOFTBALL","UFC","BOXING","NCAA VB",
         "NCAA MEN SOCCER","NCAA WOMEN SOCCER","NCAA MEN LAX","NCAA WOMEN LAX","NCAA WRESTLING",
-        "NCAA MEN TENNIS","NCAA WOMEN TENNIS","NCAA MEN GOLF","NCAA WOMEN GOLF","NCAA TRACK",
-        "NCAA FIELD HOCKEY","NCAA CROSS COUNTRY","NCAA SWIMMING","NCAA GYMNASTICS","NCAA ROWING","NCAA WATER POLO",
         "MLS","EPL","LaLiga","Bundesliga","Serie A","Ligue 1","UCL","UEL","NWSL","RUGBY",
         "WRESTLING","MOTOGP","WRC","WEC","IMSA","FORMULA E","MXGP","MONSTER JAM","F1","NASCAR","INDYCAR"
     )
@@ -112,16 +102,15 @@ object SportsScheduleService {
         val today=LocalDate.now(ZoneId.systemDefault());val end=today.plusDays(30)
         val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
         val limiter=Semaphore(8)
-        val results=withTimeout(28_000L){coroutineScope{leagues.map{league->async{limiter.withPermit{fetchLeagueWithFallbacks(league,dates,today,end)}}}.awaitAll()}}
+        val results=withTimeout(28_000L){coroutineScope{leagues.map{league->async{limiter.withPermit{fetchLeagueWithFallbacks(league,dates)}}}.awaitAll()}}
         results.flatten().distinctBy{it.id.ifBlank{it.title+it.startUtc+it.league}}.filter{it.isLive||it.isUpcoming}.sortedWith(compareBy<SportsEvent>{!it.isLive}.thenBy{it.startUtc})
     }
 
-    private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String,from:LocalDate,to:LocalDate):List<SportsEvent>{
+    private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String):List<SportsEvent>{
         val primary=runCatching{fetchEspn(league,dates)}.getOrDefault(emptyList())
         val fallback=if(primary.isEmpty())runCatching{fetchEspnV3(league,dates)}.getOrDefault(emptyList())else emptyList()
         return (primary+fallback).filter{it.league.equals(league.league,true)}.map{it.copy(sourceUrl=it.sourceUrl.ifBlank{league.officialUrl})}.distinctBy{canonicalKey(it)}
     }
-
     private fun canonicalKey(e:SportsEvent):String=listOf(e.league,normalize(e.home),normalize(e.away),e.startUtc.take(10)).joinToString("|")
     private fun normalize(v:String):String=v.lowercase().replace("fc"," ").replace("  "," ").trim()
     private fun fetchEspn(league:ScheduleLeague,dates:String):List<SportsEvent>=parseEspn(JSONObject(http("https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard?dates=$dates&limit=1000")),league)
