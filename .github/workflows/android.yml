@@ -54,6 +54,7 @@ jobs:
           test -f scripts/patch_yearly_schedule_window.py
           test -f scripts/patch_special_schedule_feed.py
           test -f scripts/patch_schedule_coverage.py
+          test -f scripts/fix_schedule_ui_build.py
           test -f scripts/patch_remove_unbacked_sports.py
           test -f scripts/verify_yearly_schedule_policy.py
           test -f app/src/main/assets/brand_logos/nfl.svg
@@ -82,6 +83,7 @@ jobs:
           python3 scripts/patch_yearly_schedule_window.py
           python3 scripts/patch_special_schedule_feed.py
           python3 scripts/patch_schedule_coverage.py
+          python3 scripts/fix_schedule_ui_build.py
           python3 scripts/patch_remove_unbacked_sports.py
           python3 scripts/fetch_brand_logo_pack.py
           python3 scripts/patch_canonical_logo_ui.py
