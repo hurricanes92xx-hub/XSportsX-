@@ -1,6 +1,19 @@
+import re
 from pathlib import Path
 
 TV = Path("app/src/main/java/com/xsportsx/app/TvHome.kt")
+MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
+
+# Keep legacy static ESPN CDN logo URLs out of the production UI. Static cards
+# use the bundled renderer; live/source URLs remain untouched elsewhere.
+for target in (TV, MOBILE):
+    if target.exists():
+        source = target.read_text()
+        cleaned = re.sub(r'https://a\\.espncdn\\.com/i/teamlogos/leagues[^\"]*', '', source)
+        if cleaned != source:
+            target.write_text(cleaned)
+            print(f"Removed legacy ESPN CDN league logo URLs from {target}")
+
 text = TV.read_text()
 
 # patch_sports_badges.py may already have installed the shared TV badge/grid.
