@@ -28,12 +28,15 @@ data class SportsEvent(
 data class ScheduleLeague(val sport:String,val league:String,val path:String,val officialUrl:String="")
 
 object SportsScheduleService {
+    // Keep every competition on its own stable league key. In particular,
+    // NCAA FB and NCAA BB must never share the generic "NCAA" key or their
+    // schedules will be mixed together in the home/top-sports UI.
     private val leagues=listOf(
         ScheduleLeague("Football","NFL","football/nfl","https://www.nfl.com/schedules/"),
-        ScheduleLeague("College Football","NCAA","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
+        ScheduleLeague("College Football","NCAA FB","football/college-football","https://www.ncaa.com/scoreboard/football/fbs"),
         ScheduleLeague("Basketball","NBA","basketball/nba","https://www.nba.com/schedule"),
         ScheduleLeague("Basketball","WNBA","basketball/wnba","https://www.wnba.com/schedule"),
-        ScheduleLeague("College Basketball","NCAA","basketball/mens-college-basketball","https://www.ncaa.com/scoreboard/basketball-men/d1"),
+        ScheduleLeague("College Basketball","NCAA BB","basketball/mens-college-basketball","https://www.ncaa.com/scoreboard/basketball-men/d1"),
         ScheduleLeague("Baseball","MLB","baseball/mlb","https://www.mlb.com/schedule"),
         ScheduleLeague("Hockey","NHL","hockey/nhl","https://www.nhl.com/schedule"),
         ScheduleLeague("Soccer","MLS","soccer/usa.1","https://www.mlssoccer.com/schedule"),
@@ -72,18 +75,6 @@ object SportsScheduleService {
             .sortedWith(compareBy<SportsEvent>{ !it.isLive }.thenBy { it.startUtc })
     }
 
-    /**
-     * Reliability chain:
-     * 1) ESPN structured scoreboard.
-     * 2) League-specific structured/public fallback where one exists.
-     * 3) Official league URL is retained on every event so the UI can expose
-     *    the authoritative source for verification.
-     *
-     * Google is intentionally NOT scraped. Search-result HTML is not a stable
-     * sports data API and can change by region/device. When we add a server-side
-     * search provider later it should be treated as discovery/verification only,
-     * never as the sole source of truth.
-     */
     private suspend fun fetchLeagueWithFallbacks(
         league:ScheduleLeague,
         dates:String,
@@ -91,20 +82,15 @@ object SportsScheduleService {
         to:LocalDate
     ):List<SportsEvent> {
         val sources=mutableListOf<List<SportsEvent>>()
-
-        // Primary + ESPN v3 fallback.
         runCatching { sources += fetchEspn(league,dates) }
         if(sources.lastOrNull().isNullOrEmpty()) runCatching { sources += fetchEspnV3(league,dates) }
 
-        // Independent league-specific feeds.
         when(league.league){
             "MLB" -> runCatching { sources += fetchMlbOfficial(from,to) }
             "NHL" -> runCatching { sources += fetchNhlOfficial(from,to) }
             "F1" -> runCatching { sources += fetchF1Fallback(from,to) }
         }
 
-        // Only return useful data. We merge independent sources and dedupe so
-        // a source outage cannot blank the entire schedule.
         return sources.flatten()
             .filter { it.league.equals(league.league,true) }
             .map { it.copy(sourceUrl = it.sourceUrl.ifBlank { league.officialUrl }) }
@@ -163,7 +149,6 @@ object SportsScheduleService {
         return out
     }
 
-    /** MLB's official StatsAPI is an independent structured source. */
     private fun fetchMlbOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val url="https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=$from&endDate=$to&hydrate=team,venue"
         val root=JSONObject(http(url));val days=root.optJSONArray("dates") ?: return emptyList();val out=ArrayList<SportsEvent>()
@@ -181,7 +166,6 @@ object SportsScheduleService {
         return out
     }
 
-    /** NHL's public web API is independent from ESPN. */
     private fun fetchNhlOfficial(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val out=ArrayList<SportsEvent>();var d=from
         while(!d.isAfter(to)){
@@ -203,7 +187,6 @@ object SportsScheduleService {
         return out
     }
 
-    /** F1 fallback uses Jolpica when ESPN has no race data. */
     private fun fetchF1Fallback(from:LocalDate,to:LocalDate):List<SportsEvent>{
         val root=JSONObject(http("https://api.jolpi.ca/ergast/f1/${from.year}.json"));val races=root.optJSONObject("MRData")?.optJSONObject("RaceTable")?.optJSONArray("Races") ?: return emptyList();val out=ArrayList<SportsEvent>()
         for(i in 0 until races.length()){
