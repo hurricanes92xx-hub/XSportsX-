@@ -107,8 +107,22 @@ private val sports = listOf(
 
 @Composable private fun BadgeImage(url:String,fallback:String,modifier:Modifier=Modifier){
     var failed by remember(url){mutableStateOf(false)}
-    if(!failed && url.isNotBlank()) AsyncImage(model=url,contentDescription=fallback,modifier=modifier,contentScale=ContentScale.Fit,onError={failed=true})
-    else LockedLogo(fallback,fallback,72.dp)
+    val key = fallback.uppercase()
+    val wideLogo = key.contains("NFL") || key.contains("MLB") || key.contains("WWE") || key.contains("WRESTLING") || key.contains("NETWORK") || key.contains("ESPN") || key.contains("CBS") || key.contains("FOX") || key.contains("FS1") || key.contains("RUGBY")
+    val logoModifier = if (wideLogo) modifier.padding(horizontal = 9.dp, vertical = 7.dp) else modifier.padding(3.dp)
+    if(!failed && url.isNotBlank()) {
+        AsyncImage(
+            model=url,
+            contentDescription=fallback,
+            modifier=logoModifier,
+            contentScale=ContentScale.Fit,
+            onError={failed=true}
+        )
+    } else {
+        Box(logoModifier, contentAlignment = Alignment.Center) {
+            LockedLogo(fallback,fallback, if (wideLogo) 58.dp else 66.dp)
+        }
+    }
 }
 
 @Composable
