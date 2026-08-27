@@ -1,12 +1,12 @@
 package com.xsportsx.app
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Semaphore
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -52,12 +52,23 @@ object SportsScheduleService {
         else -> label.trim().uppercase()
     }
 
+    fun canonicalLeagueFor(label:String):String = normalizeLeague(label)
+
     val uiLeagueChoices:List<String> = listOf("NFL","NBA","NCAA FB","NCAA FCS","NCAA BB","NCAA WBB","MLB","NCAA BASEBALL","NHL","NCAA MEN HOCKEY","NCAA WOMEN HOCKEY","NCAA SOFTBALL","UFC","BOXING","NCAA VB","NCAA MEN SOCCER","NCAA WOMEN SOCCER","NCAA MEN LAX","NCAA WOMEN LAX","NCAA WRESTLING","MLS","EPL","LaLiga","Bundesliga","Serie A","Ligue 1","UCL","UEL","NWSL","RUGBY","WRESTLING","MOTOGP","WRC","WEC","IMSA","FORMULA E","MXGP","MONSTER JAM","F1","NASCAR","INDYCAR")
 
     suspend fun load():List<SportsEvent> = withContext(Dispatchers.IO) {
-        val today=LocalDate.now(ZoneId.systemDefault());val end=today.plusDays(DAYS_AHEAD.toLong());val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}";val limiter=Semaphore(8)
-        val results=withTimeout(28_000L){coroutineScope{leagues.map{league->async{limiter.withPermit{fetchLeagueWithFallbacks(league,dates)}}}.awaitAll()}}
-        results.flatten().distinctBy{it.id.ifBlank{it.title+it.startUtc+it.league}}.filter{it.isLive||it.isUpcoming}.sortedWith(compareBy<SportsEvent>{!it.isLive}.thenBy{it.startUtc})
+        val today=LocalDate.now(ZoneId.systemDefault())
+        val end=today.plusDays(DAYS_AHEAD.toLong())
+        val dates="${today.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
+        val limiter=Semaphore(8)
+        val results=withTimeout(28_000L){
+            coroutineScope{
+                leagues.map{league->async{limiter.withPermit{fetchLeagueWithFallbacks(league,dates)}}}.awaitAll()
+            }
+        }
+        results.flatten().distinctBy{it.id.ifBlank{it.title+it.startUtc+it.league}}
+            .filter{it.isLive||it.isPregame()||it.isUpcoming}
+            .sortedWith(compareBy<SportsEvent>{!(it.isLive||it.isPregame())}.thenBy{it.startUtc})
     }
 
     private suspend fun fetchLeagueWithFallbacks(league:ScheduleLeague,dates:String):List<SportsEvent>{
