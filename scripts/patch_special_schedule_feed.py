@@ -28,11 +28,19 @@ s = s.replace(
     1,
 )
 
+# Add backed NCAA sports feeds. groups=50 asks ESPN for the full Division I slate.
 anchor = '        ScheduleLeague("BOXING", "Boxing", "boxing/boxing", "https://www.boxing.com/")\n'
 college = '''        ScheduleLeague("NCAA VB", "Volleyball", "volleyball/womens-college-volleyball", "https://www.ncaa.com/sports/volleyball-women", "groups=50"),\n        ScheduleLeague("NCAA MVB", "Volleyball", "volleyball/mens-college-volleyball", "https://www.ncaa.com/sports/volleyball-men", "groups=50"),\n        ScheduleLeague("NCAA BASEBALL", "Baseball", "baseball/college-baseball", "https://www.ncaa.com/sports/baseball", "groups=50"),\n        ScheduleLeague("NCAA SOFTBALL", "Softball", "softball/college-softball", "https://www.ncaa.com/sports/softball", "groups=50"),\n        ScheduleLeague("NCAA MEN HOCKEY", "Hockey", "hockey/mens-college-hockey", "https://www.ncaa.com/sports/icehockey-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN HOCKEY", "Hockey", "hockey/womens-college-hockey", "https://www.ncaa.com/sports/icehockey-women", "groups=50"),\n        ScheduleLeague("NCAA MEN SOCCER", "Soccer", "soccer/usa.ncaa.m.1", "https://www.ncaa.com/sports/soccer-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN SOCCER", "Soccer", "soccer/usa.ncaa.w.1", "https://www.ncaa.com/sports/soccer-women", "groups=50"),\n        ScheduleLeague("NCAA MEN LAX", "Lacrosse", "lacrosse/mens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-men", "groups=50"),\n        ScheduleLeague("NCAA WOMEN LAX", "Lacrosse", "lacrosse/womens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-women", "groups=50"),\n'''
 if 'ScheduleLeague("NCAA VB", "Volleyball"' not in s and anchor in s:
     s = s.replace(anchor, anchor + college, 1)
 
+# Keep every newly backed category selectable in the schedule UI.
+ui_anchor = '        "NCAA VB", "NCAA MEN SOCCER",'
+ui_add = '        "NCAA VB", "NCAA MVB", "NCAA BASEBALL", "NCAA SOFTBALL", "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER", "NCAA MEN LAX", "NCAA WOMEN LAX",'
+if '"NCAA MVB"' not in s and ui_anchor in s:
+    s = s.replace(ui_anchor, ui_add, 1)
+
+# Combat endpoints can return event cards without team-style competitors. Keep those events.
 old = '''            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue\n            val competitors = competition.optJSONArray("competitors") ?: continue\n\n            var home = ""\n'''
 new = '''            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: JSONObject()\n            val competitors = competition.optJSONArray("competitors")\n\n            var home = ""\n'''
 if old in s:
