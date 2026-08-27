@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "purpose": "Independent sports metadata corroboration for event finding; never a playback source.",
+  "refreshMinutes": 30,
+  "sources": [
+    {
+      "name": "ESPN public-facing sports data",
+      "type": "scoreboard_schedule_news",
+      "official": true,
+      "base": "https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}",
+      "resources": ["scoreboard", "summary", "teams", "calendar", "news"],
+      "priority": 100,
+      "useFor": ["event identity", "live status", "broadcast metadata", "team aliases", "news"],
+      "criticalPath": false
+    },
+    {
+      "name": "TheSportsDB",
+      "type": "sports_metadata_schedule",
+      "official": false,
+      "base": "https://www.thesportsdb.com/api/v1/json/123",
+      "resources": ["searchteams", "searchevents", "eventsday", "eventsnextleague", "eventstv", "lookupevent"],
+      "priority": 70,
+      "useFor": ["independent event corroboration", "team identity", "league identity", "schedule", "TV metadata", "artwork metadata"],
+      "criticalPath": false,
+      "freeRateLimitPerMinute": 30,
+      "appStoreUseRequiresPaidSubscription": true
+    }
+  ],
+  "policy": {
+    "cacheBeforeUse": true,
+    "neverBlockPlayback": true,
+    "neverTreatMetadataAsAStream": true,
+    "preferOfficialEventIds": true,
+    "crossCheckWithExistingSchedule": true,
+    "respectCatalogSports": true,
+    "removedSportsRemainExcluded": true
+  },
+  "matching": {
+    "eventId": 100,
+    "exactTeamsAndTime": 95,
+    "exactTeams": 90,
+    "leagueAndNetworkAndTime": 80,
+    "epgAndNetwork": 75,
+    "networkOnly": 35
+  }
+}
