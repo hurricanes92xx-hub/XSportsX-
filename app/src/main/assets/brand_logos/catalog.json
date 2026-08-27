@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "policy": "bundled-local-first",
+  "purpose": "Use deterministic local SVG assets for league and network branding; never depend on remote logo URLs at render time.",
+  "leagues": {
+    "NFL": "nfl.svg",
+    "NBA": "nba.svg",
+    "MLB": "mlb.svg",
+    "NHL": "nhl.svg",
+    "UFC": "ufc.svg",
+    "EPL": "premierleague.svg",
+    "NCAA": "ncaa.svg",
+    "WWE": "wwe.svg",
+    "AEW": "aew.svg",
+    "TNA": "tna.svg"
+  },
+  "networks": {
+    "ESPN": "espn.svg",
+    "CBS SPORTS": "cbs.svg",
+    "NFL NETWORK": "nfl.svg",
+    "NBA TV": "nba.svg",
+    "MLB NETWORK": "mlb.svg",
+    "NHL NETWORK": "nhl.svg",
+    "UFC FIGHT PASS": "ufc.svg",
+    "WWE": "wwe.svg",
+    "AEW": "aew.svg",
+    "TNA": "tna.svg"
+  },
+  "fallback": "vector_mark",
+  "sources": {
+    "core_league_assets": "Existing XSportsX bundled assets",
+    "wwe": "Simple Icons WWE SVG (CC0 project; trademark remains with owner)",
+    "aew": "Bundled simplified AEW identification mark",
+    "tna": "Bundled TNA Wrestling identification mark"
+  }
+}
