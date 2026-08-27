@@ -38,22 +38,24 @@ private val Panel = Color(0xFF0D1119)
 private val Panel2 = Color(0xFF141A24)
 private val Muted = Color(0xFF727B8B)
 
+private const val WIKI_LOGO = "https://commons.wikimedia.org/wiki/Special:FilePath/"
+
 data class XNetwork(val name: String, val type: String, val icon: String, val logoUrl: String = "")
 private val xNetworks = listOf(
-    XNetwork("ESPN", "SPORTS", "ESPN", ""),
-    XNetwork("ESPN2", "SPORTS", "ESPN2", ""),
-    XNetwork("ESPNU", "SPORTS", "ESPNU", ""),
-    XNetwork("NFL Network", "SPORTS", "NFL", ""),
-    XNetwork("FS1", "SPORTS", "FS1", ""),
-    XNetwork("CBS Sports", "SPORTS", "CBS", ""),
-    XNetwork("SEC Network", "SPORTS", "SEC", ""),
-    XNetwork("ACC Network", "SPORTS", "ACC", ""),
-    XNetwork("Big Ten Network", "SPORTS", "B1G", ""),
-    XNetwork("ESPN+", "SPORTS", "ESPN+", ""),
-    XNetwork("Pac-12 Network", "SPORTS", "PAC12", ""),
-    XNetwork("Red Bull TV", "ACTION", "RED BULL", ""),
-    XNetwork("Monster Jam", "MOTORSPORT", "MJ", ""),
-    XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "")
+    XNetwork("ESPN", "SPORTS", "ESPN", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/960px-ESPN_wordmark.svg.png"),
+    XNetwork("ESPN2", "SPORTS", "ESPN2", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/ESPN2_logo.svg/960px-ESPN2_logo.svg.png"),
+    XNetwork("ESPNU", "SPORTS", "ESPNU", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN_U_logo.svg?width=256"),
+    XNetwork("NFL Network", "SPORTS", "NFL", "https://static.cdnlogo.com/logos/n/50/nfl-network.svg"),
+    XNetwork("FS1", "SPORTS", "FS1", "https://commons.wikimedia.org/wiki/Special:FilePath/2015_Fox_Sports_1_logo.svg?width=256"),
+    XNetwork("CBS Sports", "SPORTS", "CBS", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/CBS_Sports_%282021%29.svg/960px-CBS_Sports_%282021%29.svg.png"),
+    XNetwork("SEC Network", "SPORTS", "SEC", "https://commons.wikimedia.org/wiki/Special:FilePath/SEC_Network_%282024%29.svg?width=256"),
+    XNetwork("ACC Network", "SPORTS", "ACC", "https://commons.wikimedia.org/wiki/Special:FilePath/ACC_Network_ESPN_logo.svg?width=256"),
+    XNetwork("Big Ten Network", "SPORTS", "B1G", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256"),
+    XNetwork("ESPN+", "SPORTS", "ESPN+", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN%2B_logo.svg?width=256"),
+    XNetwork("Pac-12 Network", "SPORTS", "PAC12", "https://commons.wikimedia.org/wiki/Special:FilePath/Pac-12_Network_logo.svg?width=256"),
+    XNetwork("Red Bull TV", "ACTION", "RED BULL", "https://img.logokit.com/redbull.tv"),
+    XNetwork("Monster Jam", "MOTORSPORT", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256"),
+    XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256")
 )
 
 private data class SportVisual(val name: String, val icon: String, val logoUrl: String)
@@ -64,19 +66,19 @@ private val sports = listOf(
     SportVisual("NCAA BB", "NCAA", "https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png"),
     SportVisual("MLB", "MLB", "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"),
     SportVisual("NHL", "NHL", "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"),
-    SportVisual("UFC", "UFC", ""),
-    SportVisual("BOXING", "BOX", ""),
-    SportVisual("RUGBY", "RUGBY", ""),
-    SportVisual("VOLLEYBALL", "VB", ""),
-    SportVisual("LACROSSE", "LAX", ""),
-    SportVisual("WRESTLING", "WWE", ""),
-    SportVisual("MOTOGP", "GP", ""),
-    SportVisual("WRC", "WRC", ""),
-    SportVisual("WEC", "WEC", ""),
-    SportVisual("IMSA", "IMSA", ""),
-    SportVisual("FORMULA E", "FE", ""),
-    SportVisual("MXGP", "MX", ""),
-    SportVisual("MONSTER JAM", "MJ", ""),
+    SportVisual("UFC", "UFC", "https://commons.wikimedia.org/wiki/Special:FilePath/UFC_Logo.svg?width=256"),
+    SportVisual("BOXING", "BOX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Boxing_logo_2023.svg?width=256"),
+    SportVisual("RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256"),
+    SportVisual("VOLLEYBALL", "VB", "https://commons.wikimedia.org/wiki/Special:FilePath/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg?width=256"),
+    SportVisual("LACROSSE", "LAX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Lacrosse_logo.png?width=256"),
+    SportVisual("WRESTLING", "WWE", "https://commons.wikimedia.org/wiki/Special:FilePath/WWE_Official_Logo.svg?width=256"),
+    SportVisual("MOTOGP", "GP", "https://commons.wikimedia.org/wiki/Special:FilePath/MotoGP_logo_%282024%29.svg?width=256"),
+    SportVisual("WRC", "WRC", "https://commons.wikimedia.org/wiki/Special:FilePath/WRC_logo.svg?width=256"),
+    SportVisual("WEC", "WEC", "https://commons.wikimedia.org/wiki/Special:FilePath/WEC_Logo.svg?width=256"),
+    SportVisual("IMSA", "IMSA", "https://commons.wikimedia.org/wiki/Special:FilePath/IMSA_SportsCar_Championship_logo.svg?width=256"),
+    SportVisual("FORMULA E", "FE", "https://commons.wikimedia.org/wiki/Special:FilePath/Formula-e-logo-championship_2023.svg?width=256"),
+    SportVisual("MXGP", "MX", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_MXGP.svg?width=256"),
+    SportVisual("MONSTER JAM", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256"),
     SportVisual("ESPORTS", "ESPORTS", ""),
     SportVisual("ACTION SPORTS", "ACTION", "")
 )
@@ -147,7 +149,9 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
 @Composable private fun SportBadgeCard(sport: SportVisual, onClick: () -> Unit) { Column(Modifier.width(118.dp).height(142.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick() }.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) { Box(Modifier.fillMaxWidth().height(88.dp), contentAlignment = Alignment.Center) { BadgeImage(sport.logoUrl, sport.icon, Modifier.size(72.dp)) }; Spacer(Modifier.height(5.dp)); Text(sport.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
 @Composable private fun NetworkCard(network:XNetwork,onClick:(XNetwork)->Unit){
     Column(Modifier.width(132.dp).height(124.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable{onClick(network)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){
-        Box(Modifier.fillMaxWidth().height(70.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF0A0F17)),contentAlignment=Alignment.Center){LockedLogo(network.icon,network.name,52.dp)}
+        Box(Modifier.fillMaxWidth().height(70.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF0A0F17)),contentAlignment=Alignment.Center){
+            BadgeImage(network.logoUrl,network.name,Modifier.size(58.dp))
+        }
         Spacer(Modifier.height(7.dp))
         Text(network.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)
     }
