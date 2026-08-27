@@ -67,6 +67,7 @@ jobs:
           [ ! -f scripts/patch_college_favorites.py ] || python3 scripts/patch_college_favorites.py
           python3 scripts/patch_sports_badges.py
           python3 .github/patch_networks.py
+          python3 scripts/patch_pregame_window.py
           python3 scripts/patch_league_routing.py
           python3 scripts/patch_verified_sports_logos_wwe.py
           python3 scripts/patch_ncaavb_badge.py
