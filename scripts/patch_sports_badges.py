@@ -17,11 +17,15 @@ def tv_patch():
     TvSport("UFC","UFC",""),TvSport("BOXING","BOX",""),TvSport("RUGBY","RUGBY",""),TvSport("VOLLEYBALL","VB",""),TvSport("LACROSSE","LAX",""),TvSport("WRESTLING","WR",""),
     TvSport("FORMULA 1","F1",""),TvSport("NASCAR","NASCAR",""),TvSport("DTM","DTM",""),TvSport("MOTOGP","MotoGP",""),TvSport("WRC","WRC",""),TvSport("WEC","WEC",""),TvSport("FORMULA E","FE",""),TvSport("MXGP","MXGP",""),TvSport("MONSTER JAM","MJ",""),TvSport("SOCCER","SOCCER","")
 )'''
-    text=re.sub(r'private val tvSports = listOf\(.*?\n\)',sports,text,count=1,flags=re.S)
+    text, sports_count = re.subn(r'private val tvSports = listOf\(.*?\s*\)', sports, text, count=1, flags=re.S)
+    if sports_count != 1:
+        raise SystemExit('Could not locate tvSports catalog')
     networks='''private val tvNetworks = listOf(
     TvNetwork("ESPN","ESPN",""),TvNetwork("ESPN2","ESPN2",""),TvNetwork("ESPNU","ESPNU",""),TvNetwork("NFL NETWORK","NFL",""),TvNetwork("FS1","FS1",""),TvNetwork("CBS SPORTS","CBS",""),TvNetwork("SEC NETWORK","SEC",""),TvNetwork("ACC NETWORK","ACC",""),TvNetwork("BIG TEN NETWORK","B1G",""),TvNetwork("ESPN+","ESPN+",""),TvNetwork("PAC-12 NETWORK","PAC12",""),TvNetwork("NBA TV","NBA TV",""),TvNetwork("MLB NETWORK","MLB",""),TvNetwork("NHL NETWORK","NHL",""),TvNetwork("UFC FIGHT PASS","UFC",""),TvNetwork("RED BULL TV","RED BULL",""),TvNetwork("MONSTER JAM","MJ",""),TvNetwork("RUGBYPASS TV","RUGBY","")
 )'''
-    text=re.sub(r'private val tvNetworks = listOf\(.*?\n\)',networks,text,count=1,flags=re.S)
+    text, network_count = re.subn(r'private val tvNetworks = listOf\(.*?\s*\)', networks, text, count=1, flags=re.S)
+    if network_count != 1:
+        raise SystemExit('Could not locate tvNetworks catalog')
     text=text.replace('TvSection("SPORTS NETWORKS","LIVE SOURCES")','TvSection("NETWORKS","LIVE SOURCES")')
     text=text.replace('@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(sports,key={it.name}){TvTile(it.name,it.glyph,TvBlue){onNetwork(it.name)}}}}','@Composable private fun TvSportRow(sports:List<TvSport>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(sports,key={it.name}){TvBadgeTile(it,onNetwork)}}}')
     text=text.replace('@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNetwork:(String)->Unit){Column(verticalArrangement=Arrangement.spacedBy(8.dp)){networks.chunked(5).forEach{row->Row(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()){row.forEach{network->TvTile(network.name,network.mark,TvRed){onNetwork(network.name)}}}}}}','@Composable private fun TvNetworkGrid(networks:List<TvNetwork>,onNetwork:(String)->Unit){LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(bottom=4.dp)){items(networks,key={it.name}){network->TvNetworkTile(network,onNetwork)}}}')
@@ -39,7 +43,6 @@ def tv_patch():
 def mobile_patch():
     if not MOBILE.exists(): return
     text=MOBILE.read_text()
-    # Mobile already has a hardwired LockedLogo fallback; keep it and lock the visible section name.
     text=text.replace('MobileSectionLabel("FREE SPORTS SOURCES", null)','MobileSectionLabel("NETWORKS", null)')
     MOBILE.write_text(text)
 
