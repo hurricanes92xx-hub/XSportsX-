@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "source": "telegram-public-event-intelligence",
+  "playbackBlocking": false,
+  "directStreamIngestion": false,
+  "credentialsIngestion": false,
+  "use": "event-and-network-discovery-only",
+  "networkAliases": {
+    "A Sports": ["A Sports HD", "ARY Sports"],
+    "Geo Super": ["Geo Super HD"],
+    "Ten Sports": ["TEN Sports", "Ten Sports HD"],
+    "PTV Sports": ["PTV Sports HD"],
+    "T Sports": ["T Sports HD"],
+    "beIN Sports": ["beIN SP", "beIN Sports HD"],
+    "Setanta Sports": ["Setanta", "Setanta Sports HD"],
+    "Persiana Sports": ["Persiana Sport", "Persiana Sports 1"],
+    "Match!": ["Match TV", "Match! Football", "Match! Premier"]
+  },
+  "sports": ["football","basketball","cricket","hockey","mma","boxing","racing","soccer"],
+  "priority": ["live event","event schedule","broadcast network","kickoff","start time","final score"],
+  "safety": {
+    "allowDirectPlaylistUrls": false,
+    "allowXtreamCredentials": false,
+    "requireSeparatePublicSourceValidation": true,
+    "expireEventHintsMinutes": 180
+  }
+}
