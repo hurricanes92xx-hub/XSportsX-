@@ -13,7 +13,6 @@ android {
         targetSdk = 36
         versionCode = 19
         versionName = "1.6.8"
-        // Neon X branding release.
     }
     flavorDimensions += "device"
     productFlavors {
@@ -32,8 +31,6 @@ android {
     }
     signingConfigs {
         create("release") {
-            // Do not require release credentials while configuring debug-only QA builds.
-            // The production release workflow supplies these values before assembling release APKs.
             val keystorePath = System.getenv("XSORTSX_KEYSTORE_PATH")
             val storePassword = System.getenv("XSORTSX_KEYSTORE_PASSWORD")
             val keyAlias = System.getenv("XSORTSX_KEY_ALIAS")
@@ -47,10 +44,7 @@ android {
         }
     }
     buildTypes {
-        getByName("debug") {
-            // QA builds use the standard debug key and never require release credentials.
-            signingConfig = signingConfigs.getByName("debug")
-        }
+        getByName("debug") { signingConfig = signingConfigs.getByName("debug") }
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
@@ -77,7 +71,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2")
     implementation("androidx.browser:browser:1.9.0")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+    implementation("io.coil-kt.coil-network-okhttp:3.3.0")
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.camera:camera-camera2:1.6.1")
@@ -88,5 +82,6 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-hls:1.11.0")
     implementation("androidx.media3:media3-ui:1.11.0")
     implementation("androidx.media3:media3-common:1.11.0")
+    implementation("com.caverock:androidsvg-aar:1.4")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
