@@ -18,6 +18,11 @@ import androidx.media3.ui.PlayerView
 
 @Composable
 fun NativePlayerScreen(streamUrl: String, title: String = "XSportsX", onBack: () -> Unit) {
+    if (isYouTubeUrl(streamUrl)) {
+        YouTubeEventPlayer(streamUrl, title, onBack)
+        return
+    }
+
     val context = androidx.compose.ui.platform.LocalContext.current
     var error by remember { mutableStateOf<String?>(null) }
     val player = remember(streamUrl) {
