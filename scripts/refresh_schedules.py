@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-import json, urllib.request
+import json, re, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 OUT = Path('data/schedule_feed.json')
 HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.0', 'Accept': 'application/json,text/html'}
 
-# Broad ESPN schedule coverage. A failed/empty source is skipped rather than
-# erasing good data from the other leagues.
 LEAGUES = [
     ('NFL','football','nfl','🏈'), ('NCAA FB','football','college-football','🏈'), ('CFL','football','cfl','🏈'),
     ('NBA','basketball','nba','🏀'), ('WNBA','basketball','wnba','🏀'),
@@ -27,10 +25,7 @@ LEAGUES = [
     ('ICC T20','cricket','icc.t20','🏏'), ('IPL','cricket','ipl','🏏'),
 ]
 
-# Wrestling is maintained separately because WWE/AEW/TNA are not part of the
-# ESPN scoreboard catalog used above. These entries are also the safe fallback
-# when the official pages are temporarily unavailable.
-WRESTLING = [
+WRESTLING_FALLBACK = [
     ('WWE','NXT Heatwave','2026-08-30T17:00:00Z','SPECIAL','🏆'),
     ('WWE',"Sunday Night's Main Event",'2026-09-07T00:00:00Z','SPECIAL','🏆'),
     ('WWE','Worlds Collide','2026-09-27T00:00:00Z','SPECIAL','🏆'),
@@ -42,6 +37,12 @@ WRESTLING = [
     ('AEW','WrestleDream','2026-10-17T23:00:00Z','PPV','🤼'),
     ('AEW','Full Gear','2026-11-14T23:00:00Z','PPV','🤼'),
     ('TNA','Bound for Glory','2026-10-11T20:00:00Z','PPV','🤼'),
+]
+
+OFFICIAL_WRESTLING = [
+    ('WWE','https://www.wwe.com/article/wwe-upcoming-events','🏆'),
+    ('AEW','https://www.allelitewrestling.com/aew-events','🤼'),
+    ('TNA','https://tnawrestling.com/events/','🤼'),
 ]
 
 def get(url):
@@ -72,13 +73,58 @@ def add_espn(events, name, sport, league, icon):
         if start_at:
             events.append({'league':name,'title':title,'start':start_at,'tag':tag,'icon':icon})
 
+def jsonld_objects(html):
+    for match in re.findall(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', html, re.I | re.S):
+        try:
+            value = json.loads(match.strip())
+            values = value if isinstance(value, list) else value.get('@graph', []) if isinstance(value, dict) else []
+            if isinstance(value, dict) and value.get('@type'): values = [value] + values
+            for obj in values:
+                if isinstance(obj, dict): yield obj
+        except Exception:
+            continue
+
+def add_official_wrestling(events, brand, url, icon):
+    try:
+        html = get(url).decode('utf-8', 'ignore')
+    except Exception as exc:
+        print(f'skip official {brand}: {exc}')
+        return 0
+    added = 0
+    now = datetime.now(timezone.utc) - timedelta(hours=6)
+    for obj in jsonld_objects(html):
+        kind = obj.get('@type')
+        if kind != 'Event' and not (isinstance(kind, list) and 'Event' in kind):
+            continue
+        title = str(obj.get('name') or '').strip()
+        start = str(obj.get('startDate') or '').strip()
+        if not title or not start: continue
+        if start.endswith('Z'):
+            start_at = start
+        else:
+            try: start_at = datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+            except Exception: continue
+        try: dt = datetime.fromisoformat(start_at.replace('Z','+00:00'))
+        except Exception: continue
+        if dt < now: continue
+        events.append({'league':brand,'title':title,'start':start_at,'tag':'PPV' if any(x in title.lower() for x in ('all in','all out','wrestledream','full gear','bound for glory','money in the bank','survivor series')) else 'SPECIAL','icon':icon})
+        added += 1
+    return added
+
+def add_wrestling(events):
+    found = set()
+    for brand, url, icon in OFFICIAL_WRESTLING:
+        count = add_official_wrestling(events, brand, url, icon)
+        if count: found.add(brand)
+    for brand,title,start,tag,icon in WRESTLING_FALLBACK:
+        if brand not in found and datetime.fromisoformat(start.replace('Z','+00:00')) >= datetime.now(timezone.utc) - timedelta(hours=6):
+            events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon})
+
 def main():
     events=[]
     for league in LEAGUES:
         add_espn(events,*league)
-    for brand,title,start,tag,icon in WRESTLING:
-        if datetime.fromisoformat(start.replace('Z','+00:00')) >= datetime.now(timezone.utc) - timedelta(hours=6):
-            events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon})
+    add_wrestling(events)
     events.sort(key=lambda x:x['start'])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     payload={'schema':2,'generatedAt':datetime.now(timezone.utc).isoformat(),'refreshHours':6,'events':events[:600]}
