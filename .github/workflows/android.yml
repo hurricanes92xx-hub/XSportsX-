@@ -46,6 +46,10 @@ jobs:
           test -f app/build.gradle.kts
           test -f settings.gradle.kts
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
+          test -f app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          test -f data/schedule_auto_update_policy.json
+          test -f scripts/patch_yearly_schedule_window.py
+          test -f scripts/verify_yearly_schedule_policy.py
           test -f app/src/main/assets/brand_logos/nfl.svg
           test -f app/src/main/assets/brand_logos/nba.svg
           test -f app/src/main/assets/brand_logos/ncaa.svg
@@ -68,6 +72,8 @@ jobs:
           python3 scripts/patch_real_brand_logos.py
           python3 scripts/patch_wrestling_schedule.py
           python3 scripts/patch_college_schedule_ui.py
+          python3 scripts/patch_yearly_schedule_window.py
+          python3 scripts/verify_yearly_schedule_policy.py
           python3 scripts/verify_logo_catalog.py
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
