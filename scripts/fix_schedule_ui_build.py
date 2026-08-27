@@ -1,67 +1,120 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import re
 
 SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 s = SCREEN.read_text(encoding='utf-8')
 
-# The yearly schedule patch intentionally collapses the league list to a
-# one-line expression. The later coverage patch previously searched for a
-# multiline list terminator and could accidentally consume the LazyRow opener.
-# Normalize the generated screen after all schedule patches have run.
-choices = '''    val leagueChoices = listOf(
+# Rebuild only the stable top-level screen function. This prevents any
+# text-based schedule catalog patch from consuming surrounding Compose UI.
+start_marker = '@Composable\nfun SportsScheduleScreen('
+end_marker = '@Composable\nprivate fun ScheduleEventCard'
+start = s.find(start_marker)
+end = s.find(end_marker, start + 1)
+if start < 0 or end < 0:
+    raise SystemExit('SportsScheduleScreen function boundaries not found; refusing unsafe rewrite')
+
+screen = '''@Composable
+fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
+    val scope = rememberCoroutineScope()
+    var events by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var filter by remember { mutableStateOf("ALL") }
+    var leagueFilter by remember { mutableStateOf(initialLeague ?: "ALL") }
+
+    fun refresh() {
+        scope.launch {
+            loading = true
+            error = null
+            runCatching { SportsScheduleService.load() }
+                .onSuccess { events = it }
+                .onFailure { error = it.message ?: "Unable to load schedules" }
+            loading = false
+        }
+    }
+
+    LaunchedEffect(initialLeague) { leagueFilter = initialLeague ?: "ALL" }
+    LaunchedEffect(Unit) { refresh() }
+
+    val statusVisible = when (filter) {
+        "LIVE" -> events.filter { it.isLive }
+        "UPCOMING" -> events.filter { it.isUpcoming }
+        else -> events
+    }
+    val visible = if (leagueFilter == "ALL") statusVisible else statusVisible.filter { it.league.equals(leagueFilter, true) }
+    val leagueChoices = listOf(
         "ALL", "NFL", "NBA", "WNBA", "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB",
         "MLB", "NCAA BASEBALL", "NHL", "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA SOFTBALL",
         "NCAA VB", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER", "NCAA MEN LAX", "NCAA WOMEN LAX", "NCAA WRESTLING",
         "MLS", "EPL", "LaLiga", "Bundesliga", "Serie A", "Ligue 1", "UCL", "UEL", "NWSL",
-        "UFC", "BOXING", "RUGBY", "F1", "NASCAR", "INDYCAR", "WRESTLING", "WRC", "WEC", "IMSA",
-        "FORMULA E", "MXGP", "MONSTER JAM", "MOTOGP"
-    )'''
-
-# Prefer the current one-line generated form; otherwise replace a complete
-# multiline list only when its own closing line is present.
-if '    val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices' in s:
-    s = re.sub(
-        r'^    val leagueChoices = .*?$\n',
-        choices + '\n',
-        s,
-        count=1,
-        flags=re.MULTILINE,
+        "UFC", "BOXING", "RUGBY", "RUGBY LEAGUE", "LACROSSE", "NLL", "VOLLEYBALL", "VOLLEYBALL MEN",
+        "GOLF PGA", "GOLF LPGA", "GOLF LIV", "TENNIS ATP", "TENNIS WTA", "AFL",
+        "F1", "NASCAR", "NASCAR XFINITY", "NASCAR TRUCK", "INDYCAR", "MOTOGP",
+        "WRESTLING", "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM"
     )
-else:
-    pattern = re.compile(r'(?ms)^    val leagueChoices = listOf\(.*?^    \)\n')
-    s, count = pattern.subn(choices + '\n', s, count=1)
-    if count == 0:
-        raise SystemExit('leagueChoices block not found; refusing unsafe UI rewrite')
 
-# The UI applies the league filter locally, so the service must remain the
-# zero-argument loader. Remove any stale generated call with a filter argument.
-s = s.replace('SportsScheduleService.load(leagueFilter)', 'SportsScheduleService.load()')
-
-# If the coverage patch consumed the LazyRow opener, restore it immediately
-# before the existing items(leagueChoices) block. Do not touch a valid LazyRow.
-if 'items(leagueChoices) { league ->' in s and 'LazyRow(' not in s:
-    marker = '        items(leagueChoices) { league ->'
-    lazy = '''        LazyRow(
+    Column(Modifier.fillMaxSize().background(Color(0xFF07080C))) {
+        Row(Modifier.fillMaxWidth().padding(28.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("‹", color = Color.White, fontSize = 38.sp, modifier = Modifier.clickable { onBack() })
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(if (leagueFilter == "ALL") "LIVE + UPCOMING" else leagueFilter, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
+                Text(if (leagueFilter == "ALL") "Sports schedule" else "$leagueFilter schedule", color = Color(0xFF858B98), fontSize = 12.sp)
+            }
+            TextButton(onClick = { refresh() }) { Text("REFRESH") }
+        }
+        Row(Modifier.padding(horizontal = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf("ALL", "LIVE", "UPCOMING").forEach { value ->
+                FilterChip(selected = filter == value, onClick = { filter = value }, label = { Text(value) })
+            }
+        }
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 28.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            items(leagueChoices) { league ->
+                FilterChip(
+                    selected = leagueFilter.equals(league, true),
+                    onClick = { leagueFilter = league },
+                    label = { Text(league) }
+                )
+            }
+        }
+        when {
+            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFFFF1744))
+            }
+            error != null -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
+                    Spacer(Modifier.height(8.dp))
+                    Text(error!!, color = Color.White)
+                    Spacer(Modifier.height(12.dp))
+                    TextButton(onClick = { refresh() }) { Text("TRY AGAIN") }
+                }
+            }
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    if (filter == "LIVE") "Nothing live right now"
+                    else if (leagueFilter == "ALL") "No events found"
+                    else "No $leagueFilter events found",
+                    color = Color(0xFF858B98)
+                )
+            }
+            else -> LazyColumn(
+                contentPadding = PaddingValues(28.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                items(visible, key = { it.id }) { event ->
+                    ScheduleEventCard(event) { onEvent(event) }
+                }
+            }
+        }
+    }
+}
+
 '''
-    s = s.replace(marker, lazy + marker, 1)
-
-# The specific corruption from patch_schedule_coverage.py leaves a bare
-# "        {" immediately before items(). Convert that into the proper LazyRow.
-s = s.replace(
-    '        {\n            items(leagueChoices) { league ->',
-    '''        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 28.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(leagueChoices) { league ->''',
-    1,
-)
-
+s = s[:start] + screen + s[end:]
 SCREEN.write_text(s, encoding='utf-8')
-print('Schedule UI build repair applied: league chips and LazyRow syntax normalized.')
+print('Schedule UI build repair applied: rebuilt only SportsScheduleScreen with valid Compose structure and complete league catalog.')
