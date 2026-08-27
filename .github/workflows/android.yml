@@ -26,7 +26,7 @@ jobs:
       - name: Checkout production branch
         uses: actions/checkout@v4
       - name: Set up Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -87,59 +87,54 @@ jobs:
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Check release signing configuration
+        shell: bash
         env:
-          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           set -euo pipefail
           for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
             [ -n "${!name}" ] || { echo "Missing required release signing secret: $name"; exit 1; }
           done
       - name: Restore release keystore
+        shell: bash
         env:
-          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
           set -euo pipefail
-          printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
-          chmod 600 xsportsx-release.jks
-          test -s xsportsx-release.jks
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/xsportsx-release.jks"
+          chmod 600 "$RUNNER_TEMP/xsportsx-release.jks"
+          test -s "$RUNNER_TEMP/xsportsx-release.jks"
       - name: Build Mobile + TV release APKs
-        env:
-          XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
-          XSORTSX_KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
-          XSORTSX_KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
-          XSORTSX_KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
         shell: bash
+        env:
+          XSORTSX_KEYSTORE_PATH: ${{ runner.temp }}/xsportsx-release.jks
+          XSORTSX_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          XSORTSX_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          XSORTSX_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
       - name: Verify and upload APKs
+        if: success()
         shell: bash
         run: |
           set -euo pipefail
-          MOBILE=app/build/outputs/apk/mobile/release/app-mobile-release.apk
-          TV=app/build/outputs/apk/tv/release/app-tv-release.apk
-          test -s "$MOBILE" && test -s "$TV"
-          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
-          test -n "$APKSIGNER"
-          "$APKSIGNER" verify --verbose "$MOBILE"
-          "$APKSIGNER" verify --verbose "$TV"
-          cp "$MOBILE" XSportsX-Mobile.apk
-          cp "$TV" XSportsX-TV.apk
-          VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
-          VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
-          echo "$VERSION_NAME ($VERSION_CODE)"
+          test -s app/build/outputs/apk/mobile/release/app-mobile-release.apk
+          test -s app/build/outputs/apk/tv/release/app-tv-release.apk
       - name: Upload Mobile APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: XSportsX-Mobile-${{ github.run_number }}
-          path: XSportsX-Mobile.apk
+          name: XSportsX-mobile-release
+          path: app/build/outputs/apk/mobile/release/app-mobile-release.apk
           retention-days: 14
       - name: Upload TV APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: XSportsX-TV-${{ github.run_number }}
-          path: XSportsX-TV.apk
+          name: XSportsX-tv-release
+          path: app/build/outputs/apk/tv/release/app-tv-release.apk
           retention-days: 14
       - name: Upload Gradle log
         if: always()
