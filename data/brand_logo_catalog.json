@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "mode": "local_build_assets",
+  "fallback": "text_only",
+  "league": {
+    "NFL": "nfl.svg",
+    "NBA": "nba.svg",
+    "MLB": "mlb.svg",
+    "NHL": "nhl.svg",
+    "UFC": "ufc.svg",
+    "EPL": "premierleague.svg",
+    "WWE": "wwe.svg",
+    "AEW": "aew.svg",
+    "TNA": "tna.svg",
+    "NCAA": "ncaa.svg"
+  },
+  "network": {
+    "ESPN": "espn.svg",
+    "CBS SPORTS": "cbs.svg",
+    "NFL NETWORK": "nfl.svg",
+    "NBA TV": "nba.svg",
+    "MLB NETWORK": "mlb.svg",
+    "NHL NETWORK": "nhl.svg",
+    "UFC FIGHT PASS": "ufc.svg",
+    "FS1": "fs1.svg",
+    "ACC NETWORK": "acc.svg",
+    "SEC NETWORK": "sec.svg"
+  },
+  "rule": "Use exact catalog asset first; never synthesize a fake brand mark when an asset exists."
+}
