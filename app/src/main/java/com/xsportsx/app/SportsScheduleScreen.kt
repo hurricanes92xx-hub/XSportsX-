@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,12 +26,13 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
+fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
     val scope = rememberCoroutineScope()
     var events by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var filter by remember { mutableStateOf("ALL") }
+    var leagueFilter by remember { mutableStateOf(initialLeague ?: "ALL") }
 
     fun refresh() {
         scope.launch {
@@ -43,31 +45,49 @@ fun SportsScheduleScreen(onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
         }
     }
 
+    LaunchedEffect(initialLeague) {
+        leagueFilter = initialLeague ?: "ALL"
+    }
     LaunchedEffect(Unit) { refresh() }
 
-    val visible = when (filter) {
+    val statusVisible = when (filter) {
         "LIVE" -> events.filter { it.isLive }
         "UPCOMING" -> events.filter { it.isUpcoming }
         else -> events
     }
+    val visible = if (leagueFilter == "ALL") statusVisible else statusVisible.filter { it.league.equals(leagueFilter, true) }
+    val leagueChoices = listOf("ALL", "NFL", "NCAA FB", "NBA", "NCAA BB", "MLB", "NHL", "UFC", "BOXING")
 
     Column(Modifier.fillMaxSize().background(Color(0xFF07080C))) {
         Row(Modifier.fillMaxWidth().padding(28.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("‹", color = Color.White, fontSize = 38.sp, modifier = Modifier.clickable { onBack() })
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
-                Text("LIVE + UPCOMING", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
-                Text("Sports schedule", color = Color(0xFF858B98), fontSize = 12.sp)
+                Text(if (leagueFilter == "ALL") "LIVE + UPCOMING" else leagueFilter, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
+                Text(if (leagueFilter == "ALL") "Sports schedule" else "$leagueFilter schedule", color = Color(0xFF858B98), fontSize = 12.sp)
             }
             TextButton(onClick = { refresh() }) { Text("REFRESH") }
         }
         Row(Modifier.padding(horizontal = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf("ALL", "LIVE", "UPCOMING").forEach { value -> FilterChip(selected = filter == value, onClick = { filter = value }, label = { Text(value) }) }
         }
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 28.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(leagueChoices) { league ->
+                FilterChip(
+                    selected = leagueFilter.equals(league, true),
+                    onClick = { leagueFilter = league },
+                    label = { Text(league) }
+                )
+            }
+        }
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black); Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White); Spacer(Modifier.height(12.dp)); TextButton(onClick = { refresh() }) { Text("TRY AGAIN") } } }
-            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (filter == "LIVE") "Nothing live right now" else "No events found", color = Color(0xFF858B98)) }
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (filter == "LIVE") "Nothing live right now" else if (leagueFilter == "ALL") "No events found" else "No $leagueFilter events found", color = Color(0xFF858B98)) }
             else -> LazyColumn(contentPadding = PaddingValues(28.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) { items(visible, key = { it.id }) { event -> ScheduleEventCard(event) { onEvent(event) } } }
         }
     }
@@ -192,7 +212,6 @@ private fun espnTeamLogoUrl(name: String, league: String): String? {
     return "https://a.espncdn.com/i/teamlogos/$sport/500/scoreboard/$code.png"
 }
 
-
 @Composable
 private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, modifier: Modifier = Modifier) {
     val isUfc = combat && event.league.equals("UFC", true)
@@ -226,7 +245,6 @@ private fun EventArtBadge(event: SportsEvent, combat: Boolean, racing: Boolean, 
         Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
     }
 }
-
 
 private fun cardBrush(event: SportsEvent, combat: Boolean, racing: Boolean): Brush = when {
     racing -> Brush.linearGradient(listOf(Color(0xFF120B14), Color(0xFF111A2B), Color(0xFF29080E)))
