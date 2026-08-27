@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "purpose": "Corroborate channel and now-next metadata without delaying stream discovery",
+  "primary": [
+    {"name":"iptv-org EPG","type":"epg","url":"https://github.com/iptv-org/epg","priority":100},
+    {"name":"IPTV-EPG.org","type":"epg","url":"https://iptv-epg.org/guides","priority":80}
+  ],
+  "sportsSiteHints": [
+    "nhl.com","beinsports.com","foxsports.com.au"
+  ],
+  "refreshMinutes": 360,
+  "matchFields": ["xmltv_id","channel_name","network","sport","country","start","title"],
+  "policy": "Use EPG as corroborating metadata; never treat EPG alone as proof that a stream is playable."
+}
