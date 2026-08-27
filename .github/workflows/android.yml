@@ -48,6 +48,8 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
           test -f app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           test -f data/schedule_auto_update_policy.json
+          test -f data/brand_logo_catalog.json
+          test -f scripts/fetch_brand_logo_pack.py
           test -f scripts/patch_yearly_schedule_window.py
           test -f scripts/verify_yearly_schedule_policy.py
           test -f app/src/main/assets/brand_logos/nfl.svg
@@ -73,8 +75,10 @@ jobs:
           python3 scripts/patch_wrestling_schedule.py
           python3 scripts/patch_college_schedule_ui.py
           python3 scripts/patch_yearly_schedule_window.py
+          python3 scripts/fetch_brand_logo_pack.py
           python3 scripts/verify_yearly_schedule_policy.py
           python3 scripts/verify_logo_catalog.py
+          for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do test -s "app/src/main/assets/brand_logos/$logo.svg"; done
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
