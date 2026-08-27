@@ -44,6 +44,12 @@ jobs:
           test -f build.gradle.kts
           test -f app/build.gradle.kts
           test -f settings.gradle.kts
+          test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
+          test -f app/src/main/assets/brand_logos/nfl.svg
+          test -f app/src/main/assets/brand_logos/nba.svg
+          test -f app/src/main/assets/brand_logos/ncaa.svg
+          test -f app/src/main/assets/brand_logos/espn.svg
+          test -f app/src/main/assets/brand_logos/cbs.svg
       - name: Apply production UI and sports patches
         shell: bash
         run: |
@@ -57,11 +63,14 @@ jobs:
           python3 scripts/patch_ncaavb_badge.py
           python3 scripts/patch_public_free_sources.py
           python3 scripts/patch_top_sports_routing.py
-          # MainActivityFuture/LiveChannelsScreen already provide the public-first live flow.
-          # Do not run the legacy MainActivity patch: it targets the retired screen and can
-          # fail after other production UI patches have changed that file.
-          # Logo regression guard: static league/network cards must not depend on a remote CDN.
+          python3 scripts/patch_real_brand_logos.py
+          # Static league/network cards must not depend on ESPN CDN URLs.
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
+          # Production UI must use the bundled renderer for the static cards.
+          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
       - name: Check release signing configuration
         env:
           KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
