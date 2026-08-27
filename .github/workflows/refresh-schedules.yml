@@ -10,6 +10,7 @@ on:
       - 'scripts/refresh_schedules.py'
       - 'scripts/google_sports_intelligence.py'
       - 'scripts/refresh_sports_news.py'
+      - 'data/telegram_sports_intelligence.json'
 
 permissions:
   contents: write
@@ -33,12 +34,23 @@ jobs:
         run: python3 scripts/google_sports_intelligence.py
       - name: Refresh sports news/ticker manifest
         run: python3 scripts/refresh_sports_news.py
+      - name: Validate Telegram intelligence manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          p='data/telegram_sports_intelligence.json'
+          d=json.load(open(p,encoding='utf-8'))
+          assert d['playbackBlocking'] is False
+          assert d['directStreamIngestion'] is False
+          assert d['credentialsIngestion'] is False
+          print('Telegram intelligence: safe/non-blocking')
+          PY
       - name: Commit only when data changed
         run: |
           set -euo pipefail
           git config user.name 'XSportsX Schedule Bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json
+          git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json data/telegram_sports_intelligence.json
           if git diff --cached --quiet; then
             echo 'Schedule/intelligence feeds unchanged.'
             exit 0
