@@ -95,8 +95,8 @@ jobs:
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           ! grep -Rqs 'SportVisual("ESPORTS"' app/src/main/java/com/xsportsx/app
           ! grep -Rqs 'SportVisual("ACTION SPORTS"' app/src/main/java/com/xsportsx/app
-          ! grep -Rqs 'uww\.org' app/src/main/java/com/xsportsx/app scripts data
-          ! grep -Rqs 'NCAA WRESTLING' app/src/main/java/com/xsportsx/app scripts data
+          ! grep -Rqs 'uww\.org' app/src/main/java/com/xsportsx/app
+          ! grep -Rqs 'NCAA WRESTLING' app/src/main/java/com/xsportsx/app
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
