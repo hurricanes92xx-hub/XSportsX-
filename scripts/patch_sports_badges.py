@@ -45,7 +45,6 @@ def mobile_patch():
     if not MOBILE.exists(): return
     text=MOBILE.read_text()
     text=text.replace('MobileSectionLabel("FREE SPORTS SOURCES", null)','MobileSectionLabel("NETWORKS", null)')
-    # Top Sports cards must open the matching league schedule, not the generic source/connect flow.
     old='SportBadgeCard(sport) { onConnect() }'
     new='SportBadgeCard(sport) { onNetwork(XNetwork(sport.name, "LEAGUE", sport.icon, sport.logoUrl)) }'
     text=text.replace(old,new)
@@ -54,16 +53,22 @@ def mobile_patch():
 def future_main_patch():
     if not FUTURE_MAIN.exists(): return
     text=FUTURE_MAIN.read_text()
-    # A league tile is a schedule navigation event; a network tile remains a live-source filter.
+    text=text.replace('''var schedules by remember { mutableStateOf(false) }''','''var schedules by remember { mutableStateOf(false) }
+            var selectedScheduleLeague by remember { mutableStateOf<String?>(null) }''')
     old='''FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })'''
     new='''FuturisticHome(
                             onConnect = { if (connected) schedules = true else connectSource = true },
-                            onSport = { league -> selectedScheduleLeague = league; schedules = true },
-                            onNetwork = { network -> selectedEvent = null; liveFilter = network.name }
+                            onNetwork = { network ->
+                                if (network.type == "LEAGUE") {
+                                    selectedScheduleLeague = network.name
+                                    schedules = true
+                                } else {
+                                    selectedEvent = null
+                                    liveFilter = network.name
+                                }
+                            }
                         )'''
     text=text.replace(old,new)
-    text=text.replace('''var schedules by remember { mutableStateOf(false) }''','''var schedules by remember { mutableStateOf(false) }
-            var selectedScheduleLeague by remember { mutableStateOf<String?>(null) }''')
     text=text.replace('''SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''','''SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''')
     FUTURE_MAIN.write_text(text)
 
