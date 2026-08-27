@@ -93,7 +93,14 @@ jobs:
           python3 scripts/verify_yearly_schedule_policy.py
           python3 scripts/verify_logo_catalog.py
           python3 scripts/finalize_wrestling_build.py
-          SPECIAL_COUNT=$(grep -Ec '^private fun specialCardKicker\(event: SportsEvent\): String \{' app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt || true)
+          SPECIAL_COUNT=$(python3 - <<'PY'
+          import re
+          from pathlib import Path
+          text = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt').read_text(encoding='utf-8')
+          pattern = re.compile(r'(?m)^\s*(?:(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\s+))*fun\s+specialCardKicker\s*\([^)]*\)\s*(?::\s*[^=\n{]+)?\s*\{')
+          print(len(pattern.findall(text)))
+          PY
+          )
           test "$SPECIAL_COUNT" -eq 1 || { echo "Expected exactly one specialCardKicker declaration, found $SPECIAL_COUNT"; exit 1; }
           for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do test -s "app/src/main/assets/brand_logos/$logo.svg"; done
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
