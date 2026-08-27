@@ -77,19 +77,17 @@ if SCREEN.exists():
     new_choices = 'val leagueChoices = SportsScheduleService.uiLeagueChoices.let { listOf("ALL") + it.filter { choice -> choice != "ALL" }.distinct() }'
     if old_choices in t:
         t = t.replace(old_choices, new_choices, 1)
-    old_label = '''                    Text(when { event.league.equals("UFC", true) -> "UFC • FIGHT EVENT"; event.league.equals("BOXING", true) -> "BOXING • EVENT NIGHT"; else -> "F1 • GRAND PRIX" }, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
-    new_label = '''                    Text(specialCardKicker(event), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
-    if old_label in t:
-        t = t.replace(old_label, new_label, 1)
+    old_label = '''                    Text(specialCardKicker(event), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
+    # The final release normalizer owns specialCardKicker. Leave this call site intact.
+    if old_label not in t:
+        old_label = '''                    Text(when { event.league.equals("UFC", true) -> "UFC • FIGHT EVENT"; event.league.equals("BOXING", true) -> "BOXING • EVENT NIGHT"; else -> "F1 • GRAND PRIX" }, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
+        new_label = '''                    Text(specialCardKicker(event), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'''
+        if old_label in t:
+            t = t.replace(old_label, new_label, 1)
     old_text = 'Text(if (isUfc) "UFC" else "BOXING", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)'
     new_text = 'Text(event.league.uppercase(), color = Color.White, fontSize = if (event.league.length > 8) 9.sp else 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.0.sp)'
     if old_text in t:
         t = t.replace(old_text, new_text, 1)
-    if 'private fun specialCardKicker(event: SportsEvent)' not in t:
-        marker = '@Composable\nprivate fun EventArtBadge'
-        helper = '''private fun specialCardKicker(event: SportsEvent): String = when (event.league.uppercase()) {\n    "UFC" -> "UFC • FIGHT EVENT"\n    "BOXING" -> "BOXING • EVENT NIGHT"\n    "FORMULA E" -> "FORMULA E • ePRIX"\n    "MXGP" -> "MXGP • GRAND PRIX"\n    "MONSTER JAM" -> "MONSTER JAM • EVENT"\n    "MOTOGP" -> "MOTOGP • GRAND PRIX"\n    "WRC" -> "WRC • RALLY"\n    "WEC" -> "WEC • ENDURANCE"\n    "IMSA" -> "IMSA • SPORTS CAR"\n    "F1" -> "F1 • GRAND PRIX"\n    "WRESTLING" -> "WRESTLING • EVENT"\n    else -> "${event.league.uppercase()} • EVENT"\n}\n\n'''
-        if marker in t:
-            t = t.replace(marker, helper + marker, 1)
     SCREEN.write_text(t, encoding='utf-8')
 
 print('Schedule patch updated: combat events without team competitors, NCAA volleyball/college feeds, and correct special-event card labels.')
