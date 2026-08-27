@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source": "Google TV / YouTube TV public network metadata",
+  "playbackBlocking": false,
+  "networks": [
+    {"name":"ACC Digital Network","aliases":["ACCDN","ACC Digital"],"sports":["NCAA FB","NCAA BB","NCAA WBB"],"publicCandidate":true},
+    {"name":"Big 12 Studios","aliases":["Big 12 Studios"],"sports":["NCAA FB","NCAA BB","NCAA WBB"],"publicCandidate":true},
+    {"name":"beIN SPORTS Xtra","aliases":["beIN Sports Xtra","beIN Xtra"],"sports":["soccer","motorsport"],"publicCandidate":true},
+    {"name":"Billiard TV","aliases":["BilliardTV"],"sports":["billiards"],"publicCandidate":true},
+    {"name":"ESPN","aliases":["ESPN","ESPN HD"],"sports":["NFL","NCAA FB","NBA","NCAA BB","MLB","NHL","UFC","BOXING"],"publicCandidate":false},
+    {"name":"ESPN2","aliases":["ESPN 2"],"sports":["NCAA FB","NCAA BB","MLB","NHL"],"publicCandidate":false},
+    {"name":"ESPNU","aliases":["ESPNU"],"sports":["NCAA FB","NCAA BB","NCAA WBB"],"publicCandidate":false},
+    {"name":"ACC Network","aliases":["ACCN"],"sports":["NCAA FB","NCAA BB","NCAA WBB"],"publicCandidate":false},
+    {"name":"SEC Network","aliases":["SECN"],"sports":["NCAA FB","NCAA BB","NCAA WBB"],"publicCandidate":false},
+    {"name":"CBS Sports Network","aliases":["CBSSN"],"sports":["NCAA FB","NCAA BB","NHL"],"publicCandidate":false},
+    {"name":"FS1","aliases":["FOX Sports 1"],"sports":["NCAA FB","MLB","MLS","NASCAR"],"publicCandidate":false},
+    {"name":"FS2","aliases":["FOX Sports 2"],"sports":["NCAA FB","soccer","NASCAR"],"publicCandidate":false},
+    {"name":"FOX Sports","aliases":["FOX","FOX Sports"],"sports":["NFL","NCAA FB","MLB","MLS","NASCAR"],"publicCandidate":false},
+    {"name":"NBC Sports","aliases":["NBCSN","NBC Sports"],"sports":["NHL","NFL","NASCAR","soccer"],"publicCandidate":false},
+    {"name":"NBC Sports Regional","aliases":["NBC Sports Bay Area","NBC Sports Boston","NBC Sports Chicago","NBC Sports Philadelphia","NBC Sports Washington"],"sports":["MLB","NBA","NHL"],"publicCandidate":false},
+    {"name":"NFL Network","aliases":["NFLN"],"sports":["NFL"],"publicCandidate":false},
+    {"name":"NFL RedZone","aliases":["RedZone"],"sports":["NFL"],"publicCandidate":false},
+    {"name":"NBA TV","aliases":["NBATV"],"sports":["NBA"],"publicCandidate":false},
+    {"name":"SNY","aliases":["SportsNet NY"],"sports":["MLB","NBA"],"publicCandidate":false},
+    {"name":"NCAA March Madness Live","aliases":["March Madness Live"],"sports":["NCAA BB","NCAA WBB"],"publicCandidate":true},
+    {"name":"NBC Olympics","aliases":["NBC Olympics"],"sports":["olympics"],"publicCandidate":true},
+    {"name":"Olympic Channel","aliases":["Olympics"],"sports":["olympics"],"publicCandidate":true},
+    {"name":"Stadium","aliases":["Stadium Sports"],"sports":["NCAA FB","NCAA BB"],"publicCandidate":true},
+    {"name":"SportsGrid","aliases":["Sports Grid"],"sports":["sports","fantasy"],"publicCandidate":true},
+    {"name":"FanDuel TV","aliases":["FanDuel Sports Network"],"sports":["racing","horse racing","sports"],"publicCandidate":true},
+    {"name":"Yahoo! Sports Network","aliases":["Yahoo Sports Network"],"sports":["sports"],"publicCandidate":true}
+  ]
+}
