@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "policy": {
+    "mode": "season_aware",
+    "lookAheadDays": 370,
+    "minimumWindowDays": 30,
+    "refreshHours": 6,
+    "annualRollover": true,
+    "prefetchNextSeason": true,
+    "retainCurrentSeasonUntilComplete": true,
+    "neverRequireApkUpdate": true,
+    "neverBlockPlayback": true
+  },
+  "selection": {
+    "preferCurrentSeason": true,
+    "includeNextSeasonWhenPublished": true,
+    "useOfficialSeasonCalendarWhenAvailable": true,
+    "useScheduleApiFallbacks": true,
+    "preserveLeagueSeparation": true,
+    "dedupeBy": ["league", "home", "away", "startUtc"],
+    "preserveStableEventIds": true
+  },
+  "specialEvents": {
+    "mode": "date_and_event_id",
+    "supports": ["Monster Jam", "WWE", "TNA", "AEW", "UFC", "F1", "NASCAR", "INDYCAR", "PLL", "WLL", "AUSL", "PWHL"]
+  },
+  "failurePolicy": {
+    "newSeasonUnavailable": "keep_current_cached_schedule",
+    "sourceFailure": "use_last_good_snapshot",
+    "partialSourceFailure": "merge_successful_sources",
+    "malformedEvent": "discard_event_only",
+    "staleSnapshot": "mark_stale_do_not_delete"
+  }
+}
