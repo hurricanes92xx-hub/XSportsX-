@@ -2,6 +2,7 @@
 from pathlib import Path
 
 SERVICE = Path('app/src/main/java/com/xsportsx/app/SportsScheduleService.kt')
+SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 
 s = SERVICE.read_text(encoding='utf-8')
 
@@ -14,15 +15,12 @@ if 'private const val SPECIAL_FEED_URL' not in s:
         raise SystemExit('schedule constants anchor not found')
     s = s.replace(anchor, anchor + inject, 1)
 
-# Let Android HttpURLConnection perform its normal transparent gzip handling.
-# The old code explicitly requested gzip, which can disable that transparent
-# decompression path on Android.
+# Do not explicitly request gzip; Android HttpURLConnection can then transparently decompress it.
 s = s.replace('            setRequestProperty("Accept-Encoding", "gzip")\n', '', 1)
 
 if 'fetchSpecialScheduleFeed()' not in s:
     anchor = '        results.flatten()\n'
-    replacement = '''        (results.flatten() + fetchSpecialScheduleFeed())
-'''
+    replacement = '        (results.flatten() + fetchSpecialScheduleFeed())\n'
     if anchor not in s:
         raise SystemExit('schedule result anchor not found')
     s = s.replace(anchor, replacement, 1)
@@ -69,7 +67,6 @@ if 'private fun fetchSpecialScheduleFeed()' not in s:
                     "",
                     "",
                     "",
-                    "",
                     ""
                 ))
             }
@@ -82,4 +79,12 @@ if 'private fun fetchSpecialScheduleFeed()' not in s:
     s = s.replace(anchor, inject + anchor, 1)
 
 SERVICE.write_text(s, encoding='utf-8')
-print('Special schedule feed merged into the shared schedule service')
+
+# The yearly-schedule patch currently calls load(leagueFilter), while the shared service API is load().
+# Normalize that generated call here so the release build and both emulator builds compile against the same API.
+if SCREEN.exists():
+    t = SCREEN.read_text(encoding='utf-8')
+    t = t.replace('SportsScheduleService.load(leagueFilter)', 'SportsScheduleService.load()')
+    SCREEN.write_text(t, encoding='utf-8')
+
+print('Special schedule feed merged; schedule API call normalized; SportsEvent constructor arity fixed')
