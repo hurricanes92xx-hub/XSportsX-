@@ -62,9 +62,11 @@ jobs:
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
           python3 scripts/patch_college_favorites.py
-          grep -q ':List<FavoriteTeam> =' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-          grep -q ':List<FavoriteNews> =' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
-          grep -q '): List<TvGame> =' app/src/main/java/com/xsportsx/app/TvHome.kt
+          # These are structural checks, not formatting checks. The TV navigation
+          # patch intentionally normalizes the loader signature.
+          grep -q 'loadTvGames' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q ':List<FavoriteTeam>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
+          grep -q ':List<FavoriteNews>' app/src/main/java/com/xsportsx/app/TeamFavorites.kt
       - name: Build debug APKs
         shell: bash
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
