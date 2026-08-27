@@ -11,20 +11,24 @@ loader = """private suspend fun loadTvGames():List<TvGame> = withContext(Dispatc
     runCatching { SportsScheduleService.load() }.getOrDefault(emptyList()).mapNotNull { event ->
         val start = runCatching { java.time.Instant.parse(event.startUtc).toEpochMilli() }.getOrDefault(0L)
         if (start == 0L) return@mapNotNull null
-        // Preserve the canonical league from SportsScheduleService. Do not collapse
-        // soccer leagues into a generic SOCCER bucket: EPL, LaLiga, Bundesliga,
-        // Serie A, Ligue 1, UCL, UEL, MLS and NWSL must remain independently routable.
         val league = SportsScheduleService.canonicalLeagueFor(event.league)
+        val now = System.currentTimeMillis()
+        val pregame = event.isPregame(now)
+        val live = event.isLive
+        // live=true means the card belongs in the Live/Tune-In feed. Pregames are
+        // intentionally included for the 30-minute early tune-in window, but their
+        // status remains PRE-GAME so the UI never falsely labels them LIVE.
+        if (!live && !pregame && start <= now) return@mapNotNull null
         TvGame(
             league = league,
             home = event.home.ifBlank { event.title.ifBlank { "TBD" } },
             away = event.away,
             homeLogo = event.homeLogo,
             awayLogo = event.awayLogo,
-            score = if (event.isLive) "LIVE" else "—",
-            status = event.status.ifBlank { if (event.isLive) "LIVE" else "UPCOMING" },
+            score = if (live) "LIVE" else "—",
+            status = if (live) "LIVE" else "PRE-GAME",
             network = event.broadcast.ifBlank { "TBD" },
-            live = event.isLive,
+            live = live || pregame,
             timestamp = start
         )
     }.distinctBy { listOf(it.league,it.home,it.away,it.timestamp / 60000L).joinToString("|") }
@@ -60,14 +64,14 @@ if old_state not in text: raise SystemExit("TvHome state block not found")
 text=text.replace(old_state,new_state,1)
 
 old_case='"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->{TvSection(selectedNav,"LIVE FEED");val games=liveGames.filter{it.league==selectedNav};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)}'
-new_case='"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","SOCCER","F1","UFC","BOXING"->{TvSection(selectedNav,if(liveGames.any{it.league==selectedNav})"LIVE FEED" else "UPCOMING + LIVE");val live=liveGames.filter{it.league==selectedNav};val upcoming=upcomingGames.filter{it.league==selectedNav};if(live.isNotEmpty())TvGameRow(live,onNetwork);if(upcoming.isNotEmpty()){Spacer(Modifier.height(14.dp));TvSection("UPCOMING $selectedNav","SCHEDULED");TvGameRow(upcoming,onNetwork)};if(live.isEmpty()&&upcoming.isEmpty())TvLiveEmpty(loadingSchedule)}'
+new_case='"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->{val live=liveGames.filter{it.league==selectedNav};val upcoming=upcomingGames.filter{it.league==selectedNav};TvSection(selectedNav,if(live.any{it.status=="LIVE"})"LIVE + PRE-GAME" else "PRE-GAME");if(live.isNotEmpty())TvGameRow(live,onNetwork);if(upcoming.isNotEmpty()){Spacer(Modifier.height(14.dp));TvSection("UPCOMING $selectedNav","SCHEDULED");TvGameRow(upcoming,onNetwork)};if(live.isEmpty()&&upcoming.isEmpty())TvLiveEmpty(loadingSchedule)}'
 if old_case not in text: raise SystemExit("league UI case not found")
 text=text.replace(old_case,new_case,1)
 
-text=text.replace('TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE")','TvSection("LIVE NOW",if(liveGames.isEmpty())"No games live right now" else "${liveGames.size} LIVE")',1)
+text=text.replace('TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE")','TvSection("LIVE NOW",if(liveGames.isEmpty())"No live or pre-game events" else "${liveGames.count{it.status=="LIVE"}} LIVE • ${liveGames.count{it.status=="PRE-GAME"}} PRE-GAME")',1)
 text=text.replace('else TvLiveEmpty(loadingLive)','else TvLiveEmpty(loadingSchedule)',2)
 text=text.replace('TvSection("UPCOMING",if(loadingUpcoming)"LOADING" else "${upcomingGames.size} EVENTS")','TvSection("UPCOMING",if(loadingSchedule)"LOADING" else "${upcomingGames.size} EVENTS")',1)
 text=text.replace('else TvLiveEmpty(loadingUpcoming)','else TvLiveEmpty(loadingSchedule)',1)
 
 path.write_text(text)
-print("League routing fixed without overwriting hardwired sports/network catalog")
+print("League routing and 30-minute pregame live-feed window applied")
