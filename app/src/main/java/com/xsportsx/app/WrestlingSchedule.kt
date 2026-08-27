@@ -1,5 +1,6 @@
 package com.xsportsx.app
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,10 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class WrestlingEvent(val brand:String,val title:String,val date:String,val location:String,val kind:String,val time:String="")
 
-private val wrestlingEvents = listOf(
+private val fallbackWrestlingEvents = listOf(
     WrestlingEvent("WWE","NXT Heatwave","AUG 30, 2026","Edinburg, TX","SPECIAL","1:00 PM ET"),
     WrestlingEvent("WWE","Sunday Night's Main Event","SEP 6, 2026","Atlanta, GA","SPECIAL","8:00 PM ET"),
     WrestlingEvent("WWE","Worlds Collide","SEP 26, 2026","Chicago, IL","SPECIAL","8:00 PM ET"),
@@ -44,8 +49,25 @@ private val wrestlingWeekly = listOf(
     "TNA iMPACT! • Thursdays"
 )
 
+private fun remoteWrestlingEvents(games: List<Game>): List<WrestlingEvent> = games.filter { it.league in setOf("WWE","AEW","TNA") }.map {
+    val parsed = runCatching { Instant.parse(it.time.substringAfter("• ", "")) }.getOrNull()
+    WrestlingEvent(it.league, it.matchup, parsed?.let { instant -> DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US).format(instant.atZone(ZoneId.systemDefault())) } ?: "UPCOMING", "", it.tag, it.time)
+}
+
 @Composable
 fun WrestlingScheduleSection(onWatch:()->Unit={}) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var wrestlingEvents by remember { mutableStateOf(fallbackWrestlingEvents) }
+    var lastRefresh by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            val remote = runCatching { ScheduleFeed.load(context) }.getOrDefault(emptyList())
+            val mapped = remoteWrestlingEvents(remote)
+            if (mapped.isNotEmpty()) wrestlingEvents = mapped
+            lastRefresh = System.currentTimeMillis()
+            kotlinx.coroutines.delay(6L * 60L * 60L * 1000L)
+        }
+    }
     Column(Modifier.fillMaxWidth()) {
         Row(verticalAlignment=Alignment.CenterVertically) {
             Text("WRESTLING",color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp)
@@ -55,9 +77,7 @@ fun WrestlingScheduleSection(onWatch:()->Unit={}) {
         Spacer(Modifier.height(9.dp))
         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
             listOf("WWE" to Color(0xFF2E8BFF),"AEW" to Color(0xFFFF102F),"TNA" to Color(0xFFFF6D00)).forEach { (brand,color) ->
-                Box(Modifier.clip(RoundedCornerShape(10.dp)).background(color.copy(alpha=.16f)).padding(horizontal=9.dp,vertical=6.dp)) {
-                    Text(brand,color=color,fontSize=9.sp,fontWeight=FontWeight.Black)
-                }
+                Box(Modifier.clip(RoundedCornerShape(10.dp)).background(color.copy(alpha=.16f)).padding(horizontal=9.dp,vertical=6.dp)) { Text(brand,color=color,fontSize=9.sp,fontWeight=FontWeight.Black) }
             }
         }
         Spacer(Modifier.height(9.dp))
