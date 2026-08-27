@@ -51,6 +51,15 @@ s = s.replace(
     '            val title = rawName.ifBlank {\n                when {\n                    home.isNotBlank() && away.isNotBlank() -> "$away vs $home"\n                    home.isNotBlank() -> home\n                    away.isNotBlank() -> away\n                    else -> league.league\n                }\n            }\n',
     1,
 )
+
+# The special feed is also used for combat promotions that do not expose a
+# reliable ESPN scoreboard (especially boxing). Keep UFC on ESPN to avoid
+# duplicate cards, but allow BOXING to come from the maintained special feed.
+s = s.replace(
+    'setOf("WRESTLING", "WWE", "AEW", "TNA", "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM", "MOTOGP", "F1")',
+    'setOf("WRESTLING", "WWE", "AEW", "TNA", "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MONSTER JAM", "MOTOGP", "F1", "BOXING")',
+    1,
+)
 SERVICE.write_text(s, encoding='utf-8')
 
 # Final UI catalog: expose the same leagues the service can actually back.
