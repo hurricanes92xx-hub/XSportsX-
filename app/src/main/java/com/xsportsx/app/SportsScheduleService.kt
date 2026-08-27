@@ -11,6 +11,7 @@ import kotlinx.coroutines.sync.withPermit
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -100,4 +101,11 @@ object SportsScheduleService {
     }
     private fun extractYouTubeId(value:String):String{val v=value.trim();if(v.matches(Regex("[A-Za-z0-9_-]{11}")))return v;return Regex("(?:v=|youtu\\.be/|youtube\\.com/(?:embed/|shorts/))([A-Za-z0-9_-]{11})").find(v)?.groupValues?.getOrNull(1).orEmpty()}
     private fun http(target:String):String{val c=(URL(target).openConnection()as HttpURLConnection).apply{requestMethod="GET";connectTimeout=2200;readTimeout=4500;instanceFollowRedirects=true;setRequestProperty("User-Agent","XSportsX/1.5 (Android)");setRequestProperty("Accept","application/json,text/plain,*/*")};return try{val code=c.responseCode;if(code !in 200..299)error("Schedule HTTP $code");c.inputStream.bufferedReader(Charsets.UTF_8).use{it.readText()}}finally{c.disconnect()}}
+}
+
+private fun SportsEvent.isPregame(): Boolean {
+    if (isLive) return false
+    val start = runCatching { Instant.parse(startUtc) }.getOrNull() ?: return false
+    val now = Instant.now()
+    return !start.isBefore(now) && !start.isAfter(now.plusSeconds(30 * 60L))
 }
