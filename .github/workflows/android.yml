@@ -50,6 +50,7 @@ jobs:
           test -f app/src/main/assets/brand_logos/ncaa.svg
           test -f app/src/main/assets/brand_logos/espn.svg
           test -f app/src/main/assets/brand_logos/cbs.svg
+          test -f app/src/main/assets/brand_logos/premierleague.svg
       - name: Apply production UI and sports patches
         shell: bash
         run: |
@@ -64,9 +65,8 @@ jobs:
           python3 scripts/patch_public_free_sources.py
           python3 scripts/patch_top_sports_routing.py
           python3 scripts/patch_real_brand_logos.py
-          # Static league/network cards must not depend on ESPN CDN URLs.
+          python3 scripts/verify_logo_catalog.py
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
-          # Production UI must use the bundled renderer for the static cards.
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
