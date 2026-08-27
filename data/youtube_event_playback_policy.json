@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "criticalPath": false,
+  "description": "Official/public YouTube event playback fallback. This policy describes when an event may be handed to the YouTube player surface; it does not extract or proxy YouTube media URLs.",
+  "eligible": {
+    "officialOrAuthorizedSource": true,
+    "eventMatchRequired": true,
+    "videoIdRequired": true,
+    "publicOrUnlisted": true,
+    "embedEnabledRequired": true,
+    "liveOrUpcomingOrReplay": true
+  },
+  "priority": {
+    "exactOfficialLiveEvent": 100,
+    "exactOfficialUpcomingEvent": 90,
+    "exactOfficialReplay": 70,
+    "genericChannelVideo": 20
+  },
+  "fallback": "existing_stream_resolver",
+  "never": [
+    "extract YouTube media URLs",
+    "proxy YouTube media",
+    "bypass region restrictions",
+    "bypass authentication or paywalls",
+    "treat a generic YouTube search result as an event stream"
+  ],
+  "player": {
+    "surface": "YouTube-compatible embedded/player surface",
+    "requireEmbedPermission": true,
+    "verifyAvailabilityBeforeLaunch": true
+  }
+}
