@@ -42,6 +42,9 @@ def mobile_patch():
     text=text.replace('MobileSectionLabel("FREE SPORTS SOURCES", null)', 'MobileSectionLabel("NETWORKS", null)')
     text=text.replace('SportBadgeCard(sport) { onConnect() }', 'SportBadgeCard(sport) { onNetwork(XNetwork(sport.name, "LEAGUE", sport.icon, sport.logoUrl)) }')
     text = re.sub(r'@Composable private fun BadgeImage\(url:String,fallback:String,modifier:Modifier=Modifier\)\{.*?\n\}', '@Composable private fun BadgeImage(url:String,fallback:String,modifier:Modifier=Modifier){XSportsLeagueLogo(fallback,modifier,size=72.dp)}', text, count=1, flags=re.S)
+    # Static league cards never need a network URL. Keep the data field for API compatibility,
+    # but blank the hard-coded CDN addresses so accidental regressions are visible in QA.
+    text = re.sub(r'"https://a\.espncdn\.com/i/teamlogos/leagues/500/[^\"]+"', '""', text)
     MOBILE.write_text(text)
 
 def future_main_patch():
