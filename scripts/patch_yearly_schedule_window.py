@@ -33,6 +33,7 @@ new_load = '''suspend fun load(leagueFilter:String? = null):List<SportsEvent> = 
         val canonical=if(selected.isBlank() || selected.equals("ALL",true)) "" else canonicalLeagueFor(selected)
         val targetLeagues=if(canonical.isBlank()) leagues else leagues.filter{it.league.equals(canonical,true)}
         if(targetLeagues.isEmpty()) return@withContext emptyList()
+        val limiter=Semaphore(6)
         val results=coroutineScope {
             targetLeagues.map { league ->
                 async {
