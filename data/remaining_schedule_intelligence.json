@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "purpose": "Targeted corroboration for remaining schedule weak spots; no new sports are added to the user catalog.",
+  "prioritySources": [
+    {"sport":"NCAA Baseball","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Softball","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Ice Hockey","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Volleyball","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Soccer","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Lacrosse","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"NCAA Wrestling","scope":["DI","DII","DIII"],"source":"NCAA championship/sport data","priority":100},
+    {"sport":"PLL","scope":["2026"],"source":"USA Lacrosse + ESPN schedule/broadcast data","priority":100},
+    {"sport":"WLL","scope":["2026"],"source":"WLL official schedule + ESPN schedule/broadcast data","priority":100},
+    {"sport":"AUSL","scope":["2026"],"source":"AUSL official schedule + broadcast schedule","priority":100}
+  ],
+  "strongExistingSources": [
+    "PWHL official schedule/where-to-watch",
+    "Monster Jam official event schedule",
+    "WWE/TNA/AEW event schedules"
+  ],
+  "rules": {
+    "retainLeagueSeparation": true,
+    "retainExistingCatalog": true,
+    "preferOfficialEventIds": true,
+    "preferExactTeamPair": true,
+    "useConferenceOrSchoolScheduleAsSecondaryCorroboration": true,
+    "neverTreatScheduleMetadataAsPlayable": true,
+    "neverBlockPlayback": true
+  },
+  "refreshMinutes": 360
+}
