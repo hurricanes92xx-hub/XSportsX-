@@ -32,9 +32,20 @@ class PublicSourceHealthIndex(context: Context) {
     fun rank(eventId: String, sport: String, league: String, network: String, limit: Int = 8): List<PublicSourceHealth> =
         memory.values.asSequence()
             .filter { it.eventId == eventId || (it.sport.equals(sport, true) && (league.isBlank() || it.league.equals(league, true))) }
-            .sortedByDescending { it.copy(eventMatch = if (it.eventId == eventId) 1.0 else if (network.isNotBlank() && it.network.equals(network, true)) .75 else 0.25).score }
+            .map { it.copy(eventMatch = when {
+                it.eventId == eventId && eventId.isNotBlank() -> 1.0
+                network.isNotBlank() && it.network.equals(network, true) -> .75
+                it.sport.equals(sport, true) && it.league.equals(league, true) -> .5
+                else -> .25
+            }) }
+            .sortedByDescending { it.score }
             .take(limit)
             .toList()
+
+    fun rankResolved(eventId: String, sport: String, league: String, network: String, limit: Int = 8): List<PublicResolvedStream> =
+        rank(eventId, sport, league, network, limit).map {
+            PublicResolvedStream(it.channel, if (it.network.isBlank()) "PUBLIC" else it.network, it.url, sourceName = "Health index", latencyMs = it.latencyMs)
+        }
 
     fun record(stream: PublicResolvedStream, sport: String, league: String, eventId: String, network: String, success: Boolean) {
         val previous = memory[stream.url]
