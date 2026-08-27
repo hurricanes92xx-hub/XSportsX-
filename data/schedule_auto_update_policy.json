@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "enabled": true,
   "policy": {
     "mode": "season_aware",
@@ -17,9 +17,20 @@
     "includeNextSeasonWhenPublished": true,
     "useOfficialSeasonCalendarWhenAvailable": true,
     "useScheduleApiFallbacks": true,
+    "useLongTailBackupSources": true,
     "preserveLeagueSeparation": true,
     "dedupeBy": ["league", "home", "away", "startUtc"],
     "preserveStableEventIds": true
+  },
+  "backupSources": {
+    "order": ["official", "primary_schedule_api", "special_event_feed", "thesportsdb_long_tail", "last_good_snapshot"],
+    "thesportsdb": {
+      "mode": "last_resort",
+      "freeApi": true,
+      "requestTimeoutMs": 2500,
+      "cacheMinutes": 15,
+      "neverOverrideNonEmptyPrimary": true
+    }
   },
   "specialEvents": {
     "mode": "date_and_event_id",
