@@ -35,7 +35,7 @@ def tv_patch():
         if anchor not in text: raise SystemExit('TvTile anchor not found')
         components='''@Composable private fun TvHardwiredLogo(label:String,size:androidx.compose.ui.unit.Dp=62.dp){val k=label.uppercase();val bg=when{ k.contains("ESPN")->Color(0xFFE31837);k.contains("SEC")->Color(0xFF174A7E);k.contains("ACC")->Color(0xFF0077B8);k.contains("B1G")||k.contains("BIG TEN")->Color(0xFF111923);k.contains("NFL")->Color(0xFF013369);k.contains("NBA")->Color(0xFF17408B);k.contains("MLB")->Color(0xFF0B4F8A);k.contains("NHL")->Color(0xFF111923);k.contains("FS1")->Color(0xFF0877BD);k.contains("CBS")->Color(0xFF1D5B89);k.contains("UFC")->Color(0xFFD20A0A);k.contains("FORMULA 1")->Color(0xFFE10600);k.contains("NASCAR")->Color(0xFF101318);k.contains("DTM")->Color(0xFF28384A);k.contains("MOTOGP")->Color(0xFFDF102D);k.contains("WRC")->Color(0xFF00A651);k.contains("WEC")->Color(0xFF1D5CA8);k.contains("RUGBY")->Color(0xFFE30613);k.contains("MONSTER")->Color(0xFF161616);k.contains("RED BULL")->Color(0xFF0A1B4A);else->Color(0xFF202A38)};Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(bg),contentAlignment=Alignment.Center){Text(label.replace(" NETWORK","").replace(" SPORTS",""),color=Color.White,fontSize=if(label.length>7)8.sp else 12.sp,fontWeight=FontWeight.Black,maxLines=1,overflow=TextOverflow.Ellipsis)}}
 @Composable private fun TvLogo(url:String,label:String,size:androidx.compose.ui.unit.Dp){var failed by remember(url){mutableStateOf(false)};if(url.isNotBlank()&&!failed)AsyncImage(model=url,contentDescription=label,modifier=Modifier.size(size),contentScale=ContentScale.Fit,onError={failed=true})else TvHardwiredLogo(label,size)}
-@Composable private fun TvBadgeTile(sport:TvSport,onNetwork:(String)->Unit){var focused by remember{mutableStateOf(false)};Column(Modifier.width(142.dp).height(118.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel).border(1.dp,TvBlue.copy(alpha=if(focused)1f else .25f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onNetwork(sport.name)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){Box(Modifier.weight(1f),contentAlignment=Alignment.Center){TvLogo(sport.logoUrl,sport.name,70.dp)};Text(sport.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Black,maxLines=1,overflow=TextOverflow.Ellipsis)}}
+@Composable private fun TvBadgeTile(sport:TvSport,onNetwork:(String)->Unit){var focused by remember{mutableStateOf(false)};Column(Modifier.width(142.dp).height(118.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel).border(1.dp,TvBlue.copy(alpha=if(focused)1f else .25f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onNetwork("LEAGUE:"+sport.name)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){Box(Modifier.weight(1f),contentAlignment=Alignment.Center){TvLogo(sport.logoUrl,sport.name,70.dp)};Text(sport.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Black,maxLines=1,overflow=TextOverflow.Ellipsis)}}
 @Composable private fun TvNetworkTile(network:TvNetwork,onNetwork:(String)->Unit){var focused by remember{mutableStateOf(false)};Column(Modifier.width(142.dp).height(96.dp).clip(RoundedCornerShape(16.dp)).background(TvPanel).border(1.dp,TvRed.copy(alpha=if(focused)1f else .25f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onNetwork(network.name)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){TvLogo(network.logoUrl,network.name,42.dp);Spacer(Modifier.height(6.dp));Text(network.name,color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)}}
 '''
         text=text.replace(anchor,components+anchor,1)
@@ -45,9 +45,7 @@ def mobile_patch():
     if not MOBILE.exists(): return
     text=MOBILE.read_text()
     text=text.replace('MobileSectionLabel("FREE SPORTS SOURCES", null)','MobileSectionLabel("NETWORKS", null)')
-    old='SportBadgeCard(sport) { onConnect() }'
-    new='SportBadgeCard(sport) { onNetwork(XNetwork(sport.name, "LEAGUE", sport.icon, sport.logoUrl)) }'
-    text=text.replace(old,new)
+    text=text.replace('SportBadgeCard(sport) { onConnect() }','SportBadgeCard(sport) { onNetwork(XNetwork(sport.name, "LEAGUE", sport.icon, sport.logoUrl)) }')
     MOBILE.write_text(text)
 
 def future_main_patch():
@@ -55,8 +53,22 @@ def future_main_patch():
     text=FUTURE_MAIN.read_text()
     text=text.replace('''var schedules by remember { mutableStateOf(false) }''','''var schedules by remember { mutableStateOf(false) }
             var selectedScheduleLeague by remember { mutableStateOf<String?>(null) }''')
-    old='''FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })'''
-    new='''FuturisticHome(
+    text=text.replace('''TvAdaptiveHost(
+                    onConnect = { tvConnectChooser = true },
+                    onNetwork = { network -> selectedEvent = null; liveFilter = network }
+                )''','''TvAdaptiveHost(
+                    onConnect = { tvConnectChooser = true },
+                    onNetwork = { network ->
+                        if (network.startsWith("LEAGUE:")) {
+                            selectedScheduleLeague = network.removePrefix("LEAGUE:")
+                            schedules = true
+                        } else {
+                            selectedEvent = null
+                            liveFilter = network
+                        }
+                    }
+                )''')
+    text=text.replace('''FuturisticHome(onConnect = { if (connected) schedules = true else connectSource = true }, onNetwork = { network -> selectedEvent = null; liveFilter = network.name })''','''FuturisticHome(
                             onConnect = { if (connected) schedules = true else connectSource = true },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") {
@@ -67,9 +79,8 @@ def future_main_patch():
                                     liveFilter = network.name
                                 }
                             }
-                        )'''
-    text=text.replace(old,new)
+                        )''')
     text=text.replace('''SportsScheduleScreen(onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''','''SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })''')
     FUTURE_MAIN.write_text(text)
 
-tv_patch();mobile_patch();future_main_patch();print('Sports/network UI patch applied; top sport tiles now route to league schedules.')
+tv_patch();mobile_patch();future_main_patch();print('Sports/network UI patch applied; top sport tiles now route to their matching league schedules on mobile and TV.')
