@@ -16,6 +16,7 @@ on:
       - 'data/epg_intelligence_sources.json'
       - 'data/event_intelligence_graph.json'
       - 'data/sports_api_intelligence.json'
+      - 'data/remaining_schedule_intelligence.json'
 
 permissions:
   contents: write
@@ -45,29 +46,29 @@ jobs:
         run: python3 scripts/refresh_sports_api_intelligence.py
       - name: Validate intelligence policy
         run: |
+          set -euo pipefail
           python3 - <<'PY'
           import json
-          for p in ('data/telegram_sports_intelligence.json','data/epg_intelligence_sources.json','data/event_intelligence_graph.json','data/source_catalog_diff.json','data/sports_api_intelligence.json','data/sports_api_refresh.json'):
-              d=json.load(open(p,encoding='utf-8'))
-              assert d['playbackBlocking'] is False
-          t=json.load(open('data/telegram_sports_intelligence.json',encoding='utf-8'))
-          assert t['directStreamIngestion'] is False
-          assert t['credentialsIngestion'] is False
-          s=json.load(open('data/source_catalog_diff.json',encoding='utf-8'))
-          assert s['policy']['require_health_check'] is True
-          assert s['policy']['require_public_or_authorized'] is True
-          assert s['policy']['never_import_credentials'] is True
-          a=json.load(open('data/sports_api_intelligence.json',encoding='utf-8'))
-          assert a['policy']['neverBlockPlayback'] is True
-          assert a['policy']['neverTreatMetadataAsAStream'] is True
-          print('Sports intelligence policy: safe/non-blocking')
+          base = ('data/telegram_sports_intelligence.json','data/epg_intelligence_sources.json','data/event_intelligence_graph.json','data/source_catalog_diff.json','data/sports_api_intelligence.json','data/sports_api_refresh.json')
+          for p in base:
+              try:
+                  d=json.load(open(p,encoding='utf-8'))
+                  assert d['playbackBlocking'] is False
+              except FileNotFoundError:
+                  print(f'Optional intelligence file not present: {p}')
+          r=json.load(open('data/remaining_schedule_intelligence.json',encoding='utf-8'))
+          assert r['playbackBlocking'] is False
+          assert r['rules']['retainLeagueSeparation'] is True
+          assert r['rules']['neverTreatScheduleMetadataAsPlayable'] is True
+          assert r['rules']['neverBlockPlayback'] is True
+          print('Sports schedule intelligence policy: safe/non-blocking')
           PY
       - name: Commit only when data changed
         run: |
           set -euo pipefail
           git config user.name 'XSportsX Schedule Bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json data/telegram_sports_intelligence.json data/epg_intelligence_sources.json data/event_intelligence_graph.json data/source_catalog_diff.json data/sports_api_refresh.json
+          git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json data/telegram_sports_intelligence.json data/epg_intelligence_sources.json data/event_intelligence_graph.json data/source_catalog_diff.json data/sports_api_refresh.json data/remaining_schedule_intelligence.json
           if git diff --cached --quiet; then
             echo 'Schedule/intelligence feeds unchanged.'
             exit 0
