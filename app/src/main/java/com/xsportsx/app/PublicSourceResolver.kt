@@ -26,21 +26,23 @@ class PublicSourceResolver {
         private const val CACHE_TTL_MS = 15 * 60 * 1000L
         private const val MAX_PLAYLIST_BYTES = 8_000_000
         private const val MAX_CANDIDATES = 160
-        private const val MAX_HEALTH_CHECKS = 32
+        private const val PER_SOURCE_CANDIDATES = 20
+        private const val MAX_HEALTH_CHECKS = 48
         private val REGISTRY_URLS = listOf(
+            "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/docs/public-sources-registry.json",
             "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/main/docs/public-sources-registry.json",
+            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@android-app/docs/public-sources-registry.json",
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json",
-            "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@android-app/public-sources-registry.json",
             "https://hurricanes92xx-hub.github.io/XSportsX-/public-sources-registry.json"
         )
         private val approvedHosts = setOf(
             "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
-            "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net", "cloudfront.net",
+            "dearbulut.github.io", "wurl.com", "amagi.tv", "tubi.video", "splus.ir", "akamaized.net", "cloudfront.net",
             "pluto.tv", "samsungcloud.tv", "plex.tv", "roku.com",
             "tjktv.org", "rtatv.akamaized.net", "jmp2.uk", "i.mjh.nz"
         )
         private val sportsTerms = Regex(
-            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|btn|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount)\\b",
+            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|big ten|btn|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|bein|sky sport|f1|formula|racing|ufc|boxing|nascar|pga|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|motorsport)\\b",
             RegexOption.IGNORE_CASE
         )
     }
@@ -58,17 +60,21 @@ class PublicSourceResolver {
         val registry = runCatching { JSONObject(registryText) }.getOrNull()
             ?: return@withContext hit?.second.orEmpty()
         val sources = registry.optJSONArray("sources") ?: JSONArray()
-        val candidates = ArrayList<PublicResolvedStream>()
+        val candidates = ArrayList<PublicResolvedStream>(MAX_CANDIDATES)
 
+        // Every enabled public source gets its own quota. The old implementation
+        // let the first large playlist consume all 160 slots, so later sources
+        // were technically configured but never reached the app UI.
         for (i in 0 until sources.length()) {
+            if (candidates.size >= MAX_CANDIDATES) break
             val source = sources.optJSONObject(i) ?: continue
             if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
             val playlist = source.optString("playlist").trim()
             val sourceName = source.optString("name").ifBlank { "Public source" }
             if (!isAllowed(playlist)) continue
             val body = fetchText(playlist, MAX_PLAYLIST_BYTES) ?: continue
-            candidates += parseM3u(body, sourceName)
-            if (candidates.size >= MAX_CANDIDATES) break
+            val remaining = MAX_CANDIDATES - candidates.size
+            candidates += parseM3u(body, sourceName, minOf(PER_SOURCE_CANDIDATES, remaining))
         }
 
         val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
@@ -76,12 +82,12 @@ class PublicSourceResolver {
             unique.take(MAX_HEALTH_CHECKS).map { stream -> async { health(stream) } }
                 .awaitAll().filterNotNull()
         }
-        val result = checked.sortedBy { it.latencyMs }
+        val result = checked.sortedWith(compareBy<PublicResolvedStream> { it.sourceName }.thenBy { it.latencyMs })
         cache.put(key, now to result)
         result
     }
 
-    private fun parseM3u(text: String, sourceName: String): List<PublicResolvedStream> {
+    private fun parseM3u(text: String, sourceName: String, maxResults: Int): List<PublicResolvedStream> {
         val result = ArrayList<PublicResolvedStream>()
         var name = ""; var group = "LIVE"; var icon = ""
         for (line in text.lineSequence()) {
@@ -99,7 +105,7 @@ class PublicSourceResolver {
                     name = ""; group = "LIVE"; icon = ""
                 }
             }
-            if (result.size >= MAX_CANDIDATES) break
+            if (result.size >= maxResults) break
         }
         return result
     }
