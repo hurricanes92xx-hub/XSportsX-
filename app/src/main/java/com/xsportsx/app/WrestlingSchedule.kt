@@ -29,7 +29,6 @@ private val wrestlingEvents = listOf(
     WrestlingEvent("AEW","Grand Slam: France","OCT 6, 2026","Paris, France","SPECIAL","TBA"),
     WrestlingEvent("AEW","WrestleDream","OCT 17, 2026","Orlando, FL","PPV","7:00 PM ET"),
     WrestlingEvent("AEW","Full Gear","NOV 14, 2026","Phoenix, AZ","PPV","4:00 PM PT"),
-    WrestlingEvent("TNA","Lockdown","AUG 23, 2026","Chicago, IL","PPV","5:00 PM ET"),
     WrestlingEvent("TNA","Bound for Glory","OCT 11, 2026","Tampa, FL","PPV","4:00 PM Local")
 )
 
