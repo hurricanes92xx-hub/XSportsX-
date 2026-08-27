@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "description": "Metadata-only sports APIs used to corroborate schedules, events, teams and scores. Never used as stream providers.",
+  "sources": [
+    {
+      "name": "ESPN public event data",
+      "type": "sports_metadata",
+      "role": ["events", "scores", "teams", "standings", "news"],
+      "priority": 100,
+      "cacheMinutes": 30,
+      "officialOnly": true,
+      "criticalPath": false
+    },
+    {
+      "name": "TheSportsDB",
+      "type": "sports_metadata",
+      "role": ["events", "schedules", "teams", "leagues", "artwork", "tv_schedule"],
+      "priority": 80,
+      "cacheMinutes": 120,
+      "officialOnly": false,
+      "criticalPath": false,
+      "rateLimitAware": true
+    }
+  ],
+  "mergePolicy": {
+    "neverReplacePrimarySchedule": true,
+    "neverCreatePlayableStream": true,
+    "requireIndependentAgreementForHighConfidence": true,
+    "preferExactEventId": true,
+    "preferExactTeamPair": true,
+    "retainExistingLeagueSeparation": true
+  },
+  "failurePolicy": {
+    "apiUnavailable": "ignore_and_use_existing_cache",
+    "staleData": "lower_confidence",
+    "timeout": "fail_open_to_existing_resolver"
+  }
+}
