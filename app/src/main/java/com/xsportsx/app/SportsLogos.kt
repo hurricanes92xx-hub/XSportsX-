@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.caverock.androidsvg.SVG
+import kotlin.math.roundToInt
 
 private data class LogoPalette(val bg: Color, val fg: Color, val accent: Color)
 
