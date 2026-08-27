@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "playbackBlocking": false,
+  "sources": [
+    {"name":"Monster Jam official schedule","type":"event_schedule","sports":["monster_jam","motorsports"],"priority":100,"eventModel":"tour_venue_date","official":true,"refreshMinutes":360},
+    {"name":"TNA official events","type":"event_schedule","sports":["wrestling"],"priority":100,"eventModel":"promotion_show_date","official":true,"refreshMinutes":360},
+    {"name":"AEW official events","type":"event_schedule","sports":["wrestling"],"priority":100,"eventModel":"promotion_show_date","official":true,"refreshMinutes":360},
+    {"name":"WWE official events","type":"event_schedule","sports":["wrestling"],"priority":100,"eventModel":"promotion_show_date","official":true,"refreshMinutes":360},
+    {"name":"NCAA conference/team schedules","type":"event_schedule","sports":["baseball","softball","hockey","volleyball","soccer","lacrosse","wrestling"],"priority":90,"eventModel":"team_opponent_date","official":true,"refreshMinutes":360}
+  ],
+  "policy":{"neverBlockPlayback":true,"officialSchedulePreferred":true,"preserveLeagueSeparation":true,"dedupeByEventIdTeamPairTimeVenue":true}
+}
