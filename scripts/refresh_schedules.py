@@ -1,24 +1,35 @@
 #!/usr/bin/env python3
-import json, re, urllib.request
+import json, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 OUT = Path('data/schedule_feed.json')
 HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.0', 'Accept': 'application/json,text/html'}
 
-# Reliable ESPN scoreboard feeds for mainstream leagues. Empty feeds are skipped,
-# so one unavailable league can never erase the rest of the catalog.
+# Broad ESPN schedule coverage. A failed/empty source is skipped rather than
+# erasing good data from the other leagues.
 LEAGUES = [
-    ('NFL','football','nfl','🏈'), ('NCAA FB','football','college-football','🏈'),
+    ('NFL','football','nfl','🏈'), ('NCAA FB','football','college-football','🏈'), ('CFL','football','cfl','🏈'),
     ('NBA','basketball','nba','🏀'), ('WNBA','basketball','wnba','🏀'),
     ('NCAA BB','basketball','mens-college-basketball','🏀'), ('NCAA WBB','basketball','womens-college-basketball','🏀'),
-    ('MLB','baseball','mlb','⚾'), ('NCAA BBall','baseball','college-baseball','⚾'),
-    ('NHL','hockey','nhl','🏒'), ('MLS','soccer','usa.1','⚽'), ('EPL','soccer','eng.1','⚽'),
-    ('UCL','soccer','uefa.champions','⚽'), ('LaLiga','soccer','esp.1','⚽'), ('Serie A','soccer','ita.1','⚽'),
-    ('Bundesliga','soccer','ger.1','⚽'), ('Ligue 1','soccer','fra.1','⚽'),
-    ('UFC','mma','ufc','🥊'), ('F1','racing','f1','🏎️'),
+    ('MLB','baseball','mlb','⚾'), ('NCAA Baseball','baseball','college-baseball','⚾'),
+    ('NHL','hockey','nhl','🏒'),
+    ('MLS','soccer','usa.1','⚽'), ('EPL','soccer','eng.1','⚽'), ('UCL','soccer','uefa.champions','⚽'),
+    ('LaLiga','soccer','esp.1','⚽'), ('Serie A','soccer','ita.1','⚽'), ('Bundesliga','soccer','ger.1','⚽'), ('Ligue 1','soccer','fra.1','⚽'),
+    ('UFC','mma','ufc','🥊'),
+    ('F1','racing','f1','🏎️'), ('IndyCar','racing','irl','🏎️'), ('NASCAR Cup','racing','nascar-premier','🏎️'),
+    ('PGA','golf','pga','⛳'), ('LPGA','golf','lpga','⛳'), ('LIV Golf','golf','liv','⛳'),
+    ('ATP','tennis','atp','🎾'), ('WTA','tennis','wta','🎾'),
+    ('PLL','lacrosse','pll','🥍'), ('NLL','lacrosse','nll','🥍'),
+    ('FIVB Men','volleyball','fivb.m','🏐'), ('FIVB Women','volleyball','fivb.w','🏐'),
+    ('Rugby World Cup','rugby','164205','🏉'), ('Six Nations','rugby','180659','🏉'),
+    ('NRL','rugby-league','3','🏉'), ('AFL','australian-football','afl','🏉'),
+    ('ICC T20','cricket','icc.t20','🏏'), ('IPL','cricket','ipl','🏏'),
 ]
 
+# Wrestling is maintained separately because WWE/AEW/TNA are not part of the
+# ESPN scoreboard catalog used above. These entries are also the safe fallback
+# when the official pages are temporarily unavailable.
 WRESTLING = [
     ('WWE','NXT Heatwave','2026-08-30T17:00:00Z','SPECIAL','🏆'),
     ('WWE',"Sunday Night's Main Event",'2026-09-07T00:00:00Z','SPECIAL','🏆'),
@@ -51,14 +62,15 @@ def add_espn(events, name, sport, league, icon):
     for event in root.get('events', []):
         comp = (event.get('competitions') or [{}])[0]
         teams = comp.get('competitors') or []
-        home = next((x.get('team',{}).get('shortDisplayName') or x.get('team',{}).get('displayName') for x in teams if x.get('homeAway') == 'home'), 'TBD')
-        away = next((x.get('team',{}).get('shortDisplayName') or x.get('team',{}).get('displayName') for x in teams if x.get('homeAway') == 'away'), 'TBD')
+        home = next((x.get('team',{}).get('shortDisplayName') or x.get('team',{}).get('displayName') for x in teams if x.get('homeAway') == 'home'), '')
+        away = next((x.get('team',{}).get('shortDisplayName') or x.get('team',{}).get('displayName') for x in teams if x.get('homeAway') == 'away'), '')
+        title = f'{away} @ {home}' if home and away else (event.get('name') or event.get('shortName') or name)
         status = ((comp.get('status') or {}).get('type') or {})
         state = status.get('state','pre')
         tag = 'LIVE' if state == 'in' else ('FINAL' if state == 'post' else 'UPCOMING')
         start_at = event.get('date')
-        if not start_at: continue
-        events.append({'league':name,'title':f'{away} @ {home}','start':start_at,'tag':tag,'icon':icon})
+        if start_at:
+            events.append({'league':name,'title':title,'start':start_at,'tag':tag,'icon':icon})
 
 def main():
     events=[]
@@ -69,7 +81,7 @@ def main():
             events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon})
     events.sort(key=lambda x:x['start'])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    payload={'schema':2,'generatedAt':datetime.now(timezone.utc).isoformat(),'refreshHours':6,'events':events[:400]}
+    payload={'schema':2,'generatedAt':datetime.now(timezone.utc).isoformat(),'refreshHours':6,'events':events[:600]}
     tmp=OUT.with_suffix('.tmp')
     tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
     tmp.replace(OUT)
