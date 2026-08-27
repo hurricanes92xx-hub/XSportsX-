@@ -11,6 +11,9 @@ s = SERVICE.read_text(encoding='utf-8')
 # earlier builds may already have changed the limiter or pregame classification.
 if 'DAYS_AHEAD=30' not in s:
     s = s.replace('DAYS_AHEAD=370', 'DAYS_AHEAD=30', 1)
+# LocalDate.plusDays() takes a Long; normalize the constant so the generated
+# Kotlin remains type-correct on every build.
+s = s.replace('DAYS_AHEAD=30', 'DAYS_AHEAD=30L', 1)
 
 # Make selected leagues load independently. Replace any prior load implementation,
 # including the version already modified by patch_pregame_window.py.
