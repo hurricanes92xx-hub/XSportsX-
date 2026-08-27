@@ -87,6 +87,7 @@ jobs:
           python3 scripts/patch_special_schedule_feed.py
           python3 scripts/patch_pro_wrestling_schedule.py
           python3 scripts/patch_schedule_coverage.py
+          python3 scripts/patch_official_ncaa_schedule_sources.py
           python3 scripts/fix_schedule_ui_build.py
           python3 scripts/patch_remove_unbacked_sports.py
           python3 scripts/fetch_brand_logo_pack.py
