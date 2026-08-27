@@ -20,6 +20,7 @@ private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loade
 class StreamResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
     private val publicResolver = PublicSourceResolver()
+    private val publicEventMatcher = PublicEventMatcher(publicResolver)
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
         private val cache = LruCache<String, StreamCacheEntry>(2)
@@ -68,6 +69,44 @@ class StreamResolver(context: Context) {
             terms.any { haystack.contains(it.lowercase()) }
         }
     }
+
+    /**
+     * Event-first resolver used by the live-event UI. It searches the user's
+     * authorized source and the verified public catalog without requiring a
+     * public-source login. Public results are ranked by event/team/league and
+     * broadcast matches rather than simply returning the first sports channels.
+     */
+    suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
+        val config = store.load()
+        val privateMatches = if (config.isConfigured()) {
+            val private = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
+            matchEventAgainstStreams(event, private)
+        } else emptyList()
+
+        val publicMatches = runCatching { publicEventMatcher.find(event, force) }
+            .getOrDefault(emptyList())
+            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+
+        dedupe(privateMatches + publicMatches)
+    }
+
+    private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
+        val eventTerms = listOf(event.title, event.home, event.away, event.league, event.broadcast)
+            .map { normalize(it) }
+            .filter { it.length >= 3 }
+        if (eventTerms.isEmpty()) return emptyList()
+        return streams.mapNotNull { stream ->
+            val haystack = normalize("${stream.name} ${stream.group}")
+            val hits = eventTerms.count { term -> haystack.contains(term) }
+            if (hits == 0) null else hits to stream
+        }.sortedByDescending { it.first }.map { it.second }.take(12)
+    }
+
+    private fun normalize(value: String): String = value.lowercase()
+        .replace("&", " and ")
+        .replace(Regex("[^a-z0-9+]+"), " ")
+        .trim()
+        .replace(Regex("\\s+"), " ")
 
     private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl, BuildConfig.PAIRING_BASE_URL).joinToString("|")
 
