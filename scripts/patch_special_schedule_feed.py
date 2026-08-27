@@ -33,7 +33,27 @@ s = s.replace(
 
 if 'private fun fetchSpecialScheduleFeed()' not in s:
     anchor = '    private fun buildWindows(today: LocalDate): List<ScheduleWindow> {\n'
-    inject = '''    private fun fetchSpecialScheduleFeed(): List<SportsEvent> = runCatching {
+    inject = '''    private fun specialEventDurationMinutes(league: String, event: JSONObject): Long =
+        event.optLong("durationMinutes", when (league) {
+            "WRESTLING" -> 210L
+            "WRC", "WEC", "IMSA", "FORMULA E", "MXGP", "MOTOGP", "F1" -> 240L
+            "MONSTER JAM" -> 180L
+            else -> 180L
+        }).coerceIn(30L, 720L)
+
+    private fun specialEventState(start: String, league: String, event: JSONObject): String {
+        val startMillis = runCatching { java.time.Instant.parse(start).toEpochMilli() }.getOrDefault(0L)
+        if (startMillis <= 0L) return "pre"
+        val now = System.currentTimeMillis()
+        val endMillis = startMillis + specialEventDurationMinutes(league, event) * 60_000L
+        return when {
+            now < startMillis -> "pre"
+            now < endMillis -> "in"
+            else -> "post"
+        }
+    }
+
+    private fun fetchSpecialScheduleFeed(): List<SportsEvent> = runCatching {
         val root = JSONObject(http(SPECIAL_FEED_URL))
         val events = root.optJSONArray("events") ?: return@runCatching emptyList()
         buildList {
@@ -59,7 +79,7 @@ if 'private fun fetchSpecialScheduleFeed()' not in s:
                     title,
                     start,
                     e.optString("tag").ifBlank { "EVENT" },
-                    "pre",
+                    specialEventState(start, league, e),
                     title,
                     league,
                     "",
@@ -87,4 +107,4 @@ if SCREEN.exists():
     t = t.replace('SportsScheduleService.load(leagueFilter)', 'SportsScheduleService.load()')
     SCREEN.write_text(t, encoding='utf-8')
 
-print('Special schedule feed merged; schedule API call normalized; SportsEvent constructor arity fixed')
+print('Special schedule feed merged with clock-based live state; schedule API call normalized; SportsEvent constructor arity fixed')
