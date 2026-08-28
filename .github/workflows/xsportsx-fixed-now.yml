@@ -1,13 +1,15 @@
 name: XSportsX Fixed Emulator QA Now
 
 on:
-  workflow_run:
-    workflows: [XSportsX Source QA]
-    types: [completed]
+  push:
+    branches: [android-app]
+    paths:
+      - 'app/**'
+      - 'scripts/**'
+      - '.github/workflows/xsportsx-fixed-now.yml'
 
 permissions:
   contents: read
-  actions: read
 
 concurrency:
   group: xsportsx-fixed-emulator-qa
@@ -15,34 +17,38 @@ concurrency:
 
 jobs:
   prepare:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - name: Download APKs from completed source QA run
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Apply required source patches
         shell: bash
         run: |
           set -euo pipefail
-          API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts"
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$API" -o artifacts.json
-          URL=$(jq -r '.artifacts[] | select(.name=="source-qa-apks") | .archive_download_url' artifacts.json | head -n1)
-          test -n "$URL" && test "$URL" != null
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$URL" -o apks.zip
-          mkdir -p test-apks
-          unzip -q apks.zip -d test-apks
-          MOBILE=$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)
-          TV=$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)
-          test -s "$MOBILE"
-          test -s "$TV"
+          python3 scripts/patch_tv_navigation.py
+          python3 scripts/patch_college_favorites.py
+      - name: Build current debug APKs
+        run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+      - name: Verify APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+          test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
-          path: test-apks/**/*.apk
+          name: xsportsx-fixed-apks-${{ github.run_id }}
+          path: |
+            app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+            app/build/outputs/apk/tv/debug/app-tv-debug.apk
           if-no-files-found: error
 
   mobile:
@@ -51,14 +57,15 @@ jobs:
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
       - uses: actions/download-artifact@v4
         with:
-          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
+          name: xsportsx-fixed-apks-${{ github.run_id }}
           path: test-apks
       - name: Enable KVM
-        run: sudo chmod 666 /dev/kvm
+        run: |
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
       - name: Run fixed mobile regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -74,7 +81,9 @@ jobs:
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
-          pre-emulator-launch-script: adb kill-server || true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile-fixed
         env:
           MOBILE_APK: ${{ github.workspace }}/test-apks/app-mobile-debug.apk
@@ -83,7 +92,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: xsportsx-fixed-mobile-${{ github.event.workflow_run.id }}
+          name: xsportsx-fixed-mobile-${{ github.run_id }}
           path: test-output-mobile-fixed/**
           if-no-files-found: ignore
 
@@ -93,14 +102,15 @@ jobs:
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
       - uses: actions/download-artifact@v4
         with:
-          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
+          name: xsportsx-fixed-apks-${{ github.run_id }}
           path: test-apks
       - name: Enable KVM
-        run: sudo chmod 666 /dev/kvm
+        run: |
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
       - name: Run fixed TV regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -116,7 +126,9 @@ jobs:
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
-          pre-emulator-launch-script: adb kill-server || true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv-fixed
         env:
           TV_APK: ${{ github.workspace }}/test-apks/app-tv-debug.apk
@@ -125,6 +137,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: xsportsx-fixed-tv-${{ github.event.workflow_run.id }}
+          name: xsportsx-fixed-tv-${{ github.run_id }}
           path: test-output-tv-fixed/**
           if-no-files-found: ignore
