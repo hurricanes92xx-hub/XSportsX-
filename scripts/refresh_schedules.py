@@ -6,7 +6,13 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 OUT = Path('data/schedule_feed.json')
-HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.2', 'Accept': 'application/json,text/html'}
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Referer': 'https://www.espn.com/',
+    'Connection': 'keep-alive',
+}
 
 # ESPN remains the source for the pro leagues and the two college feeds that
 # are already known-good in XSportsX. NCAA college sports use the official
@@ -29,10 +35,6 @@ ESPN_LEAGUES = [
     ('ICC T20','cricket','icc.t20','🏏',30), ('IPL','cricket','ipl','🏏',30),
 ]
 
-# These are deliberately sourced from NCAA.com. ESPN's college league IDs
-# are inconsistent across sports; NCAA.com exposes one normalized scoreboard
-# contract for these sports. We refresh a practical 30-day horizon rather
-# than making hundreds of long-range calls.
 NCAA_LEAGUES = [
     ('NCAA BB','basketball-men','d1','🏀'),
     ('NCAA WBB','basketball-women','d1','🏀'),
@@ -76,13 +78,26 @@ def get(url):
     with urllib.request.urlopen(req, timeout=12) as r:
         return r.read()
 
+def get_espn(url):
+    # August 2026 reports show Akamai blocking some requests to the classic
+    # site.api host. Try the web-facing ESPN host first, then the classic host.
+    candidates = [url.replace('https://site.api.espn.com', 'https://site.web.api.espn.com'), url]
+    last_error = None
+    for target in candidates:
+        try:
+            return get(target)
+        except Exception as exc:
+            last_error = exc
+            print(f'ERROR ESPN request {target}: {exc}')
+    raise last_error
+
 def add_espn(events, name, sport, league, icon, days):
     start = datetime.now(timezone.utc).date()
     end = start + timedelta(days=days)
     dates = f'{start:%Y%m%d}-{end:%Y%m%d}'
-    url = f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={dates}&limit=5000'
+    url = f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={dates}&limit=1000'
     try:
-        root = json.loads(get(url))
+        root = json.loads(get_espn(url))
     except Exception as exc:
         print(f'ERROR ESPN {name}: {exc}')
         return False
@@ -125,8 +140,6 @@ def ncaa_day(url):
 def add_ncaa(events, name, sport, division, icon, days=30):
     start = datetime.now(timezone.utc).date()
     dates = [start + timedelta(days=i) for i in range(days + 1)]
-    # NCAA's public API is limited to roughly 5 requests/sec. Four workers
-    # keeps us below that limit while making the daily sweep fast enough for CI.
     results = []
     with ThreadPoolExecutor(max_workers=4) as pool:
         futures = {
@@ -218,8 +231,6 @@ def main():
             failures.append(league[0])
     add_wrestling(events)
 
-    # Never replace a known-good league because one upstream provider had a
-    # transient failure. Preserve only the affected league from the prior feed.
     if failures and OUT.exists():
         try:
             previous = json.loads(OUT.read_text(encoding='utf-8'))
@@ -232,8 +243,6 @@ def main():
         except Exception as exc:
             print(f'warning: could not preserve prior feed: {exc}')
 
-    # Deduplicate the normalized feed. NCAA scoreboard days can overlap around
-    # timezone boundaries, and ESPN/NCAA can occasionally repeat an event.
     unique={}
     for e in events:
         key=(e.get('league'), e.get('title'), e.get('start'))
@@ -241,7 +250,6 @@ def main():
     events=list(unique.values())
     events.sort(key=lambda x:x['start'])
 
-    # Per-league cap: no single high-volume sport can starve smaller sports.
     per_league={}
     for event in events:
         per_league[event['league']] = per_league.get(event['league'], 0) + 1
