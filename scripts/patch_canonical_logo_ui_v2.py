@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-# This stage is intentionally a no-op verifier. All logo transformations are
-# owned by the preceding idempotent patches. Keeping this step side-effect-free
-# prevents release builds from depending on historical source anchors.
+# Idempotent verifier only. Logo transformations are owned by the preceding
+# patches. This stage must never depend on historical source anchors.
 required = [
     Path('app/src/main/java/com/xsportsx/app/SportsLogos.kt'),
     Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),
     Path('app/src/main/java/com/xsportsx/app/TvHome.kt'),
 ]
+
 for path in required:
     if not path.exists():
         raise SystemExit(f'missing required source: {path}')
