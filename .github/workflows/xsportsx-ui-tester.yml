@@ -39,6 +39,7 @@ jobs:
           test -f app/src/main/java/com/xsportsx/app/TvCrackPulseCompat.kt
           test -f app/src/main/java/com/xsportsx/app/SportsLogos.kt
           test -f app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt
+          test -f scripts/run_emulator_regression.sh
           test -f app/src/main/assets/brand_logos/nfl.svg
           test -f app/src/main/assets/brand_logos/nba.svg
           test -f app/src/main/assets/brand_logos/ncaa.svg
@@ -140,33 +141,7 @@ jobs:
           pre-emulator-launch-script: |
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
-          script: |
-            set -eu
-            adb start-server
-            adb wait-for-device
-            echo "ADB state: $(adb -s emulator-5554 get-state)"
-            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
-            export QA_SOURCE_HOST=0.0.0.0
-            export QA_SOURCE_PORT=8765
-            rm -f qa-source.log
-            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-            QA_SERVER_PID=$!
-            cleanup() { kill "$QA_SERVER_PID" 2>/dev/null || true; }
-            trap cleanup EXIT
-            server_ready=0
-            for i in $(seq 1 30); do
-              if ! kill -0 "$QA_SERVER_PID" 2>/dev/null; then
-                echo 'QA source server exited unexpectedly.'
-                cat qa-source.log || true
-                exit 1
-              fi
-              if curl -fsS http://127.0.0.1:8765/health >/dev/null; then server_ready=1; break; fi
-              sleep 1
-            done
-            test "$server_ready" = 1 || { echo 'QA source server did not become ready.'; cat qa-source.log || true; exit 1; }
-            curl -fsS http://10.0.2.2:8765/health >/dev/null
-            chmod +x scripts/qa_regression_test.sh
-            QA_MODE=mobile QA_SOURCE_BASE=http://10.0.2.2:8765 ./scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
+          script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -224,33 +199,7 @@ jobs:
           pre-emulator-launch-script: |
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
-          script: |
-            set -eu
-            adb start-server
-            adb wait-for-device
-            echo "ADB state: $(adb -s emulator-5554 get-state)"
-            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
-            export QA_SOURCE_HOST=0.0.0.0
-            export QA_SOURCE_PORT=8765
-            rm -f qa-source.log
-            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-            QA_SERVER_PID=$!
-            cleanup() { kill "$QA_SERVER_PID" 2>/dev/null || true; }
-            trap cleanup EXIT
-            server_ready=0
-            for i in $(seq 1 30); do
-              if ! kill -0 "$QA_SERVER_PID" 2>/dev/null; then
-                echo 'QA source server exited unexpectedly.'
-                cat qa-source.log || true
-                exit 1
-              fi
-              if curl -fsS http://127.0.0.1:8765/health >/dev/null; then server_ready=1; break; fi
-              sleep 1
-            done
-            test "$server_ready" = 1 || { echo 'QA source server did not become ready.'; cat qa-source.log || true; exit 1; }
-            curl -fsS http://10.0.2.2:8765/health >/dev/null
-            chmod +x scripts/qa_regression_test.sh
-            QA_MODE=tv QA_SOURCE_BASE=http://10.0.2.2:8765 ./scripts/qa_regression_test.sh "$TV_APK" test-output-tv
+          script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv
       - uses: actions/upload-artifact@v4
         if: always()
         with:
