@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 from pathlib import Path
-required = [Path('app/src/main/java/com/xsportsx/app/SportsLogos.kt'), Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'), Path('app/src/main/java/com/xsportsx/app/TvHome.kt')]
+
+required = [
+    Path('app/src/main/java/com/xsportsx/app/SportsLogos.kt'),
+    Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),
+    Path('app/src/main/java/com/xsportsx/app/TvHome.kt'),
+]
 for path in required:
     if not path.exists():
         raise SystemExit(f'missing required source: {path}')
