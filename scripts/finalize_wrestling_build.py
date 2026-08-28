@@ -34,12 +34,9 @@ HELPER = '''private fun specialCardKicker(event: SportsEvent): String {
 
 '''
 
-# Match the function by its Kotlin name rather than one exact whitespace/signature
-# spelling. Older patches produced harmless-looking variants that Kotlin still
-# treats as conflicting overloads.
 FUNCTION_RE = re.compile(
-    r'(?m)^[ \\t]*(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\\s+)*)'
-    r'fun\\s+specialCardKicker\\s*\\([^)]*\\)\\s*(?::\\s*[^=\\n{]+)?\\s*\\{'
+    r'(?m)^[ \t]*(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\s+)*'
+    r'fun\s+specialCardKicker\s*\([^)]*\)\s*(?::\s*[^=\n{]+)?\s*\{'
 )
 
 
@@ -49,7 +46,6 @@ def remove_all_named_functions(source: str) -> tuple[str, int]:
         match = FUNCTION_RE.search(source)
         if not match:
             break
-
         open_brace = source.find('{', match.start(), match.end())
         depth = 0
         close_brace = None
@@ -64,27 +60,20 @@ def remove_all_named_functions(source: str) -> tuple[str, int]:
                     break
         if close_brace is None:
             raise RuntimeError(f'Unbalanced braces while removing {HELPER_NAME}')
-
         start = match.start()
         end = close_brace
         while end < len(source) and source[end] in ' \t\r\n':
             end += 1
         source = source[:start] + source[end:]
         removed += 1
-
     return source, removed
 
-
-# This is the final source normalization step, after every other release patch.
 s = SCREEN.read_text(encoding='utf-8')
 s, removed = remove_all_named_functions(s)
-
 marker = '@Composable\nprivate fun EventArtBadge'
 if marker not in s:
     raise RuntimeError('Could not find EventArtBadge marker; refusing to write an unverified release source file')
 s = s.replace(marker, HELPER + marker, 1)
-
-# Make wrestling cards use the same kicker as the other special events.
 s = s.replace(
     'event.league.equals("UFC", true) || event.league.equals("BOXING", true) || event.sport.equals("MMA", true)',
     'event.league.equals("UFC", true) || event.league.equals("BOXING", true) || event.league.equals("WRESTLING", true) || event.sport.equals("MMA", true)',
@@ -95,14 +84,11 @@ s = s.replace(
     'Text(specialCardKicker(event), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)',
     1,
 )
-
 count = len(FUNCTION_RE.findall(s))
 if count != 1:
     raise RuntimeError(f'Release source normalization failed: expected exactly 1 {HELPER_NAME} declaration, found {count}')
 SCREEN.write_text(s, encoding='utf-8')
 
-# Keep the promotion-chip row inside LazyRow's DSL via items(); direct forEach
-# composable emission there is illegal and was a previous release-build error.
 w = WRESTLING.read_text(encoding='utf-8')
 w = w.replace('Text("WWE • AEW • TNA"', 'Text("WWE • AEW • NXT • ROH • TNA • NJPW"')
 w = w.replace(
@@ -125,10 +111,10 @@ if old in w:
 w = w.replace('setOf("WWE","AEW","TNA")', 'setOf("WWE","AEW","NXT","ROH","TNA","NJPW")')
 WRESTLING.write_text(w, encoding='utf-8')
 
-# The emulator QA workflow runs the full production patch chain in a clean
-# checkout before compiling its debug APKs. Some legacy text patches can touch
-# unrelated Kotlin source files. The launcher is not a patch target, so restore
-# it from HEAD at the very end and fail closed if it is missing or malformed.
+# Production patch scripts are allowed to rewrite their target files, but the
+# launcher activity is not one of those targets. Restore it from the checked-in
+# commit at the end of the patch chain so emulator/debug builds cannot ship a
+# manifest entry for a missing Activity class.
 subprocess.run(['git', 'checkout', '--', str(LAUNCHER)], check=True)
 if not LAUNCHER.is_file() or 'class MainActivityFuture' not in LAUNCHER.read_text(encoding='utf-8'):
     raise RuntimeError('Launcher activity was not restored after production patches')
