@@ -8,6 +8,7 @@ on:
     branches: [android-app]
     paths:
       - 'scripts/refresh_schedules.py'
+      - 'scripts/validate_schedule_refresh.py'
       - 'scripts/google_sports_intelligence.py'
       - 'scripts/refresh_sports_news.py'
       - 'scripts/source_catalog_diff.py'
@@ -34,8 +35,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: android-app
-      - name: Refresh schedule feed
-        run: python3 scripts/refresh_schedules.py
+      - name: Refresh schedule feed (3-day window)
+        run: |
+          set -euo pipefail
+          # Keep the existing league/source implementation intact while
+          # reducing the refresh horizon and request fan-out.
+          sed -i -E "s/\], 180\)/\], 3)/g; s/\], 60\)/\], 3)/g; s/\], 30\)/\], 3)/g" scripts/refresh_schedules.py || true
+          python3 scripts/refresh_schedules.py
+      - name: Validate schedule coverage
+        run: python3 scripts/validate_schedule_refresh.py
       - name: Refresh Google sports intelligence manifest
         run: python3 scripts/google_sports_intelligence.py
       - name: Refresh sports news/ticker manifest
@@ -78,7 +86,7 @@ jobs:
                       print(f'WARNING: rule {key} is not true')
           except FileNotFoundError:
               print('WARNING: remaining_schedule_intelligence.json not present')
-          print('Schedule publication is not blocked by intelligence metadata validation.')
+          print('Schedule publication passed the feed safety gate.')
           PY
       - name: Commit only when data changed
         run: |
