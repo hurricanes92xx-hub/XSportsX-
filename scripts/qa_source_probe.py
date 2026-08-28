@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Probe the local QA source fixture from the emulator runner.
-This validates network reachability, Xtream auth/catalog, and M3U parsing independently
-of provider credentials. The app itself remains untouched."""
+"""Probe the QA source fixture from either the runner host or Android emulator.
+The caller supplies QA_SOURCE_BASE so host-side checks use loopback while
+emulator-side checks can use Android's 10.0.2.2 host alias."""
 import json
+import os
 import urllib.parse
 import urllib.request
 
-BASE = "http://10.0.2.2:8765"
+BASE = os.environ.get("QA_SOURCE_BASE", "http://10.0.2.2:8765")
 
 def get(path):
     with urllib.request.urlopen(BASE + path, timeout=10) as r:
@@ -27,4 +28,4 @@ m3u = get("/playlist.m3u")
 assert m3u.startswith("#EXTM3U")
 assert "QA Sports One" in m3u and "QA Sports Two" in m3u
 
-print("QA source probe passed: Xtream auth/catalog + M3U playlist")
+print(f"QA source probe passed: Xtream auth/catalog + M3U playlist ({BASE})")
