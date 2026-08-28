@@ -4,25 +4,36 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 OUT = Path('data/schedule_feed.json')
-HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.0', 'Accept': 'application/json,text/html'}
+HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.1', 'Accept': 'application/json,text/html'}
 
+# ESPN exposes college sports as separate sport/league pairs. Keep these
+# explicit instead of treating NCAA as one generic competition. College
+# schedules are seasonal, so they get a longer look-ahead window below.
 LEAGUES = [
-    ('NFL','football','nfl','🏈'), ('NCAA FB','football','college-football','🏈'), ('CFL','football','cfl','🏈'),
-    ('NBA','basketball','nba','🏀'), ('WNBA','basketball','wnba','🏀'),
-    ('NCAA BB','basketball','mens-college-basketball','🏀'), ('NCAA WBB','basketball','womens-college-basketball','🏀'),
-    ('MLB','baseball','mlb','⚾'), ('NCAA Baseball','baseball','college-baseball','⚾'),
-    ('NHL','hockey','nhl','🏒'),
-    ('MLS','soccer','usa.1','⚽'), ('EPL','soccer','eng.1','⚽'), ('UCL','soccer','uefa.champions','⚽'),
-    ('LaLiga','soccer','esp.1','⚽'), ('Serie A','soccer','ita.1','⚽'), ('Bundesliga','soccer','ger.1','⚽'), ('Ligue 1','soccer','fra.1','⚽'),
-    ('UFC','mma','ufc','🥊'),
-    ('F1','racing','f1','🏎️'), ('IndyCar','racing','irl','🏎️'), ('NASCAR Cup','racing','nascar-premier','🏎️'),
-    ('PGA','golf','pga','⛳'), ('LPGA','golf','lpga','⛳'), ('LIV Golf','golf','liv','⛳'),
-    ('ATP','tennis','atp','🎾'), ('WTA','tennis','wta','🎾'),
-    ('PLL','lacrosse','pll','🥍'), ('NLL','lacrosse','nll','🥍'),
-    ('FIVB Men','volleyball','fivb.m','🏐'), ('FIVB Women','volleyball','fivb.w','🏐'),
-    ('Rugby World Cup','rugby','164205','🏉'), ('Six Nations','rugby','180659','🏉'),
-    ('NRL','rugby-league','3','🏉'), ('AFL','australian-football','afl','🏉'),
-    ('ICC T20','cricket','icc.t20','🏏'), ('IPL','cricket','ipl','🏏'),
+    ('NFL','football','nfl','🏈',14), ('NCAA FB','football','college-football','🏈',60), ('CFL','football','cfl','🏈',30),
+    ('NBA','basketball','nba','🏀',30), ('WNBA','basketball','wnba','🏀',30),
+    ('NCAA BB','basketball','mens-college-basketball','🏀',180), ('NCAA WBB','basketball','womens-college-basketball','🏀',180),
+    ('MLB','baseball','mlb','⚾',30), ('NCAA Baseball','baseball','college-baseball','⚾',180),
+    ('NCAA Softball','baseball','college-softball','🥎',180),
+    ('NHL','hockey','nhl','🏒',30),
+    ('NCAA Men's Hockey','hockey','mens-college-hockey','🏒',180),
+    ('NCAA Women's Hockey','hockey','womens-college-hockey','🏒',180),
+    ('MLS','soccer','usa.1','⚽',30), ('EPL','soccer','eng.1','⚽',30), ('UCL','soccer','uefa.champions','⚽',30),
+    ('LaLiga','soccer','esp.1','⚽',30), ('Serie A','soccer','ita.1','⚽',30), ('Bundesliga','soccer','ger.1','⚽',30), ('Ligue 1','soccer','fra.1','⚽',30),
+    ('NCAA Men's Soccer','soccer','usa.ncaa.m.1','⚽',180), ('NCAA Women's Soccer','soccer','usa.ncaa.w.1','⚽',180),
+    ('NCAA Men's Lacrosse','lacrosse','mens-college-lacrosse','🥍',180), ('NCAA Women's Lacrosse','lacrosse','womens-college-lacrosse','🥍',180),
+    ('NCAA Men's Volleyball','volleyball','mens-college-volleyball','🏐',180), ('NCAA Women's Volleyball','volleyball','womens-college-volleyball','🏐',180),
+    ('NCAA Men's Water Polo','water-polo','mens-college-water-polo','🤽',180), ('NCAA Women's Water Polo','water-polo','womens-college-water-polo','🤽',180),
+    ('NCAA Women's Field Hockey','field-hockey','womens-college-field-hockey','🏑',180),
+    ('UFC','mma','ufc','🥊',30),
+    ('F1','racing','f1','🏎️',30), ('IndyCar','racing','irl','🏎️',30), ('NASCAR Cup','racing','nascar-premier','🏎️',30),
+    ('PGA','golf','pga','⛳',30), ('LPGA','golf','lpga','⛳',30), ('LIV Golf','golf','liv','⛳',30),
+    ('ATP','tennis','atp','🎾',30), ('WTA','tennis','wta','🎾',30),
+    ('PLL','lacrosse','pll','🥍',30), ('NLL','lacrosse','nll','🥍',30),
+    ('FIVB Men','volleyball','fivb.m','🏐',30), ('FIVB Women','volleyball','fivb.w','🏐',30),
+    ('Rugby World Cup','rugby','164205','🏉',30), ('Six Nations','rugby','180659','🏉',30),
+    ('NRL','rugby-league','3','🏉',30), ('AFL','australian-football','afl','🏉',30),
+    ('ICC T20','cricket','icc.t20','🏏',30), ('IPL','cricket','ipl','🏏',30),
 ]
 
 WRESTLING_FALLBACK = [
@@ -50,16 +61,17 @@ def get(url):
     with urllib.request.urlopen(req, timeout=12) as r:
         return r.read()
 
-def add_espn(events, name, sport, league, icon):
+def add_espn(events, name, sport, league, icon, days):
     start = datetime.now(timezone.utc).date()
-    end = start + timedelta(days=14)
+    end = start + timedelta(days=days)
     dates = f'{start:%Y%m%d}-{end:%Y%m%d}'
-    url = f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={dates}&limit=500'
+    url = f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={dates}&limit=5000'
     try:
         root = json.loads(get(url))
     except Exception as exc:
-        print(f'skip {name}: {exc}')
-        return
+        print(f'ERROR {name}: {exc}')
+        return False
+
     for event in root.get('events', []):
         comp = (event.get('competitions') or [{}])[0]
         teams = comp.get('competitors') or []
@@ -72,6 +84,7 @@ def add_espn(events, name, sport, league, icon):
         start_at = event.get('date')
         if start_at:
             events.append({'league':name,'title':title,'start':start_at,'tag':tag,'icon':icon})
+    return True
 
 def jsonld_objects(html):
     for match in re.findall(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', html, re.I | re.S):
@@ -122,15 +135,50 @@ def add_wrestling(events):
 
 def main():
     events=[]
+    failures=[]
     for league in LEAGUES:
-        add_espn(events,*league)
+        ok = add_espn(events,*league)
+        if not ok:
+            failures.append(league[0])
     add_wrestling(events)
+
+    # Never replace a known-good feed because one upstream provider had a
+    # transient failure. This is especially important for college schedules,
+    # where many separate ESPN league endpoints are queried.
+    if failures and OUT.exists():
+        try:
+            previous = json.loads(OUT.read_text(encoding='utf-8'))
+            previous_events = previous.get('events') or []
+            if previous_events:
+                failed_prefixes = tuple(failures)
+                events = [e for e in events if not str(e.get('league','')).startswith(failed_prefixes)]
+                events.extend(e for e in previous_events if str(e.get('league','')) in failures)
+                print(f'preserved {len(previous_events)} prior events for failed leagues: {", ".join(failures)}')
+        except Exception as exc:
+            print(f'warning: could not preserve prior feed: {exc}')
+
+    # Keep a healthy, broad feed. Do not apply one global 600-event cap that
+    # lets high-volume football/basketball crowd out smaller college sports.
     events.sort(key=lambda x:x['start'])
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    payload={'schema':2,'generatedAt':datetime.now(timezone.utc).isoformat(),'refreshHours':6,'events':events[:600]}
+    per_league = {}
+    for event in events:
+        per_league[event['league']] = per_league.get(event['league'], 0) + 1
+    selected=[]
+    for league_name in sorted(per_league, key=lambda n: min(x['start'] for x in events if x['league']==n)):
+        league_events=[x for x in events if x['league']==league_name]
+        selected.extend(league_events[:400])
+
+    payload={
+        'schema':4,
+        'generatedAt':datetime.now(timezone.utc).isoformat(),
+        'refreshHours':6,
+        'eventCounts':per_league,
+        'failedSources':failures,
+        'events':sorted(selected, key=lambda x:x['start'])
+    }
     tmp=OUT.with_suffix('.tmp')
     tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
     tmp.replace(OUT)
-    print(f'wrote {len(events)} events to {OUT}')
+    print(f'wrote {len(selected)} events across {len(per_league)} leagues to {OUT}')
 
 if __name__ == '__main__': main()
