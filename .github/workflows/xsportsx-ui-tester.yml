@@ -146,11 +146,12 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            set -euo pipefail
-            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
-            test -n "$APK" && test -s "$APK"
-            chmod +x scripts/qa_regression_test.sh
-            QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
+            bash -euo pipefail -c '
+              APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name "app-mobile-debug.apk" -print -quit)
+              test -n "$APK" && test -s "$APK"
+              chmod +x scripts/qa_regression_test.sh
+              QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
+            '
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -187,11 +188,12 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            set -euo pipefail
-            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
-            test -n "$APK" && test -s "$APK"
-            chmod +x scripts/qa_regression_test.sh
-            QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
+            bash -euo pipefail -c '
+              APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name "app-tv-debug.apk" -print -quit)
+              test -n "$APK" && test -s "$APK"
+              chmod +x scripts/qa_regression_test.sh
+              QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
+            '
       - uses: actions/upload-artifact@v4
         if: always()
         with:
