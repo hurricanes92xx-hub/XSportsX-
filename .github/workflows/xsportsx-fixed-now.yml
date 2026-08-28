@@ -44,8 +44,20 @@ jobs:
         with:
           name: fixed-now-apks
           path: test-apks
-      - name: Validate committed launcher resolution
-        run: bash -n scripts/qa_regression_test.sh
+      - name: Patch launcher resolution to use Android's launcher intent
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('scripts/qa_regression_test.sh')
+          s=p.read_text()
+          pattern=r'RESOLVE_RAW="\$\(adb shell cmd package resolve-activity.*?printf .*?resolve-activity\.txt";'
+          replacement='''LAUNCH_RESOLVE_OUTPUT="$(adb shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p "$PACKAGE" 2>&1 || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$LAUNCH_RESOLVE_OUTPUT" | sed -n 's/^Activity: //p' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$LAUNCH_RESOLVE_OUTPUT" > "$OUT/resolve-activity-raw.txt"; fail "Android launcher intent could not resolve $PACKAGE (raw: $LAUNCH_RESOLVE_OUTPUT)"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity via Android MAIN/LAUNCHER intent: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          s2=re.sub(pattern,replacement,s,count=1)
+          assert s2 != s, 'launcher resolver patch did not match'
+          p.write_text(s2)
+          PY
+          bash -n scripts/qa_regression_test.sh
       - run: sudo chmod 666 /dev/kvm
       - name: Run fixed mobile regression
         uses: reactivecircus/android-emulator-runner@v2
@@ -84,8 +96,20 @@ jobs:
         with:
           name: fixed-now-apks
           path: test-apks
-      - name: Validate committed launcher resolution
-        run: bash -n scripts/qa_regression_test.sh
+      - name: Patch launcher resolution to use Android's launcher intent
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('scripts/qa_regression_test.sh')
+          s=p.read_text()
+          pattern=r'RESOLVE_RAW="\$\(adb shell cmd package resolve-activity.*?printf .*?resolve-activity\.txt";'
+          replacement='''LAUNCH_RESOLVE_OUTPUT="$(adb shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p "$PACKAGE" 2>&1 || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$LAUNCH_RESOLVE_OUTPUT" | sed -n 's/^Activity: //p' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$LAUNCH_RESOLVE_OUTPUT" > "$OUT/resolve-activity-raw.txt"; fail "Android launcher intent could not resolve $PACKAGE (raw: $LAUNCH_RESOLVE_OUTPUT)"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity via Android MAIN/LAUNCHER intent: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          s2=re.sub(pattern,replacement,s,count=1)
+          assert s2 != s, 'launcher resolver patch did not match'
+          p.write_text(s2)
+          PY
+          bash -n scripts/qa_regression_test.sh
       - run: sudo chmod 666 /dev/kvm
       - name: Run fixed TV regression
         uses: reactivecircus/android-emulator-runner@v2
