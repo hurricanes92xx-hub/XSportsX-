@@ -93,7 +93,7 @@ class MainActivityFuture : ComponentActivity() {
                         }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(
-                            onConnect = { schedules = true },
+                            onConnect = { connectSource = true },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") {
                                     selectedScheduleLeague = network.name
