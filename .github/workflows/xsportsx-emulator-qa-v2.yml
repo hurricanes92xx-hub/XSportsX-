@@ -1,4 +1,4 @@
-name: XSportsX Emulator QA v2
+name: XSportsX Emulator QA v3
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: xsportsx-emulator-qa-v2-${{ github.ref }}
+  group: xsportsx-emulator-qa-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -92,10 +92,7 @@ jobs:
           ! grep -Eq 'SportVisual\("[^"]+"[^)]*https?://' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
       - name: Build debug APKs
-        shell: bash
-        run: |
-          set -eu
-          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+        run: gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
         shell: bash
         run: |
@@ -120,53 +117,46 @@ jobs:
         with:
           name: XSportsX-emulator-qa-apks-${{ github.sha }}
           path: test-apks
-      - name: Resolve downloaded mobile APK
+      - name: Resolve mobile APK
         shell: bash
         run: |
           set -eu
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
-          test -n "$APK" && test -s "$APK"
+          test -s "$APK"
           echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
+        run: python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
+      - name: Enable KVM
         shell: bash
         run: |
-          set -eu
-          python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
       - name: Run mobile emulator regression
-        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          profile: pixel_2
+          profile: pixel_5
           avd-name: xsportsx-mobile
           force-avd-creation: true
-          ram-size: 4096
-          heap-size: 1024
-          disk-size: 4G
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
           emulator-boot-timeout: 600
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: |
             set -euo pipefail
             adb start-server
-            for i in $(seq 1 120); do
-              state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
-              if [ "$state" = "device" ]; then break; fi
-              adb reconnect offline >/dev/null 2>&1 || true
-              sleep 2
-            done
-            state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
-            echo "Final ADB state: $state"
-            test "$state" = "device"
-            for i in $(seq 1 120); do
-              boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
-              if [ "$boot" = "1" ]; then break; fi
-              sleep 2
-            done
-            boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
-            echo "Final boot state: $boot"
-            test "$boot" = "1"
+            adb wait-for-device
+            echo "ADB state: $(adb -s emulator-5554 get-state)"
+            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
@@ -197,53 +187,46 @@ jobs:
         with:
           name: XSportsX-emulator-qa-apks-${{ github.sha }}
           path: test-apks
-      - name: Resolve downloaded TV APK
+      - name: Resolve TV APK
         shell: bash
         run: |
           set -eu
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
-          test -n "$APK" && test -s "$APK"
+          test -s "$APK"
           echo "TV_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
+        run: python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
+      - name: Enable KVM
         shell: bash
         run: |
-          set -eu
-          python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
       - name: Run TV emulator regression
-        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
-          target: google_apis
+          target: google_tv
           arch: x86_64
           profile: tv_1080p
           avd-name: xsportsx-tv
           force-avd-creation: true
-          ram-size: 4096
-          heap-size: 1024
-          disk-size: 4G
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
           emulator-boot-timeout: 600
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: |
             set -euo pipefail
             adb start-server
-            for i in $(seq 1 120); do
-              state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
-              if [ "$state" = "device" ]; then break; fi
-              adb reconnect offline >/dev/null 2>&1 || true
-              sleep 2
-            done
-            state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
-            echo "Final ADB state: $state"
-            test "$state" = "device"
-            for i in $(seq 1 120); do
-              boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
-              if [ "$boot" = "1" ]; then break; fi
-              sleep 2
-            done
-            boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
-            echo "Final boot state: $boot"
-            test "$boot" = "1"
+            adb wait-for-device
+            echo "ADB state: $(adb -s emulator-5554 get-state)"
+            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
