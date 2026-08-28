@@ -133,30 +133,33 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Run mobile emulator regression
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: pixel_2
-          force-avd-creation: true
-          emulator-boot-timeout: 300
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -wipe-data
+          avd-name: xsportsx-mobile
+          force-avd-creation: false
+          ram-size: 4096M
+          heap-size: 1024M
+          disk-size: 4G
+          emulator-boot-timeout: 600
+          after-boot-delay: 30000
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
           disable-animations: true
           script: |
             set -euo pipefail
-            adb kill-server >/dev/null 2>&1 || true
-            adb start-server >/dev/null 2>&1
-            for i in $(seq 1 90); do
+            adb devices
+            for i in $(seq 1 60); do
               state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
               if [ "$state" = "device" ]; then break; fi
-              if [ $((i % 15)) -eq 0 ]; then
-                adb reconnect offline >/dev/null 2>&1 || true
-              fi
+              adb reconnect device >/dev/null 2>&1 || true
               sleep 2
             done
             state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
             test "$state" = "device"
+            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
@@ -200,30 +203,33 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Run TV emulator regression
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: tv_1080p
-          force-avd-creation: true
-          emulator-boot-timeout: 300
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -wipe-data
+          avd-name: xsportsx-tv
+          force-avd-creation: false
+          ram-size: 4096M
+          heap-size: 1024M
+          disk-size: 4G
+          emulator-boot-timeout: 600
+          after-boot-delay: 30000
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
           disable-animations: true
           script: |
             set -euo pipefail
-            adb kill-server >/dev/null 2>&1 || true
-            adb start-server >/dev/null 2>&1
-            for i in $(seq 1 90); do
+            adb devices
+            for i in $(seq 1 60); do
               state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
               if [ "$state" = "device" ]; then break; fi
-              if [ $((i % 15)) -eq 0 ]; then
-                adb reconnect offline >/dev/null 2>&1 || true
-              fi
+              adb reconnect device >/dev/null 2>&1 || true
               sleep 2
             done
             state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
             test "$state" = "device"
+            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
