@@ -2,11 +2,12 @@
 """Local-only deterministic Xtream/M3U fixture server for emulator QA.
 Never contacts or stores real provider credentials."""
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-HOST = "0.0.0.0"
-PORT = 8765
+HOST = os.environ.get("QA_SOURCE_HOST", "0.0.0.0")
+PORT = int(os.environ.get("QA_SOURCE_PORT", "8765"))
 USER = "qauser"
 PASS = "qapass"
 TOKEN = "qa-token"
@@ -58,9 +59,12 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json({"epg_listings": []}); return
             self.send_json([]); return
         if u.path.startswith("/stream/"):
-            # Valid HTTP endpoint for player-handoff testing; no real media is served.
             self.send_response(200); self.send_header("Content-Type", "video/mp2t"); self.end_headers(); return
         self.send_response(404); self.end_headers()
 
+class ReusableThreadingHTTPServer(ThreadingHTTPServer):
+    allow_reuse_address = True
+
 if __name__ == "__main__":
-    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
+    print(f"QA source fixture listening on {HOST}:{PORT}", flush=True)
+    ReusableThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
