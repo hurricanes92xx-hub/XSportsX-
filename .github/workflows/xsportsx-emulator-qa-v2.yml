@@ -93,11 +93,13 @@ jobs:
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
       - name: Build debug APKs
         shell: bash
-        run: gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+        run: |
+          set -eu
+          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
         shell: bash
         run: |
-          set -euo pipefail
+          set -eu
           test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
           test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
       - uses: actions/upload-artifact@v4
@@ -111,7 +113,7 @@ jobs:
   mobile:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -121,15 +123,14 @@ jobs:
       - name: Resolve downloaded mobile APK
         shell: bash
         run: |
-          set -euo pipefail
+          set -eu
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
           test -n "$APK" && test -s "$APK"
           echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
-          echo "Resolved mobile APK: $APK"
       - name: Probe public schedules outside emulator
         shell: bash
         run: |
-          set -euo pipefail
+          set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Run mobile emulator regression
         uses: reactivecircus/android-emulator-runner@v2
@@ -141,16 +142,21 @@ jobs:
           force-avd-creation: false
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
-          disable-animations: true
+          disable-animations: false
           script: |
             set -eu
+            adb start-server >/dev/null 2>&1 || true
+            for i in $(seq 1 60); do
+              state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
+              if [ "$state" = "device" ]; then break; fi
+              adb reconnect offline >/dev/null 2>&1 || true
+              sleep 2
+            done
+            test "$(adb -s emulator-5554 get-state 2>/dev/null)" = "device"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
-            for i in $(seq 1 30); do
-              curl -fsS http://127.0.0.1:8765/health >/dev/null && break
-              sleep 1
-            done
+            for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && break; sleep 1; done
             curl -fsS http://127.0.0.1:8765/health >/dev/null
             curl -fsS http://10.0.2.2:8765/health >/dev/null
             bash scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
@@ -170,7 +176,7 @@ jobs:
   tv:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -180,15 +186,14 @@ jobs:
       - name: Resolve downloaded TV APK
         shell: bash
         run: |
-          set -euo pipefail
+          set -eu
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
           test -n "$APK" && test -s "$APK"
           echo "TV_APK=$APK" >> "$GITHUB_ENV"
-          echo "Resolved TV APK: $APK"
       - name: Probe public schedules outside emulator
         shell: bash
         run: |
-          set -euo pipefail
+          set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Run TV emulator regression
         uses: reactivecircus/android-emulator-runner@v2
@@ -200,16 +205,21 @@ jobs:
           force-avd-creation: false
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
-          disable-animations: true
+          disable-animations: false
           script: |
             set -eu
+            adb start-server >/dev/null 2>&1 || true
+            for i in $(seq 1 60); do
+              state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
+              if [ "$state" = "device" ]; then break; fi
+              adb reconnect offline >/dev/null 2>&1 || true
+              sleep 2
+            done
+            test "$(adb -s emulator-5554 get-state 2>/dev/null)" = "device"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
-            for i in $(seq 1 30); do
-              curl -fsS http://127.0.0.1:8765/health >/dev/null && break
-              sleep 1
-            done
+            for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && break; sleep 1; done
             curl -fsS http://127.0.0.1:8765/health >/dev/null
             curl -fsS http://10.0.2.2:8765/health >/dev/null
             bash scripts/qa_regression_test.sh "$TV_APK" test-output-tv
