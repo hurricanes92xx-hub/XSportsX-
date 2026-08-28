@@ -1,0 +1,46 @@
+name: XSportsX Fast QA Gate
+
+on:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/**'
+      - 'app/src/main/java/**'
+      - '.github/workflows/xsportsx-fast-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xsportsx-fast-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run fast schedule/source checks
+        shell: bash
+        run: |
+          set -eu
+          python3 scripts/qa_public_schedule_probe.py fast-schedule.json
+          test -s fast-schedule.json
+          python3 - <<'PY'
+          import json
+          p='fast-schedule.json'
+          d=json.load(open(p))
+          print('Fast QA schedule probe passed:', type(d).__name__)
+          PY
+      - name: Verify bundled sports/logo invariants
+        shell: bash
+        run: |
+          set -eu
+          for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do
+            test -s "app/src/main/assets/brand_logos/$logo.svg"
+          done
+          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
