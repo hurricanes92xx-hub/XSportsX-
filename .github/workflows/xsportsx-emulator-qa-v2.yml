@@ -1,0 +1,152 @@
+name: XSportsX Emulator QA v2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'app/**'
+      - 'scripts/**'
+      - '.github/workflows/xsportsx-emulator-qa-v2.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xsportsx-emulator-qa-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_VERSION: '8.13'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Build debug APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+      - name: Verify APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+          test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XSportsX-emulator-qa-apks-${{ github.sha }}
+          path: |
+            app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+            app/build/outputs/apk/tv/debug/app-tv-debug.apk
+          if-no-files-found: error
+
+  mobile:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: XSportsX-emulator-qa-apks-${{ github.sha }}
+          path: test-apks
+      - name: Probe public schedules outside emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
+      - name: Start QA source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat qa-source.log
+          exit 1
+      - name: Run mobile emulator regression
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          force-avd-creation: true
+          emulator-boot-timeout: 900
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          disable-animations: true
+          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app-mobile-debug.apk" test-output-mobile
+        env:
+          QA_MODE: mobile
+          QA_SOURCE_BASE: http://10.0.2.2:8765
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: XSportsX-mobile-emulator-qa-${{ github.sha }}
+          path: |
+            test-output-mobile/**
+            qa-source.log
+            public-schedule-mobile.json
+          if-no-files-found: ignore
+
+  tv:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: XSportsX-emulator-qa-apks-${{ github.sha }}
+          path: test-apks
+      - name: Probe public schedules outside emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
+      - name: Start QA source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat qa-source.log
+          exit 1
+      - name: Run TV emulator regression
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: tv_1080p
+          force-avd-creation: true
+          emulator-boot-timeout: 900
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          disable-animations: true
+          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app-tv-debug.apk" test-output-tv
+        env:
+          QA_MODE: tv
+          QA_SOURCE_BASE: http://10.0.2.2:8765
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: XSportsX-tv-emulator-qa-${{ github.sha }}
+          path: |
+            test-output-tv/**
+            qa-source.log
+            public-schedule-tv.json
+          if-no-files-found: ignore
