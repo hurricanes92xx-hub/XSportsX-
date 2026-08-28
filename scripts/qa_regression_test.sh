@@ -15,7 +15,6 @@ case "$MODE" in
   mobile|tv) PACKAGE="com.xsportsx.app.${MODE}" ;;
   *) echo "[QA][FAIL] Unsupported QA_MODE '$MODE' (expected mobile or tv)" >&2; exit 2 ;;
 esac
-ACTIVITY="${PACKAGE}/.MainActivityFuture"
 mkdir -p "$OUT"
 
 adb wait-for-device
@@ -90,8 +89,18 @@ PY
 adb shell am force-stop "$PACKAGE" || true
 log "Resolved QA mode: $MODE"
 log "Using package: $PACKAGE"
-log "Using activity: $ACTIVITY"
-adb shell cmd package resolve-activity --brief "$PACKAGE" | tee "$OUT/resolve-activity.txt" || true
+
+# Resolve the actual launcher component from the installed APK instead of
+# reconstructing the class from the flavor applicationId. The source package
+# (com.xsportsx.app) and the flavored applicationId (com.xsportsx.app.mobile/tv)
+# are intentionally different; Android's resolver returns the authoritative
+# ComponentName for that exact installed variant.
+RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\.xsportsx\.app\.(mobile|tv)/' | tail -n 1 | tr -d '\r')"
+[[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"
+ACTIVITY="$RESOLVED_ACTIVITY"
+log "Resolved launcher activity: $ACTIVITY"
+printf '%s\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt"
+
 log "Launching $ACTIVITY explicitly"
 START_OUTPUT="$(adb shell am start -W -n "$ACTIVITY" 2>&1)" || { echo "$START_OUTPUT"; fail "Explicit activity launch command failed"; }
 printf '%s\n' "$START_OUTPUT" | tee "$OUT/launch-result.txt"
