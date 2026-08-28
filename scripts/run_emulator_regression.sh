@@ -10,7 +10,8 @@ if [[ -z "$APK" || -z "$MODE" || -z "$OUTDIR" ]]; then
   exit 2
 fi
 
-QA_SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
+SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
+HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
 
 echo "Starting XSportsX ${MODE} emulator regression"
 adb start-server
@@ -22,10 +23,10 @@ echo "Boot completed: ${boot_completed}"
 test "$adb_state" = device
 test "$boot_completed" = 1
 
-echo "Checking QA source fixture at ${QA_SOURCE_BASE}/health"
+echo "Checking QA source fixture on host at ${HOST_SOURCE_BASE}/health"
 server_ready=0
 for i in $(seq 1 30); do
-  if curl -fsS --max-time 2 "${QA_SOURCE_BASE}/health" >/dev/null; then
+  if curl -fsS --max-time 2 "${HOST_SOURCE_BASE}/health" >/dev/null; then
     server_ready=1
     break
   fi
@@ -33,12 +34,12 @@ for i in $(seq 1 30); do
 done
 
 if [[ "$server_ready" != 1 ]]; then
-  echo "QA source fixture is not reachable at ${QA_SOURCE_BASE}/health"
+  echo "QA source fixture is not reachable at ${HOST_SOURCE_BASE}/health"
   echo "Host-side diagnostic:"
-  curl -v --max-time 3 http://127.0.0.1:8765/health || true
+  curl -v --max-time 3 "${HOST_SOURCE_BASE}/health" || true
   exit 1
 fi
 
-echo "QA source fixture reachable from emulator host route."
+echo "QA source fixture is alive on the host. Android will use ${SOURCE_BASE}."
 chmod +x scripts/qa_regression_test.sh
-QA_MODE="$MODE" QA_SOURCE_BASE="$QA_SOURCE_BASE" ./scripts/qa_regression_test.sh "$APK" "$OUTDIR"
+QA_MODE="$MODE" QA_SOURCE_BASE="$SOURCE_BASE" QA_SOURCE_HOST_BASE="$HOST_SOURCE_BASE" ./scripts/qa_regression_test.sh "$APK" "$OUTDIR"
