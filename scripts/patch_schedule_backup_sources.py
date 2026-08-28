@@ -5,8 +5,14 @@ import re
 SERVICE = Path('app/src/main/java/com/xsportsx/app/SportsScheduleService.kt')
 s = SERVICE.read_text(encoding='utf-8')
 
+# ESPN's site.api edge has a 2026 User-Agent classification change: spoofed
+# browser UAs can be rejected with 403. Keep the Android client on an honest,
+# descriptive transport identity instead of Chrome impersonation.
+s = s.replace('setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/136.0.0.0 Mobile Safari/537.36")', 'setRequestProperty("User-Agent", "XSportsX/2.0 Android")')
+
 MARKER = 'TSDB_LONG_TAIL_BACKUP_V1'
 if MARKER in s:
+    SERVICE.write_text(s, encoding='utf-8')
     print('Schedule backup sources already present')
     raise SystemExit(0)
 
@@ -70,8 +76,6 @@ if 'TSDB_LONG_TAIL_LEAGUES' not in s:
         raise SystemExit('league choices anchor not found')
     s = s.replace(anchor, LEAGUES + anchor, 1)
 
-# Include long-tail events in the top-level filter without depending on one
-# exact result-pipeline shape from earlier schedule patches.
 old_filter = 'leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming)'
 new_filter = '(leagues.any { it.league == normalizeLeague(event.league) } || TSDB_LONG_TAIL_LEAGUES.contains(normalizeLeague(event.league))) && (event.isLive || event.isPregame() || event.isUpcoming)'
 if old_filter in s and 'TSDB_LONG_TAIL_LEAGUES.contains(normalizeLeague(event.league))' not in s:
@@ -147,9 +151,6 @@ IMPLEMENTATION = r'''    private suspend fun fetchTheSportsDbLongTailFallbacks()
 
 '''
 
-# Prefer a canonical-key function, but tolerate it being rewritten by another
-# patch. Normalize/fetchEspn are stable fallbacks. The implementation itself does
-# not depend on canonicalKey, so any of these anchors are safe.
 anchors = [
     '    private fun canonicalKey(event: SportsEvent): String = listOf(',
     '    private fun normalize(value: String): String =',
@@ -161,7 +162,6 @@ for anchor in anchors:
         s = s.replace(anchor, IMPLEMENTATION + anchor, 1)
         break
 else:
-    # Last safe fallback: insert immediately before the object's final brace.
     pos = s.rfind('\n}')
     if pos < 0:
         raise SystemExit('could not find safe insertion point for schedule backup implementation')
