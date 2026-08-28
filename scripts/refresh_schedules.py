@@ -1,30 +1,23 @@
 #!/usr/bin/env python3
 import json, re, urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 OUT = Path('data/schedule_feed.json')
-HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.1', 'Accept': 'application/json,text/html'}
+HEADERS = {'User-Agent': 'XSportsX-ScheduleBot/1.2', 'Accept': 'application/json,text/html'}
 
-# ESPN exposes college sports as separate sport/league pairs. Keep these
-# explicit instead of treating NCAA as one generic competition. College
-# schedules are seasonal, so they get a longer look-ahead window below.
-LEAGUES = [
+# ESPN remains the source for the pro leagues and the two college feeds that
+# are already known-good in XSportsX. NCAA college sports use the official
+# NCAA scoreboard API instead of ESPN's league-specific scoreboard IDs.
+ESPN_LEAGUES = [
     ('NFL','football','nfl','🏈',14), ('NCAA FB','football','college-football','🏈',60), ('CFL','football','cfl','🏈',30),
     ('NBA','basketball','nba','🏀',30), ('WNBA','basketball','wnba','🏀',30),
-    ('NCAA BB','basketball','mens-college-basketball','🏀',180), ('NCAA WBB','basketball','womens-college-basketball','🏀',180),
-    ('MLB','baseball','mlb','⚾',30), ('NCAA Baseball','baseball','college-baseball','⚾',180),
-    ('NCAA Softball','baseball','college-softball','🥎',180),
-    ('NHL','hockey','nhl','🏒',30),
-    ('NCAA Men's Hockey','hockey','mens-college-hockey','🏒',180),
-    ('NCAA Women's Hockey','hockey','womens-college-hockey','🏒',180),
+    ('NHL','hockey','nhl','🏒',30), ('NCAA Women\'s Hockey','hockey','womens-college-hockey','🏒',180),
+    ('MLB','baseball','mlb','⚾',30),
     ('MLS','soccer','usa.1','⚽',30), ('EPL','soccer','eng.1','⚽',30), ('UCL','soccer','uefa.champions','⚽',30),
     ('LaLiga','soccer','esp.1','⚽',30), ('Serie A','soccer','ita.1','⚽',30), ('Bundesliga','soccer','ger.1','⚽',30), ('Ligue 1','soccer','fra.1','⚽',30),
-    ('NCAA Men's Soccer','soccer','usa.ncaa.m.1','⚽',180), ('NCAA Women's Soccer','soccer','usa.ncaa.w.1','⚽',180),
-    ('NCAA Men's Lacrosse','lacrosse','mens-college-lacrosse','🥍',180), ('NCAA Women's Lacrosse','lacrosse','womens-college-lacrosse','🥍',180),
-    ('NCAA Men's Volleyball','volleyball','mens-college-volleyball','🏐',180), ('NCAA Women's Volleyball','volleyball','womens-college-volleyball','🏐',180),
-    ('NCAA Men's Water Polo','water-polo','mens-college-water-polo','🤽',180), ('NCAA Women's Water Polo','water-polo','womens-college-water-polo','🤽',180),
-    ('NCAA Women's Field Hockey','field-hockey','womens-college-field-hockey','🏑',180),
     ('UFC','mma','ufc','🥊',30),
     ('F1','racing','f1','🏎️',30), ('IndyCar','racing','irl','🏎️',30), ('NASCAR Cup','racing','nascar-premier','🏎️',30),
     ('PGA','golf','pga','⛳',30), ('LPGA','golf','lpga','⛳',30), ('LIV Golf','golf','liv','⛳',30),
@@ -34,6 +27,28 @@ LEAGUES = [
     ('Rugby World Cup','rugby','164205','🏉',30), ('Six Nations','rugby','180659','🏉',30),
     ('NRL','rugby-league','3','🏉',30), ('AFL','australian-football','afl','🏉',30),
     ('ICC T20','cricket','icc.t20','🏏',30), ('IPL','cricket','ipl','🏏',30),
+]
+
+# These are deliberately sourced from NCAA.com. ESPN's college league IDs
+# are inconsistent across sports; NCAA.com exposes one normalized scoreboard
+# contract for these sports. We refresh a practical 30-day horizon rather
+# than making hundreds of long-range calls.
+NCAA_LEAGUES = [
+    ('NCAA BB','basketball-men','d1','🏀'),
+    ('NCAA WBB','basketball-women','d1','🏀'),
+    ('NCAA Baseball','baseball','d1','⚾'),
+    ('NCAA Softball','softball','d1','🥎'),
+    ('NCAA Men\'s Hockey','icehockey-men','d1','🏒'),
+    ('NCAA Men\'s Soccer','soccer-men','d1','⚽'),
+    ('NCAA Women\'s Soccer','soccer-women','d1','⚽'),
+    ('NCAA Men\'s Lacrosse','lacrosse-men','d1','🥍'),
+    ('NCAA Women\'s Lacrosse','lacrosse-women','d1','🥍'),
+    ('NCAA Men\'s Volleyball','volleyball-men','d1','🏐'),
+    ('NCAA Women\'s Volleyball','volleyball-women','d1','🏐'),
+    ('NCAA Men\'s Water Polo','waterpolo-men','d1','🤽'),
+    ('NCAA Women\'s Water Polo','waterpolo-women','d1','🤽'),
+    ('NCAA Women\'s Field Hockey','fieldhockey-women','d1','🏑'),
+    ('NCAA Beach Volleyball','beach-volleyball','d1','🏐'),
 ]
 
 WRESTLING_FALLBACK = [
@@ -69,9 +84,8 @@ def add_espn(events, name, sport, league, icon, days):
     try:
         root = json.loads(get(url))
     except Exception as exc:
-        print(f'ERROR {name}: {exc}')
+        print(f'ERROR ESPN {name}: {exc}')
         return False
-
     for event in root.get('events', []):
         comp = (event.get('competitions') or [{}])[0]
         teams = comp.get('competitors') or []
@@ -84,6 +98,64 @@ def add_espn(events, name, sport, league, icon, days):
         start_at = event.get('date')
         if start_at:
             events.append({'league':name,'title':title,'start':start_at,'tag':tag,'icon':icon})
+    return True
+
+def parse_ncaa_time(start_date, start_time):
+    if not start_date:
+        return None
+    text = str(start_time or '').strip()
+    if not text:
+        return f'{start_date}T00:00:00Z'
+    text = re.sub(r'\s+', '', text.upper())
+    text = text.replace('ET', '')
+    for fmt in ('%Y-%m-%d%I:%M%p', '%Y-%m-%d%H:%M'):
+        try:
+            dt = datetime.strptime(f'{start_date}{text}', fmt).replace(tzinfo=ZoneInfo('America/New_York'))
+            return dt.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+        except ValueError:
+            pass
+    return f'{start_date}T00:00:00Z'
+
+def ncaa_day(url):
+    try:
+        return json.loads(get(url)), None
+    except Exception as exc:
+        return None, str(exc)
+
+def add_ncaa(events, name, sport, division, icon, days=30):
+    start = datetime.now(timezone.utc).date()
+    dates = [start + timedelta(days=i) for i in range(days + 1)]
+    # NCAA's public API is limited to roughly 5 requests/sec. Four workers
+    # keeps us below that limit while making the daily sweep fast enough for CI.
+    results = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = {
+            pool.submit(ncaa_day, f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{d:%Y/%m/%d}/all-conf'): d
+            for d in dates
+        }
+        for future in as_completed(futures):
+            root, error = future.result()
+            if error:
+                print(f'ERROR NCAA {name} {futures[future]}: {error}')
+                continue
+            results.append(root)
+
+    if not results:
+        return False
+    added = 0
+    for root in results:
+        for wrapper in root.get('games', []):
+            game = wrapper.get('game', wrapper) if isinstance(wrapper, dict) else {}
+            away = ((game.get('away') or {}).get('names') or {}).get('short') or ((game.get('away') or {}).get('names') or {}).get('full')
+            home = ((game.get('home') or {}).get('names') or {}).get('short') or ((game.get('home') or {}).get('names') or {}).get('full')
+            title = f'{away} @ {home}' if away and home else game.get('title') or name
+            state = str(game.get('gameState') or '').lower()
+            tag = 'LIVE' if state in ('live','in-progress','in') else ('FINAL' if state in ('final','f') else 'UPCOMING')
+            start_at = parse_ncaa_time(game.get('startDate'), game.get('startTime'))
+            if start_at:
+                events.append({'league':name,'title':title,'start':start_at,'tag':tag,'icon':icon})
+                added += 1
+    print(f'NCAA {name}: added {added} events')
     return True
 
 def jsonld_objects(html):
@@ -136,31 +208,41 @@ def add_wrestling(events):
 def main():
     events=[]
     failures=[]
-    for league in LEAGUES:
+    for league in ESPN_LEAGUES:
         ok = add_espn(events,*league)
+        if not ok:
+            failures.append(league[0])
+    for league in NCAA_LEAGUES:
+        ok = add_ncaa(events,*league)
         if not ok:
             failures.append(league[0])
     add_wrestling(events)
 
-    # Never replace a known-good feed because one upstream provider had a
-    # transient failure. This is especially important for college schedules,
-    # where many separate ESPN league endpoints are queried.
+    # Never replace a known-good league because one upstream provider had a
+    # transient failure. Preserve only the affected league from the prior feed.
     if failures and OUT.exists():
         try:
             previous = json.loads(OUT.read_text(encoding='utf-8'))
             previous_events = previous.get('events') or []
             if previous_events:
-                failed_prefixes = tuple(failures)
-                events = [e for e in events if not str(e.get('league','')).startswith(failed_prefixes)]
-                events.extend(e for e in previous_events if str(e.get('league','')) in failures)
-                print(f'preserved {len(previous_events)} prior events for failed leagues: {", ".join(failures)}')
+                failed_set = set(failures)
+                events = [e for e in events if e.get('league') not in failed_set]
+                events.extend(e for e in previous_events if e.get('league') in failed_set)
+                print(f'preserved prior events for failed leagues: {", ".join(failures)}')
         except Exception as exc:
             print(f'warning: could not preserve prior feed: {exc}')
 
-    # Keep a healthy, broad feed. Do not apply one global 600-event cap that
-    # lets high-volume football/basketball crowd out smaller college sports.
+    # Deduplicate the normalized feed. NCAA scoreboard days can overlap around
+    # timezone boundaries, and ESPN/NCAA can occasionally repeat an event.
+    unique={}
+    for e in events:
+        key=(e.get('league'), e.get('title'), e.get('start'))
+        unique[key]=e
+    events=list(unique.values())
     events.sort(key=lambda x:x['start'])
-    per_league = {}
+
+    # Per-league cap: no single high-volume sport can starve smaller sports.
+    per_league={}
     for event in events:
         per_league[event['league']] = per_league.get(event['league'], 0) + 1
     selected=[]
