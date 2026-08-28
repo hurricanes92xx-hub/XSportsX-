@@ -49,7 +49,6 @@ try:
     env["QA_SOURCE_HOST_BASE"] = host_base
     env["QA_SOURCE_PORT"] = str(port)
 
-    # Secondary deterministic route: Android localhost -> host through ADB.
     reverse = subprocess.run(
         ["adb", "reverse", f"tcp:{port}", f"tcp:{port}"],
         text=True,
@@ -64,14 +63,12 @@ try:
 
     print(f"[QA] Android source URL: {source_base}", flush=True)
 
-    # Explicitly install the APK. android-emulator-runner only boots the
-    # emulator and executes the supplied script; it does not install an
-    # arbitrary APK passed as an argument to this script. Without this step
-    # package-manager resolution can correctly return "No activity found"
-    # because the application is simply not present on the fresh AVD.
     if not os.path.isfile(apk) or os.path.getsize(apk) == 0:
         print(f"[QA][FAIL] APK missing or empty: {apk}", file=sys.stderr, flush=True)
         raise SystemExit(1)
+
+    print(f"[QA] Clearing prior app state: com.xsportsx.app.{mode}", flush=True)
+    subprocess.run(["adb", "shell", "pm", "clear", f"com.xsportsx.app.{mode}"], text=True, capture_output=True, check=False)
 
     print(f"[QA] Installing APK: {apk}", flush=True)
     install = subprocess.run(
@@ -102,11 +99,6 @@ try:
         raise SystemExit(1)
     print(f"[QA] Installed package verified: {expected_package}", flush=True)
 
-    # qa_regression_test.sh resolves the installed launcher's authoritative
-    # ComponentName from the package manager. Do not rewrite ACTIVITY here:
-    # the flavor applicationId (com.xsportsx.app.mobile/tv) intentionally
-    # differs from the Kotlin namespace (com.xsportsx.app), and Android needs
-    # the complete package/class component returned by cmd package.
     qa_script = "scripts/qa_regression_test.sh"
     print("[QA] launcher target will be resolved from installed APK", flush=True)
 
