@@ -133,14 +133,14 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Run mobile emulator regression
-        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: pixel_2
           avd-name: xsportsx-mobile
-          force-avd-creation: false
+          force-avd-creation: true
           ram-size: 4096M
           heap-size: 1024M
           disk-size: 4G
@@ -203,14 +203,14 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Run TV emulator regression
-        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: tv_1080p
           avd-name: xsportsx-tv
-          force-avd-creation: false
+          force-avd-creation: true
           ram-size: 4096M
           heap-size: 1024M
           disk-size: 4G
