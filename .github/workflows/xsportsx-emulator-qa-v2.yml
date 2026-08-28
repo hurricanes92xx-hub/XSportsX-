@@ -33,6 +33,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Preflight emulator QA scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/run_emulator_regression.sh
+          bash -n scripts/qa_regression_test.sh
+          python3 -m py_compile scripts/qa_source_probe.py scripts/qa_public_schedule_probe.py
+          echo "QA script syntax preflight passed"
       - name: Apply production UI and sports patches
         shell: bash
         run: |
