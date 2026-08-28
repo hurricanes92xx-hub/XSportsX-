@@ -33,40 +33,24 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
-
-      # The production APK workflow applies the idempotent source/UI patches
-      # before compiling. QA must build the same effective source tree; doing
-      # a raw checkout here can compile an unpatched tree and fail before the
-      # emulator jobs ever start.
       - name: Apply production UI and sports patches
         shell: bash
         run: |
           set -euo pipefail
           run_patch() {
-            local label="$1"
-            shift
-            local log rc
+            local label="$1"; shift; local log rc
             log=$(mktemp)
             echo "::group::${label}"
-            if "$@" > >(tee "$log") 2>&1; then
-              rc=0
-            else
-              rc=$?
-            fi
+            if "$@" > >(tee "$log") 2>&1; then rc=0; else rc=$?; fi
             if [ "$rc" -ne 0 ]; then
               if grep -Fq 'canonical key anchor not found' "$log"; then
                 echo "::warning::Ignored obsolete canonical-logo anchor failure from ${label}; post-patch build decides health."
               else
-                cat "$log"
-                echo "::endgroup::"
-                rm -f "$log"
-                return "$rc"
+                cat "$log"; echo "::endgroup::"; rm -f "$log"; return "$rc"
               fi
             fi
-            echo "::endgroup::"
-            rm -f "$log"
+            echo "::endgroup::"; rm -f "$log"
           }
-
           [ ! -f scripts/patch_tv_navigation.py ] || run_patch tv-navigation python3 scripts/patch_tv_navigation.py
           [ ! -f scripts/patch_college_favorites.py ] || run_patch college-favorites python3 scripts/patch_college_favorites.py
           run_patch sports-badges python3 scripts/patch_sports_badges.py
@@ -94,10 +78,7 @@ jobs:
           run_patch verify-yearly-policy python3 scripts/verify_yearly_schedule_policy.py
           run_patch verify-logo-catalog python3 scripts/verify_logo_catalog.py
           run_patch finalize-wrestling python3 scripts/finalize_wrestling_build.py
-
-          for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do
-            test -s "app/src/main/assets/brand_logos/$logo.svg"
-          done
+          for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do test -s "app/src/main/assets/brand_logos/$logo.svg"; done
           ! grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
           ! grep -Rqs 'SportVisual("ESPORTS"' app/src/main/java/com/xsportsx/app
           ! grep -Rqs 'SportVisual("ACTION SPORTS"' app/src/main/java/com/xsportsx/app
@@ -110,12 +91,9 @@ jobs:
           ! grep -Eq 'XNetwork\("[^"]+"[^)]*https?://' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           ! grep -Eq 'SportVisual\("[^"]+"[^)]*https?://' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
-
       - name: Build debug APKs
         shell: bash
-        run: |
-          set -euo pipefail
-          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+        run: gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
         shell: bash
         run: |
@@ -153,8 +131,7 @@ jobs:
             curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
             sleep 1
           done
-          cat qa-source.log
-          exit 1
+          cat qa-source.log; exit 1
       - name: Run mobile emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -166,7 +143,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app-mobile-debug.apk" test-output-mobile
+          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app/build/outputs/apk/mobile/debug/app-mobile-debug.apk" test-output-mobile
         env:
           QA_MODE: mobile
           QA_SOURCE_BASE: http://10.0.2.2:8765
@@ -203,8 +180,7 @@ jobs:
             curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
             sleep 1
           done
-          cat qa-source.log
-          exit 1
+          cat qa-source.log; exit 1
       - name: Run TV emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -216,7 +192,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app-tv-debug.apk" test-output-tv
+          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app/build/outputs/apk/tv/debug/app-tv-debug.apk" test-output-tv
         env:
           QA_MODE: tv
           QA_SOURCE_BASE: http://10.0.2.2:8765
