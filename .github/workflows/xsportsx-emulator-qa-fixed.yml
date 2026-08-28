@@ -1,0 +1,163 @@
+name: XSportsX Emulator QA Fixed
+
+on:
+  workflow_run:
+    workflows: [XSportsX Emulator QA v4]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: xsportsx-emulator-qa-fixed
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Download APKs from source QA run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$API" -o artifacts.json
+          URL=$(jq -r --arg n "XSportsX-emulator-qa-apks-${SHA}" '.artifacts[] | select(.name==$n) | .archive_download_url' artifacts.json | head -n1)
+          test -n "$URL" && test "$URL" != null
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$URL" -o apks.zip
+          mkdir -p test-apks
+          unzip -q apks.zip -d test-apks
+          test -s "$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)"
+          test -s "$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
+          path: test-apks/**/*.apk
+          if-no-files-found: error
+
+  mobile:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
+          path: test-apks
+      - name: Patch QA launcher resolution in runner copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/qa_regression_test.sh')
+          s = p.read_text()
+          old = '''RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r')"; [[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          new = '''RESOLVE_RAW="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$RESOLVE_RAW" | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$RESOLVE_RAW" > "$OUT/resolve-activity-raw.txt"; fail "Could not resolve launcher activity for $PACKAGE; raw resolver output saved"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          if old not in s:
+              raise SystemExit('expected launcher-resolution block not found')
+          p.write_text(s.replace(old, new, 1))
+          print('patched launcher resolution')
+          PY
+          bash -n scripts/qa_regression_test.sh
+      - name: Enable KVM
+        run: |
+          sudo chmod 666 /dev/kvm
+      - name: Run fixed mobile emulator regression
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          avd-name: xsportsx-mobile-fixed
+          force-avd-creation: true
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
+          disable-animations: true
+          pre-emulator-launch-script: adb kill-server || true
+          script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile-fixed
+        env:
+          MOBILE_APK: ${{ github.workspace }}/test-apks/app-mobile-debug.apk
+          QA_MODE: mobile
+          QA_SOURCE_PORT: 8765
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xsportsx-fixed-mobile-${{ github.event.workflow_run.id }}
+          path: test-output-mobile-fixed/**
+          if-no-files-found: ignore
+
+  tv:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: xsportsx-fixed-apks-${{ github.event.workflow_run.id }}
+          path: test-apks
+      - name: Patch QA launcher resolution in runner copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/qa_regression_test.sh')
+          s = p.read_text()
+          old = '''RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r')"; [[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          new = '''RESOLVE_RAW="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$RESOLVE_RAW" | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$RESOLVE_RAW" > "$OUT/resolve-activity-raw.txt"; fail "Could not resolve launcher activity for $PACKAGE; raw resolver output saved"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
+          if old not in s:
+              raise SystemExit('expected launcher-resolution block not found')
+          p.write_text(s.replace(old, new, 1))
+          print('patched launcher resolution')
+          PY
+          bash -n scripts/qa_regression_test.sh
+      - name: Enable KVM
+        run: |
+          sudo chmod 666 /dev/kvm
+      - name: Run fixed TV emulator regression
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: tv_1080p
+          avd-name: xsportsx-tv-fixed
+          force-avd-creation: true
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
+          disable-animations: true
+          pre-emulator-launch-script: adb kill-server || true
+          script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv-fixed
+        env:
+          TV_APK: ${{ github.workspace }}/test-apks/app-tv-debug.apk
+          QA_MODE: tv
+          QA_SOURCE_PORT: 8765
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xsportsx-fixed-tv-${{ github.event.workflow_run.id }}
+          path: test-output-tv-fixed/**
+          if-no-files-found: ignore
