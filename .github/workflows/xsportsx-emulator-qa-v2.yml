@@ -141,25 +141,32 @@ jobs:
           profile: pixel_2
           avd-name: xsportsx-mobile
           force-avd-creation: true
-          ram-size: 4096M
-          heap-size: 1024M
+          ram-size: 4096
+          heap-size: 1024
           disk-size: 4G
           emulator-boot-timeout: 600
-          after-boot-delay: 30000
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
           disable-animations: true
           script: |
             set -euo pipefail
-            adb devices
-            for i in $(seq 1 60); do
+            adb start-server
+            for i in $(seq 1 120); do
               state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
               if [ "$state" = "device" ]; then break; fi
-              adb reconnect device >/dev/null 2>&1 || true
+              adb reconnect offline >/dev/null 2>&1 || true
               sleep 2
             done
             state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
+            echo "Final ADB state: $state"
             test "$state" = "device"
-            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
+            for i in $(seq 1 120); do
+              boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+              if [ "$boot" = "1" ]; then break; fi
+              sleep 2
+            done
+            boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+            echo "Final boot state: $boot"
+            test "$boot" = "1"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
@@ -211,25 +218,32 @@ jobs:
           profile: tv_1080p
           avd-name: xsportsx-tv
           force-avd-creation: true
-          ram-size: 4096M
-          heap-size: 1024M
+          ram-size: 4096
+          heap-size: 1024
           disk-size: 4G
           emulator-boot-timeout: 600
-          after-boot-delay: 30000
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none
           disable-animations: true
           script: |
             set -euo pipefail
-            adb devices
-            for i in $(seq 1 60); do
+            adb start-server
+            for i in $(seq 1 120); do
               state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
               if [ "$state" = "device" ]; then break; fi
-              adb reconnect device >/dev/null 2>&1 || true
+              adb reconnect offline >/dev/null 2>&1 || true
               sleep 2
             done
             state=$(adb -s emulator-5554 get-state 2>/dev/null || true)
+            echo "Final ADB state: $state"
             test "$state" = "device"
-            adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
+            for i in $(seq 1 120); do
+              boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+              if [ "$boot" = "1" ]; then break; fi
+              sleep 2
+            done
+            boot=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+            echo "Final boot state: $boot"
+            test "$boot" = "1"
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
