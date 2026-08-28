@@ -93,9 +93,7 @@ jobs:
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
       - name: Build debug APKs
         shell: bash
-        run: |
-          set -eu
-          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+        run: gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
         shell: bash
         run: |
@@ -129,9 +127,7 @@ jobs:
           echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
         shell: bash
-        run: |
-          set -eu
-          python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
+        run: python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Enable KVM
         shell: bash
         run: |
@@ -157,22 +153,10 @@ jobs:
           pre-emulator-launch-script: |
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
-          script: |
-            set -eu
-            adb start-server
-            adb wait-for-device
-            echo "ADB state: $(adb -s emulator-5554 get-state)"
-            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
-            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-            QA_SERVER_PID=$!
-            trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
-            for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && break; sleep 1; done
-            curl -fsS http://127.0.0.1:8765/health >/dev/null
-            curl -fsS http://10.0.2.2:8765/health >/dev/null
-            bash scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
+          script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile
         env:
           QA_MODE: mobile
-          QA_SOURCE_BASE: http://10.0.2.2:8765
+          QA_SOURCE_PORT: 8765
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -202,9 +186,7 @@ jobs:
           echo "TV_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
         shell: bash
-        run: |
-          set -eu
-          python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
+        run: python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Enable KVM
         shell: bash
         run: |
@@ -230,22 +212,10 @@ jobs:
           pre-emulator-launch-script: |
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
-          script: |
-            set -eu
-            adb start-server
-            adb wait-for-device
-            echo "ADB state: $(adb -s emulator-5554 get-state)"
-            echo "Boot completed: $(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
-            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-            QA_SERVER_PID=$!
-            trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
-            for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && break; sleep 1; done
-            curl -fsS http://127.0.0.1:8765/health >/dev/null
-            curl -fsS http://10.0.2.2:8765/health >/dev/null
-            bash scripts/qa_regression_test.sh "$TV_APK" test-output-tv
+          script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv
         env:
           QA_MODE: tv
-          QA_SOURCE_BASE: http://10.0.2.2:8765
+          QA_SOURCE_PORT: 8765
       - uses: actions/upload-artifact@v4
         if: always()
         with:
