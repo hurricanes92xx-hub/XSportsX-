@@ -4,7 +4,10 @@ set -euo pipefail
 APK="${1:?APK path required}"
 OUT="${2:-test-output}"
 MODE="${QA_MODE:-mobile}"
+# SOURCE_BASE is the address the Android emulator uses to reach the host.
 SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
+# Host-side fixture checks must use loopback, not the emulator's 10.0.2.2 alias.
+HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
 PACKAGE="com.xsportsx.app"
 mkdir -p "$OUT"
 
@@ -53,18 +56,18 @@ input_text(){
 }
 
 # ----- Isolated source fixture + measurable source latency -----
-log "Checking isolated source fixture"
-curl -fsS "$SOURCE_BASE/health" >/dev/null
-curl -fsS "$SOURCE_BASE/playlist.m3u" | grep -q '#EXTM3U'
-curl -fsS "$SOURCE_BASE/playlist.m3u" | grep -q 'QA Sports One'
-curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass" | grep -q '"auth": 1'
-curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_categories" | grep -q 'QA Sports'
-curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_streams" | grep -q 'QA Sports One'
-curl -fsS "$SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_short_epg" | grep -q 'epg_listings'
-curl -fsS "$SOURCE_BASE/stream/101" >/dev/null
-python3 scripts/qa_source_probe.py
+log "Checking isolated source fixture at $HOST_SOURCE_BASE"
+curl -fsS "$HOST_SOURCE_BASE/health" >/dev/null
+curl -fsS "$HOST_SOURCE_BASE/playlist.m3u" | grep -q '#EXTM3U'
+curl -fsS "$HOST_SOURCE_BASE/playlist.m3u" | grep -q 'QA Sports One'
+curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass" | grep -q '"auth": 1'
+curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_categories" | grep -q 'QA Sports'
+curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_streams" | grep -q 'QA Sports One'
+curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_short_epg" | grep -q 'epg_listings'
+curl -fsS "$HOST_SOURCE_BASE/stream/101" >/dev/null
+QA_SOURCE_BASE="$HOST_SOURCE_BASE" python3 scripts/qa_source_probe.py
 
-python3 - "$SOURCE_BASE" "$OUT/source-latency.json" <<'PY'
+python3 - "$HOST_SOURCE_BASE" "$OUT/source-latency.json" <<'PY'
 import json,sys,time,urllib.request
 base=sys.argv[1]; out=sys.argv[2]
 paths=['/health','/playlist.m3u','/player_api.php?username=qauser&password=qapass','/player_api.php?username=qauser&password=qapass&action=get_live_streams']
@@ -111,7 +114,6 @@ if [[ "$MODE" == "mobile" ]]; then
   snapshot 06-source-connected
   assert_any_text 06-source-connected "SOURCE SAVED" "Connected" "source responded"
 
-  # Favorites tab must exist on the production mobile shell.
   tap_text "FAVORITES"
   snapshot 07-favorites
   assert_any_text 07-favorites "FAVORITES" "YOUR FAVORITES LIVE HERE" "YOUR PICKS"
@@ -176,7 +178,6 @@ else
     fi
   fi
 
-  # Full My Teams / Favorites surface, including college picker presence.
   adb shell input keyevent KEYCODE_HOME
   sleep 1
   adb shell monkey -p "$PACKAGE" 1 >/dev/null
@@ -194,7 +195,6 @@ else
     snapshot 13-team-picker
     assert_text "SELECT YOUR TEAMS" 13-team-picker
     assert_text "Search teams" 13-team-picker
-    # College regression: search a known college team and verify it appears.
     tap_text "Search teams"
     input_text "Alabama"
     sleep 1
@@ -203,7 +203,6 @@ else
     if has_text "CANCEL" 14-college-picker; then tap_text "CANCEL" || true; fi
   fi
 
-  # Return to home and verify ticker/background UI remains alive.
   tap_text "HOME"
   sleep 1
   snapshot 15-tv-final
