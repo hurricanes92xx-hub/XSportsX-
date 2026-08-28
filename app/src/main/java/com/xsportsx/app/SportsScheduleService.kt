@@ -26,6 +26,19 @@ object SportsScheduleService {
     private const val HTTP_TIMEOUT_MS = 4_500L
     private const val CONNECT_TIMEOUT_MS = 1_800
 
+    // ESPN's public site API has recently started returning Akamai 403s to
+    // some non-browser clients. The web API host is the working alternate
+    // route reported by current ESPN API users. Keep the original host as a
+    // second fallback so this survives another edge/CDN change.
+    private val ESPN_BASES = listOf(
+        "https://site.web.api.espn.com/apis/site/v2",
+        "https://site.api.espn.com/apis/site/v2"
+    )
+    private val ESPN_V3_BASES = listOf(
+        "https://site.web.api.espn.com/apis/site/v3",
+        "https://site.api.espn.com/apis/site/v3"
+    )
+
     // This registry is authoritative. UI choices alone do not fetch a league.
     private val leagues = listOf(
         ScheduleLeague("NFL", "Football", "football/nfl", "https://www.nfl.com/"),
@@ -125,8 +138,23 @@ object SportsScheduleService {
 
     private fun canonicalKey(event: SportsEvent): String = listOf(normalizeLeague(event.league), normalize(event.home), normalize(event.away), event.startUtc.take(16)).joinToString("|")
     private fun normalize(value: String): String = value.lowercase().replace(Regex("\\bfc\\b"), "").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
-    private fun fetchEspn(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> = parseEspn(JSONObject(http(buildUrl("https://site.api.espn.com/apis/site/v2", league, window))), league)
-    private fun fetchEspnV3(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> = parseEspn(JSONObject(http(buildUrl("https://site.api.espn.com/apis/site/v3", league, window))), league)
+
+    private fun fetchEspn(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
+        for (base in ESPN_BASES) {
+            val result = runCatching { parseEspn(JSONObject(http(buildUrl(base, league, window))), league) }.getOrDefault(emptyList())
+            if (result.isNotEmpty()) return result
+        }
+        return emptyList()
+    }
+
+    private fun fetchEspnV3(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
+        for (base in ESPN_V3_BASES) {
+            val result = runCatching { parseEspn(JSONObject(http(buildUrl(base, league, window))), league) }.getOrDefault(emptyList())
+            if (result.isNotEmpty()) return result
+        }
+        return emptyList()
+    }
+
     private fun buildUrl(base: String, league: ScheduleLeague, window: ScheduleWindow): String = buildString {
         append("$base/sports/${league.path}/scoreboard?dates=${window.query()}&limit=1000")
         if (league.query.isNotBlank()) append('&').append(league.query)
@@ -176,8 +204,16 @@ object SportsScheduleService {
     private fun http(target: String): String {
         val connection = (URL(target).openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"; connectTimeout = CONNECT_TIMEOUT_MS; readTimeout = HTTP_TIMEOUT_MS.toInt(); instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "XSportsX/1.5 (Android)"); setRequestProperty("Accept", "application/json,text/plain,*/*"); setRequestProperty("Accept-Encoding", "gzip")
+            setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/136.0 Mobile Safari/537.36")
+            setRequestProperty("Accept", "application/json, text/plain, */*")
+            setRequestProperty("Accept-Language", "en-US,en;q=0.9")
+            setRequestProperty("Referer", "https://www.espn.com/")
+            setRequestProperty("Connection", "keep-alive")
         }
-        return try { val code = connection.responseCode; if (code !in 200..299) error("Schedule HTTP $code"); connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { connection.disconnect() }
+        return try {
+            val code = connection.responseCode
+            if (code !in 200..299) error("Schedule HTTP $code from ${URL(target).host}")
+            connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { connection.disconnect() }
     }
 }
