@@ -88,15 +88,14 @@ if [[ "$MODE" == "mobile" ]]; then
   tap_text "NETWORKS"; snapshot 03-networks; assert_text "NETWORKS" 03-networks
   tap_text "FAVORITES"; snapshot 04-favorites; assert_text "FAVORITES" 04-favorites; assert_any_text 04-favorites "YOUR PICKS" "YOUR FAVORITES LIVE HERE"
   tap_text "HOME"; snapshot 05-home; assert_any_text 05-home "XSPORTS" "NEXT-GEN SPORTS COMMAND"
-  # The source control is a compact header chip on mobile. Use the explicit
-  # source CTA as a deterministic fallback if UiAutomator cannot expose the
-  # header chip after the navigation transition.
   if ! tap_any_text "ADD SOURCE" "CONNECT NOW →" "CONNECT SOURCE →"; then fail "Could not locate mobile source entry point"; fi
   sleep 1; snapshot 06-source; assert_any_text 06-source "CONNECT SOURCE" "XTREAM" "M3U" "Server URL"
   if has_text "Server URL" 06-source; then
     tap_text "Server URL"; input_text "$SOURCE_BASE"
     tap_text "Username"; input_text "qauser"
     tap_text "Password"; input_text "qapass"
+    adb shell input keyevent KEYCODE_BACK || true
+    sleep 1
     tap_text "TEST & CONNECT"; sleep 2
     snapshot 07-source-connected; assert_any_text 07-source-connected "Connected" "source responded" "SOURCE SAVED" "Connection successful"
   else fail "Source connection form did not expose Server URL"; fi
@@ -121,6 +120,8 @@ else
     tap_text "Server URL"; input_text "$SOURCE_BASE"
     tap_text "Username"; input_text "qauser"
     tap_text "Password"; input_text "qapass"
+    adb shell input keyevent KEYCODE_BACK || true
+    sleep 1
     assert_text "TEST & CONNECT" 07-manual
     tap_text "TEST & CONNECT"; sleep 2
     snapshot 08-xtream-result; assert_any_text 08-xtream-result "Connected" "source responded" "SOURCE SAVED" "Connection successful"
