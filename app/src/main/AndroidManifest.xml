@@ -12,7 +12,7 @@
         android:resizeableActivity="true">
 
         <activity
-            android:name=".MainActivityFuture"
+            android:name="com.xsportsx.app.MainActivityFuture"
             android:screenOrientation="unspecified"
             android:exported="true">
             <intent-filter>
