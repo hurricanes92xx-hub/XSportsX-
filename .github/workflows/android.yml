@@ -60,6 +60,7 @@ jobs:
           test -f scripts/finalize_wrestling_build.py
           test -f scripts/patch_schedule_coverage.py
           test -f scripts/fix_schedule_ui_build.py
+          test -f scripts/patch_schedule_performance.py
           test -f scripts/patch_remove_unbacked_sports.py
           test -f scripts/verify_yearly_schedule_policy.py
           test -f scripts/patch_official_ncaa_schedule_sources.py
@@ -93,6 +94,7 @@ jobs:
           python3 scripts/patch_official_ncaa_schedule_sources.py
           python3 scripts/patch_schedule_backup_sources.py
           python3 scripts/fix_schedule_ui_build.py
+          python3 scripts/patch_schedule_performance.py
           python3 scripts/patch_remove_unbacked_sports.py
           python3 scripts/fetch_brand_logo_pack.py
           python3 scripts/patch_canonical_logo_ui.py
