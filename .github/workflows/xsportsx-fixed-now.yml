@@ -35,6 +35,7 @@ jobs:
           set -euo pipefail
           python3 scripts/patch_tv_navigation.py
           python3 scripts/patch_college_favorites.py
+          python3 scripts/patch_regression_labels.py
       - name: Build current debug APKs
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
