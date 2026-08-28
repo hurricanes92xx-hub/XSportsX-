@@ -1,4 +1,4 @@
-name: XSportsX Emulator QA v3
+name: XSportsX Emulator QA v4
 
 on:
   workflow_dispatch:
@@ -92,7 +92,10 @@ jobs:
           ! grep -Eq 'SportVisual\("[^"]+"[^)]*https?://' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
       - name: Build debug APKs
-        run: gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+        shell: bash
+        run: |
+          set -eu
+          gradle clean :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
       - name: Verify APKs
         shell: bash
         run: |
@@ -125,7 +128,10 @@ jobs:
           test -s "$APK"
           echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
-        run: python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
+        shell: bash
+        run: |
+          set -eu
+          python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Enable KVM
         shell: bash
         run: |
@@ -152,7 +158,7 @@ jobs:
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
           script: |
-            set -euo pipefail
+            set -eu
             adb start-server
             adb wait-for-device
             echo "ADB state: $(adb -s emulator-5554 get-state)"
@@ -195,7 +201,10 @@ jobs:
           test -s "$APK"
           echo "TV_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
-        run: python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
+        shell: bash
+        run: |
+          set -eu
+          python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Enable KVM
         shell: bash
         run: |
@@ -207,7 +216,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
-          target: google_tv
+          target: google_apis
           arch: x86_64
           profile: tv_1080p
           avd-name: xsportsx-tv
@@ -222,7 +231,7 @@ jobs:
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
           script: |
-            set -euo pipefail
+            set -eu
             adb start-server
             adb wait-for-device
             echo "ADB state: $(adb -s emulator-5554 get-state)"
