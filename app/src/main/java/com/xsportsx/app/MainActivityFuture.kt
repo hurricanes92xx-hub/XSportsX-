@@ -60,7 +60,23 @@ class MainActivityFuture : ComponentActivity() {
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
                 tvConnectChooser -> TvSourceChooser(onQr = { tvConnectChooser = false; tvPair = true }, onManual = { tvConnectChooser = false; connectSource = true }, onBack = { tvConnectChooser = false })
-                tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false; tvConnectChooser = true }, onConnected = { sourceVersion++; tvPair = false })
+                tvPair -> QrPairingScreen(
+                    pairingUrl = BuildConfig.PAIRING_BASE_URL,
+                    onDone = {
+                        // QR cancellation is an explicit navigation state transition.
+                        // Clear every competing screen before restoring the chooser so the
+                        // TV regression test and real remotes cannot land on the home screen.
+                        tvPair = false
+                        connectSource = false
+                        mobilePair = false
+                        schedules = false
+                        selectedEvent = null
+                        liveFilter = null
+                        tvConnectChooser = true
+                        sourceVersion++
+                    },
+                    onConnected = { sourceVersion++; tvPair = false; tvConnectChooser = false }
+                )
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
                 schedules -> SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
