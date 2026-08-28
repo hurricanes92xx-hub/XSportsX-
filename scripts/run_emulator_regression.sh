@@ -1,46 +1,75 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# QA fixture is owned by the GitHub Actions background service in the workflow.
-APK="$1"
-MODE="$2"
-OUTDIR="$3"
+APK="${1:?APK path required}"
+MODE="${2:?mobile|tv mode required}"
+OUTDIR="${3:?output directory required}"
 
-if [[ -z "$APK" || -z "$MODE" || -z "$OUTDIR" ]]; then
-  echo "Usage: $0 APK mobile|tv OUTPUT_DIR" >&2
-  exit 2
-fi
+# The emulator action can interfere with background child-process lifecycle.
+# Keep the fixture server in the foreground Python process and run the actual
+# regression as its child so the fixture cannot disappear between health checks.
+python3 - "$APK" "$MODE" "$OUTDIR" <<'PY'
+import os
+import subprocess
+import sys
+import threading
+import time
+import urllib.request
 
-SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
-HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
+from scripts.qa_source_server import Handler, ReusableThreadingHTTPServer
 
-echo "Starting XSportsX ${MODE} emulator regression"
-adb start-server
-adb wait-for-device
-adb_state="$(adb -s emulator-5554 get-state)"
-boot_completed="$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')"
-echo "ADB state: ${adb_state}"
-echo "Boot completed: ${boot_completed}"
-test "$adb_state" = device
-test "$boot_completed" = 1
+apk, mode, outdir = sys.argv[1:4]
+port = int(os.environ.get("QA_SOURCE_PORT", "8765"))
+source_base = f"http://10.0.2.2:{port}"
+host_base = f"http://127.0.0.1:{port}"
 
-echo "Checking QA source fixture on host at ${HOST_SOURCE_BASE}/health"
-server_ready=0
-for i in $(seq 1 30); do
-  if curl -fsS --max-time 2 "${HOST_SOURCE_BASE}/health" >/dev/null; then
-    server_ready=1
-    break
-  fi
-  sleep 1
-done
+server = ReusableThreadingHTTPServer(("0.0.0.0", port), Handler)
+thread = threading.Thread(target=server.serve_forever, daemon=True)
+thread.start()
 
-if [[ "$server_ready" != 1 ]]; then
-  echo "QA source fixture is not reachable at ${HOST_SOURCE_BASE}/health"
-  echo "Host-side diagnostic:"
-  curl -v --max-time 3 "${HOST_SOURCE_BASE}/health" || true
-  exit 1
-fi
+try:
+    print(f"[QA] fixture started in-process on 0.0.0.0:{port}", flush=True)
+    last_error = None
+    for _ in range(30):
+        try:
+            with urllib.request.urlopen(f"{host_base}/health", timeout=2) as response:
+                if response.status == 200:
+                    print("[QA] host fixture health check passed", flush=True)
+                    break
+        except Exception as exc:
+            last_error = exc
+        time.sleep(1)
+    else:
+        print(f"[QA][FAIL] fixture never became reachable: {last_error}", file=sys.stderr, flush=True)
+        raise SystemExit(1)
 
-echo "QA source fixture is alive on the host. Android will use ${SOURCE_BASE}."
-chmod +x scripts/qa_regression_test.sh
-QA_MODE="$MODE" QA_SOURCE_BASE="$SOURCE_BASE" QA_SOURCE_HOST_BASE="$HOST_SOURCE_BASE" ./scripts/qa_regression_test.sh "$APK" "$OUTDIR"
+    env = os.environ.copy()
+    env["QA_MODE"] = mode
+    env["QA_SOURCE_BASE"] = source_base
+    env["QA_SOURCE_HOST_BASE"] = host_base
+    env["QA_SOURCE_PORT"] = str(port)
+
+    # Secondary deterministic route: Android localhost -> host through ADB.
+    reverse = subprocess.run(
+        ["adb", "reverse", f"tcp:{port}", f"tcp:{port}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    print(f"[QA] adb reverse tcp:{port} -> tcp:{port}: rc={reverse.returncode}", flush=True)
+    if reverse.stdout:
+        print(reverse.stdout.strip(), flush=True)
+    if reverse.stderr:
+        print(reverse.stderr.strip(), flush=True)
+
+    print(f"[QA] Android source URL: {source_base}", flush=True)
+    result = subprocess.run(
+        ["bash", "scripts/qa_regression_test.sh", apk, outdir],
+        env=env,
+        check=False,
+    )
+    raise SystemExit(result.returncode)
+finally:
+    server.shutdown()
+    server.server_close()
+PY
