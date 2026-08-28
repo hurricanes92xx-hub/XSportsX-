@@ -51,7 +51,7 @@ jobs:
           test -f data/brand_logo_catalog.json
           test -f data/schedule_feed.json
           test -f scripts/fetch_brand_logo_pack.py
-          test -f scripts/patch_canonical_logo_ui.py
+          test -f scripts/patch_canonical_logo_ui_v2.py
           test -f scripts/patch_unified_logo_cards.py
           test -f scripts/patch_yearly_schedule_window.py
           test -f scripts/patch_special_schedule_feed.py
@@ -97,7 +97,7 @@ jobs:
           python3 scripts/patch_schedule_performance.py
           python3 scripts/patch_remove_unbacked_sports.py
           python3 scripts/fetch_brand_logo_pack.py
-          python3 scripts/patch_canonical_logo_ui.py
+          python3 scripts/patch_canonical_logo_ui_v2.py
           python3 scripts/patch_unified_logo_cards.py
           python3 scripts/verify_yearly_schedule_policy.py
           python3 scripts/verify_logo_catalog.py
