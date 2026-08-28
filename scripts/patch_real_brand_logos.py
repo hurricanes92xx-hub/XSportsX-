@@ -7,12 +7,15 @@ MOBILE = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
 for target in (TV, MOBILE):
     if target.exists():
         source = target.read_text(encoding="utf-8")
-        # Correctly remove legacy ESPN CDN league-logo URLs while preserving
-        # the surrounding Kotlin string/constructor syntax.
         cleaned = re.sub(r'https://a\.espncdn\.com/i/teamlogos/leagues[^\"]*', '', source)
+        if target == MOBILE:
+            # Keep the constructors, but make their logo fields empty so the
+            # UI falls back to the bundled/local renderer instead of networking.
+            cleaned = re.sub(r'(XNetwork\([^\n]*?,\s*[^\n]*?,\s*[^\n]*?,\s*)"https?://[^\"]*"(\))', r'\1""\2', cleaned)
+            cleaned = re.sub(r'(SportVisual\([^\n]*?,\s*[^\n]*?,\s*)"https?://[^\"]*"(\))', r'\1""\2', cleaned)
         if cleaned != source:
             target.write_text(cleaned, encoding="utf-8")
-            print(f"Removed legacy ESPN CDN league logo URLs from {target}")
+            print(f"Removed remote brand/logo URLs from {target}")
 
 if not TV.exists():
     print("TV source absent; nothing to patch")
