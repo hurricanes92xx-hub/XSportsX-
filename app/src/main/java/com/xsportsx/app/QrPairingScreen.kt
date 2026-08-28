@@ -1,5 +1,6 @@
 package com.xsportsx.app
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,10 @@ fun QrPairingScreen(pairingUrl: String, onDone: () -> Unit, onConnected: () -> U
     var start by remember { mutableStateOf<PairingClient.PairStart?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var connected by remember { mutableStateOf(false) }
+
+    // On TV the CANCEL text can fall below the viewport while the QR payload
+    // is being generated. Back must cancel pairing instead of exiting the app.
+    BackHandler(enabled = true) { onDone() }
 
     LaunchedEffect(pairingUrl) {
         runCatching { PairingClient.start(pairingUrl) }
