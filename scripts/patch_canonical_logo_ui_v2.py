@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-# Idempotent verifier only. Logo transformations are owned by the preceding
-# patches. This stage must never depend on historical source anchors.
 required = [
     Path('app/src/main/java/com/xsportsx/app/SportsLogos.kt'),
     Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'),
