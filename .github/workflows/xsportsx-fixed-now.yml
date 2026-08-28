@@ -2,7 +2,7 @@ name: XSportsX Fixed Emulator QA Now
 
 on:
   workflow_run:
-    workflows: [XSportsX Emulator QA v4]
+    workflows: [XSportsX Source QA]
     types: [completed]
 
 permissions:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   prepare:
-    if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -25,13 +25,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
-          SHA: ${{ github.event.workflow_run.head_sha }}
         shell: bash
         run: |
           set -euo pipefail
           API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts"
           curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$API" -o artifacts.json
-          URL=$(jq -r --arg n "XSportsX-emulator-qa-apks-${SHA}" '.artifacts[] | select(.name==$n) | .archive_download_url' artifacts.json | head -n1)
+          URL=$(jq -r '.artifacts[] | select(.name=="source-qa-apks") | .archive_download_url' artifacts.json | head -n1)
           test -n "$URL" && test "$URL" != null
           curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "$URL" -o apks.zip
           mkdir -p test-apks
