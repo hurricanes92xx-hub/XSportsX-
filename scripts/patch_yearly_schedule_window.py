@@ -6,7 +6,7 @@ SERVICE = Path("app/src/main/java/com/xsportsx/app/SportsScheduleService.kt")
 SCREEN = Path("app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt")
 
 s = SERVICE.read_text(encoding="utf-8")
-s = re.sub(r"(const\\s+val\\s+DAYS_AHEAD\\s*=\\s*)\\d+L?", r"\\g<1>30L", s, count=1)
+s = re.sub(r"(const\s+val\s+DAYS_AHEAD\s*=\s*)\d+L?", r"\g<1>30L", s, count=1)
 if "const val DAYS_AHEAD" not in s:
     s = s.replace("object SportsScheduleService {", "object SportsScheduleService {\n    private const val DAYS_AHEAD = 30L", 1)
 
@@ -58,12 +58,11 @@ registry = '''    private val leagues = listOf(
         ScheduleLeague("AFL", "Australian Football", "australian-football/afl", "https://www.afl.com.au/")
     )'''
 
-m = re.search(r"(?ms)^    private val leagues = listOf\\(.*?^    \\)\\n\\n    fun normalizeLeague", s)
+m = re.search(r"(?ms)^    private val leagues = listOf\(.*?^    \)\n\n    fun normalizeLeague", s)
 if not m:
     raise SystemExit("schedule league registry not found: refusing unsafe rewrite")
 s = s[:m.start()] + registry + "\n\n    fun normalizeLeague" + s[m.end():]
 
-# Add aliases immediately before the catch-all instead of relying on a fragile old marker.
 aliases = '''        "WNBA" -> "WNBA"
         "NCAA WOMEN'S BASKETBALL", "NCAA WOMENS BASKETBALL" -> "NCAA WBB"
         "NATIONAL WOMEN'S SOCCER LEAGUE" -> "NWSL"
@@ -84,9 +83,7 @@ if '"WNBA" -> "WNBA"' not in s:
     s = s.replace(marker, aliases + marker, 1)
 SERVICE.write_text(s, encoding="utf-8")
 
-# Keep the schedule UI synchronized with the authoritative service registry.
 t = SCREEN.read_text(encoding="utf-8")
-t = re.sub(r'val leagueChoices = listOf\\(.*?\\)', 'val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices', t, count=1, flags=re.S)
-t = t.replace('SportsScheduleService.load()', 'SportsScheduleService.load()', 1)
+t = re.sub(r'val leagueChoices = listOf\(.*?\)', 'val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices', t, count=1, flags=re.S)
 SCREEN.write_text(t, encoding="utf-8")
 print("Expanded schedule registry safely and made the UI choices authoritative")
