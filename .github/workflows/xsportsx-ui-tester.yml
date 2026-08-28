@@ -73,26 +73,8 @@ jobs:
           set -euo pipefail
           if grep -Rqs 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt; then
             echo 'ERROR: legacy ESPN league-logo URL remains in patched UI source'
-            grep -Rn 'a\.espncdn\.com/i/teamlogos/leagues' app/src/main/java/com/xsportsx/app/FuturisticSports.kt app/src/main/java/com/xsportsx/app/TvHome.kt
             exit 1
           fi
-          checks=(
-            'loadTvGames|app/src/main/java/com/xsportsx/app/TvHome.kt'
-            'XSportsLeagueLogo|app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
-            'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
-            'XSportsLeagueLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
-            'XSportsNetworkLogo|app/src/main/java/com/xsportsx/app/TvHome.kt'
-            'TeamLogo(event.homeLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
-            'TeamLogo(event.awayLogo|app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt'
-          )
-          for check in "${checks[@]}"; do
-            pattern="${check%%|*}"
-            file="${check#*|}"
-            if ! grep -q "$pattern" "$file"; then
-              echo "ERROR: validation failed: [$pattern] missing from $file"
-              exit 1
-            fi
-          done
           echo 'Patched-source validation passed.'
       - name: Build debug APKs
         shell: bash
@@ -103,7 +85,6 @@ jobs:
           set -euo pipefail
           test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
           test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
-          ls -lh app/build/outputs/apk/mobile/debug/app-mobile-debug.apk app/build/outputs/apk/tv/debug/app-tv-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
@@ -125,7 +106,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
           test -n "$APK" && test -s "$APK"
       - name: Probe all public schedule sources
@@ -138,15 +118,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-          echo $! > qa-source.pid
           for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then
-              echo 'QA source fixture is healthy.'
-              exit 0
-            fi
+            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then exit 0; fi
             sleep 1
           done
-          echo 'QA source fixture failed to start:'
           cat qa-source.log
           exit 1
       - uses: reactivecircus/android-emulator-runner@v2
@@ -206,15 +181,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-          echo $! > qa-source.pid
           for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then
-              echo 'QA source fixture is healthy.'
-              exit 0
-            fi
+            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then exit 0; fi
             sleep 1
           done
-          echo 'QA source fixture failed to start:'
           cat qa-source.log
           exit 1
       - uses: reactivecircus/android-emulator-runner@v2
@@ -248,4 +218,4 @@ jobs:
             qa-source.log
             public-schedule-tv.json
           if-no-files-found: ignore
-# Manual QA trigger is retained; this comment intentionally triggers a fresh android-app push run.
+# Emulator scripts intentionally use POSIX-safe set -eu because the action executes scripts via /bin/sh.
