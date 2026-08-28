@@ -54,12 +54,13 @@ class MainActivityFuture : ComponentActivity() {
                 val update = availableUpdate!!
                 AlertDialog(onDismissRequest = { if (!updateBusy) availableUpdate = null }, title = { Text("XSPORTSX UPDATE AVAILABLE") }, text = { Text(if (updateBusy) "Downloading update… $updateProgress%\n\nKeep XSportsX open until the download finishes." else "Version ${update.versionName} is ready.\n\n${update.notes}") }, confirmButton = {
                     TextButton(enabled = !updateBusy, onClick = { updateBusy = true; updateProgress = 0; updateMessage = null; scope.launch { val result = AppUpdateManager.downloadAndInstall(this@MainActivityFuture, update) { p -> updateProgress = p }; updateBusy = false; result.exceptionOrNull()?.let { updateMessage = it.message ?: "Update failed" } } }) { Text(if (updateBusy) "DOWNLOADING $updateProgress%" else "UPDATE NOW") }
-                }, dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") } })
+                }, dismissButton = { TextButton(enabled = !updateBusy, onClick = { availableUpdate = null }) { Text("LATER") }
+                })
             }
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
                 tvConnectChooser -> TvSourceChooser(onQr = { tvConnectChooser = false; tvPair = true }, onManual = { tvConnectChooser = false; connectSource = true }, onBack = { tvConnectChooser = false })
-                tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false }, onConnected = { sourceVersion++; tvPair = false })
+                tvPair -> QrPairingScreen(pairingUrl = BuildConfig.PAIRING_BASE_URL, onDone = { tvPair = false; tvConnectChooser = true }, onConnected = { sourceVersion++; tvPair = false })
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
                 schedules -> SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
@@ -79,8 +80,6 @@ class MainActivityFuture : ComponentActivity() {
                         }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(
-                            // LIVE/SCHEDULE entry must never require a private source.
-                            // Xtream/M3U is optional and is opened only through ADD SOURCE.
                             onConnect = { schedules = true },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") {
