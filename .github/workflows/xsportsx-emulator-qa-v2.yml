@@ -133,7 +133,7 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Run mobile emulator regression
-        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
           api-level: 34
           target: google_apis
@@ -203,7 +203,7 @@ jobs:
           set -eu
           python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Run TV emulator regression
-        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
           api-level: 34
           target: google_apis
