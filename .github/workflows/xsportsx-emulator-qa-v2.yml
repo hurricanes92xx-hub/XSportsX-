@@ -117,6 +117,14 @@ jobs:
         with:
           name: XSportsX-emulator-qa-apks-${{ github.sha }}
           path: test-apks
+      - name: Resolve downloaded mobile APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
+          test -n "$APK" && test -s "$APK"
+          echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
+          echo "Resolved mobile APK: $APK"
       - name: Probe public schedules outside emulator
         shell: bash
         run: |
@@ -143,7 +151,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app/build/outputs/apk/mobile/debug/app-mobile-debug.apk" test-output-mobile
+          script: bash scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
         env:
           QA_MODE: mobile
           QA_SOURCE_BASE: http://10.0.2.2:8765
@@ -166,6 +174,14 @@ jobs:
         with:
           name: XSportsX-emulator-qa-apks-${{ github.sha }}
           path: test-apks
+      - name: Resolve downloaded TV APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
+          test -n "$APK" && test -s "$APK"
+          echo "TV_APK=$APK" >> "$GITHUB_ENV"
+          echo "Resolved TV APK: $APK"
       - name: Probe public schedules outside emulator
         shell: bash
         run: |
@@ -192,7 +208,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$GITHUB_WORKSPACE/test-apks/app/build/outputs/apk/tv/debug/app-tv-debug.apk" test-output-tv
+          script: bash scripts/qa_regression_test.sh "$TV_APK" test-output-tv
         env:
           QA_MODE: tv
           QA_SOURCE_BASE: http://10.0.2.2:8765
