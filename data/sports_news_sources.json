@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-08-28T20:02:16.786892+00:00",
+  "ttlMinutes": 30,
+  "playbackBlocking": false,
+  "sources": [
+    {
+      "name": "Google Sports Search",
+      "type": "discovery",
+      "priority": 100,
+      "officialOnly": true
+    },
+    {
+      "name": "Google News Sports",
+      "type": "news",
+      "priority": 90,
+      "officialOnly": false
+    },
+    {
+      "name": "YouTube Official Sports",
+      "type": "video",
+      "priority": 80,
+      "officialOnly": true
+    }
+  ],
+  "priorityTopics": [
+    "breaking",
+    "injury",
+    "trade",
+    "signing",
+    "suspension",
+    "postponed",
+    "cancelled",
+    "playoff",
+    "championship",
+    "record",
+    "final",
+    "live",
+    "schedule",
+    "broadcast"
+  ],
+  "leagues": [
+    "NFL",
+    "NCAA FB",
+    "NCAA FCS",
+    "NBA",
+    "WNBA",
+    "NCAA BB",
+    "NCAA WBB",
+    "MLB",
+    "NHL",
+    "NCAA BASEBALL",
+    "NCAA SOFTBALL",
+    "NCAA MEN HOCKEY",
+    "NCAA WOMEN HOCKEY",
+    "NCAA VB",
+    "NCAA MEN SOCCER",
+    "NCAA WOMEN SOCCER",
+    "NCAA MEN LAX",
+    "NCAA WOMEN LAX",
+    "NCAA WRESTLING",
+    "MLS",
+    "EPL",
+    "UCL",
+    "LaLiga",
+    "Serie A",
+    "Bundesliga",
+    "Ligue 1",
+    "UFC",
+    "BOXING",
+    "F1",
+    "NASCAR",
+    "INDYCAR"
+  ]
+}

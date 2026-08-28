@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-08-28T20:02:16.827776+00:00",
+  "catalogs": [
+    {
+      "name": "iptv-org sports",
+      "kind": "playlist",
+      "url": "https://iptv-org.github.io/iptv/categories/sports.m3u",
+      "priority": 100
+    },
+    {
+      "name": "Free-TV IPTV",
+      "kind": "playlist",
+      "url": "https://github.com/Free-TV/IPTV",
+      "priority": 95
+    },
+    {
+      "name": "FreeCastHub Sports",
+      "kind": "playlist",
+      "url": "https://github.com/freecasthub/public-iptv",
+      "priority": 90
+    },
+    {
+      "name": "World IPTV",
+      "kind": "aggregator",
+      "url": "https://github.com/Romaxa55/world_ip_tv",
+      "priority": 70
+    },
+    {
+      "name": "Shovo",
+      "kind": "derived-aggregator",
+      "url": "https://github.com/shovo127/IPTV-By-Shovo",
+      "priority": 40
+    }
+  ],
+  "policy": {
+    "existing_sources_are_deduped": true,
+    "promote_only_unique": true,
+    "require_https": true,
+    "require_health_check": true,
+    "require_public_or_authorized": true,
+    "exclude_catalog_sports": [
+      "tennis",
+      "golf",
+      "track & field",
+      "swimming & diving",
+      "cross country",
+      "field hockey",
+      "water polo",
+      "beach volleyball",
+      "mens volleyball",
+      "rowing"
+    ],
+    "never_import_credentials": true,
+    "never_import_telegram_stream_urls": true,
+    "never_block_playback": true
+  }
+}
