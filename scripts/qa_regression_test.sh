@@ -48,10 +48,12 @@ if [[ "$MODE" == "mobile" ]]; then
   log "Live feed still settling (${attempt}/20)"; sleep 1
  done
  [[ "$live_ok" -eq 1 ]] || fail "Live feed did not expose an expected settled UI state within 20s"
- tap_text "SEARCH"; snapshot 03-search; assert_text "SEARCH SPORTS" 03-search; assert_text "Find teams, fighters, leagues and events" 03-search
- tap_text "SOURCES"; snapshot 04-sources; assert_any_text 04-sources "SOURCE CENTER" "CONNECT SOURCE"; assert_any_text 04-sources "XTREAM CODES" "CONNECT SOURCE"
- tap_text "Server URL"; input_text "$SOURCE_BASE"; tap_text "Username"; input_text "qauser"; tap_text "Password"; input_text "qapass"; snapshot 05-source-filled; tap_text "CONNECT SOURCE"; sleep 2; snapshot 06-source-connected; assert_any_text 06-source-connected "SOURCE SAVED" "Connected" "source responded"
- tap_text "FAVORITES"; snapshot 07-favorites; assert_any_text 07-favorites "FAVORITES" "YOUR FAVORITES LIVE HERE" "YOUR PICKS"; adb shell input keyevent KEYCODE_HOME; sleep 1; adb shell am start -W -n "$ACTIVITY" >/dev/null; sleep 2; snapshot 08-relaunch; assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "NEXT-GEN SPORTS COMMAND" "XSPORTS" "ADD SOURCE" "SOURCE READY"
+ # Current mobile UI uses a bottom navigation bar, not a standalone SEARCH/SOURCES page.
+ tap_text "NETWORKS"; snapshot 03-networks; assert_text "NETWORKS" 03-networks
+ tap_text "FAVORITES"; snapshot 04-favorites; assert_text "FAVORITES" 04-favorites; assert_any_text 04-favorites "YOUR PICKS" "YOUR FAVORITES LIVE HERE"
+ tap_text "HOME"; snapshot 05-home; assert_any_text 05-home "XSPORTS" "NEXT-GEN SPORTS COMMAND"; tap_text "ADD SOURCE"; sleep 1; snapshot 06-source; assert_any_text 06-source "CONNECT SOURCE" "XTREAM" "M3U" "Server URL"
+ if has_text "Server URL" 06-source; then tap_text "Server URL"; input_text "$SOURCE_BASE"; tap_text "Username"; input_text "qauser"; tap_text "Password"; input_text "qapass"; if has_text "TEST & CONNECT" 06-source; then tap_text "TEST & CONNECT"; else tap_any_text "CONNECT SOURCE" "CONNECT" || fail "No source connect action found"; fi; sleep 2; snapshot 07-source-connected; assert_any_text 07-source-connected "SOURCE SAVED" "Connected" "source responded" "Connection successful"; else fail "Source connection form did not expose Server URL"; fi
+ adb shell input keyevent KEYCODE_HOME; sleep 1; adb shell am start -W -n "$ACTIVITY" >/dev/null; sleep 2; snapshot 08-relaunch; assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "NEXT-GEN SPORTS COMMAND" "XSPORTS" "ADD SOURCE" "SOURCE READY"
 else
  tap_text "SETTINGS"; snapshot 02-tv-settings; assert_text "SETTINGS" 02-tv-settings; assert_any_text 02-tv-settings "OPEN CONNECTION SETTINGS" "CONNECT YOUR SOURCE"; if has_text "OPEN CONNECTION SETTINGS" 02-tv-settings; then tap_text "OPEN CONNECTION SETTINGS"; sleep 1; fi
  snapshot 03-source-chooser; assert_text "CONNECT YOUR SOURCE" 03-source-chooser; assert_text "SCAN QR CODE" 03-source-chooser; assert_any_text 03-source-chooser "SIGN IN ON TV" "MANUAL" "XTREAM" "M3U"; tap_text "SCAN QR CODE"; sleep 2; snapshot 04-qr; assert_any_text 04-qr "CONNECT THIS TV" "Creating secure pairing" "Scan this code with your phone"
