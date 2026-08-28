@@ -123,6 +123,24 @@ jobs:
           test -e /dev/kvm
           sudo chmod 666 /dev/kvm
           ls -l /dev/kvm
+      - name: Start QA source fixture
+        id: qa-source
+        shell: bash
+        env:
+          QA_SOURCE_HOST: 127.0.0.1
+          QA_SOURCE_PORT: 8765
+        run: python3 -u scripts/qa_source_server.py > qa-source.log 2>&1
+        background: true
+      - name: Wait for QA source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:8765/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat qa-source.log || true
+          exit 1
       - name: Run mobile emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -142,6 +160,8 @@ jobs:
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile
+      - name: Stop QA source fixture
+        cancel: qa-source
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -181,6 +201,24 @@ jobs:
           test -e /dev/kvm
           sudo chmod 666 /dev/kvm
           ls -l /dev/kvm
+      - name: Start QA source fixture
+        id: qa-source
+        shell: bash
+        env:
+          QA_SOURCE_HOST: 127.0.0.1
+          QA_SOURCE_PORT: 8765
+        run: python3 -u scripts/qa_source_server.py > qa-source.log 2>&1
+        background: true
+      - name: Wait for QA source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:8765/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat qa-source.log || true
+          exit 1
       - name: Run TV emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -200,6 +238,8 @@ jobs:
             adb kill-server || true
             sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv
+      - name: Stop QA source fixture
+        cancel: qa-source
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -209,4 +249,4 @@ jobs:
             qa-source.log
             public-schedule-tv.json
           if-no-files-found: ignore
-# Emulator scripts intentionally use POSIX-safe set -eu because the action executes scripts via /bin/sh.
+# The QA fixture is a dedicated GitHub Actions background step so it remains alive while the emulator regression runs.
