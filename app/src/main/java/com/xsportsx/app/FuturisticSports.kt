@@ -25,6 +25,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -173,7 +175,7 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
 @Composable private fun BrandPill(text: String, foreground: Color, background: Color = Color(0xFF202A38)) { Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal = 8.dp, vertical = 9.dp), contentAlignment = Alignment.Center) { Text(text, color = foreground, fontSize = if (text.length > 7) 8.sp else 14.sp, fontWeight = FontWeight.Black, letterSpacing = .4.sp, maxLines = 1) } }
 @Composable private fun UpcomingStrip() { val items = listOf("NFL", "NBA", "UFC", "MLB"); Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) { items.take(3).forEach { sport -> Box(Modifier.weight(1f).clip(RoundedCornerShape(14.dp)).background(Panel).padding(vertical = 13.dp), contentAlignment = Alignment.Center) { Row(verticalAlignment = Alignment.CenterVertically) { SportGlyph(sport, 22.dp); Spacer(Modifier.width(5.dp)); Text(sport, color = Color(0xFFDCE1E9), fontSize = 9.sp, fontWeight = FontWeight.Black) } } } } }
 @Composable private fun MobileBottomNav(selected: String, onSelect: (String) -> Unit) { Row(Modifier.fillMaxWidth().height(70.dp).background(Color(0xF2090B10)).padding(horizontal = 10.dp, vertical = 7.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) { MobileNavItem("⌂", "HOME", selected, onSelect); MobileNavItem("●", "LIVE", selected, onSelect); MobileNavItem("▦", "NETWORKS", selected, onSelect); MobileNavItem("★", "FAVORITES", selected, onSelect) } }
-@Composable private fun MobileNavItem(icon: String, label: String, selected: String, onSelect: (String) -> Unit) { val active = selected == label; Column(Modifier.clip(RoundedCornerShape(13.dp)).background(if (active) Color(0xFF25121A) else Color.Transparent).clickable { onSelect(label) }.padding(horizontal = 13.dp, vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) { Text(icon, color = if (active) XRed else Color(0xFF7A8290), fontSize = 18.sp, fontWeight = FontWeight.Black); Text(label, color = if (active) Color.White else Color(0xFF7A8290), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .5.sp) } }
+@Composable private fun MobileNavItem(icon: String, label: String, selected: String, onSelect: (String) -> Unit) { val active = selected == label; Column(Modifier.clip(RoundedCornerShape(13.dp)).background(if (active) Color(0xFF25121A) else Color.Transparent).clickable { onSelect(label) }.semantics { contentDescription = label }.padding(horizontal = 13.dp, vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) { Text(icon, color = if (active) XRed else Color(0xFF7A8290), fontSize = 18.sp, fontWeight = FontWeight.Black); Text(label, color = if (active) Color.White else Color(0xFF7A8290), fontSize = 7.sp, fontWeight = FontWeight.Black, letterSpacing = .5.sp) } }
 
 @Composable
 private fun GlowingCracks(modifier: Modifier, intensity: Float) {
