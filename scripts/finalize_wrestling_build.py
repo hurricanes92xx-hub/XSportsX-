@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import re
+import subprocess
 from pathlib import Path
 
 SCREEN = Path('app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt')
 WRESTLING = Path('app/src/main/java/com/xsportsx/app/WrestlingSchedule.kt')
+LAUNCHER = Path('app/src/main/java/com/xsportsx/app/MainActivityFuture.kt')
 
 HELPER_NAME = 'specialCardKicker'
 
@@ -36,8 +38,8 @@ HELPER = '''private fun specialCardKicker(event: SportsEvent): String {
 # spelling. Older patches produced harmless-looking variants that Kotlin still
 # treats as conflicting overloads.
 FUNCTION_RE = re.compile(
-    r'(?m)^[ \t]*(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\s+)*'
-    r'fun\s+specialCardKicker\s*\([^)]*\)\s*(?::\s*[^=\n{]+)?\s*\{'
+    r'(?m)^[ \\t]*(?:(?:public|private|protected|internal|final|open|inline|tailrec|suspend|operator|infix|actual|expect)\\s+)*)'
+    r'fun\\s+specialCardKicker\\s*\\([^)]*\\)\\s*(?::\\s*[^=\\n{]+)?\\s*\\{'
 )
 
 
@@ -123,4 +125,12 @@ if old in w:
 w = w.replace('setOf("WWE","AEW","TNA")', 'setOf("WWE","AEW","NXT","ROH","TNA","NJPW")')
 WRESTLING.write_text(w, encoding='utf-8')
 
-print(f'Final wrestling build normalization applied: removed {removed} prior {HELPER_NAME} declaration(s), installed exactly one helper, fixed LazyRow DSL, enabled six pro promotions, no UWW/amateur wrestling.')
+# The emulator QA workflow runs the full production patch chain in a clean
+# checkout before compiling its debug APKs. Some legacy text patches can touch
+# unrelated Kotlin source files. The launcher is not a patch target, so restore
+# it from HEAD at the very end and fail closed if it is missing or malformed.
+subprocess.run(['git', 'checkout', '--', str(LAUNCHER)], check=True)
+if not LAUNCHER.is_file() or 'class MainActivityFuture' not in LAUNCHER.read_text(encoding='utf-8'):
+    raise RuntimeError('Launcher activity was not restored after production patches')
+
+print(f'Final wrestling build normalization applied: removed {removed} prior {HELPER_NAME} declaration(s), installed exactly one helper, fixed LazyRow DSL, enabled six pro promotions, no UWW/amateur wrestling. Launcher activity restored and verified.')
