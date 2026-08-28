@@ -61,6 +61,17 @@ jobs:
         with:
           name: xsportsx-fixed-apks-${{ github.run_id }}
           path: test-apks
+      - name: Locate downloaded mobile APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Downloaded artifact contents:'
+          find test-apks -type f -maxdepth 8 -print
+          MOBILE_APK_PATH="$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)"
+          test -n "$MOBILE_APK_PATH"
+          test -s "$MOBILE_APK_PATH"
+          echo "MOBILE_APK=$GITHUB_WORKSPACE/$MOBILE_APK_PATH" >> "$GITHUB_ENV"
+          echo "Resolved MOBILE_APK=$GITHUB_WORKSPACE/$MOBILE_APK_PATH"
       - name: Enable KVM
         run: |
           set -euxo pipefail
@@ -86,7 +97,6 @@ jobs:
             sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile-fixed
         env:
-          MOBILE_APK: ${{ github.workspace }}/test-apks/app-mobile-debug.apk
           QA_MODE: mobile
           QA_SOURCE_PORT: 8765
       - uses: actions/upload-artifact@v4
@@ -106,6 +116,17 @@ jobs:
         with:
           name: xsportsx-fixed-apks-${{ github.run_id }}
           path: test-apks
+      - name: Locate downloaded TV APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Downloaded artifact contents:'
+          find test-apks -type f -maxdepth 8 -print
+          TV_APK_PATH="$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)"
+          test -n "$TV_APK_PATH"
+          test -s "$TV_APK_PATH"
+          echo "TV_APK=$GITHUB_WORKSPACE/$TV_APK_PATH" >> "$GITHUB_ENV"
+          echo "Resolved TV_APK=$GITHUB_WORKSPACE/$TV_APK_PATH"
       - name: Enable KVM
         run: |
           set -euxo pipefail
@@ -131,7 +152,6 @@ jobs:
             sudo chmod 666 /dev/kvm || true
           script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv-fixed
         env:
-          TV_APK: ${{ github.workspace }}/test-apks/app-tv-debug.apk
           QA_MODE: tv
           QA_SOURCE_PORT: 8765
       - uses: actions/upload-artifact@v4
