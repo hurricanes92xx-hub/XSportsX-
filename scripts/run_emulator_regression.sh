@@ -64,27 +64,13 @@ try:
 
     print(f"[QA] Android source URL: {source_base}", flush=True)
 
-    # Product flavors change applicationId to com.xsportsx.app.mobile/tv,
-    # but the Kotlin namespace (and therefore the Activity class) remains
-    # com.xsportsx.app. The previous regression runner incorrectly constructed
-    # com.xsportsx.app.<flavor>.MainActivityFuture. Normalize the test target
-    # immediately before execution so both APK flavors launch the real class.
+    # qa_regression_test.sh resolves the installed launcher's authoritative
+    # ComponentName from the package manager. Do not rewrite ACTIVITY here:
+    # the flavor applicationId (com.xsportsx.app.mobile/tv) intentionally
+    # differs from the Kotlin namespace (com.xsportsx.app), and Android needs
+    # the complete package/class component returned by cmd package.
     qa_script = "scripts/qa_regression_test.sh"
-    with open(qa_script, "r", encoding="utf-8") as fh:
-        qa_text = fh.read()
-    lines = qa_text.splitlines()
-    replaced = False
-    for i, line in enumerate(lines):
-        if line.startswith("ACTIVITY="):
-            lines[i] = 'ACTIVITY="com.xsportsx.app.MainActivityFuture"'
-            replaced = True
-            break
-    if not replaced:
-        print("[QA][FAIL] Could not locate ACTIVITY setting in regression script", file=sys.stderr, flush=True)
-        raise SystemExit(1)
-    with open(qa_script, "w", encoding="utf-8") as fh:
-        fh.write("\n".join(lines) + "\n")
-    print("[QA] normalized Activity target to com.xsportsx.app.MainActivityFuture", flush=True)
+    print("[QA] launcher target will be resolved from installed APK", flush=True)
 
     result = subprocess.run(
         ["bash", qa_script, apk, outdir],
