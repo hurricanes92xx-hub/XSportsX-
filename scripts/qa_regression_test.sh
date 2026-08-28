@@ -4,11 +4,10 @@ set -euo pipefail
 APK="${1:?APK path required}"
 OUT="${2:-test-output}"
 MODE="${QA_MODE:-mobile}"
-# SOURCE_BASE is the address the Android emulator uses to reach the host.
 SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
-# Host-side fixture checks must use loopback, not the emulator's 10.0.2.2 alias.
 HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
 PACKAGE="com.xsportsx.app"
+ACTIVITY="com.xsportsx.app/.MainActivityFuture"
 mkdir -p "$OUT"
 
 adb wait-for-device
@@ -16,7 +15,7 @@ adb shell settings put system screen_off_timeout 1800000 || true
 adb install -r -d "$APK"
 
 log(){ echo "[QA] $*"; }
-fail(){ echo "[QA][FAIL] $*" >&2; exit 1; }
+fail(){ echo "[QA][FAIL] $*" >&2; adb logcat -d -t 300 > "$OUT/failure-logcat.txt" 2>/dev/null || true; adb shell dumpsys package "$PACKAGE" > "$OUT/failure-package.txt" 2>/dev/null || true; exit 1; }
 
 snapshot(){
   local name="$1"
@@ -81,7 +80,12 @@ PY
 
 # ----- App lifecycle -----
 adb shell am force-stop "$PACKAGE" || true
-adb shell monkey -p "$PACKAGE" 1 >/dev/null
+log "Resolving launch activity: $ACTIVITY"
+adb shell cmd package resolve-activity --brief "$PACKAGE" | tee "$OUT/resolve-activity.txt" || true
+log "Launching $ACTIVITY explicitly"
+START_OUTPUT="$(adb shell am start -W -n "$ACTIVITY" 2>&1)" || { echo "$START_OUTPUT"; fail "Explicit activity launch command failed"; }
+printf '%s\n' "$START_OUTPUT" | tee "$OUT/launch-result.txt"
+echo "$START_OUTPUT" | grep -q 'Status: ok' || fail "Activity did not report Status: ok"
 sleep 4
 snapshot 01-launch
 assert_any_text 01-launch "SPORTS COMMAND CENTER" "XSPORTSX" "WELCOME TO"
@@ -120,7 +124,7 @@ if [[ "$MODE" == "mobile" ]]; then
 
   adb shell input keyevent KEYCODE_HOME
   sleep 1
-  adb shell monkey -p "$PACKAGE" 1 >/dev/null
+  adb shell am start -W -n "$ACTIVITY" >/dev/null
   sleep 2
   snapshot 08-relaunch
   assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "XSPORTS" "ADD SOURCE"
@@ -180,7 +184,7 @@ else
 
   adb shell input keyevent KEYCODE_HOME
   sleep 1
-  adb shell monkey -p "$PACKAGE" 1 >/dev/null
+  adb shell am start -W -n "$ACTIVITY" >/dev/null
   sleep 3
   snapshot 11-tv-home
   tap_text "FAVORITES"
