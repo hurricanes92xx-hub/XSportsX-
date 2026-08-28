@@ -128,6 +128,11 @@ jobs:
           find "$GITHUB_WORKSPACE/test-apks" -type f -name '*.apk' -print
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
           test -n "$APK" && test -s "$APK"
+      - name: Probe all public schedule sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
       - name: Start isolated QA source fixture
         shell: bash
         run: |
@@ -154,6 +159,14 @@ jobs:
           disable-animations: true
           script: |
             set -euo pipefail
+            echo 'Testing public ESPN schedule access from inside the Android emulator...'
+            adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wsoc.json "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.w.1/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
+            adb shell 'test -s /data/local/tmp/ncaa-wsoc.json'
+            adb shell 'toybox grep -q '"'"'events'"'"' /data/local/tmp/ncaa-wsoc.json'
+            adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wvb.json "https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
+            adb shell 'test -s /data/local/tmp/ncaa-wvb.json'
+            adb shell 'toybox grep -q '"'"'events'"'"' /data/local/tmp/ncaa-wvb.json'
+            echo 'Public-source network checks passed inside mobile emulator.'
             APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
             test -n "$APK" && test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
@@ -165,6 +178,7 @@ jobs:
           path: |
             test-output-mobile/**
             qa-source.log
+            public-schedule-mobile.json
           if-no-files-found: ignore
 
   tv-emulator:
@@ -182,6 +196,11 @@ jobs:
           set -euo pipefail
           APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
           test -n "$APK" && test -s "$APK"
+      - name: Probe all public schedule sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
       - name: Start isolated QA source fixture
         shell: bash
         run: |
@@ -208,6 +227,14 @@ jobs:
           disable-animations: true
           script: |
             set -euo pipefail
+            echo 'Testing public ESPN schedule access from inside the Android TV emulator...'
+            adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wsoc.json "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.w.1/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
+            adb shell 'test -s /data/local/tmp/ncaa-wsoc.json'
+            adb shell 'toybox grep -q '"'"'events'"'"' /data/local/tmp/ncaa-wsoc.json'
+            adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wvb.json "https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
+            adb shell 'test -s /data/local/tmp/ncaa-wvb.json'
+            adb shell 'toybox grep -q '"'"'events'"'"' /data/local/tmp/ncaa-wvb.json'
+            echo 'Public-source network checks passed inside TV emulator.'
             APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
             test -n "$APK" && test -s "$APK"
             chmod +x scripts/qa_regression_test.sh
@@ -219,4 +246,5 @@ jobs:
           path: |
             test-output-tv/**
             qa-source.log
+            public-schedule-tv.json
           if-no-files-found: ignore
