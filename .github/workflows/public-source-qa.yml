@@ -1,0 +1,21 @@
+name: Public IPTV Source QA
+
+on:
+  push:
+    branches: [ android-app ]
+  workflow_dispatch:
+
+jobs:
+  public-source-qa:
+    name: Public IPTV source QA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe every enabled public source
+        run: python3 qa/public_source_probe.py | tee public-source-qa.txt
+      - name: Upload source report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-source-qa
+          path: public-source-qa.txt
