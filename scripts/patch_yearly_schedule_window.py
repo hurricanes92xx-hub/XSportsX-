@@ -6,11 +6,26 @@ SERVICE = Path("app/src/main/java/com/xsportsx/app/SportsScheduleService.kt")
 SCREEN = Path("app/src/main/java/com/xsportsx/app/SportsScheduleScreen.kt")
 
 s = SERVICE.read_text(encoding="utf-8")
+
+# Keep this patch idempotent. Earlier versions used over-escaped regexes and
+# required an exact marker that other schedule patches could change.
 s = re.sub(r"(const\s+val\s+DAYS_AHEAD\s*=\s*)\d+L?", r"\g<1>30L", s, count=1)
 if "const val DAYS_AHEAD" not in s:
     s = s.replace("object SportsScheduleService {", "object SportsScheduleService {\n    private const val DAYS_AHEAD = 30L", 1)
 
-registry = '''    private val leagues = listOf(
+# The service registry is already authoritative on current branches. Only
+# restore the registry when a legacy build has actually lost it.
+required = [
+    'ScheduleLeague("MLS"',
+    'ScheduleLeague("EPL"',
+    'ScheduleLeague("NCAA WOMEN SOCCER"',
+    'ScheduleLeague("NCAA WOMEN HOCKEY"',
+    'ScheduleLeague("NCAA WBB"',
+    'ScheduleLeague("NCAA VB"'
+]
+
+if not all(token in s for token in required):
+    registry = '''    private val leagues = listOf(
         ScheduleLeague("NFL", "Football", "football/nfl", "https://www.nfl.com/"),
         ScheduleLeague("NBA", "Basketball", "basketball/nba", "https://www.nba.com/"),
         ScheduleLeague("WNBA", "Basketball", "basketball/wnba", "https://www.wnba.com/"),
@@ -37,53 +52,29 @@ registry = '''    private val leagues = listOf(
         ScheduleLeague("Ligue 1", "Soccer", "soccer/fra.1", "https://www.ligue1.com/"),
         ScheduleLeague("UCL", "Soccer", "soccer/uefa.champions", "https://www.uefa.com/uefachampionsleague/"),
         ScheduleLeague("UEL", "Soccer", "soccer/uefa.europa", "https://www.uefa.com/uefaeuropaleague/"),
-        ScheduleLeague("NWSL", "Soccer", "soccer/usa.nwsl", "https://www.nwslsoccer.com/"),
-        ScheduleLeague("F1", "Racing", "racing/f1", "https://www.formula1.com/"),
-        ScheduleLeague("NASCAR", "Racing", "racing/nascar-premier", "https://www.nascar.com/"),
-        ScheduleLeague("INDYCAR", "Racing", "racing/irl", "https://www.indycar.com/"),
-        ScheduleLeague("NASCAR XFINITY", "Racing", "racing/nascar-secondary", "https://www.nascar.com/"),
-        ScheduleLeague("NASCAR TRUCK", "Racing", "racing/nascar-truck", "https://www.nascar.com/"),
-        ScheduleLeague("MOTOGP", "Racing", "racing/motogp", "https://www.motogp.com/"),
-        ScheduleLeague("RUGBY", "Rugby", "rugby/180659", "https://www.world.rugby/"),
-        ScheduleLeague("RUGBY LEAGUE", "Rugby League", "rugby-league/3", "https://www.nrl.com/"),
-        ScheduleLeague("LACROSSE", "Lacrosse", "lacrosse/pll", "https://premierlacrosseleague.com/"),
-        ScheduleLeague("NLL", "Lacrosse", "lacrosse/nll", "https://www.nll.com/"),
-        ScheduleLeague("VOLLEYBALL", "Volleyball", "volleyball/fivb.w", "https://www.fivb.com/"),
-        ScheduleLeague("VOLLEYBALL MEN", "Volleyball", "volleyball/fivb.m", "https://www.fivb.com/"),
-        ScheduleLeague("GOLF PGA", "Golf", "golf/pga", "https://www.pgatour.com/"),
-        ScheduleLeague("GOLF LPGA", "Golf", "golf/lpga", "https://www.lpga.com/"),
-        ScheduleLeague("GOLF LIV", "Golf", "golf/liv", "https://www.livgolf.com/"),
-        ScheduleLeague("TENNIS ATP", "Tennis", "tennis/atp", "https://www.atptour.com/"),
-        ScheduleLeague("TENNIS WTA", "Tennis", "tennis/wta", "https://www.wtatennis.com/"),
-        ScheduleLeague("AFL", "Australian Football", "australian-football/afl", "https://www.afl.com.au/")
+        ScheduleLeague("NWSL", "Soccer", "soccer/usa.nwsl", "https://www.nwslsoccer.com/")
     )'''
+    m = re.search(r"(?ms)^    private val leagues = listOf\(.*?^    \)\n\n    fun normalizeLeague", s)
+    if not m:
+        raise SystemExit("schedule league registry not found: refusing unsafe rewrite")
+    s = s[:m.start()] + registry + "\n\n    fun normalizeLeague" + s[m.end():]
 
-m = re.search(r"(?ms)^    private val leagues = listOf\(.*?^    \)\n\n    fun normalizeLeague", s)
-if not m:
-    raise SystemExit("schedule league registry not found: refusing unsafe rewrite")
-s = s[:m.start()] + registry + "\n\n    fun normalizeLeague" + s[m.end():]
-
-aliases = '''        "WNBA" -> "WNBA"
-        "NCAA WOMEN'S BASKETBALL", "NCAA WOMENS BASKETBALL" -> "NCAA WBB"
-        "NATIONAL WOMEN'S SOCCER LEAGUE" -> "NWSL"
-        "NASCAR CUP", "NASCAR CUP SERIES" -> "NASCAR"
-        "INDYCAR SERIES" -> "INDYCAR"
-        "PLL" -> "LACROSSE"
-        "ATP" -> "TENNIS ATP"
-        "WTA" -> "TENNIS WTA"
-        "PGA" -> "GOLF PGA"
-        "LPGA" -> "GOLF LPGA"
-        "LIV" -> "GOLF LIV"
-        "NRL", "SUPER LEAGUE" -> "RUGBY LEAGUE"
-'''
-if '"WNBA" -> "WNBA"' not in s:
-    marker = '        else -> label.trim().uppercase()'
-    if marker not in s:
-        raise SystemExit("league normalization fallback not found: refusing unsafe rewrite")
-    s = s.replace(marker, aliases + marker, 1)
+# Ensure the important aliases exist without depending on a fragile marker.
+aliases = {
+    '"NCAA WOMEN\'S BASKETBALL", "NCAA WOMENS BASKETBALL" -> "NCAA WBB"': 'NCAA WBB alias',
+    '"NATIONAL WOMEN\'S SOCCER LEAGUE" -> "NWSL"': 'NWSL alias',
+    '"NCAA WOMEN\'S SOCCER" -> "NCAA WOMEN SOCCER"': 'NCAA women soccer alias',
+    '"COLLEGE WOMEN\'S HOCKEY" -> "NCAA WOMEN HOCKEY"': 'NCAA women hockey alias'
+}
+if "else -> label.trim().uppercase()" in s:
+    missing = [line for line in aliases if line not in s]
+    if missing:
+        block = "\n".join("        " + line for line in missing) + "\n"
+        s = s.replace("        else -> label.trim().uppercase()", block + "        else -> label.trim().uppercase()", 1)
 SERVICE.write_text(s, encoding="utf-8")
 
+# Keep UI choices synchronized with the service registry.
 t = SCREEN.read_text(encoding="utf-8")
-t = re.sub(r'val leagueChoices = listOf\(.*?\)', 'val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices', t, count=1, flags=re.S)
+t = re.sub(r"val leagueChoices = listOf\(.*?\)", 'val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices', t, count=1, flags=re.S)
 SCREEN.write_text(t, encoding="utf-8")
-print("Expanded schedule registry safely and made the UI choices authoritative")
+print("Schedule registry patch applied idempotently")
