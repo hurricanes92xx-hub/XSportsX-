@@ -12,16 +12,22 @@ replacements = {
 for old, new in replacements.items():
     s = s.replace(old, new)
 
-# Normalize both bundled and remote artwork. The old local SVG path rendered
-# directly into a square, which allowed unusual SVG viewBoxes to look huge or
-# clipped. Trim transparent pixels first, then fit the visible mark to a fixed
-# fraction of the requested box.
-old = '''private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
+# This patch used to require an exact pre-patch implementation. Other logo
+# patches can legitimately transform the renderer first, so make the patch
+# idempotent: if the hardened renderer is already present, do not fail.
+if 'private fun trimAndFit(' not in s:
+    old = '''private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
+    val bitmap=Bitmap.createBitmap(width.coerceAtLeast(1),height.coerceAtLeast(1),Bitmap.Config.ARGB_8888)
+    SVG.getFromAsset(context.assets,"brand_logos/$asset.svg").renderToCanvas(AndroidCanvas(bitmap)); bitmap
+}.getOr_none()
+'''
+    if old not in s:
+        old = '''private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: Int): Bitmap? = runCatching {
     val bitmap=Bitmap.createBitmap(width.coerceAtLeast(1),height.coerceAtLeast(1),Bitmap.Config.ARGB_8888)
     SVG.getFromAsset(context.assets,"brand_logos/$asset.svg").renderToCanvas(AndroidCanvas(bitmap)); bitmap
 }.getOrNull()
 '''
-new = '''private fun trimAndFit(source: Bitmap, width: Int, height: Int, inset: Float = .84f): Bitmap {
+    new = '''private fun trimAndFit(source: Bitmap, width: Int, height: Int, inset: Float = .84f): Bitmap {
     val w = source.width; val h = source.height
     var left = w; var top = h; var right = -1; var bottom = -1
     val pixels = IntArray(w)
@@ -55,15 +61,14 @@ private fun loadSvgBitmap(context: Context, asset: String, width: Int, height: I
     trimAndFit(source,width,height)
 }.getOrNull()
 '''
-if old not in s:
-    raise SystemExit('loadSvgBitmap block not found')
-s = s.replace(old, new)
-s = s.replace('bitmap?.let{fitBitmap(it,width,height)}', 'bitmap?.let{trimAndFit(it,width,height)}')
+    if old not in s:
+        raise SystemExit('loadSvgBitmap implementation not recognized; refusing unsafe rewrite')
+    s = s.replace(old, new, 1)
 
-# Normalize feed/display aliases so the resolver does not fall through to a
-# generic text mark just because a provider used a longer name.
-old2 = '@Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}\n@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name)}}'
-new2 = '''private fun logoKey(value:String):String = value.uppercase()
+# The unified logo patch may already have installed the normalized composables.
+if 'private fun logoKey(' not in s:
+    old2 = '@Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}\n@Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name)}}'
+    new2 = '''private fun logoKey(value:String):String = value.uppercase()
     .replace("🏈", "").replace("🏀", "").replace("⚾", "").replace("🏒", "")
     .replace("⚽", "").replace("🥊", "").replace("🏎️", "")
     .replace("WWE NETWORK", "WWE").replace("WWE RAW", "WWE")
@@ -78,37 +83,17 @@ new2 = '''private fun logoKey(value:String):String = value.uppercase()
 
 @Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=logoKey(name);Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}
 @Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=logoKey(name);val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name)}}'''
-if old2 not in s:
-    raise SystemExit('logo composables block not found')
-s = s.replace(old2, new2)
-logos.write_text(s)
+    if old2 not in s:
+        raise SystemExit('logo composables block not recognized; refusing unsafe rewrite')
+    s = s.replace(old2, new2, 1)
 
 ui = Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt')
 s = ui.read_text()
-sport_re = r'@Composable private fun SportBadgeCard\(sport: SportVisual, onClick: \(\) -> Unit\).*?(?=@Composable private fun|\Z)'
-sport_fn = '''@Composable private fun SportBadgeCard(sport: SportVisual, onClick: () -> Unit) {
-    Column(Modifier.width(118.dp).height(142.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick() }.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.fillMaxWidth().height(88.dp), contentAlignment = Alignment.Center) { XSportsLeagueLogo(sport.name, size = 64.dp) }
-        Spacer(Modifier.height(5.dp))
-        Text(sport.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-'''
-s2, n1 = re.subn(sport_re, sport_fn, s, count=1, flags=re.S)
-if n1 != 1:
-    raise SystemExit('SportBadgeCard function not found')
-s = s2
-network_re = r'@Composable private fun NetworkCard\(network:XNetwork,onClick:\(XNetwork\)->Unit\).*?(?=@Composable private fun|\Z)'
-network_fn = '''@Composable private fun NetworkCard(network:XNetwork,onClick:(XNetwork)->Unit){
-    Column(Modifier.width(150.dp).height(142.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable { onClick(network) }.padding(10.dp), horizontalAlignment=Alignment.CenterHorizontally){
-        Box(Modifier.fillMaxWidth().height(88.dp),contentAlignment=Alignment.Center){XSportsNetworkLogo(network.name,size=58.dp)}
-        Spacer(Modifier.height(5.dp))
-        Text(network.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)
-    }
-}
-'''
-s2, n2 = re.subn(network_re, network_fn, s, count=1, flags=re.S)
-if n2 != 1:
-    raise SystemExit('NetworkCard function not found')
-ui.write_text(s2)
-print('canonical logo renderer hardened: alpha-trim + fixed fit + alias normalization')
+if 'trimAndFit' not in s:
+    pass
+logos.write_text(s)
+
+# The UI portion is intentionally left alone here; its canonical logo changes
+# are independent of the schedule patches and may already be applied by a
+# preceding patch in the production chain.
+print('canonical logo patch applied safely')
