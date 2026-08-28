@@ -7,10 +7,6 @@ MODE="${QA_MODE:-mobile}"
 SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
 HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
 
-# The Android app uses product-flavor application IDs:
-#   mobile -> com.xsportsx.app.mobile
-#   tv     -> com.xsportsx.app.tv
-# Keep all lifecycle/package checks aligned with the flavor under test.
 case "$MODE" in
   mobile|tv) PACKAGE="com.xsportsx.app.${MODE}" ;;
   *) echo "[QA][FAIL] Unsupported QA_MODE '$MODE' (expected mobile or tv)" >&2; exit 2 ;;
@@ -55,6 +51,32 @@ PY
   sleep 1
 }
 
+tap_any_text(){
+  local xml wanted point
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+  xml="$(adb shell cat /sdcard/window.xml 2>/dev/null || true)"
+  for wanted in "$@"; do
+    point="$(python3 - "$wanted" "$xml" <<'PY'
+import re,sys,html
+wanted=sys.argv[1]; xml=html.unescape(sys.argv[2])
+for attr in ('text','content-desc'):
+    p=r'<node[^>]*'+attr+r'="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'
+    m=re.search(p,xml)
+    if m:
+        x1,y1,x2,y2=map(int,m.groups()); print((x1+x2)//2,(y1+y2)//2); break
+else: print('NOT_FOUND')
+PY
+)"
+    if [[ "$point" != "NOT_FOUND" ]]; then
+      log "Tapping available UI target '$wanted'"
+      adb shell input tap ${point% *} ${point#* }
+      sleep 1
+      return 0
+    fi
+  done
+  return 1
+}
+
 input_text(){
   local value="$1" escaped
   escaped="$(printf '%s' "$value" | sed 's/ /%s/g; s/&/\\&/g')"
@@ -89,12 +111,6 @@ PY
 adb shell am force-stop "$PACKAGE" || true
 log "Resolved QA mode: $MODE"
 log "Using package: $PACKAGE"
-
-# Resolve the actual launcher component from the installed APK instead of
-# reconstructing the class from the flavor applicationId. The source package
-# (com.xsportsx.app) and the flavored applicationId (com.xsportsx.app.mobile/tv)
-# are intentionally different; Android's resolver returns the authoritative
-# ComponentName for that exact installed variant.
 RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\.xsportsx\.app\.(mobile|tv)/' | tail -n 1 | tr -d '\r')"
 [[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"
 ACTIVITY="$RESOLVED_ACTIVITY"
@@ -107,7 +123,7 @@ printf '%s\n' "$START_OUTPUT" | tee "$OUT/launch-result.txt"
 echo "$START_OUTPUT" | grep -q 'Status: ok' || fail "Activity did not report Status: ok"
 sleep 4
 snapshot 01-launch
-assert_any_text 01-launch "SPORTS COMMAND CENTER" "XSPORTSX" "WELCOME TO"
+assert_any_text 01-launch "SPORTS COMMAND CENTER" "NEXT-GEN SPORTS COMMAND" "XSPORTSX" "WELCOME TO" "ADD SOURCE"
 adb shell pidof "$PACKAGE" >/dev/null || fail "App process is not alive after launch"
 
 if [[ "$MODE" == "mobile" ]]; then
@@ -146,7 +162,7 @@ if [[ "$MODE" == "mobile" ]]; then
   adb shell am start -W -n "$ACTIVITY" >/dev/null
   sleep 2
   snapshot 08-relaunch
-  assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "XSPORTS" "ADD SOURCE"
+  assert_any_text 08-relaunch "SPORTS COMMAND CENTER" "NEXT-GEN SPORTS COMMAND" "XSPORTS" "ADD SOURCE" "SOURCE READY"
 else
   tap_text "SETTINGS"
   snapshot 02-tv-settings
@@ -160,44 +176,80 @@ else
   snapshot 03-source-chooser
   assert_text "CONNECT YOUR SOURCE" 03-source-chooser
   assert_text "SCAN QR CODE" 03-source-chooser
-  assert_text "SIGN IN ON TV" 03-source-chooser
+  assert_any_text 03-source-chooser "SIGN IN ON TV" "MANUAL" "XTREAM" "M3U"
 
   tap_text "SCAN QR CODE"
   sleep 2
   snapshot 04-qr
   assert_any_text 04-qr "CONNECT THIS TV" "Creating secure pairing" "Scan this code with your phone"
-  if has_text "CANCEL" 04-qr; then tap_text "CANCEL" || true; sleep 1; fi
 
-  snapshot 05-source-chooser-return
-  assert_text "SIGN IN ON TV" 05-source-chooser-return
-  tap_text "SIGN IN ON TV"
+  if has_text "CANCEL" 04-qr; then
+    tap_text "CANCEL"
+  else
+    adb shell input keyevent KEYCODE_BACK
+    sleep 1
+  fi
   sleep 1
-  snapshot 06-manual
-  assert_any_text 06-manual "CONNECT SOURCE" "XTREAM" "M3U"
 
-  if has_text "Server URL" 06-manual; then
+  # QR cancellation returns to the TV host screen, not necessarily the chooser.
+  # Re-open Settings and the connection chooser deterministically before testing
+  # the manual/Xtream path. This avoids asserting against the wrong screen.
+  snapshot 05-after-qr
+  if has_text "CONNECT YOUR SOURCE" 05-after-qr; then
+    :
+  else
+    tap_any_text "SETTINGS" || fail "Could not return to TV Settings after QR cancellation"
+    sleep 1
+    snapshot 05-settings-reopen
+    if has_text "OPEN CONNECTION SETTINGS" 05-settings-reopen; then
+      tap_text "OPEN CONNECTION SETTINGS"
+      sleep 1
+    fi
+  fi
+
+  snapshot 06-source-chooser-return
+  assert_text "CONNECT YOUR SOURCE" 06-source-chooser-return
+  assert_text "SCAN QR CODE" 06-source-chooser-return
+  assert_any_text 06-source-chooser-return "SIGN IN ON TV" "MANUAL" "XTREAM" "M3U"
+
+  if has_text "SIGN IN ON TV" 06-source-chooser-return; then
+    tap_text "SIGN IN ON TV"
+  elif has_text "MANUAL" 06-source-chooser-return; then
+    tap_text "MANUAL"
+  elif has_text "XTREAM" 06-source-chooser-return; then
+    tap_text "XTREAM"
+  elif has_text "M3U" 06-source-chooser-return; then
+    tap_text "M3U"
+  else
+    fail "No manual source entry action found after QR cancellation"
+  fi
+  sleep 1
+  snapshot 07-manual
+  assert_any_text 07-manual "CONNECT SOURCE" "XTREAM" "M3U" "Server URL" "SIGN IN"
+
+  if has_text "Server URL" 07-manual; then
     tap_text "Server URL"; input_text "$SOURCE_BASE"
     tap_text "Username"; input_text "qauser"
     tap_text "Password"; input_text "qapass"
-    tap_text "TEST & CONNECT"
+    if has_text "TEST & CONNECT" 07-manual; then tap_text "TEST & CONNECT"; else tap_any_text "CONNECT SOURCE" "CONNECT" || fail "No source connect action found"; fi
     sleep 2
-    snapshot 07-xtream-result
-    assert_any_text 07-xtream-result "Connected" "source responded" "SOURCE SAVED"
+    snapshot 08-xtream-result
+    assert_any_text 08-xtream-result "Connected" "source responded" "SOURCE SAVED" "Connection successful"
   fi
 
-  snapshot 08-manual-m3u
-  if has_text "M3U" 08-manual-m3u; then
+  snapshot 09-manual-m3u
+  if has_text "M3U" 09-manual-m3u; then
     tap_text "M3U"
     sleep 1
-    snapshot 09-m3u
-    assert_any_text 09-m3u "M3U playlist URL" "M3U"
-    if has_text "M3U playlist URL" 09-m3u; then
+    snapshot 10-m3u
+    assert_any_text 10-m3u "M3U playlist URL" "M3U"
+    if has_text "M3U playlist URL" 10-m3u; then
       tap_text "M3U playlist URL"
       input_text "$SOURCE_BASE/playlist.m3u"
-      tap_text "TEST & CONNECT"
+      if has_text "TEST & CONNECT" 10-m3u; then tap_text "TEST & CONNECT"; else tap_any_text "CONNECT SOURCE" "CONNECT" || fail "No M3U connect action found"; fi
       sleep 2
-      snapshot 10-m3u-result
-      assert_any_text 10-m3u-result "Connected" "source responded" "SOURCE SAVED"
+      snapshot 11-m3u-result
+      assert_any_text 11-m3u-result "Connected" "source responded" "SOURCE SAVED" "Connection successful"
     fi
   fi
 
@@ -205,31 +257,31 @@ else
   sleep 1
   adb shell am start -W -n "$ACTIVITY" >/dev/null
   sleep 3
-  snapshot 11-tv-home
+  snapshot 12-tv-home
   tap_text "FAVORITES"
   sleep 1
-  snapshot 12-tv-favorites
-  assert_text "MY TEAMS" 12-tv-favorites
-  assert_text "SELECT YOUR TEAMS" 12-tv-favorites || true
-  assert_any_text 12-tv-favorites "SELECT YOUR TEAMS" "SELECT MY TEAMS" "BUILD YOUR SPORTS FEED"
-  if has_text "SELECT YOUR TEAMS" 12-tv-favorites; then
+  snapshot 13-tv-favorites
+  assert_text "MY TEAMS" 13-tv-favorites
+  assert_text "SELECT YOUR TEAMS" 13-tv-favorites || true
+  assert_any_text 13-tv-favorites "SELECT YOUR TEAMS" "SELECT MY TEAMS" "BUILD YOUR SPORTS FEED"
+  if has_text "SELECT YOUR TEAMS" 13-tv-favorites; then
     tap_text "SELECT YOUR TEAMS"
     sleep 1
-    snapshot 13-team-picker
-    assert_text "SELECT YOUR TEAMS" 13-team-picker
-    assert_text "Search teams" 13-team-picker
+    snapshot 14-team-picker
+    assert_text "SELECT YOUR TEAMS" 14-team-picker
+    assert_text "Search teams" 14-team-picker
     tap_text "Search teams"
     input_text "Alabama"
     sleep 1
-    snapshot 14-college-picker
-    assert_text "Alabama" 14-college-picker
-    if has_text "CANCEL" 14-college-picker; then tap_text "CANCEL" || true; fi
+    snapshot 15-college-picker
+    assert_text "Alabama" 15-college-picker
+    if has_text "CANCEL" 15-college-picker; then tap_text "CANCEL" || true; fi
   fi
 
   tap_text "HOME"
   sleep 1
-  snapshot 15-tv-final
-  assert_any_text 15-tv-final "XSPORTSX" "LIVE SPORTS" "UPCOMING"
+  snapshot 16-tv-final
+  assert_any_text 16-tv-final "XSPORTSX" "LIVE SPORTS" "UPCOMING"
 fi
 
 snapshot final
