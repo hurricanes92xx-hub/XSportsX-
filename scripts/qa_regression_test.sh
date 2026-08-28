@@ -6,8 +6,16 @@ OUT="${2:-test-output}"
 MODE="${QA_MODE:-mobile}"
 SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
 HOST_SOURCE_BASE="${QA_SOURCE_HOST_BASE:-http://127.0.0.1:8765}"
-PACKAGE="com.xsportsx.app"
-ACTIVITY="com.xsportsx.app/.MainActivityFuture"
+
+# The Android app uses product-flavor application IDs:
+#   mobile -> com.xsportsx.app.mobile
+#   tv     -> com.xsportsx.app.tv
+# Keep all lifecycle/package checks aligned with the flavor under test.
+case "$MODE" in
+  mobile|tv) PACKAGE="com.xsportsx.app.${MODE}" ;;
+  *) echo "[QA][FAIL] Unsupported QA_MODE '$MODE' (expected mobile or tv)" >&2; exit 2 ;;
+esac
+ACTIVITY="${PACKAGE}/.MainActivityFuture"
 mkdir -p "$OUT"
 
 adb wait-for-device
@@ -80,7 +88,9 @@ PY
 
 # ----- App lifecycle -----
 adb shell am force-stop "$PACKAGE" || true
-log "Resolving launch activity: $ACTIVITY"
+log "Resolved QA mode: $MODE"
+log "Using package: $PACKAGE"
+log "Using activity: $ACTIVITY"
 adb shell cmd package resolve-activity --brief "$PACKAGE" | tee "$OUT/resolve-activity.txt" || true
 log "Launching $ACTIVITY explicitly"
 START_OUTPUT="$(adb shell am start -W -n "$ACTIVITY" 2>&1)" || { echo "$START_OUTPUT"; fail "Explicit activity launch command failed"; }
