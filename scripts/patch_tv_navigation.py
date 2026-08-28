@@ -60,7 +60,7 @@ loader = ''' + 'r"""' + '''private suspend fun loadTvGames(): List<TvGame> = wit
 }''' + '"""' + '''
 s = re.sub(r"private fun dateRange\\(\\):String.*?\\n\\n@Composable fun TvHome", loader + "\\n\\n@Composable fun TvHome", s, count=1, flags=re.S)
 
-old_state = re.compile(r"    var liveGames by remember\\{mutableStateOf<List<TvGame>>\\(emptyList\\(\\)\\)\\}.*?    LaunchedEffect\\(selectedNav\\).*?\\}\\}", re.S)
+old_state = re.compile(r"    var liveGames by remember\\{mutableStateOf<List<TvGame>\\(emptyList\\(\\)\\)\\}.*?    LaunchedEffect\\(selectedNav\\).*?\\}\\}", re.S)
 new_state = ''' + 'r"""' + '''    var allGames by remember{mutableStateOf<List<TvGame>>(emptyList())}
     var loadingSchedule by remember{mutableStateOf(true)}
     val liveGames = allGames.filter { it.live }
@@ -91,3 +91,40 @@ Path("scripts/patch_league_routing.py").write_text(routing, encoding="utf-8")
 
 p.write_text(s, encoding="utf-8")
 print("TV navigation patch applied safely")
+
+# Mobile QA: the home hero already contains a clickable LIVE badge, while the
+# persistent bottom navigation also exposes LIVE. UiAutomator finds the first
+# matching text, so make the hero label distinct and reserve the exact LIVE
+# label for the bottom navigation control.
+mobile = Path("app/src/main/java/com/xsportsx/app/FuturisticSports.kt")
+if mobile.is_file():
+    ms = mobile.read_text(encoding="utf-8")
+    ms = ms.replace(
+        'Text("LIVE", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black)',
+        'Text("LIVE NOW", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black)',
+        1,
+    )
+    mobile.write_text(ms, encoding="utf-8")
+    print("Mobile LIVE hero label normalized for deterministic navigation")
+
+# TV QR cancellation: the regression fallback uses the Android back action
+# when the tiny TextButton is outside the TV viewport. Intercept BackHandler so
+# back means "cancel pairing" rather than leaving the activity/task.
+qr = Path("app/src/main/java/com/xsportsx/app/QrPairingScreen.kt")
+if qr.is_file():
+    qs = qr.read_text(encoding="utf-8")
+    if 'import androidx.activity.compose.BackHandler' not in qs:
+        qs = qs.replace(
+            'package com.xsportsx.app\n\n',
+            'package com.xsportsx.app\n\nimport androidx.activity.compose.BackHandler\n',
+            1,
+        )
+    marker = '    var connected by remember { mutableStateOf(false) }\n'
+    if marker in qs and 'BackHandler(enabled = true)' not in qs:
+        qs = qs.replace(
+            marker,
+            marker + '\n    BackHandler(enabled = true) { onDone() }\n',
+            1,
+        )
+    qr.write_text(qs, encoding="utf-8")
+    print("TV QR cancellation back handling hardened")
