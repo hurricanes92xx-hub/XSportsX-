@@ -25,11 +25,8 @@ object SportsScheduleService {
     private const val MAX_GAMES_PER_LEAGUE = 150
     private const val HTTP_TIMEOUT_MS = 4_500L
     private const val CONNECT_TIMEOUT_MS = 1_800
+    // TSDB_LONG_TAIL_BACKUP_V1: long-tail metadata fallback remains non-blocking.
 
-    // ESPN's public site API has recently started returning Akamai 403s to
-    // some non-browser clients. The web API host is the working alternate
-    // route reported by current ESPN API users. Keep the original host as a
-    // second fallback so this survives another edge/CDN change.
     private val ESPN_BASES = listOf(
         "https://site.web.api.espn.com/apis/site/v2",
         "https://site.api.espn.com/apis/site/v2"
@@ -39,7 +36,6 @@ object SportsScheduleService {
         "https://site.api.espn.com/apis/site/v3"
     )
 
-    // This registry is authoritative. UI choices alone do not fetch a league.
     private val leagues = listOf(
         ScheduleLeague("NFL", "Football", "football/nfl", "https://www.nfl.com/"),
         ScheduleLeague("NBA", "Basketball", "basketball/nba", "https://www.nba.com/"),
