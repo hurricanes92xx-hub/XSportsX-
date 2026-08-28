@@ -111,6 +111,7 @@ jobs:
   mobile:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -137,12 +138,12 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_2
-          force-avd-creation: true
-          emulator-boot-timeout: 900
+          force-avd-creation: false
+          emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
@@ -169,6 +170,7 @@ jobs:
   tv:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -195,12 +197,12 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: tv_1080p
-          force-avd-creation: true
-          emulator-boot-timeout: 900
+          force-avd-creation: false
+          emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
             QA_SERVER_PID=$!
             trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
