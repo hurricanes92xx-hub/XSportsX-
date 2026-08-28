@@ -158,7 +158,7 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             echo 'Testing public ESPN schedule access from inside the Android emulator...'
             adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wsoc.json "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.w.1/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
             adb shell 'test -s /data/local/tmp/ncaa-wsoc.json'
@@ -226,7 +226,7 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             echo 'Testing public ESPN schedule access from inside the Android TV emulator...'
             adb shell 'toybox wget -q -O /data/local/tmp/ncaa-wsoc.json "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.w.1/scoreboard?dates=$(date +%Y%m%d)-$(date -d "+7 days" +%Y%m%d)&limit=1000"'
             adb shell 'test -s /data/local/tmp/ncaa-wsoc.json'
