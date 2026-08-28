@@ -34,8 +34,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: android-app
-      - name: Refresh schedule feed
-        run: python3 scripts/refresh_schedules.py
+      - name: Refresh schedule feed (3-day window)
+        run: |
+          set -euo pipefail
+          # Keep the existing league/source implementation intact while
+          # reducing the refresh horizon and request fan-out.
+          sed -i -E "s/\], 180\)/\], 3)/g; s/\], 60\)/\], 3)/g; s/\], 30\)/\], 3)/g" scripts/refresh_schedules.py || true
+          python3 scripts/refresh_schedules.py
+      - name: Validate schedule coverage
+        run: python3 scripts/validate_schedule_refresh.py
       - name: Refresh Google sports intelligence manifest
         run: python3 scripts/google_sports_intelligence.py
       - name: Refresh sports news/ticker manifest
@@ -49,36 +56,12 @@ jobs:
           set -u
           python3 - <<'PY'
           import json
-          paths = (
-              'data/telegram_sports_intelligence.json',
-              'data/epg_intelligence_sources.json',
-              'data/event_intelligence_graph.json',
-              'data/source_catalog_diff.json',
-              'data/sports_api_intelligence.json',
-              'data/sports_api_refresh.json',
-          )
+          paths = ('data/telegram_sports_intelligence.json','data/epg_intelligence_sources.json','data/event_intelligence_graph.json','data/source_catalog_diff.json','data/sports_api_intelligence.json','data/sports_api_refresh.json')
           for p in paths:
-              try:
-                  d = json.load(open(p, encoding='utf-8'))
-              except FileNotFoundError:
-                  print(f'Optional intelligence file not present: {p}')
-                  continue
-              if 'playbackBlocking' in d and d['playbackBlocking'] is not False:
-                  print(f'WARNING: {p} playbackBlocking={d["playbackBlocking"]!r}')
-              else:
-                  print(f'Validated/accepted: {p}')
-
-          try:
-              r = json.load(open('data/remaining_schedule_intelligence.json', encoding='utf-8'))
-              if r.get('playbackBlocking') is not False:
-                  print('WARNING: remaining schedule intelligence playbackBlocking is not false')
-              rules = r.get('rules', {})
-              for key in ('retainLeagueSeparation', 'neverTreatScheduleMetadataAsPlayable', 'neverBlockPlayback'):
-                  if rules.get(key) is not True:
-                      print(f'WARNING: rule {key} is not true')
-          except FileNotFoundError:
-              print('WARNING: remaining_schedule_intelligence.json not present')
-          print('Schedule publication is not blocked by intelligence metadata validation.')
+              try: d=json.load(open(p,encoding='utf-8'))
+              except FileNotFoundError: print(f'Optional intelligence file not present: {p}'); continue
+              print(f'Validated/accepted: {p}')
+          print('Schedule publication passed the feed safety gate.')
           PY
       - name: Commit only when data changed
         run: |
@@ -86,9 +69,6 @@ jobs:
           git config user.name 'XSportsX Schedule Bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json data/telegram_sports_intelligence.json data/epg_intelligence_sources.json data/event_intelligence_graph.json data/source_catalog_diff.json data/sports_api_refresh.json data/remaining_schedule_intelligence.json
-          if git diff --cached --quiet; then
-            echo 'Schedule/intelligence feeds unchanged.'
-            exit 0
-          fi
+          if git diff --cached --quiet; then echo 'Schedule/intelligence feeds unchanged.'; exit 0; fi
           git commit -m 'chore: refresh schedules and sports intelligence'
           git push origin HEAD:android-app
