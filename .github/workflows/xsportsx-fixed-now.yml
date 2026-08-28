@@ -44,17 +44,8 @@ jobs:
         with:
           name: fixed-now-apks
           path: test-apks
-      - name: Patch launcher resolution for this test only
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('scripts/qa_regression_test.sh'); s=p.read_text()
-          old='''RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r')"; [[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
-          new='''RESOLVE_RAW="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$RESOLVE_RAW" | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$RESOLVE_RAW" > "$OUT/resolve-activity-raw.txt"; fail "Could not resolve launcher activity for $PACKAGE"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
-          assert old in s
-          p.write_text(s.replace(old,new,1))
-          PY
-          bash -n scripts/qa_regression_test.sh
+      - name: Validate committed launcher resolution
+        run: bash -n scripts/qa_regression_test.sh
       - run: sudo chmod 666 /dev/kvm
       - name: Run fixed mobile regression
         uses: reactivecircus/android-emulator-runner@v2
@@ -93,17 +84,8 @@ jobs:
         with:
           name: fixed-now-apks
           path: test-apks
-      - name: Patch launcher resolution for this test only
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('scripts/qa_regression_test.sh'); s=p.read_text()
-          old='''RESOLVED_ACTIVITY="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r')"; [[ -n "$RESOLVED_ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE"; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
-          new='''RESOLVE_RAW="$(adb shell cmd package resolve-activity --brief "$PACKAGE" 2>/dev/null || true)"; RESOLVED_ACTIVITY="$(printf '%s\\n' "$RESOLVE_RAW" | grep -E '^com\\.xsportsx\\.app\\.(mobile|tv)/' | tail -n 1 | tr -d '\\r' || true)"; if [[ -z "$RESOLVED_ACTIVITY" ]]; then printf '%s\\n' "$RESOLVE_RAW" > "$OUT/resolve-activity-raw.txt"; fail "Could not resolve launcher activity for $PACKAGE"; fi; ACTIVITY="$RESOLVED_ACTIVITY"; log "Resolved launcher activity: $ACTIVITY"; printf '%s\\n' "$RESOLVED_ACTIVITY" > "$OUT/resolve-activity.txt";'''
-          assert old in s
-          p.write_text(s.replace(old,new,1))
-          PY
-          bash -n scripts/qa_regression_test.sh
+      - name: Validate committed launcher resolution
+        run: bash -n scripts/qa_regression_test.sh
       - run: sudo chmod 666 /dev/kvm
       - name: Run fixed TV regression
         uses: reactivecircus/android-emulator-runner@v2
