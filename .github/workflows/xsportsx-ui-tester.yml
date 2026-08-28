@@ -248,3 +248,4 @@ jobs:
             qa-source.log
             public-schedule-tv.json
           if-no-files-found: ignore
+# Manual QA trigger is retained; this comment intentionally triggers a fresh android-app push run.
