@@ -130,16 +130,6 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
-      - name: Start QA source fixture
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-          for i in $(seq 1 30); do
-            curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
-            sleep 1
-          done
-          cat qa-source.log; exit 1
       - name: Run mobile emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -149,9 +139,20 @@ jobs:
           profile: pixel_2
           force-avd-creation: true
           emulator-boot-timeout: 900
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
+          script: |
+            set -euo pipefail
+            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
+            QA_SERVER_PID=$!
+            trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
+            for i in $(seq 1 30); do
+              curl -fsS http://127.0.0.1:8765/health >/dev/null && break
+              sleep 1
+            done
+            curl -fsS http://127.0.0.1:8765/health >/dev/null
+            curl -fsS http://10.0.2.2:8765/health >/dev/null
+            bash scripts/qa_regression_test.sh "$MOBILE_APK" test-output-mobile
         env:
           QA_MODE: mobile
           QA_SOURCE_BASE: http://10.0.2.2:8765
@@ -187,16 +188,6 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
-      - name: Start QA source fixture
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
-          for i in $(seq 1 30); do
-            curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0
-            sleep 1
-          done
-          cat qa-source.log; exit 1
       - name: Run TV emulator regression
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -206,9 +197,20 @@ jobs:
           profile: tv_1080p
           force-avd-creation: true
           emulator-boot-timeout: 900
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
-          script: bash scripts/qa_regression_test.sh "$TV_APK" test-output-tv
+          script: |
+            set -euo pipefail
+            python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
+            QA_SERVER_PID=$!
+            trap 'kill "$QA_SERVER_PID" 2>/dev/null || true' EXIT
+            for i in $(seq 1 30); do
+              curl -fsS http://127.0.0.1:8765/health >/dev/null && break
+              sleep 1
+            done
+            curl -fsS http://127.0.0.1:8765/health >/dev/null
+            curl -fsS http://10.0.2.2:8765/health >/dev/null
+            bash scripts/qa_regression_test.sh "$TV_APK" test-output-tv
         env:
           QA_MODE: tv
           QA_SOURCE_BASE: http://10.0.2.2:8765
