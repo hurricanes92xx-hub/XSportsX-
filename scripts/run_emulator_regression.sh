@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# QA fixture is owned by the GitHub Actions background service in the workflow.
 APK="$1"
 MODE="$2"
 OUTDIR="$3"
