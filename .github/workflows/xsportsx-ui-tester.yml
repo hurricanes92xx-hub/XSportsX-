@@ -134,7 +134,14 @@ jobs:
           set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
           echo $! > qa-source.pid
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0; sleep 1; done
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then
+              echo 'QA source fixture is healthy.'
+              exit 0
+            fi
+            sleep 1
+          done
+          echo 'QA source fixture failed to start:'
           cat qa-source.log
           exit 1
       - uses: reactivecircus/android-emulator-runner@v2
@@ -146,12 +153,11 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            bash -euo pipefail -c '
-              APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name "app-mobile-debug.apk" -print -quit)
-              test -n "$APK" && test -s "$APK"
-              chmod +x scripts/qa_regression_test.sh
-              QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
-            '
+            set -euo pipefail
+            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-mobile-debug.apk' -print -quit)
+            test -n "$APK" && test -s "$APK"
+            chmod +x scripts/qa_regression_test.sh
+            QA_MODE=mobile ./scripts/qa_regression_test.sh "$APK" test-output-mobile
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -170,13 +176,26 @@ jobs:
         with:
           name: XSportsX-debug-apks-${{ github.sha }}
           path: test-apks
+      - name: Verify downloaded TV APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
+          test -n "$APK" && test -s "$APK"
       - name: Start isolated QA source fixture
         shell: bash
         run: |
           set -euo pipefail
           python3 scripts/qa_source_server.py > qa-source.log 2>&1 &
           echo $! > qa-source.pid
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/health >/dev/null && exit 0; sleep 1; done
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/health >/dev/null; then
+              echo 'QA source fixture is healthy.'
+              exit 0
+            fi
+            sleep 1
+          done
+          echo 'QA source fixture failed to start:'
           cat qa-source.log
           exit 1
       - uses: reactivecircus/android-emulator-runner@v2
@@ -188,12 +207,11 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
           script: |
-            bash -euo pipefail -c '
-              APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name "app-tv-debug.apk" -print -quit)
-              test -n "$APK" && test -s "$APK"
-              chmod +x scripts/qa_regression_test.sh
-              QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
-            '
+            set -euo pipefail
+            APK=$(find "$GITHUB_WORKSPACE/test-apks" -type f -name 'app-tv-debug.apk' -print -quit)
+            test -n "$APK" && test -s "$APK"
+            chmod +x scripts/qa_regression_test.sh
+            QA_MODE=tv ./scripts/qa_regression_test.sh "$APK" test-output-tv
       - uses: actions/upload-artifact@v4
         if: always()
         with:
