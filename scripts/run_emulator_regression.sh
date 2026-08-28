@@ -10,6 +10,8 @@ if [[ -z "$APK" || -z "$MODE" || -z "$OUTDIR" ]]; then
   exit 2
 fi
 
+QA_SOURCE_BASE="${QA_SOURCE_BASE:-http://10.0.2.2:8765}"
+
 echo "Starting XSportsX ${MODE} emulator regression"
 adb start-server
 adb wait-for-device
@@ -20,26 +22,10 @@ echo "Boot completed: ${boot_completed}"
 test "$adb_state" = device
 test "$boot_completed" = 1
 
-export QA_SOURCE_HOST=0.0.0.0
-export QA_SOURCE_PORT=8765
-rm -f qa-source.log
-python3 scripts/qa_source_server.py >qa-source.log 2>&1 &
-QA_SERVER_PID=$!
-
-cleanup() {
-  kill "$QA_SERVER_PID" 2>/dev/null || true
-  wait "$QA_SERVER_PID" 2>/dev/null || true
-}
-trap cleanup EXIT
-
+echo "Checking QA source fixture at ${QA_SOURCE_BASE}/health"
 server_ready=0
 for i in $(seq 1 30); do
-  if ! kill -0 "$QA_SERVER_PID" 2>/dev/null; then
-    echo "QA source server exited unexpectedly."
-    cat qa-source.log || true
-    exit 1
-  fi
-  if curl -fsS http://127.0.0.1:8765/health >/dev/null; then
+  if curl -fsS --max-time 2 "${QA_SOURCE_BASE}/health" >/dev/null; then
     server_ready=1
     break
   fi
@@ -47,13 +33,12 @@ for i in $(seq 1 30); do
 done
 
 if [[ "$server_ready" != 1 ]]; then
-  echo "QA source server did not become ready."
-  cat qa-source.log || true
+  echo "QA source fixture is not reachable at ${QA_SOURCE_BASE}/health"
+  echo "Host-side diagnostic:"
+  curl -v --max-time 3 http://127.0.0.1:8765/health || true
   exit 1
 fi
 
-curl -fsS http://10.0.2.2:8765/health >/dev/null
-
-echo "QA source server reachable from emulator."
+echo "QA source fixture reachable from emulator host route."
 chmod +x scripts/qa_regression_test.sh
-QA_MODE="$MODE" QA_SOURCE_BASE=http://10.0.2.2:8765 ./scripts/qa_regression_test.sh "$APK" "$OUTDIR"
+QA_MODE="$MODE" QA_SOURCE_BASE="$QA_SOURCE_BASE" ./scripts/qa_regression_test.sh "$APK" "$OUTDIR"
