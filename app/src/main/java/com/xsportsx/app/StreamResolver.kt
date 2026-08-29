@@ -73,9 +73,6 @@ class StreamResolver(context: Context) {
             eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
         }
 
-        // Single-flight protection: concurrent clicks on the same live event now
-        // share one resolver operation instead of launching duplicate public
-        // discovery/health work. Different events remain fully concurrent.
         val existing = eventInFlight[eventKey]
         if (existing != null) return@withContext existing.await()
 
@@ -85,7 +82,7 @@ class StreamResolver(context: Context) {
             }
             val winner = eventInFlight.putIfAbsent(eventKey, work) ?: work
             try {
-                winner.await()
+                return@coroutineScope winner.await()
             } finally {
                 if (winner === work) eventInFlight.remove(eventKey, work)
             }
@@ -93,8 +90,6 @@ class StreamResolver(context: Context) {
     }
 
     private suspend fun resolveEventStreams(config: SourceConfig, eventKey: String, event: SportsEvent, force: Boolean): List<ResolvedStream> {
-        // Recheck after becoming the single in-flight owner so a racing caller
-        // can never repeat a freshly completed event resolution.
         if (!force) {
             val now = System.currentTimeMillis()
             eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return it }
@@ -105,9 +100,6 @@ class StreamResolver(context: Context) {
             matchEventAgainstStreams(event, private)
         } else emptyList()
 
-        // Fast path: reuse public candidates that were already health-checked for
-        // this exact event, league, sport, or broadcast network. This avoids a
-        // full public discovery pass on every click.
         val indexed = publicHealthIndex.rankResolved(
             eventId = event.id,
             sport = event.sport,
@@ -116,17 +108,13 @@ class StreamResolver(context: Context) {
             limit = 8
         ).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
 
-        // Cold/warm discovery path: only run the existing event matcher when the
-        // index does not already have enough candidates, or when explicitly forced.
         val discovered = if (force || indexed.size < 2) {
             runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList())
         } else emptyList()
 
-        // Feed successfully health-checked discoveries back into the persistent
-        // index so future clicks become progressively faster.
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
 
-        val publicMatches = (indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) })
+        val publicMatches = indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let {
             ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it")
         }
@@ -134,7 +122,7 @@ class StreamResolver(context: Context) {
         eventCacheMutex.withLock {
             eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis()))
         }
-        resolved
+        return resolved
     }
 
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
