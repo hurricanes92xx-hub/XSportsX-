@@ -20,11 +20,15 @@ android {
             dimension = "device"
             applicationIdSuffix = ".mobile"
             buildConfigField("boolean", "IS_TV_BUILD", "false")
+            // Legacy source compatibility only; the production pairing flow is LAN-only.
+            buildConfigField("String", "PAIRING_BASE_URL", "\"http://127.0.0.1\"")
         }
         create("tv") {
             dimension = "device"
             applicationIdSuffix = ".tv"
             buildConfigField("boolean", "IS_TV_BUILD", "true")
+            // Legacy source compatibility only; the production pairing flow is LAN-only.
+            buildConfigField("String", "PAIRING_BASE_URL", "\"http://127.0.0.1\"")
         }
     }
     signingConfigs {
