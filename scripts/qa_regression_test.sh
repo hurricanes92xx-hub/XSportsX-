@@ -36,6 +36,12 @@ else: print('NOT_FOUND')
 PY
 )"; if [[ "$point" != "NOT_FOUND" ]]; then log "Tapping available UI target '$wanted'"; adb shell input tap ${point% *} ${point#* }; sleep 1; return 0; fi; done; return 1; }
 input_text(){ local value="$1" escaped; escaped="$(printf '%s' "$value" | sed 's/ /%s/g; s/&/\\&/g')"; adb shell input text "$escaped"; }
+fill_source_credentials(){
+  local base="$1"
+  tap_text "Server URL"; input_text "$base"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
+  tap_text "Username"; input_text "qauser"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
+  tap_text "Password"; input_text "qapass"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
+}
 
 log "Checking isolated source fixture at $HOST_SOURCE_BASE"
 curl -fsS "$HOST_SOURCE_BASE/health" >/dev/null
@@ -83,7 +89,7 @@ if [[ "$MODE" == "mobile" ]]; then
   tap_any_text "ADD SOURCE" "CONNECT NOW →" "CONNECT SOURCE →" || fail "Could not locate mobile source entry point"
   sleep 1; snapshot 06-source; assert_any_text 06-source "CONNECT SOURCE" "XTREAM" "M3U" "Server URL"
   if has_text "Server URL" 06-source; then
-    tap_text "Server URL"; input_text "$SOURCE_BASE"; tap_text "Username"; input_text "qauser"; tap_text "Password"; input_text "qapass"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
+    fill_source_credentials "$SOURCE_BASE"
     refresh_ui 07-source-ready; assert_any_text 07-source-ready "TEST & CONNECT" "TESTING SOURCE" "CONNECT SOURCE"
     tap_any_text "TEST & CONNECT" "CONNECT SOURCE" || fail "Could not locate mobile source connect action"
     sleep 2; snapshot 08-source-connected; assert_any_text 08-source-connected "Connected" "source responded" "SOURCE SAVED" "Connection successful"
@@ -105,7 +111,7 @@ else
   tap_any_text "SIGN IN ON TV" "MANUAL" "XTREAM" "M3U" || fail "Could not open TV manual source form"
   sleep 1; snapshot 07-manual; assert_any_text 07-manual "CONNECT SOURCE" "XTREAM" "M3U" "Server URL" "SIGN IN"
   if has_text "Server URL" 07-manual; then
-    tap_text "Server URL"; input_text "$SOURCE_BASE"; tap_text "Username"; input_text "qauser"; tap_text "Password"; input_text "qapass"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
+    fill_source_credentials "$SOURCE_BASE"
     refresh_ui 07-manual-ready; assert_any_text 07-manual-ready "TEST & CONNECT" "TESTING SOURCE" "CONNECT SOURCE"
     tap_any_text "TEST & CONNECT" "CONNECT SOURCE" || fail "Could not locate TV source connect action"
     sleep 2; snapshot 08-xtream-result; assert_any_text 08-xtream-result "Connected" "source responded" "SOURCE SAVED" "Connection successful"
