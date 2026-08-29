@@ -10,7 +10,7 @@ on:
       - '.github/workflows/xsportsx-emulator-qa-v2.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: xsportsx-emulator-qa-${{ github.ref }}
@@ -195,3 +195,69 @@ jobs:
             qa-source.log
             public-schedule-tv.json
           if-no-files-found: ignore
+
+  publish:
+    name: Publish verified release APKs
+    needs: [mobile, tv]
+    if: ${{ needs.mobile.result == 'success' && needs.tv.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Restore release keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_B64"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
+          chmod 600 xsportsx-release.jks
+          test -s xsportsx-release.jks
+      - name: Build signed release APKs from the exact QA commit
+        env:
+          XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
+          XSORTSX_KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
+          XSORTSX_KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
+          XSORTSX_KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in XSORTSX_KEYSTORE_PATH XSORTSX_KEYSTORE_PASSWORD XSORTSX_KEY_ALIAS XSORTSX_KEY_PASSWORD; do
+            [ -n "${!name}" ] || { echo "Missing signing value: $name"; exit 1; }
+          done
+          gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain
+          cp app/build/outputs/apk/mobile/release/app-mobile-release.apk XSportsX-Mobile.apk
+          cp app/build/outputs/apk/tv/release/app-tv-release.apk XSportsX-TV.apk
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
+          "$APKSIGNER" verify --verbose XSportsX-Mobile.apk
+          "$APKSIGNER" verify --verbose XSportsX-TV.apk
+      - name: Publish verified release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
+          VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
+          test -n "$VERSION_NAME"
+          TAG="v${VERSION_NAME}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refusing to overwrite a published APK."
+            exit 1
+          fi
+          gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
+            --target "$GITHUB_SHA" \
+            --title "XSportsX $VERSION_NAME" \
+            --notes "Verified Mobile + Android TV release. Version code $VERSION_CODE. Published only after both Mobile and TV emulator regression jobs passed on this exact commit."
+      - name: Remove signing key
+        if: always()
+        run: rm -f xsportsx-release.jks
