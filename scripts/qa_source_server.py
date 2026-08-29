@@ -8,6 +8,7 @@ from urllib.parse import parse_qs, urlparse
 
 HOST = os.environ.get("QA_SOURCE_HOST", "0.0.0.0")
 PORT = int(os.environ.get("QA_SOURCE_PORT", "8765"))
+CLIENT_HOST = os.environ.get("QA_SOURCE_CLIENT_HOST", "127.0.0.1")
 USER = "qauser"
 PASS = "qapass"
 TOKEN = "qa-token"
@@ -37,7 +38,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if u.path == "/playlist.m3u":
             body = "#EXTM3U\n" + "\n".join(
-                f'#EXTINF:-1 tvg-id="{c["epg_channel_id"]}" group-title="QA Sports",{c["name"]}\nhttp://10.0.2.2:{PORT}/stream/{c["stream_id"]}'
+                f'#EXTINF:-1 tvg-id="{c["epg_channel_id"]}" group-title="QA Sports",{c["name"]}\nhttp://{CLIENT_HOST}:{PORT}/stream/{c["stream_id"]}'
                 for c in CHANNELS
             ) + "\n"
             raw = body.encode()
@@ -50,7 +51,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json({"user_info": {"auth": 0, "status": "Disabled"}}); return
             action = q.get("action", [""])[0]
             if not action:
-                self.send_json({"user_info": {"auth": 1, "status": "Active", "username": USER, "password": PASS, "exp_date": "4102444800", "message": TOKEN}, "server_info": {"url": "10.0.2.2", "port": str(PORT), "https_port": str(PORT)}}); return
+                self.send_json({"user_info": {"auth": 1, "status": "Active", "username": USER, "password": PASS, "exp_date": "4102444800", "message": TOKEN}, "server_info": {"url": CLIENT_HOST, "port": str(PORT), "https_port": str(PORT)}}); return
             if action == "get_live_categories":
                 self.send_json([{"category_id":"1","category_name":"QA Sports","parent_id":0}]); return
             if action == "get_live_streams":
@@ -66,5 +67,5 @@ class ReusableThreadingHTTPServer(ThreadingHTTPServer):
     allow_reuse_address = True
 
 if __name__ == "__main__":
-    print(f"QA source fixture listening on {HOST}:{PORT}", flush=True)
+    print(f"QA source fixture listening on {HOST}:{PORT}; client host {CLIENT_HOST}", flush=True)
     ReusableThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
