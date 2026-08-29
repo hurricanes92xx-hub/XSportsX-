@@ -26,15 +26,12 @@ jobs:
 
           ticker = Path('app/src/main/java/com/xsportsx/app/HomeSportsTicker.kt')
           text = ticker.read_text()
-          old = 'private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = supervisorScope {'
-          new = 'private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {\n    supervisorScope {'
-          if old in text and new not in text:
-              text = text.replace(old, new, 1)
-              marker = '    games.sortedWith(compareBy<TickerLeagueGroup> { if (it.items.any { x -> x.kind == "LIVE" }) 0 else 1 }.thenBy { it.league }) + news\n}'
-              replacement = '    games.sortedWith(compareBy<TickerLeagueGroup> { if (it.items.any { x -> x.kind == "LIVE" }) 0 else 1 }.thenBy { it.league }) + news\n    }\n}'
-              if marker not in text:
-                  raise SystemExit('ticker closing marker not found')
-              text = text.replace(marker, replacement, 1)
+          pattern = r'private suspend fun loadTickerGroups\(\): List<TickerLeagueGroup> = supervisorScope \{(.*?)\n\}\n\nprivate fun line'
+          match = re.search(pattern, text, flags=re.S)
+          if match:
+              body = match.group(1)
+              replacement = 'private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {\n    supervisorScope {' + body + '\n    }\n}\n\nprivate fun line'
+              text = text[:match.start()] + replacement + text[match.end():]
               ticker.write_text(text)
 
           tv = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
