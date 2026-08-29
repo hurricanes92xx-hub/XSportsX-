@@ -19,7 +19,10 @@ import urllib.request
 from scripts.qa_source_server import Handler, ReusableThreadingHTTPServer
 
 apk, mode, outdir = sys.argv[1:4]
-port = int(os.environ.get("QA_SOURCE_PORT", "8765"))
+# Use a dedicated in-process fixture port. The workflow also starts a legacy
+# background fixture on 8765; keeping this regression fixture on its own port
+# prevents bind races when the emulator runner changes process lifecycles.
+port = int(os.environ.get("QA_SOURCE_PORT", "8766"))
 source_base = f"http://10.0.2.2:{port}"
 host_base = f"http://127.0.0.1:{port}"
 
