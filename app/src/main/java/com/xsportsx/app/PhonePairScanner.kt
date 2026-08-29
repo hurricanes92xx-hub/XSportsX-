@@ -25,7 +25,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 @Composable
-fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
+fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val source = remember { SourceStore(context).load() }
@@ -41,6 +41,10 @@ fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCa
     }
 
     suspend fun approveLocal(raw: String) = withContext(Dispatchers.IO) {
+        val uri = Uri.parse(raw)
+        require(uri.scheme == "http" && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()) {
+            "Scan the QR code shown by the XSportsX TV app"
+        }
         val c = (URL(raw).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             doOutput = true
@@ -54,7 +58,9 @@ fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCa
             val code = c.responseCode
             val stream = if (code in 200..299) c.inputStream else c.errorStream
             val body = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
+            if (code !in 200..299) {
+                throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
+            }
             if (!JSONObject(body.ifBlank { "{}" }).optBoolean("ok", false)) throw IllegalStateException("TV did not accept the source")
             true
         } finally { c.disconnect() }
@@ -62,32 +68,16 @@ fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCa
 
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
         val raw = result.contents ?: return@rememberLauncherForActivityResult
-        val uri = runCatching { Uri.parse(raw) }.getOrNull()
-        val isLocal = uri?.scheme == "http" && uri.host != null && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()
         busy = true
         scope.launch {
-            if (isLocal) {
-                runCatching { approveLocal(raw) }
-                    .onSuccess {
-                        PairingStore.save(context, "paired-tv:local:${uri?.host}:${uri?.port}")
-                        status = "TV connected"
-                        onConnected("local")
-                    }
-                    .onFailure { status = it.message ?: "Local TV pairing failed" }
-            } else {
-                val code = raw.substringAfter("xsportsx://pair/", raw).substringBefore('?').trim()
-                if (code.isBlank()) {
-                    status = "That isn't an XSportsX pairing code"
-                } else {
-                    runCatching { PairingClient.approve(pairingBaseUrl, code, sourceJson()) }
-                        .onSuccess {
-                            PairingStore.save(context, "paired-tv:${it.sessionId}")
-                            status = "TV connected"
-                            onConnected(it.sessionId)
-                        }
-                        .onFailure { status = it.message ?: "Pairing failed or expired" }
+            runCatching { approveLocal(raw) }
+                .onSuccess {
+                    val uri = Uri.parse(raw)
+                    PairingStore.save(context, "paired-tv:local:${uri.host}:${uri.port}")
+                    status = "TV connected"
+                    onConnected("local")
                 }
-            }
+                .onFailure { status = it.message ?: "Local TV pairing failed" }
             busy = false
         }
     }
