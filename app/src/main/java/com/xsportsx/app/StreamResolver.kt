@@ -3,6 +3,8 @@ package com.xsportsx.app
 import android.content.Context
 import android.util.LruCache
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -12,6 +14,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPInputStream
 
 data class ResolvedStream(val name: String, val group: String, val url: String, val iconUrl: String = "")
@@ -23,6 +26,7 @@ class StreamResolver(context: Context) {
     private val publicHealthIndex = PublicSourceHealthIndex(context.applicationContext)
     private val publicResolver = PublicSourceResolver()
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
+    private val eventInFlight = ConcurrentHashMap<String, kotlinx.coroutines.Deferred<List<ResolvedStream>>>()
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
         private const val EVENT_CACHE_TTL_MS = 2 * 60 * 1000L
@@ -67,6 +71,33 @@ class StreamResolver(context: Context) {
         val now = System.currentTimeMillis()
         if (!force) {
             eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
+        }
+
+        // Single-flight protection: concurrent clicks on the same live event now
+        // share one resolver operation instead of launching duplicate public
+        // discovery/health work. Different events remain fully concurrent.
+        val existing = eventInFlight[eventKey]
+        if (existing != null) return@withContext existing.await()
+
+        coroutineScope {
+            val work = async(Dispatchers.IO) {
+                resolveEventStreams(config, eventKey, event, force)
+            }
+            val winner = eventInFlight.putIfAbsent(eventKey, work) ?: work
+            try {
+                winner.await()
+            } finally {
+                if (winner === work) eventInFlight.remove(eventKey, work)
+            }
+        }
+    }
+
+    private suspend fun resolveEventStreams(config: SourceConfig, eventKey: String, event: SportsEvent, force: Boolean): List<ResolvedStream> {
+        // Recheck after becoming the single in-flight owner so a racing caller
+        // can never repeat a freshly completed event resolution.
+        if (!force) {
+            val now = System.currentTimeMillis()
+            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return it }
         }
 
         val privateMatches = if (config.isConfigured()) {
