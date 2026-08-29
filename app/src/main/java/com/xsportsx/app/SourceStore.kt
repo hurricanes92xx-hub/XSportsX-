@@ -39,8 +39,8 @@ class SourceStore(context: Context) {
             type = prefs.getString("type", "XTREAM") ?: "XTREAM",
             server = prefs.getString("server", "") ?: "",
             username = prefs.getString("username", "") ?: "",
-            password = decrypt(prefs.getString("password", null)),
-            m3uUrl = decrypt(prefs.getString("m3u", null))
+            password = decrypt(prefs.getString("password", null), prefs.getString("compat_password", null)),
+            m3uUrl = decrypt(prefs.getString("m3u", null), prefs.getString("compat_m3u", null))
         )
         if (config.isConfigured() && prefs.getString("storage_version", "1") != "3") {
             runCatching { save(config) }
@@ -58,9 +58,6 @@ class SourceStore(context: Context) {
         )
         require(normalized.isConfigured()) { "Source configuration is incomplete" }
 
-        // Store a Keystore copy plus a compatibility copy. Some Android TV firmware
-        // can invalidate/recreate Keystore keys across APK updates, which previously
-        // made a saved source look signed out even though the connection had worked.
         val editor = prefs.edit()
             .putString("type", normalized.type)
             .putString("server", normalized.server)
@@ -73,9 +70,13 @@ class SourceStore(context: Context) {
             .putLong("saved_at", System.currentTimeMillis())
         check(editor.commit()) { "Could not persist source configuration" }
 
-        // Verify immediately. This prevents the UI from reporting a successful
-        // connection when the persisted credentials cannot actually be read back.
-        val verify = load()
+        val verify = SourceConfig(
+            type = prefs.getString("type", "XTREAM") ?: "XTREAM",
+            server = prefs.getString("server", "") ?: "",
+            username = prefs.getString("username", "") ?: "",
+            password = decrypt(prefs.getString("password", null), prefs.getString("compat_password", null)),
+            m3uUrl = decrypt(prefs.getString("m3u", null), prefs.getString("compat_m3u", null))
+        )
         check(verify.isConfigured()) { "Source was saved but could not be verified" }
     }
 
@@ -104,12 +105,11 @@ class SourceStore(context: Context) {
         return Base64.encodeToString(cipher.iv + cipher.doFinal(value.toByteArray(StandardCharsets.UTF_8)), Base64.NO_WRAP)
     }
 
-    private fun decrypt(encoded: String?): String {
-        if (encoded.isNullOrBlank()) return ""
+    private fun decrypt(encoded: String?, compatibility: String?): String {
+        if (encoded.isNullOrBlank() && compatibility.isNullOrBlank()) return ""
         key?.let { decryptWithKey(encoded, it)?.let { value -> return value } }
-        return decryptWithKey(prefs.getString("compat_password", null), legacyKey)
-            ?: decryptWithKey(prefs.getString("compat_m3u", null), legacyKey)
-            ?: decryptWithKey(encoded, legacyKey).orEmpty()
+        decryptWithKey(compatibility, legacyKey)?.let { return it }
+        return decryptWithKey(encoded, legacyKey).orEmpty()
     }
 
     private fun decryptWithKey(encoded: String?, secretKey: SecretKey): String? = runCatching {
