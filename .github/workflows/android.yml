@@ -40,7 +40,7 @@ jobs:
           unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
           echo "GRADLE_HOME=$RUNNER_TEMP/gradle-8.13" >> "$GITHUB_ENV"
           echo "$RUNNER_TEMP/gradle-8.13/bin" >> "$GITHUB_PATH"
-          gradle --version
+          "$RUNNER_TEMP/gradle-8.13/bin/gradle" --version
 
       - name: Verify Android project
         shell: bash
@@ -54,10 +54,10 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           grep -q 'versionCode' app/build.gradle.kts
           grep -q 'versionName' app/build.gradle.kts
-          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'fun FuturisticHome' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'fun TvHome' app/src/main/java/com/xsportsx/app/TvHome.kt
+          grep -q 'class SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          grep -q 'tvNetworks' app/src/main/java/com/xsportsx/app/TvHome.kt
           echo 'Production source verified; no CI source-rewrite patches will run.'
 
       - name: Check release signing configuration
@@ -92,7 +92,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          gradle clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
+          "$GRADLE_HOME/bin/gradle" clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
 
       - name: Verify and upload APKs
         shell: bash
