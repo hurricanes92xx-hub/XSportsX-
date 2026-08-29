@@ -36,12 +36,7 @@ else: print('NOT_FOUND')
 PY
 )"; if [[ "$point" != "NOT_FOUND" ]]; then log "Tapping available UI target '$wanted'"; adb shell input tap ${point% *} ${point#* }; sleep 1; return 0; fi; done; return 1; }
 input_text(){ local value="$1" escaped; escaped="$(printf '%s' "$value" | sed 's/ /%s/g; s/&/\\&/g')"; adb shell input text "$escaped"; }
-fill_source_credentials(){
-  local base="$1"
-  tap_text "Server URL"; input_text "$base"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
-  tap_text "Username"; input_text "qauser"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
-  tap_text "Password"; input_text "qapass"; adb shell input keyevent KEYCODE_BACK || true; sleep 1
-}
+fill_source_credentials(){ local base="$1"; tap_text "Server URL"; input_text "$base"; adb shell input keyevent KEYCODE_BACK || true; sleep 1; tap_text "Username"; input_text "qauser"; adb shell input keyevent KEYCODE_BACK || true; sleep 1; tap_text "Password"; input_text "qapass"; adb shell input keyevent KEYCODE_BACK || true; sleep 1; }
 
 log "Checking isolated source fixture at $HOST_SOURCE_BASE"
 curl -fsS "$HOST_SOURCE_BASE/health" >/dev/null
@@ -50,12 +45,9 @@ curl -fsS "$HOST_SOURCE_BASE/playlist.m3u" | grep -q 'QA Sports One'
 curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass" | grep -q '\"auth\": 1'
 curl -fsS "$HOST_SOURCE_BASE/player_api.php?username=qauser&password=qapass&action=get_live_streams" | grep -q 'QA Sports One'
 QA_SOURCE_BASE="$HOST_SOURCE_BASE" python3 scripts/qa_source_probe.py
-
 python3 - "$HOST_SOURCE_BASE" "$OUT/source-latency.json" <<'PY'
 import json,sys,time,urllib.request
-base=sys.argv[1]; out=sys.argv[2]
-paths=['/health','/playlist.m3u','/player_api.php?username=qauser&password=qapass','/player_api.php?username=qauser&password=qapass&action=get_live_streams']
-rows=[]
+base=sys.argv[1]; out=sys.argv[2]; paths=['/health','/playlist.m3u','/player_api.php?username=qauser&password=qapass','/player_api.php?username=qauser&password=qapass&action=get_live_streams']; rows=[]
 for path in paths:
  t=time.perf_counter(); data=urllib.request.urlopen(base+path,timeout=10).read(); rows.append({'path':path,'elapsed_ms':round((time.perf_counter()-t)*1000,2),'bytes':len(data)})
 json.dump({'fixture':'xsportsx-qa','checks':rows},open(out,'w'),indent=2); print(json.dumps(rows,indent=2))
@@ -81,8 +73,13 @@ if [[ "$MODE" == "mobile" ]]; then
   tap_text "LIVE"
   log "Waiting for Live feed to settle"
   live_ok=0
-  for attempt in $(seq 1 20); do snapshot "02-live-${attempt}"; if ui_has_any "02-live-${attempt}" "LIVE NOW" "No games live right now" "LIVE SPORTS"; then log "Live feed ready after ${attempt}s"; cp "$OUT/02-live-${attempt}.png" "$OUT/02-live.png"; cp "$OUT/02-live-${attempt}.xml" "$OUT/02-live.xml"; live_ok=1; break; fi; log "Live feed still settling (${attempt}/20)"; sleep 1; done
-  [[ "$live_ok" -eq 1 ]] || fail "Live feed did not expose an expected settled UI state within 20s"
+  for attempt in $(seq 1 20); do
+    snapshot "02-live-${attempt}"
+    # These are production UI states. Never mutate the APK to manufacture a label.
+    if ui_has_any "02-live-${attempt}" "LIVE NOW" "LIVE CENTER" "No games live right now" "LIVE SPORTS" "LIVE EVENT MATCHING"; then log "Live feed ready after ${attempt}s"; cp "$OUT/02-live-${attempt}.png" "$OUT/02-live.png"; cp "$OUT/02-live-${attempt}.xml" "$OUT/02-live.xml"; live_ok=1; break; fi
+    log "Live feed still settling (${attempt}/20)"; sleep 1
+  done
+  [[ "$live_ok" -eq 1 ]] || fail "Live feed did not expose an expected settled production UI state within 20s"
   tap_text "NETWORKS"; snapshot 03-networks; assert_text "NETWORKS" 03-networks
   tap_text "FAVORITES"; snapshot 04-favorites; assert_text "FAVORITES" 04-favorites; assert_any_text 04-favorites "YOUR PICKS" "YOUR FAVORITES LIVE HERE"
   tap_text "HOME"; snapshot 05-home; assert_any_text 05-home "XSPORTS" "NEXT-GEN SPORTS COMMAND"
