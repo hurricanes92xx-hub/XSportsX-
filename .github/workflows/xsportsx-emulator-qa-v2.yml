@@ -37,8 +37,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash -n scripts/run_emulator_regression.sh
-          bash -n scripts/qa_regression_test.sh
+          bash -n scripts/run_emulator_regression_v2.sh
+          bash -n scripts/qa_regression_test_v2.sh
           python3 -m py_compile scripts/qa_source_probe.py scripts/qa_public_schedule_probe.py
           echo "QA script syntax preflight passed"
       - name: Verify committed sports assets and routing
@@ -118,7 +118,7 @@ jobs:
             test -e /dev/kvm
             sudo chmod 666 /dev/kvm
             adb start-server
-          script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile
+          script: bash scripts/run_emulator_regression_v2.sh "$MOBILE_APK" mobile test-output-mobile
         env:
           QA_MODE: mobile
           QA_SOURCE_PORT: 8765
@@ -182,7 +182,7 @@ jobs:
             test -e /dev/kvm
             sudo chmod 666 /dev/kvm
             adb start-server
-          script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv
+          script: bash scripts/run_emulator_regression_v2.sh "$TV_APK" tv test-output-tv
         env:
           QA_MODE: tv
           QA_SOURCE_PORT: 8765
