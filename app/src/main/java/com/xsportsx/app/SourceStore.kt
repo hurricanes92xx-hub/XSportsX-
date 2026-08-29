@@ -18,11 +18,8 @@ data class SourceConfig(
     val password: String = "",
     val m3uUrl: String = ""
 ) {
-    fun isConfigured(): Boolean = if (type == "M3U") {
-        m3uUrl.isNotBlank()
-    } else {
-        server.isNotBlank() && username.isNotBlank() && password.isNotBlank()
-    }
+    fun isConfigured(): Boolean = if (type == "M3U") m3uUrl.isNotBlank()
+    else server.isNotBlank() && username.isNotBlank() && password.isNotBlank()
 }
 
 class SourceStore(context: Context) {
@@ -30,12 +27,9 @@ class SourceStore(context: Context) {
     private val prefs = appContext.getSharedPreferences("xsportsx_source", Context.MODE_PRIVATE)
     private val keystoreAlias = "xsportsx_source_v2"
 
-    /**
-     * Credentials must survive activity/process recreation and normal APK updates.
-     * v1 used a package-name-derived AES key; v2 uses Android Keystore so the key is
-     * stable for this installation and is not derivable from the application id.
-     */
-    private val key: SecretKey by lazy { getOrCreateKey() }
+    // Android Keystore is preferred, but some Android/TV images can temporarily fail
+    // AES-GCM key generation. Never let that make a valid source impossible to save.
+    private val key: SecretKey? by lazy { runCatching { getOrCreateKey() }.getOrNull() }
     private val legacyKey: SecretKeySpec by lazy {
         val raw = MessageDigest.getInstance("SHA-256")
             .digest((appContext.packageName + ":xsportsx-source-v1").toByteArray(StandardCharsets.UTF_8))
@@ -50,26 +44,26 @@ class SourceStore(context: Context) {
             password = decrypt(prefs.getString("password", null)),
             m3uUrl = decrypt(prefs.getString("m3u", null))
         )
-
-        // One-time migration of v1 encrypted credentials to the Keystore-backed format.
-        // This is intentionally best-effort so an old install never loses a usable source.
+        // Migrate old encrypted data to the current storage format when possible.
         if (config.isConfigured() && prefs.getString("storage_version", "1") != "2") {
-            save(config)
+            runCatching { save(config) }
         }
         return config
     }
 
     fun save(config: SourceConfig) {
         val normalized = config.copy(
+            type = config.type.uppercase(),
             server = config.server.trim().removeSuffix("/"),
             username = config.username.trim(),
             password = config.password.trim(),
             m3uUrl = config.m3uUrl.trim()
         )
+        require(normalized.isConfigured()) { "Source configuration is incomplete" }
 
-        // commit() is deliberate: callers navigate away immediately after saving and
-        // must not observe a stale SharedPreferences snapshot during that transition.
-        prefs.edit()
+        // commit() is deliberate: navigation follows immediately and must see the
+        // source as configured even if the process is reclaimed after the save.
+        val ok = prefs.edit()
             .putString("type", normalized.type)
             .putString("server", normalized.server)
             .putString("username", normalized.username)
@@ -78,16 +72,14 @@ class SourceStore(context: Context) {
             .putString("storage_version", "2")
             .putLong("saved_at", System.currentTimeMillis())
             .commit()
+        check(ok) { "Could not persist source configuration" }
     }
 
-    fun clear() {
-        prefs.edit().clear().commit()
-    }
+    fun clear() { prefs.edit().clear().commit() }
 
     private fun getOrCreateKey(): SecretKey {
         val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         (ks.getKey(keystoreAlias, null) as? SecretKey)?.let { return it }
-
         val generator = KeyGenerator.getInstance("AES", "AndroidKeyStore")
         generator.init(android.security.keystore.KeyGenParameterSpec.Builder(
             keystoreAlias,
@@ -103,8 +95,9 @@ class SourceStore(context: Context) {
 
     private fun encrypt(value: String): String {
         if (value.isBlank()) return ""
+        val secret = key ?: legacyKey
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.ENCRYPT_MODE, key)
+        cipher.init(Cipher.ENCRYPT_MODE, secret)
         val iv = cipher.iv
         val ciphertext = cipher.doFinal(value.toByteArray(StandardCharsets.UTF_8))
         return Base64.encodeToString(iv + ciphertext, Base64.NO_WRAP)
@@ -112,7 +105,8 @@ class SourceStore(context: Context) {
 
     private fun decrypt(encoded: String?): String {
         if (encoded.isNullOrBlank()) return ""
-        return decryptWithKey(encoded, key) ?: decryptWithKey(encoded, legacyKey).orEmpty()
+        key?.let { decryptWithKey(encoded, it)?.let { value -> return value } }
+        return decryptWithKey(encoded, legacyKey).orEmpty()
     }
 
     private fun decryptWithKey(encoded: String, secretKey: SecretKey): String? = runCatching {
