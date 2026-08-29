@@ -34,29 +34,33 @@ data class TickerItem(val kind: String, val league: String, val text: String, va
 data class TickerLeague(val name: String, val sport: String, val id: String)
 data class TickerLeagueGroup(val league: String, val items: List<TickerItem>)
 
+// Keep the ticker intentionally small. It is a UI accessory, not the primary schedule service.
 private val tickerLeagues = listOf(
-    TickerLeague("NFL", "football", "nfl"), TickerLeague("NCAA FB", "football", "college-football"),
-    TickerLeague("NBA", "basketball", "nba"), TickerLeague("WNBA", "basketball", "wnba"),
-    TickerLeague("NCAA BB", "basketball", "mens-college-basketball"), TickerLeague("MLB", "baseball", "mlb"),
-    TickerLeague("NHL", "hockey", "nhl"), TickerLeague("MLS", "soccer", "usa.1"),
-    TickerLeague("EPL", "soccer", "eng.1"), TickerLeague("UCL", "soccer", "uefa.champions"),
-    TickerLeague("LaLiga", "soccer", "esp.1"), TickerLeague("Serie A", "soccer", "ita.1"),
-    TickerLeague("Bundesliga", "soccer", "ger.1"), TickerLeague("Ligue 1", "soccer", "fra.1"),
-    TickerLeague("UFC", "mma", "ufc"), TickerLeague("BOXING", "boxing", "boxing")
+    TickerLeague("NFL", "football", "nfl"),
+    TickerLeague("NCAA FB", "football", "college-football"),
+    TickerLeague("NBA", "basketball", "nba"),
+    TickerLeague("NCAA BB", "basketball", "mens-college-basketball"),
+    TickerLeague("MLB", "baseball", "mlb"),
+    TickerLeague("NHL", "hockey", "nhl"),
+    TickerLeague("MLS", "soccer", "usa.1"),
+    TickerLeague("EPL", "soccer", "eng.1"),
+    TickerLeague("UFC", "mma", "ufc")
 )
 
-private val newsLeagues = tickerLeagues.filter { it.id != "boxing" }
+private val newsLeagues = tickerLeagues.filter { it.id in setOf("nfl", "nba", "mlb", "nhl", "ufc") }
+private const val TICKER_REFRESH_MS = 5 * 60_000L
+private const val REQUEST_TIMEOUT_MS = 3_500L
 
 private fun todayUtc(): String = SimpleDateFormat("yyyyMMdd", Locale.US).apply {
     timeZone = TimeZone.getTimeZone("UTC")
 }.format(Calendar.getInstance(TimeZone.getTimeZone("UTC")).time)
 
 private suspend fun getJson(url: String): JSONObject? = withContext(Dispatchers.IO) {
-    withTimeoutOrNull(5500L) {
+    withTimeoutOrNull(REQUEST_TIMEOUT_MS) {
         val connection = runCatching { URL(url).openConnection() as HttpURLConnection }.getOrNull() ?: return@withTimeoutOrNull null
         try {
-            connection.connectTimeout = 2500
-            connection.readTimeout = 4500
+            connection.connectTimeout = 1_500
+            connection.readTimeout = 2_000
             connection.requestMethod = "GET"
             connection.instanceFollowRedirects = true
             connection.setRequestProperty("User-Agent", "XSportsX/1.9 Android")
@@ -68,10 +72,12 @@ private suspend fun getJson(url: String): JSONObject? = withContext(Dispatchers.
     }
 }
 
-private fun eventTime(event: JSONObject): Long = runCatching { Instant.parse(event.optString("date")).toEpochMilli() }.getOrDefault(0L)
+private fun eventTime(event: JSONObject): Long = runCatching {
+    Instant.parse(event.optString("date")).toEpochMilli()
+}.getOrDefault(0L)
 
 private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup? {
-    val root = getJson("https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${todayUtc()}&limit=100") ?: return null
+    val root = getJson("https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/scoreboard?dates=${todayUtc()}&limit=50") ?: return null
     val events = root.optJSONArray("events") ?: return TickerLeagueGroup(league.name, emptyList())
     val now = System.currentTimeMillis()
     val items = buildList {
@@ -83,25 +89,38 @@ private suspend fun loadLeague(league: TickerLeague): TickerLeagueGroup? {
             for (j in 0 until teams.length()) {
                 val competitor = teams.optJSONObject(j) ?: continue
                 val team = competitor.optJSONObject("team")
-                val name = team?.optString("abbreviation")?.ifBlank { team.optString("shortDisplayName") }.orEmpty().ifBlank { competitor.optString("displayName").ifBlank { "TBD" } }
-                if (competitor.optString("homeAway") == "home") { home = name; homeScore = competitor.optString("score") } else { away = name; awayScore = competitor.optString("score") }
+                val name = team?.optString("abbreviation")?.ifBlank { team.optString("shortDisplayName") }
+                    ?.ifBlank { competitor.optString("displayName") }
+                    .orEmpty().ifBlank { "TBD" }
+                if (competitor.optString("homeAway") == "home") {
+                    home = name; homeScore = competitor.optString("score")
+                } else {
+                    away = name; awayScore = competitor.optString("score")
+                }
             }
             val type = competition.optJSONObject("status")?.optJSONObject("type")
             val state = type?.optString("state").orEmpty()
             val detail = type?.optString("shortDetail").orEmpty()
             val timestamp = eventTime(event)
             val kind = when (state) { "in" -> "LIVE"; "post" -> "FINAL"; else -> "UPCOMING" }
-            if (timestamp == 0L || timestamp >= now - 36L * 60L * 60L * 1000L) {
-                val text = if (kind == "UPCOMING") "$away @ $home${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}" else "$away $awayScore • $home $homeScore${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}"
+            if (timestamp == 0L || timestamp >= now - 24L * 60L * 60L * 1000L) {
+                val text = if (kind == "UPCOMING") {
+                    "$away @ $home${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}"
+                } else {
+                    "$away $awayScore • $home $homeScore${detail.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""}"
+                }
                 add(TickerItem(kind, league.name, text, timestamp))
             }
         }
     }
-    return TickerLeagueGroup(league.name, items.sortedWith(compareBy<TickerItem> { when (it.kind) { "LIVE" -> 0; "UPCOMING" -> 1; else -> 2 } }.thenBy { it.timestamp }).take(12))
+    return TickerLeagueGroup(
+        league.name,
+        items.sortedWith(compareBy<TickerItem> { when (it.kind) { "LIVE" -> 0; "UPCOMING" -> 1; else -> 2 } }.thenBy { it.timestamp }).take(8)
+    )
 }
 
 private suspend fun loadNews(league: TickerLeague): TickerLeagueGroup? {
-    val root = getJson("https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/news?limit=6") ?: return null
+    val root = getJson("https://site.api.espn.com/apis/site/v2/sports/${league.sport}/${league.id}/news?limit=3") ?: return null
     val articles = root.optJSONArray("articles") ?: return null
     val items = buildList {
         for (i in 0 until articles.length()) {
@@ -110,20 +129,27 @@ private suspend fun loadNews(league: TickerLeague): TickerLeagueGroup? {
             if (headline.isNotBlank()) add(TickerItem("NEWS", league.name, headline, eventTime(article)))
         }
     }
-    return TickerLeagueGroup("NEWS • ${league.name}", items.take(6))
+    return TickerLeagueGroup("NEWS • ${league.name}", items.take(3))
 }
 
 private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {
     supervisorScope {
-        val scoreResults = tickerLeagues.map { league -> async { runCatching { loadLeague(league) }.getOrNull() } }.awaitAll()
-        val newsResults = newsLeagues.map { league -> async { runCatching { loadNews(league) }.getOrNull() } }.awaitAll()
+        // Limit concurrency so opening a new screen cannot compete with the ticker for the network/CPU.
+        val scoreResults = tickerLeagues.chunked(3).flatMap { batch ->
+            batch.map { league -> async { runCatching { loadLeague(league) }.getOrNull() } }.awaitAll()
+        }
         val games = scoreResults.filterNotNull().filter { it.items.isNotEmpty() }
-        val news = newsResults.filterNotNull().filter { it.items.isNotEmpty() }
+        // News is deliberately secondary and fetched only for a small set of leagues.
+        val news = newsLeagues.chunked(2).flatMap { batch ->
+            batch.map { league -> async { runCatching { loadNews(league) }.getOrNull() } }.awaitAll()
+        }.filterNotNull().filter { it.items.isNotEmpty() }
         games.sortedWith(compareBy<TickerLeagueGroup> { if (it.items.any { x -> x.kind == "LIVE" }) 0 else 1 }.thenBy { it.league }) + news
     }
 }
 
-private fun line(group: TickerLeagueGroup): String = group.items.joinToString("     •     ") { "${it.kind}  [${it.league}]  ${it.text}" }
+private fun line(group: TickerLeagueGroup): String = group.items.joinToString("     •     ") {
+    "${it.kind}  [${it.league}]  ${it.text}"
+}
 
 @Composable
 fun HomeSportsTicker(modifier: Modifier = Modifier) {
@@ -131,9 +157,10 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
     var index by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(true) }
     var failed by remember { mutableStateOf(false) }
+
+    // One coroutine, one refresh cadence. No per-frame work and no 60-second network storm.
     LaunchedEffect(Unit) {
         while (isActive) {
-            loading = true
             val loaded = runCatching { loadTickerGroups() }.getOrDefault(emptyList())
             if (loaded.isNotEmpty()) {
                 groups = loaded
@@ -143,15 +170,17 @@ fun HomeSportsTicker(modifier: Modifier = Modifier) {
                 failed = true
             }
             loading = false
-            delay(60_000L)
+            delay(TICKER_REFRESH_MS)
         }
     }
+
     val group = groups.getOrNull(index.coerceIn(0, (groups.size - 1).coerceAtLeast(0)))
     val text = group?.let(::line)?.takeIf { it.isNotBlank() } ?: when {
         loading -> "SPORTS FEED  •  LOADING"
         failed -> "SPORTS FEED  •  TEMPORARILY UNAVAILABLE"
         else -> "SPORTS FEED  •  NO GAMES / NEWS AVAILABLE"
     }
+
     Row(
         modifier.fillMaxWidth().height(42.dp).background(Color(0xEE07090E)).padding(horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -171,15 +200,15 @@ private fun TickerMarquee(text: String, modifier: Modifier, onFinished: () -> Un
     var textWidthPx by remember(text) { mutableIntStateOf(0) }
     LaunchedEffect(text, viewportWidthPx, textWidthPx) {
         if (viewportWidthPx <= 0 || textWidthPx <= 0) return@LaunchedEffect
-        val velocityPxPerSecond = with(density) { 55.dp.toPx() }
-        val duration = if (textWidthPx <= viewportWidthPx) 4_500L else ((textWidthPx + viewportWidthPx) / velocityPxPerSecond * 1_000L + 900L).toLong().coerceAtLeast(5_000L)
+        val velocityPxPerSecond = with(density) { 45.dp.toPx() }
+        val duration = if (textWidthPx <= viewportWidthPx) 5_000L else ((textWidthPx + viewportWidthPx) / velocityPxPerSecond * 1_000L + 700L).toLong().coerceAtLeast(5_000L)
         delay(duration)
         onFinished()
     }
     BoxWithConstraints(modifier.fillMaxHeight().onSizeChanged { viewportWidthPx = it.width }) {
         Text(
             text,
-            modifier = Modifier.fillMaxWidth().basicMarquee(iterations = 1, repeatDelayMillis = 0, initialDelayMillis = 650, velocity = 55.dp),
+            modifier = Modifier.fillMaxWidth().basicMarquee(iterations = 1, repeatDelayMillis = 0, initialDelayMillis = 450, velocity = 45.dp),
             onTextLayout = { textWidthPx = it.size.width },
             color = Color.White,
             fontWeight = FontWeight.Bold,
