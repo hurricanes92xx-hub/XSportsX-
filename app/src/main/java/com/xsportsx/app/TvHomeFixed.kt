@@ -2,8 +2,6 @@ package com.xsportsx.app
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -14,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -42,13 +39,14 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
     var loading by remember { mutableStateOf(true) }
     val scroll = rememberScrollState()
 
+    // The canonical schedule feed does not need to poll every minute. Keep the UI
+    // responsive while still refreshing often enough for live sports.
     LaunchedEffect(Unit) {
         while (isActive) {
-            loading = events.isEmpty()
             val result = runCatching { SportsScheduleService.load() }.getOrDefault(emptyList())
             if (result.isNotEmpty()) events = result
-            loading = false
-            delay(60_000L)
+            loading = events.isEmpty()
+            delay(5 * 60_000L)
         }
     }
 
@@ -95,7 +93,9 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
                 }
             }
         }
-        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).fillMaxWidth())
+        // The ticker remains visible, but its network coroutine is cancelled as soon
+        // as the user leaves HOME so navigation never competes with the feed.
+        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).fillMaxWidth(), enabled = selected == "HOME")
     }
 }
 
@@ -116,7 +116,7 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 
 @Composable private fun FxNavItem(label: String, active: Boolean, blue: Boolean = false, onClick: () -> Unit) {
     var focused by remember { mutableStateOf(false) }
-    Row(Modifier.fillMaxWidth().padding(vertical = 3.dp).background(if (active) Color(0xFF1A0B10) else Color.Transparent, RoundedCornerShape(14.dp)).border(1.dp, if (focused || active) (if (blue) FxBlue else FxRed) else Color.Transparent, RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }.padding(horizontal = 13.dp, vertical = 11.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().padding(vertical = 3.dp).background(if (active) Color(0xFF1A0B10) else Color.Transparent, RoundedCornerShape(14.dp)).border(1.dp, if (focused || active) (if (blue) FxBlue else FxRed) else Color.Transparent, RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.tvClickable { onClick() }.padding(horizontal = 13.dp, vertical = 11.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(label, color = Color.White, fontSize = 11.sp, fontWeight = if (focused || active) FontWeight.Black else FontWeight.Bold)
     }
 }
@@ -134,7 +134,7 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 }
 
 @Composable private fun FxHero(onClick: () -> Unit) {
-    Box(Modifier.fillMaxWidth().height(160.dp).background(Brush.horizontalGradient(listOf(Color(0xFF16090F), Color(0xFF101824), Color(0xFF08121D))), RoundedCornerShape(18.dp)).border(1.dp, FxRed.copy(alpha = .28f), RoundedCornerShape(18.dp)).focusable().clickable { onClick() }.padding(24.dp)) {
+    Box(Modifier.fillMaxWidth().height(160.dp).background(Brush.horizontalGradient(listOf(Color(0xFF16090F), Color(0xFF101824), Color(0xFF08121D))), RoundedCornerShape(18.dp)).border(1.dp, FxRed.copy(alpha = .28f), RoundedCornerShape(18.dp)).tvClickable { onClick() }.padding(24.dp)) {
         Column(Modifier.align(Alignment.CenterStart)) {
             Text("WELCOME TO", color = Color.White, fontSize = 12.sp, letterSpacing = 1.sp)
             Text("XSPORTSX", color = Color.White, fontSize = 34.sp, fontWeight = FontWeight.Black)
@@ -153,7 +153,7 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 
 @Composable private fun FxEventCard(event: SportsEvent, onNetwork: (String) -> Unit) {
     var focused by remember { mutableStateOf(false) }
-    Column(Modifier.width(270.dp).background(FxPanel, RoundedCornerShape(16.dp)).border(1.dp, if (focused) FxRed else FxRed.copy(alpha = .22f), RoundedCornerShape(16.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onNetwork(event.broadcast.ifBlank { event.league }) }.padding(14.dp)) {
+    Column(Modifier.width(270.dp).background(FxPanel, RoundedCornerShape(16.dp)).border(1.dp, if (focused) FxRed else FxRed.copy(alpha = .22f), RoundedCornerShape(16.dp)).onFocusChanged { focused = it.isFocused }.tvClickable { onNetwork(event.broadcast.ifBlank { event.league }) }.padding(14.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) { Text(event.league, color = FxBlue, fontSize = 10.sp, fontWeight = FontWeight.Black); Spacer(Modifier.weight(1f)); Text(if (event.isLive) "● LIVE" else "UPCOMING", color = if (event.isLive) FxRed else FxMuted, fontSize = 9.sp, fontWeight = FontWeight.Black) }
         Spacer(Modifier.height(10.dp))
         FxTeam(event.away, event.awayLogo)
@@ -171,8 +171,8 @@ fun TvHomeFixed(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
 
 @Composable private fun FxNetworkGrid(onNetwork: (String) -> Unit) { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { fxNetworks.chunked(5).forEach { row -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) { row.forEach { FxTile(it, it.substringBefore(' '), FxRed) { onNetwork(it) } } } } } }
 
-@Composable private fun FxTile(title: String, mark: String, accent: Color, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Column(Modifier.width(120.dp).height(70.dp).background(FxPanel, RoundedCornerShape(14.dp)).border(1.dp, accent.copy(alpha = if (focused) 1f else .25f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }.padding(10.dp), verticalArrangement = Arrangement.Center) { Text(mark, color = accent, fontSize = 15.sp, fontWeight = FontWeight.Black); Text(title, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
+@Composable private fun FxTile(title: String, mark: String, accent: Color, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Column(Modifier.width(120.dp).height(70.dp).background(FxPanel, RoundedCornerShape(14.dp)).border(1.dp, accent.copy(alpha = if (focused) 1f else .25f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.tvClickable { onClick() }.padding(10.dp), verticalArrangement = Arrangement.Center) { Text(mark, color = accent, fontSize = 15.sp, fontWeight = FontWeight.Black); Text(title, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
 
 @Composable private fun FxEmpty(text: String) { Box(Modifier.fillMaxWidth().height(170.dp).background(FxPanel, RoundedCornerShape(16.dp)).border(1.dp, FxRed.copy(alpha = .18f), RoundedCornerShape(16.dp)), contentAlignment = Alignment.Center) { Text(text, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black) } }
 
-@Composable private fun FxAction(text: String, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Box(Modifier.background(if (focused) Color(0xFF241018) else Color.Transparent, RoundedCornerShape(14.dp)).border(1.dp, FxRed.copy(alpha = if (focused) 1f else .35f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.focusable().clickable { onClick() }.padding(horizontal = 12.dp, vertical = 9.dp)) { Text(text, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold) } }
+@Composable private fun FxAction(text: String, onClick: () -> Unit) { var focused by remember { mutableStateOf(false) }; Box(Modifier.background(if (focused) Color(0xFF241018) else Color.Transparent, RoundedCornerShape(14.dp)).border(1.dp, FxRed.copy(alpha = if (focused) 1f else .35f), RoundedCornerShape(14.dp)).onFocusChanged { focused = it.isFocused }.tvClickable { onClick() }.padding(horizontal = 12.dp, vertical = 9.dp)) { Text(text, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold) } }
