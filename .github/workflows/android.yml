@@ -1,5 +1,6 @@
 name: Build XSportsX APK
 
+# Force a fresh release build from the repaired android-app branch.
 on:
   push:
     branches: [android-app]
