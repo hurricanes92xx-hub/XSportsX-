@@ -18,8 +18,10 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 @Composable
 fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
@@ -69,18 +71,32 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
         Button(
             onClick = {
                 status = null
-                if (!config.isConfigured()) {
-                    status = if (config.type == "M3U") "Enter an M3U playlist URL." else "Enter server, username and password."
+                val normalized = config.copy(
+                    server = config.server.trim().removeSuffix("/"),
+                    username = config.username.trim(),
+                    password = config.password.trim(),
+                    m3uUrl = config.m3uUrl.trim()
+                )
+                if (!normalized.isConfigured()) {
+                    status = if (normalized.type == "M3U") "Enter an M3U playlist URL." else "Enter server, username and password."
                     return@Button
                 }
                 testing = true
                 scope.launch {
-                    val result = testSource(config)
-                    testing = false
-                    status = result
-                    if (result.startsWith("Connected")) {
-                        store.save(config)
-                        onSaved()
+                    val result = testSource(normalized)
+                    if (result.ok) {
+                        val saved = runCatching { store.save(normalized) }
+                        if (saved.isSuccess) {
+                            status = result.message
+                            testing = false
+                            onSaved()
+                        } else {
+                            testing = false
+                            status = "Connection works, but could not save source. ${saved.exceptionOrNull()?.message ?: "Try again."}"
+                        }
+                    } else {
+                        testing = false
+                        status = result.message
                     }
                 }
             },
@@ -116,25 +132,58 @@ private fun SourceField(label: String, value: String, onValue: (String) -> Unit,
     )
 }
 
-private suspend fun testSource(config: SourceConfig): String = withContext(Dispatchers.IO) {
+private data class SourceTestResult(val ok: Boolean, val message: String)
+
+private suspend fun testSource(config: SourceConfig): SourceTestResult = withContext(Dispatchers.IO) {
     try {
-        val target = if (config.type == "M3U") config.m3uUrl else {
+        if (config.type == "M3U") {
+            val body = get(config.m3uUrl)
+            val lines = body.lineSequence().map { it.trim() }.filter { it.isNotBlank() }.toList()
+            val playableUrls = lines.count { it.startsWith("http://") || it.startsWith("https://") }
+            val hasPlaylist = lines.any { it.startsWith("#EXTM3U", true) || it.startsWith("#EXTINF", true) }
+            if (hasPlaylist && playableUrls > 0) {
+                SourceTestResult(true, "Connected • M3U playlist verified ($playableUrls streams)")
+            } else {
+                SourceTestResult(false, "Connected to URL, but it did not return a valid M3U playlist.")
+            }
+        } else {
             val base = config.server.trimEnd('/')
-            "$base/player_api.php?username=${java.net.URLEncoder.encode(config.username, "UTF-8")}&password=${java.net.URLEncoder.encode(config.password, "UTF-8")}"
-        }
-        val connection = (URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 8000
-            readTimeout = 8000
-            instanceFollowRedirects = true
-        }
-        try {
-            val code = connection.responseCode
-            if (code in 200..299) "Connected • source responded" else "Source returned HTTP $code"
-        } finally {
-            connection.disconnect()
+            val target = "$base/player_api.php?username=${URLEncoder.encode(config.username, "UTF-8")}&password=${URLEncoder.encode(config.password, "UTF-8")}"
+            val body = get(target)
+            val json = runCatching { JSONObject(body) }.getOrNull()
+                ?: return@withContext SourceTestResult(false, "Server responded, but the Xtream API returned invalid data.")
+            val userInfo = json.optJSONObject("user_info")
+            val auth = userInfo?.optInt("auth", -1) ?: -1
+            if (auth == 1) {
+                val status = userInfo.optString("status").ifBlank { "active" }
+                SourceTestResult(true, "Connected • Xtream account $status")
+            } else if (auth == 0) {
+                SourceTestResult(false, "Xtream rejected the username or password.")
+            } else {
+                SourceTestResult(false, "Server responded, but this does not look like a valid Xtream API.")
+            }
         }
     } catch (e: Exception) {
-        "Connection failed • ${e.message ?: "check source details"}"
+        SourceTestResult(false, "Connection failed • ${e.message ?: "check source details"}")
+    }
+}
+
+private fun get(target: String): String {
+    val connection = (URL(target).openConnection() as HttpURLConnection).apply {
+        requestMethod = "GET"
+        connectTimeout = 10000
+        readTimeout = 15000
+        instanceFollowRedirects = true
+        useCaches = false
+        setRequestProperty("User-Agent", "XSportsX/2.0")
+        setRequestProperty("Accept", "application/json, text/plain, audio/x-mpegurl, application/vnd.apple.mpegurl, */*")
+        setRequestProperty("Connection", "close")
+    }
+    return try {
+        val code = connection.responseCode
+        if (code !in 200..299) error("Source returned HTTP $code")
+        connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+    } finally {
+        connection.disconnect()
     }
 }
