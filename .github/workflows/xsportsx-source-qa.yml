@@ -1,7 +1,7 @@
 name: XSportsX Source QA
 
-# Completely isolated from release builds. Uses only debug APKs and a local
-# deterministic source fixture; never uses production/provider credentials.
+# Isolated source validation using deterministic local Xtream/M3U fixtures.
+# This workflow must test the committed app as-is: no CI source patching.
 on:
   workflow_dispatch:
   push:
@@ -14,9 +14,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: xsportsx-source-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_VERSION: '8.13'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -26,44 +34,69 @@ jobs:
           cache: gradle
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.13'
-      - name: Apply release-parity source patches
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Preflight source QA scripts
+        shell: bash
         run: |
-          python3 scripts/patch_tv_navigation.py
-          python3 scripts/patch_college_favorites.py
-      - name: Build isolated debug APKs
+          set -euo pipefail
+          bash -n scripts/ui_smoke_test.sh
+          bash -n scripts/source_login_smoke.sh
+          python3 -m py_compile scripts/qa_source_server.py scripts/qa_source_fixture_check.py
+      - name: Build committed debug APKs
         run: gradle :app:assembleMobileDebug :app:assembleTvDebug --no-daemon --stacktrace --console=plain
+      - name: Verify APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
+          test -s app/build/outputs/apk/tv/debug/app-tv-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: source-qa-apks
+          name: source-qa-apks-${{ github.sha }}
           path: |
             app/build/outputs/apk/mobile/debug/app-mobile-debug.apk
             app/build/outputs/apk/tv/debug/app-tv-debug.apk
+          if-no-files-found: error
 
   mobile-source:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with:
-          name: source-qa-apks
+          name: source-qa-apks-${{ github.sha }}
           path: test-apks
       - name: Start local Xtream/M3U fixture
         run: |
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
           for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/health && break; sleep 1; done
           python3 scripts/qa_source_fixture_check.py
+      - name: Enable KVM
+        run: |
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         env:
           QA_SOURCE_BASE: http://10.0.2.2:8765
         with:
-          api-level: 35
+          api-level: 34
           target: google_apis
           arch: x86_64
-          profile: pixel_2
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          profile: pixel_5
+          avd-name: xsportsx-source-mobile
+          force-avd-creation: true
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh test-apks/app-mobile-debug.apk source-ui
@@ -71,34 +104,49 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: XSportsX-mobile-source-qa-evidence
+          name: XSportsX-mobile-source-qa-evidence-${{ github.sha }}
           path: source-*
           if-no-files-found: ignore
 
   tv-source:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with:
-          name: source-qa-apks
+          name: source-qa-apks-${{ github.sha }}
           path: test-apks
       - name: Start local Xtream/M3U fixture
         run: |
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
           for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/health && break; sleep 1; done
           python3 scripts/qa_source_fixture_check.py
+      - name: Enable KVM
+        run: |
+          set -euxo pipefail
+          test -e /dev/kvm
+          sudo chmod 666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         env:
           QA_SOURCE_BASE: http://10.0.2.2:8765
         with:
-          api-level: 35
+          api-level: 34
           target: google_apis
           arch: x86_64
           profile: tv_1080p
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          avd-name: xsportsx-source-tv
+          force-avd-creation: true
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 6G
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          pre-emulator-launch-script: |
+            adb kill-server || true
+            sudo chmod 666 /dev/kvm || true
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh test-apks/app-tv-debug.apk source-ui
@@ -106,6 +154,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: XSportsX-tv-source-qa-evidence
+          name: XSportsX-tv-source-qa-evidence-${{ github.sha }}
           path: source-*
           if-no-files-found: ignore
