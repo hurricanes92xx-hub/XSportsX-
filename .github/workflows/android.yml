@@ -2,6 +2,7 @@ name: Build XSportsX APK
 
 # Production Android release workflow. Always build the android-app branch so
 # the Downloader/release cannot accidentally publish the stale web/main tree.
+# TV focus/ticker performance fixes are included in this release build.
 on:
   push:
     branches: [android-app]
@@ -146,7 +147,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. This release contains the local TV QR pairing implementation.\n\nDownloader: 4708771\nTV download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-TV.apk\nMobile download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-Mobile.apk"
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. This release contains the local TV QR pairing implementation plus TV focus/ticker performance fixes.\n\nDownloader: 4708771\nTV download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-TV.apk\nMobile download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-Mobile.apk"
 
       - name: Upload Gradle log
         if: always()
