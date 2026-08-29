@@ -1,6 +1,7 @@
 name: Build XSportsX APK
 
-# Force a fresh release build from the repaired android-app branch.
+# Production Android release workflow. Always build the android-app branch so
+# the Downloader/release cannot accidentally publish the stale web/main tree.
 on:
   push:
     branches: [android-app]
@@ -23,8 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Checkout production branch
+      - name: Checkout production android-app branch
         uses: actions/checkout@v4
+        with:
+          ref: android-app
+          fetch-depth: 1
 
       - name: Set up Java 17
         uses: actions/setup-java@v5
@@ -53,13 +57,17 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           test -s app/src/main/java/com/xsportsx/app/TvHome.kt
           test -s app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          test -s app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
+          test -s app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
           grep -q 'versionCode' app/build.gradle.kts
           grep -q 'versionName' app/build.gradle.kts
           grep -q 'fun FuturisticHome' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'fun TvHome' app/src/main/java/com/xsportsx/app/TvHome.kt
           grep -Eq '(class|object)[[:space:]]+SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           grep -q 'tvNetworks' app/src/main/java/com/xsportsx/app/TvHome.kt
-          echo 'Production source verified; no CI source-rewrite patches will run.'
+          grep -q 'http://$ip:${socket.localPort}/pair?code=$expectedCode' app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
+          grep -q 'uri.path == "/pair"' app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
+          echo 'Production android-app source verified.'
 
       - name: Check release signing configuration
         env:
@@ -138,7 +146,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from commit ${GITHUB_SHA}. Emulator QA remains a separate verification track.\n\nDownloader: 4708771\nTV download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-TV.apk\nMobile download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-Mobile.apk"
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. This release contains the local TV QR pairing implementation.\n\nDownloader: 4708771\nTV download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-TV.apk\nMobile download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-Mobile.apk"
 
       - name: Upload Gradle log
         if: always()
