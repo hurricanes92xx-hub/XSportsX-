@@ -56,36 +56,6 @@ android {
     }
 }
 
-// Normalize TV activation before Kotlin compilation. This is intentionally limited to
-// MainActivity so mobile behavior remains unchanged while TV gets explicit DPAD handling.
-val optimizeTvFocus by tasks.registering {
-    val mainActivity = file("src/main/java/com/xsportsx/app/MainActivity.kt")
-    inputs.file(mainActivity)
-    outputs.file(mainActivity)
-    doLast {
-        if (mainActivity.exists()) {
-            val text = mainActivity.readText()
-            if (text.contains(".clickable {")) {
-                mainActivity.writeText(
-                    text.replace(".clickable {", ".tvClickable {")
-                        .let { value ->
-                            if (value.contains("tvClickable") && !value.contains("import com.xsportsx.app.tvClickable")) {
-                                value.replace(
-                                    "import androidx.compose.ui.unit.sp",
-                                    "import androidx.compose.ui.unit.sp\nimport com.xsportsx.app.tvClickable"
-                                )
-                            } else value
-                        }
-                )
-            }
-        }
-    }
-}
-
-tasks.matching { it.name.startsWith("compile") && it.name.contains("Kotlin") }.configureEach {
-    dependsOn(optimizeTvFocus)
-}
-
 kotlin { jvmToolchain(17) }
 
 dependencies {
