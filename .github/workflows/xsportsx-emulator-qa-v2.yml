@@ -70,8 +70,8 @@ jobs:
 
   mobile:
     needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 18
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -87,13 +87,18 @@ jobs:
           echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
         run: python3 scripts/qa_public_schedule_probe.py public-schedule-mobile.json
-      - name: Enable KVM
+      - name: Enable KVM and verify acceleration
         run: |
           set -euxo pipefail
           test -e /dev/kvm
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
           sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
+          grep -E 'vmx|svm' /proc/cpuinfo | head -n 1
       - name: Run mobile emulator regression
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.37.0
         with:
           api-level: 34
           target: google_apis
@@ -101,15 +106,18 @@ jobs:
           profile: pixel_5
           avd-name: xsportsx-mobile
           force-avd-creation: true
-          ram-size: 3072M
-          heap-size: 512M
+          ram-size: 3072
+          heap-size: 512
           disk-size: 6G
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          disable-linux-hw-accel: false
           pre-emulator-launch-script: |
-            adb kill-server || true
-            sudo chmod 666 /dev/kvm || true
+            set -eux
+            test -e /dev/kvm
+            sudo chmod 666 /dev/kvm
+            adb start-server
           script: bash scripts/run_emulator_regression.sh "$MOBILE_APK" mobile test-output-mobile
         env:
           QA_MODE: mobile
@@ -126,8 +134,8 @@ jobs:
 
   tv:
     needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 18
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
@@ -143,13 +151,18 @@ jobs:
           echo "TV_APK=$APK" >> "$GITHUB_ENV"
       - name: Probe public schedules outside emulator
         run: python3 scripts/qa_public_schedule_probe.py public-schedule-tv.json
-      - name: Enable KVM
+      - name: Enable KVM and verify acceleration
         run: |
           set -euxo pipefail
           test -e /dev/kvm
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
           sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
+          grep -E 'vmx|svm' /proc/cpuinfo | head -n 1
       - name: Run TV emulator regression
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.37.0
         with:
           api-level: 34
           target: google_apis
@@ -157,15 +170,18 @@ jobs:
           profile: tv_1080p
           avd-name: xsportsx-tv
           force-avd-creation: true
-          ram-size: 3072M
-          heap-size: 512M
+          ram-size: 3072
+          heap-size: 512
           disk-size: 6G
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
+          disable-linux-hw-accel: false
           pre-emulator-launch-script: |
-            adb kill-server || true
-            sudo chmod 666 /dev/kvm || true
+            set -eux
+            test -e /dev/kvm
+            sudo chmod 666 /dev/kvm
+            adb start-server
           script: bash scripts/run_emulator_regression.sh "$TV_APK" tv test-output-tv
         env:
           QA_MODE: tv
