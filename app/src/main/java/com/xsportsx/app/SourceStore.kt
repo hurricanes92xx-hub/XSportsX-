@@ -27,8 +27,6 @@ class SourceStore(context: Context) {
     private val prefs = appContext.getSharedPreferences("xsportsx_source", Context.MODE_PRIVATE)
     private val keystoreAlias = "xsportsx_source_v2"
 
-    // Android Keystore is preferred, but some Android/TV images can temporarily fail
-    // AES-GCM key generation. Never let that make a valid source impossible to save.
     private val key: SecretKey? by lazy { runCatching { getOrCreateKey() }.getOrNull() }
     private val legacyKey: SecretKeySpec by lazy {
         val raw = MessageDigest.getInstance("SHA-256")
@@ -44,8 +42,7 @@ class SourceStore(context: Context) {
             password = decrypt(prefs.getString("password", null)),
             m3uUrl = decrypt(prefs.getString("m3u", null))
         )
-        // Migrate old encrypted data to the current storage format when possible.
-        if (config.isConfigured() && prefs.getString("storage_version", "1") != "2") {
+        if (config.isConfigured() && prefs.getString("storage_version", "1") != "3") {
             runCatching { save(config) }
         }
         return config
@@ -61,18 +58,25 @@ class SourceStore(context: Context) {
         )
         require(normalized.isConfigured()) { "Source configuration is incomplete" }
 
-        // commit() is deliberate: navigation follows immediately and must see the
-        // source as configured even if the process is reclaimed after the save.
-        val ok = prefs.edit()
+        // Store a Keystore copy plus a compatibility copy. Some Android TV firmware
+        // can invalidate/recreate Keystore keys across APK updates, which previously
+        // made a saved source look signed out even though the connection had worked.
+        val editor = prefs.edit()
             .putString("type", normalized.type)
             .putString("server", normalized.server)
             .putString("username", normalized.username)
-            .putString("password", encrypt(normalized.password))
-            .putString("m3u", encrypt(normalized.m3uUrl))
-            .putString("storage_version", "2")
+            .putString("password", encryptWithKey(normalized.password, key ?: legacyKey))
+            .putString("m3u", encryptWithKey(normalized.m3uUrl, key ?: legacyKey))
+            .putString("compat_password", encryptWithKey(normalized.password, legacyKey))
+            .putString("compat_m3u", encryptWithKey(normalized.m3uUrl, legacyKey))
+            .putString("storage_version", "3")
             .putLong("saved_at", System.currentTimeMillis())
-            .commit()
-        check(ok) { "Could not persist source configuration" }
+        check(editor.commit()) { "Could not persist source configuration" }
+
+        // Verify immediately. This prevents the UI from reporting a successful
+        // connection when the persisted credentials cannot actually be read back.
+        val verify = load()
+        check(verify.isConfigured()) { "Source was saved but could not be verified" }
     }
 
     fun clear() { prefs.edit().clear().commit() }
@@ -93,23 +97,23 @@ class SourceStore(context: Context) {
         return generator.generateKey()
     }
 
-    private fun encrypt(value: String): String {
+    private fun encryptWithKey(value: String, secret: SecretKey): String {
         if (value.isBlank()) return ""
-        val secret = key ?: legacyKey
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, secret)
-        val iv = cipher.iv
-        val ciphertext = cipher.doFinal(value.toByteArray(StandardCharsets.UTF_8))
-        return Base64.encodeToString(iv + ciphertext, Base64.NO_WRAP)
+        return Base64.encodeToString(cipher.iv + cipher.doFinal(value.toByteArray(StandardCharsets.UTF_8)), Base64.NO_WRAP)
     }
 
     private fun decrypt(encoded: String?): String {
         if (encoded.isNullOrBlank()) return ""
         key?.let { decryptWithKey(encoded, it)?.let { value -> return value } }
-        return decryptWithKey(encoded, legacyKey).orEmpty()
+        return decryptWithKey(prefs.getString("compat_password", null), legacyKey)
+            ?: decryptWithKey(prefs.getString("compat_m3u", null), legacyKey)
+            ?: decryptWithKey(encoded, legacyKey).orEmpty()
     }
 
-    private fun decryptWithKey(encoded: String, secretKey: SecretKey): String? = runCatching {
+    private fun decryptWithKey(encoded: String?, secretKey: SecretKey): String? = runCatching {
+        if (encoded.isNullOrBlank()) return@runCatching null
         val blob = Base64.decode(encoded, Base64.NO_WRAP)
         require(blob.size > 12)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
