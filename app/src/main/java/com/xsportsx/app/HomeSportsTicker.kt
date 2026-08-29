@@ -34,7 +34,8 @@ data class TickerItem(val kind: String, val league: String, val text: String, va
 data class TickerLeague(val name: String, val sport: String, val id: String)
 data class TickerLeagueGroup(val league: String, val items: List<TickerItem>)
 
-// Keep the ticker intentionally small. It is a UI accessory, not the primary schedule service.
+// The ticker is intentionally a lightweight accessory. The canonical schedule service
+// remains responsible for the full event feed.
 private val tickerLeagues = listOf(
     TickerLeague("NFL", "football", "nfl"),
     TickerLeague("NCAA FB", "football", "college-football"),
@@ -134,12 +135,10 @@ private suspend fun loadNews(league: TickerLeague): TickerLeagueGroup? {
 
 private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {
     supervisorScope {
-        // Limit concurrency so opening a new screen cannot compete with the ticker for the network/CPU.
         val scoreResults = tickerLeagues.chunked(3).flatMap { batch ->
             batch.map { league -> async { runCatching { loadLeague(league) }.getOrNull() } }.awaitAll()
         }
         val games = scoreResults.filterNotNull().filter { it.items.isNotEmpty() }
-        // News is deliberately secondary and fetched only for a small set of leagues.
         val news = newsLeagues.chunked(2).flatMap { batch ->
             batch.map { league -> async { runCatching { loadNews(league) }.getOrNull() } }.awaitAll()
         }.filterNotNull().filter { it.items.isNotEmpty() }
@@ -152,14 +151,18 @@ private fun line(group: TickerLeagueGroup): String = group.items.joinToString(" 
 }
 
 @Composable
-fun HomeSportsTicker(modifier: Modifier = Modifier) {
+fun HomeSportsTicker(modifier: Modifier = Modifier, enabled: Boolean = true) {
     var groups by remember { mutableStateOf<List<TickerLeagueGroup>>(emptyList()) }
     var index by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(true) }
     var failed by remember { mutableStateOf(false) }
 
-    // One coroutine, one refresh cadence. No per-frame work and no 60-second network storm.
-    LaunchedEffect(Unit) {
+    // Cancels the entire network loop when the host screen is not active.
+    LaunchedEffect(enabled) {
+        if (!enabled) {
+            loading = false
+            return@LaunchedEffect
+        }
         while (isActive) {
             val loaded = runCatching { loadTickerGroups() }.getOrDefault(emptyList())
             if (loaded.isNotEmpty()) {
