@@ -1,6 +1,9 @@
 package com.xsportsx.app
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.LinkProperties
+import android.net.NetworkCapabilities
 import android.os.Handler
 import android.os.Looper
 import org.json.JSONObject
@@ -9,6 +12,7 @@ import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Inet4Address
+import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.ServerSocket
 import java.net.Socket
@@ -32,7 +36,7 @@ class LocalPairingHost(
     fun start(): Info? {
         if (active) return currentInfo
         val ip = localIpv4() ?: return null
-        val socket = ServerSocket(0).apply { reuseAddress = true }
+        val socket = ServerSocket(0, 8, InetAddress.getByName("0.0.0.0")).apply { reuseAddress = true }
         server = socket
         expectedCode = UUID.randomUUID().toString().replace("-", "").take(8).uppercase()
         active = true
@@ -129,12 +133,30 @@ class LocalPairingHost(
         currentInfo = null
     }
 
-    private fun localIpv4(): String? = runCatching {
+    private fun localIpv4(): String? {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val network = cm?.activeNetwork
+        val caps = network?.let { cm.getNetworkCapabilities(it) }
+        val props = network?.let { cm.getLinkProperties(it) }
+        if (caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true) {
+            val activeIp = props?.ipv4Addresses()?.firstOrNull()
+            if (activeIp != null && isUsable(activeIp)) return activeIp
+        }
+        return legacyIpv4()
+    }
+
+    private fun LinkProperties.ipv4Addresses(): List<String> = linkAddresses.mapNotNull { address ->
+        (address.address as? Inet4Address)?.hostAddress
+    }
+
+    private fun isUsable(ip: String): Boolean = !ip.startsWith("127.") && !ip.startsWith("169.254.") && ip != "0.0.0.0"
+
+    private fun legacyIpv4(): String? = runCatching {
         Collections.list(NetworkInterface.getNetworkInterfaces()).asSequence()
             .filter { it.isUp && !it.isLoopback && !it.isVirtual }
             .flatMap { Collections.list(it.inetAddresses).asSequence() }
             .filterIsInstance<Inet4Address>()
             .map { it.hostAddress }
-            .firstOrNull { !it.startsWith("127.") && !it.startsWith("169.254.") }
+            .firstOrNull(::isUsable)
     }.getOrNull()
 }
