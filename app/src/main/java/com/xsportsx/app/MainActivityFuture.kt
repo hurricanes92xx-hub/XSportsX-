@@ -60,18 +60,8 @@ class MainActivityFuture : ComponentActivity() {
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
                 tvConnectChooser -> TvSourceChooser(onQr = { tvConnectChooser = false; tvPair = true }, onManual = { tvConnectChooser = false; connectSource = true }, onBack = { tvConnectChooser = false })
-                tvPair -> QrPairingScreen(
-                    pairingUrl = BuildConfig.PAIRING_BASE_URL,
-                    onDone = {
-                        tvPair = false
-                        connectSource = false
-                        mobilePair = false
-                        schedules = false
-                        selectedEvent = null
-                        liveFilter = null
-                        tvConnectChooser = true
-                        sourceVersion++
-                    },
+                tvPair -> LocalQrPairingScreen(
+                    onCancel = { tvPair = false; tvConnectChooser = true },
                     onConnected = { sourceVersion++; tvPair = false; tvConnectChooser = false }
                 )
                 mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
