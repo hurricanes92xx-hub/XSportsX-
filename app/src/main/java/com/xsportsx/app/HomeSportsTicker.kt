@@ -113,12 +113,14 @@ private suspend fun loadNews(league: TickerLeague): TickerLeagueGroup? {
     return TickerLeagueGroup("NEWS • ${league.name}", items.take(6))
 }
 
-private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = supervisorScope {
-    val scoreResults = tickerLeagues.map { league -> async { runCatching { loadLeague(league) }.getOrNull() } }.awaitAll()
-    val newsResults = newsLeagues.map { league -> async { runCatching { loadNews(league) }.getOrNull() } }.awaitAll()
-    val games = scoreResults.filterNotNull().filter { it.items.isNotEmpty() }
-    val news = newsResults.filterNotNull().filter { it.items.isNotEmpty() }
-    games.sortedWith(compareBy<TickerLeagueGroup> { if (it.items.any { x -> x.kind == "LIVE" }) 0 else 1 }.thenBy { it.league }) + news
+private suspend fun loadTickerGroups(): List<TickerLeagueGroup> = withContext(Dispatchers.IO) {
+    supervisorScope {
+        val scoreResults = tickerLeagues.map { league -> async { runCatching { loadLeague(league) }.getOrNull() } }.awaitAll()
+        val newsResults = newsLeagues.map { league -> async { runCatching { loadNews(league) }.getOrNull() } }.awaitAll()
+        val games = scoreResults.filterNotNull().filter { it.items.isNotEmpty() }
+        val news = newsResults.filterNotNull().filter { it.items.isNotEmpty() }
+        games.sortedWith(compareBy<TickerLeagueGroup> { if (it.items.any { x -> x.kind == "LIVE" }) 0 else 1 }.thenBy { it.league }) + news
+    }
 }
 
 private fun line(group: TickerLeagueGroup): String = group.items.joinToString("     •     ") { "${it.kind}  [${it.league}]  ${it.text}" }
