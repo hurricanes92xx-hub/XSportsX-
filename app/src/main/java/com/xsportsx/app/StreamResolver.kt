@@ -16,6 +16,7 @@ import java.util.zip.GZIPInputStream
 
 data class ResolvedStream(val name: String, val group: String, val url: String, val iconUrl: String = "")
 private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loadedAt: Long)
+private data class EventStreamCacheEntry(val streams: List<ResolvedStream>, val loadedAt: Long)
 
 class StreamResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
@@ -24,9 +25,12 @@ class StreamResolver(context: Context) {
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
+        private const val EVENT_CACHE_TTL_MS = 2 * 60 * 1000L
         private val cache = LruCache<String, StreamCacheEntry>(2)
+        private val eventCache = LruCache<String, EventStreamCacheEntry>(32)
         private val cacheMutex = Mutex()
-        fun invalidateCache() { cache.evictAll() }
+        private val eventCacheMutex = Mutex()
+        fun invalidateCache() { cache.evictAll(); eventCache.evictAll() }
     }
 
     suspend fun preloadLiveStreams(force: Boolean = false): Int = withContext(Dispatchers.IO) {
@@ -59,6 +63,12 @@ class StreamResolver(context: Context) {
 
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load()
+        val eventKey = eventCacheKey(config, event)
+        val now = System.currentTimeMillis()
+        if (!force) {
+            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
+        }
+
         val privateMatches = if (config.isConfigured()) {
             val private = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
             matchEventAgainstStreams(event, private)
@@ -89,7 +99,11 @@ class StreamResolver(context: Context) {
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let {
             ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it")
         }
-        dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
+        val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
+        eventCacheMutex.withLock {
+            eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis()))
+        }
+        resolved
     }
 
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
@@ -101,6 +115,7 @@ class StreamResolver(context: Context) {
 
     private fun normalize(value: String): String = value.lowercase().replace("&", " and ").replace(Regex("[^a-z0-9+]+"), " ").trim().replace(Regex("\\s+"), " ")
     private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl, BuildConfig.PAIRING_BASE_URL).joinToString("|")
+    private fun eventCacheKey(config: SourceConfig, event: SportsEvent): String = listOf(cacheKey(config), event.id, event.title, event.home, event.away, event.league, event.broadcast).joinToString("|")
     private fun dedupe(streams: List<ResolvedStream>): List<ResolvedStream> { val seen = HashSet<String>(); return streams.filter { seen.add(it.url) } }
 
     private fun loadXtream(config: SourceConfig): List<ResolvedStream> {
