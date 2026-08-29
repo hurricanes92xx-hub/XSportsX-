@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20
-        versionName = "1.6.9"
+        versionCode = 21
+        versionName = "1.7.0"
     }
     flavorDimensions += "device"
     productFlavors {
@@ -20,15 +20,11 @@ android {
             dimension = "device"
             applicationIdSuffix = ".mobile"
             buildConfigField("boolean", "IS_TV_BUILD", "false")
-            // Legacy source compatibility only; the production pairing flow is LAN-only.
-            buildConfigField("String", "PAIRING_BASE_URL", "\"http://127.0.0.1\"")
         }
         create("tv") {
             dimension = "device"
             applicationIdSuffix = ".tv"
             buildConfigField("boolean", "IS_TV_BUILD", "true")
-            // Legacy source compatibility only; the production pairing flow is LAN-only.
-            buildConfigField("String", "PAIRING_BASE_URL", "\"http://127.0.0.1\"")
         }
     }
     signingConfigs {
