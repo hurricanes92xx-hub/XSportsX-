@@ -13,6 +13,7 @@ android {
         targetSdk = 36
         versionCode = 21
         versionName = "1.7.0"
+        buildConfigField("String", "PAIRING_BASE_URL", "\"https://github.com/hurricanes92xx-hub/XSportsX-\"")
     }
     flavorDimensions += "device"
     productFlavors {
