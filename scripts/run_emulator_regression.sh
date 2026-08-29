@@ -104,6 +104,7 @@ try:
         # TV can render the source-result screen several seconds after the
         # connection request. Keep the committed QA script authoritative while
         # making this emulator-specific timing check tolerant of that latency.
+        os.makedirs(outdir, exist_ok=True)
         tv_script = os.path.join(outdir, "qa_regression_test_tv_runtime.sh")
         with open(qa_script, "r", encoding="utf-8") as fh:
             qa_text = fh.read()
