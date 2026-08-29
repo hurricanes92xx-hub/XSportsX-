@@ -1,8 +1,11 @@
 package com.xsportsx.app
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -18,8 +21,8 @@ import androidx.core.content.ContextCompat
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -45,25 +48,52 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         require(uri.scheme == "http" && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()) {
             "Scan the QR code shown by the XSportsX TV app"
         }
-        val c = (URL(raw).openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"
-            doOutput = true
-            connectTimeout = 8000
-            readTimeout = 8000
-            setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            setRequestProperty("Accept", "application/json")
-        }
-        try {
-            c.outputStream.use { it.write(sourceJson().toString().toByteArray(Charsets.UTF_8)) }
-            val code = c.responseCode
-            val stream = if (code in 200..299) c.inputStream else c.errorStream
-            val body = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) {
-                throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
+
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val network = cm?.activeNetwork
+        var lastError: Throwable? = null
+        repeat(2) { attempt ->
+            val connection = runCatching {
+                val rawConnection = if (network != null) {
+                    network.openConnection(URL(raw))
+                } else {
+                    URL(raw).openConnection()
+                }
+                (rawConnection as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    doOutput = true
+                    connectTimeout = 5000
+                    readTimeout = 8000
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("Accept", "application/json")
+                    setRequestProperty("Connection", "close")
+                }
+            }.getOrElse {
+                lastError = it
+                return@repeat
             }
-            if (!JSONObject(body.ifBlank { "{}" }).optBoolean("ok", false)) throw IllegalStateException("TV did not accept the source")
-            true
-        } finally { c.disconnect() }
+
+            try {
+                connection.outputStream.use { it.write(sourceJson().toString().toByteArray(Charsets.UTF_8)) }
+                val code = connection.responseCode
+                val stream = if (code in 200..299) connection.inputStream else connection.errorStream
+                val body = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
+                if (code !in 200..299) {
+                    throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
+                }
+                if (!JSONObject(body.ifBlank { "{}" }).optBoolean("ok", false)) throw IllegalStateException("TV did not accept the source")
+                return@withContext true
+            } catch (t: Throwable) {
+                lastError = t
+            } finally {
+                connection.disconnect()
+            }
+            if (attempt == 0) kotlinx.coroutines.delay(350)
+        }
+        throw IllegalStateException(
+            lastError?.message?.takeIf { it.isNotBlank() }
+                ?: "Could not reach the TV. Make sure both devices are on the same Wi-Fi network and allow XSportsX to access nearby devices."
+        )
     }
 
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
