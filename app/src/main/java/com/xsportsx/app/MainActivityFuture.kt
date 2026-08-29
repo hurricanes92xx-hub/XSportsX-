@@ -64,7 +64,7 @@ class MainActivityFuture : ComponentActivity() {
                     onCancel = { tvPair = false; tvConnectChooser = true },
                     onConnected = { sourceVersion++; tvPair = false; tvConnectChooser = false }
                 )
-                mobilePair -> PhonePairScanner(pairingBaseUrl = BuildConfig.PAIRING_BASE_URL, onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
+                mobilePair -> PhonePairScanner(onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
                 schedules -> SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
                 selectedEvent != null -> LiveChannelsScreen(event = selectedEvent, onBack = { selectedEvent = null })
