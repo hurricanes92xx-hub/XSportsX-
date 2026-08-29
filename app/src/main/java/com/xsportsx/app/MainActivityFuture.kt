@@ -39,7 +39,8 @@ class MainActivityFuture : ComponentActivity() {
             var updateProgress by remember { mutableIntStateOf(0) }
             var updateMessage by remember { mutableStateOf<String?>(null) }
             val scope = rememberCoroutineScope()
-            val connected = remember(sourceVersion) { SourceStore(this@MainActivityFuture).load().isConfigured() }
+            val sourceStore = remember { SourceStore(this@MainActivityFuture) }
+            val connected = remember(sourceVersion) { sourceStore.load().isConfigured() }
 
             fun checkForUpdate() { scope.launch { val found = AppUpdateManager.check(this@MainActivityFuture); if (found != null && found.versionCode > (availableUpdate?.versionCode ?: 0)) availableUpdate = found } }
 
@@ -48,8 +49,6 @@ class MainActivityFuture : ComponentActivity() {
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
 
-            // TV has its own canonical schedule feed. Do not compete with it by
-            // preloading the full stream catalog during first-frame startup.
             LaunchedEffect(Unit) {
                 if (!BuildConfig.IS_TV_BUILD) {
                     scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
@@ -94,7 +93,19 @@ class MainActivityFuture : ComponentActivity() {
                         }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(
-                            onConnect = { connectSource = true },
+                            // A connected source must never send the user back through
+                            // the sign-in screen just because they tapped the LIVE card,
+                            // a sport tile, or another browse action. Those controls call
+                            // this callback, so route them into the live channel resolver
+                            // once credentials are already configured.
+                            onConnect = {
+                                if (sourceStore.load().isConfigured()) {
+                                    selectedEvent = null
+                                    liveFilter = ""
+                                } else {
+                                    connectSource = true
+                                }
+                            },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") {
                                     selectedScheduleLeague = network.name
