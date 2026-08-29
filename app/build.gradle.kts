@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 19
-        versionName = "1.6.8"
+        versionCode = 20
+        versionName = "1.6.9"
     }
     flavorDimensions += "device"
     productFlavors {
@@ -20,13 +20,11 @@ android {
             dimension = "device"
             applicationIdSuffix = ".mobile"
             buildConfigField("boolean", "IS_TV_BUILD", "false")
-            buildConfigField("String", "PAIRING_BASE_URL", "\"https://xsportsx.onrender.com\"")
         }
         create("tv") {
             dimension = "device"
             applicationIdSuffix = ".tv"
             buildConfigField("boolean", "IS_TV_BUILD", "true")
-            buildConfigField("String", "PAIRING_BASE_URL", "\"https://xsportsx.onrender.com\"")
         }
     }
     signingConfigs {
