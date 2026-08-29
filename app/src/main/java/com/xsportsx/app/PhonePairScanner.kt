@@ -2,6 +2,7 @@ package com.xsportsx.app
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -16,8 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 @Composable
 fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
@@ -35,19 +40,54 @@ fun PhonePairScanner(pairingBaseUrl: String, onConnected: (String) -> Unit, onCa
         put("m3uUrl", source.m3uUrl)
     }
 
+    suspend fun approveLocal(raw: String) = withContext(Dispatchers.IO) {
+        val c = (URL(raw).openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"
+            doOutput = true
+            connectTimeout = 8000
+            readTimeout = 8000
+            setRequestProperty("Content-Type", "application/json; charset=utf-8")
+            setRequestProperty("Accept", "application/json")
+        }
+        try {
+            c.outputStream.use { it.write(sourceJson().toString().toByteArray(Charsets.UTF_8)) }
+            val code = c.responseCode
+            val stream = if (code in 200..299) c.inputStream else c.errorStream
+            val body = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
+            if (code !in 200..299) throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
+            if (!JSONObject(body.ifBlank { "{}" }).optBoolean("ok", false)) throw IllegalStateException("TV did not accept the source")
+            true
+        } finally { c.disconnect() }
+    }
+
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
         val raw = result.contents ?: return@rememberLauncherForActivityResult
-        val code = raw.substringAfter("xsportsx://pair/", raw).substringBefore('?').trim()
-        if (code.isBlank()) { status = "That isn't an XSportsX pairing code"; return@rememberLauncherForActivityResult }
+        val uri = runCatching { Uri.parse(raw) }.getOrNull()
+        val isLocal = uri?.scheme == "http" && uri.host != null && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()
         busy = true
         scope.launch {
-            runCatching { PairingClient.approve(pairingBaseUrl, code, sourceJson()) }
-                .onSuccess {
-                    PairingStore.save(context, "paired-tv:${it.sessionId}")
-                    status = "TV connected"
-                    onConnected(it.sessionId)
+            if (isLocal) {
+                runCatching { approveLocal(raw) }
+                    .onSuccess {
+                        PairingStore.save(context, "paired-tv:local:${uri?.host}:${uri?.port}")
+                        status = "TV connected"
+                        onConnected("local")
+                    }
+                    .onFailure { status = it.message ?: "Local TV pairing failed" }
+            } else {
+                val code = raw.substringAfter("xsportsx://pair/", raw).substringBefore('?').trim()
+                if (code.isBlank()) {
+                    status = "That isn't an XSportsX pairing code"
+                } else {
+                    runCatching { PairingClient.approve(pairingBaseUrl, code, sourceJson()) }
+                        .onSuccess {
+                            PairingStore.save(context, "paired-tv:${it.sessionId}")
+                            status = "TV connected"
+                            onConnected(it.sessionId)
+                        }
+                        .onFailure { status = it.message ?: "Pairing failed or expired" }
                 }
-                .onFailure { status = it.message ?: "Pairing failed or expired" }
+            }
             busy = false
         }
     }
