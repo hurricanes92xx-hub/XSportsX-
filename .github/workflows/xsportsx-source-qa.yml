@@ -89,7 +89,8 @@ jobs:
           sudo chmod 666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         env:
-          QA_SOURCE_BASE: http://10.0.2.2:8765
+          QA_SOURCE_BASE: http://127.0.0.1:8765
+          QA_PACKAGE: com.xsportsx.app.mobile
         with:
           api-level: 34
           target: google_apis
@@ -148,7 +149,8 @@ jobs:
           sudo chmod 666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         env:
-          QA_SOURCE_BASE: http://10.0.2.2:8765
+          QA_SOURCE_BASE: http://127.0.0.1:8765
+          QA_PACKAGE: com.xsportsx.app.tv
         with:
           api-level: 34
           target: google_apis
