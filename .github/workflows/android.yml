@@ -56,7 +56,7 @@ jobs:
           grep -q 'versionName' app/build.gradle.kts
           grep -q 'fun FuturisticHome' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'fun TvHome' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'class SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          grep -Eq '(class|object)[[:space:]]+SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
           grep -q 'tvNetworks' app/src/main/java/com/xsportsx/app/TvHome.kt
           echo 'Production source verified; no CI source-rewrite patches will run.'
 
