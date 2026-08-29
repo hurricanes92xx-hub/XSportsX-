@@ -52,10 +52,14 @@ for path in paths:
 json.dump({'fixture':'xsportsx-qa','checks':rows},open(out,'w'),indent=2); print(json.dumps(rows,indent=2))
 PY
 adb shell am force-stop "$PACKAGE" || true
-RESOLVE_RAW="$(adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER "$PACKAGE" 2>/dev/null || true)"
-ACTIVITY="$(printf '%s\n' "$RESOLVE_RAW" | sed 's/\r$//' | grep -E '^com\.xsportsx\.app\.(mobile|tv)/' | tail -n 1 || true)"
-[[ -n "$ACTIVITY" ]] || fail "Could not resolve launcher activity for $PACKAGE (raw: $RESOLVE_RAW)"
+# The committed manifest declares MainActivityFuture as the LAUNCHER activity.
+# Flavor application IDs add .mobile/.tv to the base package, so use the explicit
+# component instead of relying on cmd package resolve-activity output, which can
+# vary on API 34/TV images and previously returned "No activity found" here.
+ACTIVITY="$PACKAGE/.MainActivityFuture"
 printf '%s\n' "$ACTIVITY" > "$OUT/resolve-activity.txt"
+PACKAGE_DUMP="$(adb shell dumpsys package "$PACKAGE" 2>/dev/null || true)"
+printf '%s\n' "$PACKAGE_DUMP" | grep -Fq "com.xsportsx.app.MainActivityFuture" || fail "Installed package $PACKAGE does not contain MainActivityFuture"
 START_OUTPUT="$(adb shell am start -W -n "$ACTIVITY" 2>&1)" || { echo "$START_OUTPUT"; fail "Explicit activity launch command failed"; }
 printf '%s\n' "$START_OUTPUT" | tee "$OUT/launch-result.txt"
 printf '%s\n' "$START_OUTPUT" | tr -d '\r' | grep -Eq 'Status:[[:space:]]*ok([[:space:]]|$)' || fail "Activity did not report Status: ok"
