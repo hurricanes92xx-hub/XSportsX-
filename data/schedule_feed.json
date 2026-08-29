@@ -1,12 +1,12 @@
 {
   "schema": 4,
-  "generatedAt": "2026-08-29T07:02:35.871951+00:00",
+  "generatedAt": "2026-08-29T20:55:02.464205+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "NCAA Men's Soccer": 685,
     "NCAA Women's Soccer": 1124,
-    "NCAA Women's Volleyball": 2070,
-    "NCAA Men's Water Polo": 126,
+    "NCAA Women's Volleyball": 2074,
+    "NCAA Men's Water Polo": 130,
     "ATP": 4,
     "WTA": 18,
     "PGA": 3,
@@ -14,7 +14,7 @@
     "LIV Golf": 2,
     "NRL": 13,
     "UFC": 9,
-    "AFL": 4,
+    "AFL": 5,
     "EPL": 39,
     "Bundesliga": 35,
     "LaLiga": 48,
@@ -31,6 +31,7 @@
     "AEW": 5,
     "WWE": 5,
     "F1": 3,
+    "UCL": 18,
     "NCAA Women's Hockey": 743,
     "NHL": 65,
     "TNA": 1
@@ -47,7 +48,7 @@
       "league": "NCAA Men's Soccer",
       "title": "VMI @ Saint Peter's",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽"
     },
     {
@@ -145,7 +146,7 @@
       "league": "NCAA Women's Soccer",
       "title": "Quinnipiac @ UAlbany",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽"
     },
     {
@@ -187,140 +188,147 @@
       "league": "NCAA Women's Volleyball",
       "title": "Ga. Southern @ Hawaii",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Mississippi Val. @ Delaware St.",
+      "start": "08/29/2026T00:00:00Z",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Gardner-Webb @ Morgan St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Liberty @ Akron",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Purdue Fort Wayne @ Bellarmine",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Presbyterian @ Northwestern St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Fairfield @ Colgate",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Norfolk St. @ Elon",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "N.C. Central @ Alabama A&M",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Providence @ New Haven",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Holy Cross @ Siena",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Radford @ Hampton",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Le Moyne @ Kennesaw St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Eastern Mich. @ Murray St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "William & Mary @ Kent St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Stetson @ Merrimack",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "High Point @ Hofstra",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Santa Clara @ Dayton",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Lindenwood @ Buffalo",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "St. John's (NY) @ USC Upstate",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "CSU Bakersfield @ Abilene Christian",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
@@ -334,154 +342,154 @@
       "league": "NCAA Women's Volleyball",
       "title": "Stonehill @ LSU New Orleans ",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Sacred Heart @ Army West Point",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Southern Miss. @ Jacksonville",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Mercyhurst @ Duquesne",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Jackson St. @ UT Martin",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Fordham @ Temple",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "NC State @ Robert Morris",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Southwest Minn. St. @ West Florida",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Binghamton @ Toledo",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UT Arlington @ SIUE",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Cal St. Fullerton @ Miami (OH)",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Illinois St. @ NJIT",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Eastern Ky. @ Utah St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Florida A&M @ UMES",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Western Caro. @ Charleston So.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UC Santa Barbara @ Prairie View",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Morehead St. @ Tennessee",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "DePaul @ Drake",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Iona @ Little Rock",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Western Ky. @ Southeast Mo. St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Northern Ky. @ Bowling Green",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "North Florida @ George Washington",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
@@ -495,273 +503,280 @@
       "league": "NCAA Women's Volleyball",
       "title": "Mercer @ Alabama St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Eastern Ill. @ Wright St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Grambling @ Northwestern St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Montana St. @ Delaware",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Auburn @ Akron",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Bucknell @ Niagara",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "A&M-Corpus Christi @ Campbell",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Florida St. @ VCU",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Tennessee St. @ UAB",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Rutgers @ Evansville",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Belmont @ San Francisco",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Gardner-Webb @ Cleveland St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Marist @ Lafayette",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Miami (FL) @ Michigan",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "North Texas @ Lamar University",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Rhode Island @ Holy Cross",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Loyola Maryland @ James Madison",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Middle Tenn. @ Boise St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "The Citadel @ UNCW",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Western Ill. @ Towson",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "N.C. A&T @ Bryant",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Wake Forest @ Houston",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "North Dakota St. @ Tennessee Tech",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "North Carolina @ Davidson",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "ULM @ Texas Southern",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Saint Peter's @ New Hampshire",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "FIU @ Fla. Atlantic",
+      "start": "08/29/2026T00:00:00Z",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UNI @ Loyola Chicago",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "FDU @ Seton Hall",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "LIU @ Michigan St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Louisiana @ Oklahoma",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Canisius @ Youngstown St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Oakland @ Bradley",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UMBC @ UTRGV",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "LMU (CA) @ Southeastern La.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "NIU @ Southern Ind.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "McNeese @ Sam Houston",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Duke @ Queens (NC)",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Valparaiso @ Tennessee St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UIC @ Saint Louis",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
@@ -775,84 +790,91 @@
       "league": "NCAA Women's Volleyball",
       "title": "Green Bay @ Indiana St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Georgia St. @ Rice",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Alcorn @ Nicholls",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Kansas City @ Austin Peay",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Texas Tech @ St. Thomas (MN)",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Utah Tech @ Utah",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Ball St. @ Xavier",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Eastern Wash. @ Chicago St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UAlbany @ Iowa",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southern U. @ Jacksonville St.",
+      "start": "08/29/2026T00:00:00Z",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Coppin St. @ Virginia Tech",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Tarleton St. @ Arizona",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "San Jose St. @ Weber St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
@@ -866,28 +888,28 @@
       "league": "NCAA Women's Volleyball",
       "title": "Nevada @ Portland",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Presbyterian @ West Ga.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Milwaukee @ South Dakota",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "New Haven @ Saint Peter's",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
@@ -901,77 +923,77 @@
       "league": "NCAA Women's Volleyball",
       "title": "Liberty @ ETSU",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Northeastern @ UNC Greensboro",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "UConn @ Penn St.",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
-      "title": "Air Force @ Quinnipiac",
+      "title": "Quinnipiac @ Air Force",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Stony Brook @ UCF",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Radford @ Bethune-Cookman",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Northwestern @ American",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Cincinnati @ Syracuse",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Morgan St. @ Lehigh",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Middle Tenn. @ UNC Asheville",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
       "league": "NCAA Women's Volleyball",
       "title": "Wofford @ Winthrop",
       "start": "08/29/2026T00:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐"
     },
     {
@@ -1539,6 +1561,13 @@
       "title": "Long Beach St. @ Saint Mary's (CA)",
       "start": "08/29/2026T00:00:00Z",
       "tag": "UPCOMING",
+      "icon": "🤽"
+    },
+    {
+      "league": "NCAA Men's Water Polo",
+      "title": "Redlands @ George Washington",
+      "start": "08/29/2026T00:00:00Z",
+      "tag": "FINAL",
       "icon": "🤽"
     },
     {
@@ -6071,27 +6100,6 @@
       "icon": "🏐"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Alabama A&M @ Georgia St.",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southeast Mo. St. @ Southern Ill.",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Arkansas St. @ Bowling Green",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
       "league": "NCAA Men's Water Polo",
       "title": "Mount St. Mary's @ Navy",
       "start": "09/04/2026T00:00:00Z",
@@ -6115,6 +6123,20 @@
     {
       "league": "NCAA Men's Water Polo",
       "title": "Southern California @ Long Beach St.",
+      "start": "09/04/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤽"
+    },
+    {
+      "league": "NCAA Men's Water Polo",
+      "title": "UC Irvine @ Redlands",
+      "start": "09/04/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤽"
+    },
+    {
+      "league": "NCAA Men's Water Polo",
+      "title": "CUI @ Redlands",
       "start": "09/04/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤽"
@@ -6535,6 +6557,13 @@
     {
       "league": "NCAA Men's Water Polo",
       "title": "Stanford @ Pepperdine",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤽"
+    },
+    {
+      "league": "NCAA Men's Water Polo",
+      "title": "California Baptist @ Redlands",
       "start": "09/05/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤽"
@@ -9364,14 +9393,14 @@
       "league": "PGA",
       "title": "TOUR Championship",
       "start": "2026-08-27T04:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "⛳"
     },
     {
       "league": "LPGA",
       "title": "FM Championship",
       "start": "2026-08-27T04:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "⛳"
     },
     {
@@ -9392,315 +9421,315 @@
       "league": "UFC",
       "title": "UFC Fight Night: Nurmagomedov vs. Song",
       "start": "2026-08-29T07:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🥊"
     },
     {
       "league": "NRL",
       "title": "Dolphins @ Roosters",
       "start": "2026-08-29T07:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏉"
     },
     {
       "league": "NRL",
       "title": "Wests Tigers @ Cowboys",
       "start": "2026-08-29T09:35Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏉"
     },
     {
       "league": "AFL",
       "title": "Carlton @ Melbourne",
       "start": "2026-08-29T09:35Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏉"
     },
     {
       "league": "EPL",
       "title": "Nottm Forest @ Liverpool",
       "start": "2026-08-29T11:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
       "title": "Frankfurt @ Union Berlin",
       "start": "2026-08-29T13:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
       "title": "Hoffenheim @ Cologne",
       "start": "2026-08-29T13:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
       "title": "Paderborn @ Mainz",
       "start": "2026-08-29T13:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
       "title": "Gladbach @ RB Leipzig",
       "start": "2026-08-29T13:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
-      "title": "Leverkusen @ ELVERSBERG",
+      "title": "Leverkusen @ Elversberg",
       "start": "2026-08-29T13:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "EPL",
       "title": "Everton @ Bournemouth",
       "start": "2026-08-29T14:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "EPL",
       "title": "Hull @ Coventry",
       "start": "2026-08-29T14:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "LaLiga",
       "title": "Betis @ Levante",
       "start": "2026-08-29T15:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Ligue 1",
       "title": "Lens @ Strasbourg",
       "start": "2026-08-29T15:15Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "NCAA FB",
       "title": "North Carolina @ TCU",
       "start": "2026-08-29T16:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏈"
     },
     {
       "league": "EPL",
       "title": "Newcastle @ Spurs",
       "start": "2026-08-29T16:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Bundesliga",
       "title": "Hamburg @ Dortmund",
       "start": "2026-08-29T16:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Serie A",
       "title": "Frosinone @ Fiorentina",
       "start": "2026-08-29T16:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Serie A",
       "title": "Udinese @ Monza",
       "start": "2026-08-29T16:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Serie A",
       "title": "Torino @ Sassuolo",
       "start": "2026-08-29T16:30Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "LaLiga",
       "title": "Espanyol @ Real Sociedad",
       "start": "2026-08-29T17:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "NFL",
       "title": "Lions @ Colts",
       "start": "2026-08-29T17:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏈"
     },
     {
       "league": "WNBA",
       "title": "Sky @ Liberty",
       "start": "2026-08-29T17:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏀"
     },
     {
       "league": "MLB",
       "title": "Red Sox @ Yankees",
       "start": "2026-08-29T17:05Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Dodgers @ Tigers",
       "start": "2026-08-29T17:10Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "White Sox @ Twins",
       "start": "2026-08-29T18:10Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Pirates @ Cardinals",
       "start": "2026-08-29T18:15Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Reds @ Cubs",
       "start": "2026-08-29T18:20Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "IndyCar",
       "title": "Grand Prix of Milwaukee Race 1",
       "start": "2026-08-29T18:30Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏎️"
     },
     {
       "league": "Ligue 1",
       "title": "Angers @ Auxerre",
       "start": "2026-08-29T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Ligue 1",
       "title": "Toulouse @ Brest",
       "start": "2026-08-29T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Ligue 1",
       "title": "Troyes @ Lorient",
       "start": "2026-08-29T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Ligue 1",
       "title": "Le Havre AC @ Lyon",
       "start": "2026-08-29T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "Serie A",
       "title": "Parma @ Juventus",
       "start": "2026-08-29T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽"
     },
     {
       "league": "NCAA FB",
       "title": "San José St @ USC",
       "start": "2026-08-29T19:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏈"
     },
     {
       "league": "MLB",
       "title": "Mariners @ Blue Jays",
       "start": "2026-08-29T19:07Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "LaLiga",
       "title": "Atlético @ Sevilla",
       "start": "2026-08-29T19:30Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽"
     },
     {
       "league": "NCAA FB",
       "title": "NC State @ Virginia",
       "start": "2026-08-29T19:30Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏈"
     },
     {
       "league": "MLB",
       "title": "Marlins @ Nationals",
       "start": "2026-08-29T20:05Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Diamondbacks @ Giants",
       "start": "2026-08-29T20:05Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Rockies @ Braves",
       "start": "2026-08-29T20:10Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Astros @ Mets",
       "start": "2026-08-29T20:10Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Royals @ Guardians",
       "start": "2026-08-29T20:10Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLB",
       "title": "Padres @ Rays",
       "start": "2026-08-29T20:10Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾"
     },
     {
       "league": "MLS",
       "title": "Chicago @ Seattle",
       "start": "2026-08-29T20:30Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽"
     },
     {
@@ -10691,6 +10720,13 @@
       "icon": "🏉"
     },
     {
+      "league": "AFL",
+      "title": "Carlton @ Geelong Cats",
+      "start": "2026-09-04T09:40Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
       "league": "NRL",
       "title": "Roosters @ Rabbitohs",
       "start": "2026-09-04T10:00Z",
@@ -10979,7 +11015,7 @@
     },
     {
       "league": "Bundesliga",
-      "title": "ELVERSBERG @ Gladbach",
+      "title": "Elversberg @ Gladbach",
       "start": "2026-09-05T13:30Z",
       "tag": "UPCOMING",
       "icon": "⚽"
@@ -12196,6 +12232,48 @@
       "icon": "⚾"
     },
     {
+      "league": "UCL",
+      "title": "LASK Linz @ AEK Athens",
+      "start": "2026-09-08T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Aston Villa @ Club Brugge",
+      "start": "2026-09-08T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Villarreal @ Dortmund",
+      "start": "2026-09-08T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Man City @ FC Porto",
+      "start": "2026-09-08T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Betis @ Lille",
+      "start": "2026-09-08T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Inter Milan @ Real Madrid",
+      "start": "2026-09-08T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
       "league": "MLB",
       "title": "Guardians @ Orioles",
       "start": "2026-09-08T22:35Z",
@@ -12308,11 +12386,53 @@
       "icon": "⚾"
     },
     {
+      "league": "UCL",
+      "title": "Feyenoord @ Barcelona",
+      "start": "2026-09-09T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Viking FK @ Stuttgart",
+      "start": "2026-09-09T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
       "league": "MLB",
       "title": "Twins @ Tigers",
       "start": "2026-09-09T17:10Z",
       "tag": "UPCOMING",
       "icon": "⚾"
+    },
+    {
+      "league": "UCL",
+      "title": "Atlético @ Liverpool",
+      "start": "2026-09-09T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Arsenal @ Napoli",
+      "start": "2026-09-09T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "S Bratislava @ PSG",
+      "start": "2026-09-09T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Galatasaray @ Sporting",
+      "start": "2026-09-09T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
     },
     {
       "league": "MLB",
@@ -12525,11 +12645,53 @@
       "icon": "⚾"
     },
     {
+      "league": "UCL",
+      "title": "AS Roma @ Fenerbahce",
+      "start": "2026-09-10T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Shakhtar @ PSV",
+      "start": "2026-09-10T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
       "league": "MLB",
       "title": "Astros @ Phillies",
       "start": "2026-09-10T17:05Z",
       "tag": "UPCOMING",
       "icon": "⚾"
+    },
+    {
+      "league": "UCL",
+      "title": "Bodo/Glimt @ Bayern",
+      "start": "2026-09-10T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "RB Leipzig @ Como",
+      "start": "2026-09-10T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Sabah @ Man United",
+      "start": "2026-09-10T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "UCL",
+      "title": "Lens @ Slavia Prague",
+      "start": "2026-09-10T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
     },
     {
       "league": "MLB",
@@ -13695,7 +13857,7 @@
     },
     {
       "league": "Bundesliga",
-      "title": "Bayern @ ELVERSBERG",
+      "title": "Bayern @ Elversberg",
       "start": "2026-09-13T15:30Z",
       "tag": "UPCOMING",
       "icon": "⚽"
@@ -15634,7 +15796,7 @@
     },
     {
       "league": "Bundesliga",
-      "title": "ELVERSBERG @ Schalke",
+      "title": "Elversberg @ Schalke",
       "start": "2026-09-20T15:30Z",
       "tag": "UPCOMING",
       "icon": "⚽"
