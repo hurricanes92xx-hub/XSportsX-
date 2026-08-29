@@ -1,0 +1,62 @@
+name: One-time Kotlin build repair
+
+on:
+  push:
+    branches: [android-app]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout android-app
+        uses: actions/checkout@v4
+
+      - name: Repair Kotlin declarations and pairing config
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          team = Path('app/src/main/java/com/xsportsx/app/TeamFavorites.kt')
+          text = team.read_text()
+          text = text.replace('):List<FavoriteTeam>=', '):List<FavoriteTeam> =')
+          text = text.replace('):List<FavoriteNews>=', '):List<FavoriteNews> =')
+          team.write_text(text)
+
+          tv = Path('app/src/main/java/com/xsportsx/app/TvHome.kt')
+          text = tv.read_text()
+          text = text.replace('):List<TvGame>=', '):List<TvGame> =')
+          tv.write_text(text)
+
+          gradle = Path('app/build.gradle.kts')
+          text = gradle.read_text()
+          marker = '        versionName = "1.7.0"\n'
+          field = '        buildConfigField("String", "PAIRING_BASE_URL", "\\"https://github.com/hurricanes92xx-hub/XSportsX-\\"")\n'
+          if 'buildConfigField("String", "PAIRING_BASE_URL"' not in text:
+              if marker not in text:
+                  raise SystemExit('Could not find defaultConfig version marker')
+              text = text.replace(marker, marker + field, 1)
+          gradle.write_text(text)
+
+          assert '):List<FavoriteTeam> =' in team.read_text()
+          assert '):List<FavoriteNews> =' in team.read_text()
+          assert '):List<TvGame> =' in tv.read_text()
+          assert 'buildConfigField("String", "PAIRING_BASE_URL"' in gradle.read_text()
+          PY
+
+      - name: Commit repair and remove one-time workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/repair-kotlin-build.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/build.gradle.kts app/src/main/java/com/xsportsx/app/TeamFavorites.kt app/src/main/java/com/xsportsx/app/TvHome.kt .github/workflows/repair-kotlin-build.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: repair Kotlin release compilation'
+          git push origin android-app
