@@ -11,7 +11,7 @@ log(){ echo "[QA] $*"; }
 fail(){ echo "[QA][FAIL] $*" >&2; adb logcat -d -t 300 > "$OUT/failure-logcat.txt" 2>/dev/null || true; adb shell dumpsys package "$PACKAGE" > "$OUT/failure-package.txt" 2>/dev/null || true; exit 1; }
 snapshot(){ local name="$1"; adb exec-out screencap -p > "$OUT/${name}.png"; adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true; adb shell cat /sdcard/window.xml > "$OUT/${name}.xml" || true; }
 refresh_ui(){ local name="$1"; adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true; adb shell cat /sdcard/window.xml > "$OUT/${name}.xml" || true; }
-has_text(){ grep -Fq "$1" "$OUT/$2.xml"; }
+has_text(){ grep -Fiq -- "$1" "$OUT/$2.xml"; }
 assert_text(){ has_text "$1" "$2" || fail "Missing UI text '$1' in $2"; log "UI OK: $1"; }
 assert_any_text(){ local f="$1"; shift; for t in "$@"; do if has_text "$t" "$f"; then log "UI OK: $t"; return; fi; done; fail "None of expected UI labels found in $f: $*"; }
 ui_has_any(){ local f="$1"; shift; for t in "$@"; do has_text "$t" "$f" && return 0; done; return 1; }
@@ -19,7 +19,7 @@ tap_text(){ local wanted="$1" xml point; refresh_ui __tap; xml="$(cat "$OUT/__ta
 import re,sys,html
 wanted=sys.argv[1]; xml=html.unescape(sys.argv[2])
 for attr in ('text','content-desc'):
- p=r'<node[^>]*'+attr+r'="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'; m=re.search(p,xml)
+ p=r'<node[^>]*'+attr+r'="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'; m=re.search(p,xml,re.I)
  if m:
   x1,y1,x2,y2=map(int,m.groups()); print((x1+x2)//2,(y1+y2)//2); break
 else: print('NOT_FOUND')
@@ -29,7 +29,7 @@ tap_any_text(){ local xml wanted point; refresh_ui __tap_any; xml="$(cat "$OUT/_
 import re,sys,html
 wanted=sys.argv[1]; xml=html.unescape(sys.argv[2])
 for attr in ('text','content-desc'):
- p=r'<node[^>]*'+attr+r'="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'; m=re.search(p,xml)
+ p=r'<node[^>]*'+attr+r'="'+re.escape(wanted)+r'"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'; m=re.search(p,xml,re.I)
  if m:
   x1,y1,x2,y2=map(int,m.groups()); print((x1+x2)//2,(y1+y2)//2); break
 else: print('NOT_FOUND')
