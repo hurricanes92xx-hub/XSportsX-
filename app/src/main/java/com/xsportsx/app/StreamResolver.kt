@@ -79,7 +79,7 @@ class StreamResolver(context: Context) {
         val existing = eventInFlight[eventKey]
         if (existing != null) return@withContext existing.await()
 
-        return@withContext coroutineScope {
+        coroutineScope {
             val work = async(Dispatchers.IO) {
                 resolveEventStreams(config, eventKey, event, force)
             }
