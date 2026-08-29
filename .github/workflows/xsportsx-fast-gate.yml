@@ -41,6 +41,6 @@ jobs:
           for logo in nfl nba ncaa mlb nhl ufc premierleague espn cbs wwe aew tna fs1 acc sec; do
             test -s "app/src/main/assets/brand_logos/$logo.svg"
           done
-          grep -q 'XSportsLeagueLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'XSportsNetworkLogo' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'fun SportGlyph' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          grep -q 'fun BadgeImage' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           grep -q 'TSDB_LONG_TAIL_BACKUP_V1' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
