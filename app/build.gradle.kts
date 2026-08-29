@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 23
-        versionName = "1.7.2"
+        versionCode = 24
+        versionName = "1.7.3"
         buildConfigField("String", "PAIRING_BASE_URL", "\"https://github.com/hurricanes92xx-hub/XSportsX-\"")
     }
     flavorDimensions += "device"
