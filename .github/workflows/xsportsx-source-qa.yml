@@ -68,6 +68,15 @@ jobs:
         with:
           name: source-qa-apks-${{ github.sha }}
           path: test-apks
+      - name: Resolve downloaded Mobile APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(find test-apks -type f -name 'app-mobile-debug.apk' -print -quit)"
+          test -n "$APK"
+          test -s "$APK"
+          echo "MOBILE_APK=$APK" >> "$GITHUB_ENV"
+          echo "Using committed Mobile APK: $APK"
       - name: Start local Xtream/M3U fixture
         run: |
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
@@ -99,8 +108,8 @@ jobs:
             sudo chmod 666 /dev/kvm || true
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
-            ./scripts/ui_smoke_test.sh test-apks/app-mobile-debug.apk source-ui
-            ./scripts/source_login_smoke.sh test-apks/app-mobile-debug.apk source-login
+            ./scripts/ui_smoke_test.sh "$MOBILE_APK" source-ui
+            ./scripts/source_login_smoke.sh "$MOBILE_APK" source-login
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -118,6 +127,15 @@ jobs:
         with:
           name: source-qa-apks-${{ github.sha }}
           path: test-apks
+      - name: Resolve downloaded TV APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(find test-apks -type f -name 'app-tv-debug.apk' -print -quit)"
+          test -n "$APK"
+          test -s "$APK"
+          echo "TV_APK=$APK" >> "$GITHUB_ENV"
+          echo "Using committed TV APK: $APK"
       - name: Start local Xtream/M3U fixture
         run: |
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
@@ -149,8 +167,8 @@ jobs:
             sudo chmod 666 /dev/kvm || true
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
-            ./scripts/ui_smoke_test.sh test-apks/app-tv-debug.apk source-ui
-            ./scripts/source_login_smoke.sh test-apks/app-tv-debug.apk source-login
+            ./scripts/ui_smoke_test.sh "$TV_APK" source-ui
+            ./scripts/source_login_smoke.sh "$TV_APK" source-login
       - uses: actions/upload-artifact@v4
         if: always()
         with:
