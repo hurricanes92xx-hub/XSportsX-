@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.Density
 
 /**
  * Keeps the TV UI proportional across different Android TV panel resolutions/densities.
- * 1280x720 logical space is the design baseline; the scale is bounded so very small
- * displays remain usable and very large 4K displays do not become oversized.
+ * The TV home now uses the canonical SportsScheduleService feed so the home screen,
+ * schedule screen and ticker do not maintain competing ESPN loaders.
  */
 @Composable
 fun TvAdaptiveHost(
@@ -24,7 +24,6 @@ fun TvAdaptiveHost(
         val widthScale = maxWidth.value / 1280f
         val heightScale = maxHeight.value / 720f
         val scale = minOf(widthScale, heightScale).coerceIn(0.85f, 1.35f)
-
         CompositionLocalProvider(
             LocalDensity provides Density(
                 density = baseDensity.density * scale,
@@ -32,7 +31,7 @@ fun TvAdaptiveHost(
             )
         ) {
             Box(Modifier.fillMaxSize()) {
-                TvHome(onConnect = onConnect, onNetwork = onNetwork)
+                TvHomeFixed(onConnect = onConnect, onNetwork = onNetwork)
             }
         }
     }
