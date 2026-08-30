@@ -38,7 +38,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var now by remember(canonicalLeague) { mutableStateOf(Instant.now()) }
 
     LaunchedEffect(canonicalLeague) {
-        while (isActive) {
+        while (true) {
             now = Instant.now()
             delay(30_000L)
         }
