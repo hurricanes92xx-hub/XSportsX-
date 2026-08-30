@@ -1,6 +1,5 @@
 package com.xsportsx.app
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,25 +12,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -47,19 +41,16 @@ private data class TvSport(val name:String,val glyph:String)
 private data class TvNetwork(val name:String,val mark:String)
 data class TvLeague(val name:String,val sport:String,val id:String)
 
-// TV uses the same canonical league identifiers as Mobile/SportsScheduleService.
-// This list is UI-only; schedule data comes from the canonical event feed.
-val liveLeagues = SportsScheduleService.uiLeagueChoices.map { label -> TvLeague(label, "", label) }
+// Canonical league catalog shared with Mobile/SportsScheduleService.
+val liveLeagues = SportsScheduleService.uiLeagueChoices.map { TvLeague(it,"",it) }
 
 private val tvSports = listOf(
-    TvSport("NFL","NFL"), TvSport("NBA","NBA"), TvSport("WNBA","WNBA"),
-    TvSport("NCAA FB","NCAA"), TvSport("NCAA FCS","FCS"), TvSport("NCAA BB","NCAA"),
-    TvSport("NCAA WBB","NCAA"), TvSport("NCAA VB","VB"), TvSport("MLB","MLB"),
-    TvSport("NHL","NHL"), TvSport("MLS","MLS"), TvSport("EPL","EPL"),
-    TvSport("LALIGA","LALIGA"), TvSport("BUNDESLIGA","BUND"), TvSport("SERIE A","SERIE A"),
-    TvSport("LIGUE 1","L1"), TvSport("NWSL","NWSL"), TvSport("UFC","UFC"),
-    TvSport("BOXING","BOX"), TvSport("WWE","WWE"), TvSport("AEW","AEW"),
-    TvSport("TNA","TNA"), TvSport("MONSTER JAM","MJ"), TvSport("NCAA SOCCER","SOCCER"),
+    TvSport("NFL","NFL"), TvSport("NBA","NBA"), TvSport("WNBA","WNBA"), TvSport("NCAA FB","NCAA"),
+    TvSport("NCAA FCS","FCS"), TvSport("NCAA BB","NCAA"), TvSport("NCAA WBB","NCAA"), TvSport("NCAA VB","VB"),
+    TvSport("MLB","MLB"), TvSport("NHL","NHL"), TvSport("MLS","MLS"), TvSport("EPL","EPL"),
+    TvSport("LALIGA","LALIGA"), TvSport("BUNDESLIGA","BUND"), TvSport("SERIE A","SERIE A"), TvSport("LIGUE 1","L1"),
+    TvSport("NWSL","NWSL"), TvSport("UFC","UFC"), TvSport("BOXING","BOX"), TvSport("WWE","WWE"),
+    TvSport("AEW","AEW"), TvSport("TNA","TNA"), TvSport("MONSTER JAM","MJ"), TvSport("NCAA SOCCER","SOCCER"),
     TvSport("NCAA W SOCCER","SOCCER"), TvSport("NCAA W VB","VB"), TvSport("NCAA WRESTLING","WREST"),
     TvSport("NCAA LAX","LAX"), TvSport("NCAA BASEBALL","NCAA"), TvSport("NCAA SOFTBALL","NCAA")
 ).distinctBy { it.name }
@@ -68,32 +59,37 @@ private val tvNetworks = listOf(TvNetwork("ESPN","ESPN"),TvNetwork("ESPN2","ESPN
 
 private fun eventMillis(value:String):Long = runCatching { java.time.Instant.parse(value).toEpochMilli() }.getOrDefault(0L)
 
-private fun tvGame(event: SportsEvent): TvGame {
-    val live = event.isLive
-    val score = if (live) event.status.ifBlank { "LIVE" } else "—"
-    return TvGame(
-        league = SportsScheduleService.canonicalLeagueFor(event.league),
-        home = event.home.ifBlank { "TBD" },
-        away = event.away.ifBlank { "TBD" },
-        homeLogo = event.homeLogo,
-        awayLogo = event.awayLogo,
-        score = score,
-        status = event.status.ifBlank { if (live) "LIVE" else "UPCOMING" },
-        network = event.broadcast.ifBlank { "TBD" },
-        live = live,
-        timestamp = eventMillis(event.startUtc)
-    )
+private fun tvGame(event:SportsEvent):TvGame = TvGame(
+    league=SportsScheduleService.canonicalLeagueFor(event.league),
+    home=event.home.ifBlank{"TBD"}, away=event.away.ifBlank{"TBD"}, homeLogo=event.homeLogo, awayLogo=event.awayLogo,
+    score=if(event.isLive) event.status.ifBlank{"LIVE"} else "—",
+    status=event.status.ifBlank{if(event.isLive)"LIVE" else "UPCOMING"}, network=event.broadcast.ifBlank{"TBD"},
+    live=event.isLive, timestamp=eventMillis(event.startUtc)
+)
+
+private fun providerLabel(ui:String):String = when(SportsScheduleService.canonicalLeagueFor(ui)) {
+    "NCAA W VB" -> "NCAA VB"
+    "NCAA W SOCCER" -> "NCAA WOMEN SOCCER"
+    "NCAA SOCCER" -> "NCAA MEN SOCCER"
+    "NCAA LAX" -> "NCAA MEN LAX"
+    "NCAA WBB" -> "NCAA WBB"
+    "LALIGA" -> "LaLiga"
+    else -> ui
 }
 
-/** Canonical schedule path shared by Mobile and TV. */
-private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> {
-    val events = SportsScheduleService.load()
-    val filtered = if (liveOnly) events.filter { it.isLive } else events.filter { it.isUpcoming || it.isPregame() }
-    return filtered
+/** Canonical feed first, with direct per-league recovery only for leagues absent from it. */
+private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = coroutineScope {
+    val canonical = SportsScheduleService.load()
+    val canonicalNames = canonical.map { SportsScheduleService.canonicalLeagueFor(it.league) }.toSet()
+    val wanted = tvSports.map { providerLabel(it.name) }.distinct()
+    val missing = wanted.filter { SportsScheduleService.canonicalLeagueFor(it) !in canonicalNames }
+    val recovery = missing.map { label -> async { SportsScheduleService.loadForLeague(label,3) } }.awaitAll().flatten()
+    val events = (canonical + recovery)
+        .filter { event -> if(liveOnly) event.isLive else event.isUpcoming || event.isPregame() }
         .map(::tvGame)
         .distinctBy { "${it.league}|${it.home}|${it.away}|${it.timestamp}" }
         .sortedBy { it.timestamp }
-        .take(250)
+    events.take(500)
 }
 
 @Composable fun TvHome(onConnect:()->Unit={},onNetwork:(String)->Unit={}){
@@ -106,25 +102,13 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> {
 
     LaunchedEffect(Unit){
         while(isActive){
-            val result=runCatching{
-                kotlinx.coroutines.coroutineScope {
-                    val live=kotlinx.coroutines.async{loadTvGames(true)}
-                    val upcoming=kotlinx.coroutines.async{loadTvGames(false)}
-                    live.await() to upcoming.await()
-                }
-            }.getOrNull()
-            if(result!=null){ liveGames=result.first; upcomingGames=result.second }
-            loadingLive=false
-            loadingUpcoming=false
-            delay(60_000)
+            val result=runCatching{coroutineScope{val live=async{loadTvGames(true)};val upcoming=async{loadTvGames(false)};live.await() to upcoming.await()}}.getOrNull()
+            if(result!=null){liveGames=result.first;upcomingGames=result.second}
+            loadingLive=false;loadingUpcoming=false;delay(60_000)
         }
     }
     LaunchedEffect(selectedNav){
-        if(selectedNav=="UPCOMING"&&upcomingGames.isEmpty()&&!loadingUpcoming){
-            loadingUpcoming=true
-            upcomingGames=runCatching{loadTvGames(false)}.getOrDefault(emptyList())
-            loadingUpcoming=false
-        }
+        if(selectedNav=="UPCOMING"&&upcomingGames.isEmpty()&&!loadingUpcoming){loadingUpcoming=true;upcomingGames=runCatching{loadTvGames(false)}.getOrDefault(emptyList());loadingUpcoming=false}
     }
     Box(Modifier.fillMaxSize().background(TvBg)){
         TvBackdrop(Modifier.fillMaxSize())
@@ -133,26 +117,13 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> {
             Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(scroll).padding(start=22.dp,end=30.dp,top=20.dp,bottom=76.dp)){
                 TvTopBar{selectedNav="SETTINGS"};Spacer(Modifier.height(14.dp))
                 when(selectedNav){
-                    "HOME"->{
-                        TvHero{selectedNav="LIVE NOW"};Spacer(Modifier.height(18.dp))
-                        TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE")
-                        if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive)
-                        Spacer(Modifier.height(16.dp))
-                        TvSection("NEXT GAMES",when { loadingUpcoming -> "Loading schedule…"; upcomingGames.isNotEmpty() -> "${upcomingGames.size} UPCOMING"; else -> "NO UPCOMING GAMES" })
-                        if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames.take(10),onNetwork)else TvLiveEmpty(loadingUpcoming)
-                        Spacer(Modifier.height(16.dp));TvSection("TOP SPORTS","FAST ACCESS");TvSportRow(tvSports,onNetwork)
-                        Spacer(Modifier.height(16.dp));TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)
-                    }
+                    "HOME"->{TvHero{selectedNav="LIVE NOW"};Spacer(Modifier.height(18.dp));TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE");if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive);Spacer(Modifier.height(16.dp));TvSection("NEXT GAMES",when{loadingUpcoming->"Loading schedule…";upcomingGames.isNotEmpty()->"${upcomingGames.size} UPCOMING";else->"NO UPCOMING GAMES"});if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames.take(10),onNetwork)else TvLiveEmpty(loadingUpcoming);Spacer(Modifier.height(16.dp));TvSection("TOP SPORTS","FAST ACCESS");TvSportRow(tvSports,onNetwork);Spacer(Modifier.height(16.dp));TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)}
                     "LIVE NOW"->{TvSection("LIVE NOW",if(liveGames.isEmpty())"No games live right now" else "${liveGames.size} LIVE");if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive)}
                     "UPCOMING"->{TvSection("UPCOMING",if(loadingUpcoming)"LOADING" else "${upcomingGames.size} EVENTS");if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames,onNetwork)else TvLiveEmpty(loadingUpcoming)}
                     "NETWORKS"->{TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)}
                     "FAVORITES"->{FavoritesCenter(tvMode=true)}
-                    else->{
-                        val canonical=SportsScheduleService.canonicalLeagueFor(selectedNav)
-                        val games=if(canonical.isBlank()) emptyList() else (liveGames+upcomingGames).filter{SportsScheduleService.canonicalLeagueFor(it.league)==canonical}.distinctBy{"${it.league}|${it.home}|${it.away}|${it.timestamp}"}.sortedBy{it.timestamp}
-                        TvSection(selectedNav,if(games.any{it.live})"LIVE + UPCOMING" else "UPCOMING")
-                        if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)
-                    }
+                    "SETTINGS"->TvSettings{onConnect()}
+                    else->{val canonical=when(selectedNav){"NCAA W VB"->"NCAA VB";"NCAA SOCCER"->"NCAA MEN SOCCER";"NCAA W SOCCER"->"NCAA WOMEN SOCCER";"NCAA LAX"->"NCAA MEN LAX";else->SportsScheduleService.canonicalLeagueFor(selectedNav)};val games=(liveGames+upcomingGames).filter{SportsScheduleService.canonicalLeagueFor(it.league)==SportsScheduleService.canonicalLeagueFor(canonical)}.distinctBy{"${it.league}|${it.home}|${it.away}|${it.timestamp}"}.sortedBy{it.timestamp};TvSection(selectedNav,if(games.any{it.live})"LIVE + UPCOMING" else "UPCOMING");if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)}
                 }
             }
         }
@@ -161,7 +132,6 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> {
 }
 
 @Composable private fun TvBackdrop(modifier:Modifier){Box(modifier.background(Brush.verticalGradient(listOf(Color(0xFF071019),TvBg,Color(0xFF020306)))))}
-
 @Composable private fun TvNav(selected:String,onSelect:(String)->Unit){Column(Modifier.width(210.dp).fillMaxHeight().background(Brush.horizontalGradient(listOf(Color(0xFF071019),Color(0xFF04070C)))).padding(start=22.dp,top=22.dp,end=18.dp,bottom=72.dp)){Box(Modifier.fillMaxWidth(),contentAlignment=Alignment.CenterStart){XtremeLogo(size=52.dp)};Text("XSPORTSX",color=Color.White,fontSize=13.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(22.dp));listOf("⌂" to "HOME","●" to "LIVE NOW","▣" to "UPCOMING","▤" to "NETWORKS","★" to "FAVORITES","⚙" to "SETTINGS").forEach{(icon,label)->TvNavItem(icon,label,selected==label){onSelect(label)}};Spacer(Modifier.height(18.dp));Text("SPORTS",color=TvMuted,fontSize=9.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp);Spacer(Modifier.height(6.dp));tvSports.forEach{sport->TvSportNavItem(sport,selected==sport.name){onSelect(sport.name)}};Spacer(Modifier.weight(1f));Text("TV MODE",color=Color(0xFF596371),fontSize=10.sp,fontWeight=FontWeight.Bold)}}
 @Composable private fun TvNavItem(icon:String,label:String,active:Boolean,onClick:()->Unit){var focused by remember{mutableStateOf(false)};Row(Modifier.fillMaxWidth().padding(vertical=3.dp).clip(RoundedCornerShape(16.dp)).background(if(active)Color(0xFF1A0B10)else Color.Transparent).border(1.dp,TvRed.copy(alpha=if(active||focused)1f else 0f),RoundedCornerShape(16.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onClick()},verticalAlignment=Alignment.CenterVertically){Text(icon,Modifier.padding(start=13.dp),color=if(active||focused)TvRed else Color.White,fontSize=19.sp);Text(label,Modifier.padding(horizontal=13.dp,vertical=11.dp),color=Color.White,fontSize=12.sp,fontWeight=if(active||focused)FontWeight.Black else FontWeight.Bold)}}
 @Composable private fun TvSportNavItem(sport:TvSport,active:Boolean,onClick:()->Unit){var focused by remember{mutableStateOf(false)};Row(Modifier.fillMaxWidth().padding(vertical=2.dp).clip(RoundedCornerShape(12.dp)).background(if(active||focused)TvPanel2 else Color.Transparent).border(1.dp,TvBlue.copy(alpha=if(active||focused)1f else 0f),RoundedCornerShape(12.dp)).onFocusChanged{focused=it.isFocused}.focusable().clickable{onClick()},verticalAlignment=Alignment.CenterVertically){Text(sport.glyph,Modifier.width(36.dp).padding(start=8.dp),color=if(active||focused)TvBlue else Color.White,fontSize=10.sp,fontWeight=FontWeight.Black);Text(sport.name,Modifier.padding(vertical=7.dp),color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold)}}
