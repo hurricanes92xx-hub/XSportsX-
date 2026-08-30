@@ -28,6 +28,33 @@ jobs:
           ref: android-app
           fetch-depth: 1
 
+      - name: Refresh canonical schedule feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --quiet tzdata || true
+          python3 scripts/refresh_schedules.py
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          p=json.load(open('data/schedule_feed.json'))
+          assert p.get('schema',0) >= 5
+          events=p.get('events') or []
+          assert events
+          assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events})
+          now=datetime.now(timezone.utc)
+          upcoming=[e for e in events if e.get('tag') == 'UPCOMING']
+          assert upcoming, 'canonical feed has no upcoming events'
+          print(f'canonical schedule: {len(events)} events, {len(upcoming)} upcoming')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/schedule_feed.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: refresh canonical schedule feed [skip ci]'
+            git push origin HEAD:android-app
+          fi
+
       - name: Apply canonical TV schedule source
         shell: bash
         run: |
