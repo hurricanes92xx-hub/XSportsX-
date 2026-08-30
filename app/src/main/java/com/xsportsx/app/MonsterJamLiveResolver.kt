@@ -2,7 +2,6 @@ package com.xsportsx.app
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Instant
@@ -10,16 +9,19 @@ import java.time.Instant
 /** Official Monster Jam YouTube live-event bridge. Only promotes an official live result. */
 object MonsterJamLiveResolver {
     private const val LIVE_URL = "https://www.youtube.com/@MonsterJam/live"
-    private val videoRegex = Regex("\"videoId\":\"([A-Za-z0-9_-]{11})\"")
-    private val titleRegex = Regex("\"title\":\{\"runs\":\[\{\"text\":\"([^\"]+)\"")
+    private val videoRegex = Regex("""\"videoId\":\"([A-Za-z0-9_-]{11})\"""")
+    private val titleRegex = Regex("""<title>(.*?)</title>""", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL))
 
     suspend fun loadLive(): List<SportsEvent> = withContext(Dispatchers.IO) {
         runCatching {
             val html = fetch(LIVE_URL)
             val id = videoRegex.find(html)?.groupValues?.getOrNull(1).orEmpty()
             if (id.isBlank()) return@runCatching emptyList<SportsEvent>()
-            val title = titleRegex.find(html)?.groupValues?.getOrNull(1)?.replace("\\u0026", "&")?.trim()
-                .takeUnless { it.isNullOrBlank() } ?: "Monster Jam Live"
+            val title = titleRegex.find(html)?.groupValues?.getOrNull(1)?.trim()
+                ?.replace("&amp;", "&")
+                ?.replace("\\u0026", "&")
+                ?.takeUnless { it.isNullOrBlank() }
+                ?: "Monster Jam Live"
             if (!looksLikeMonsterJam(title, html)) return@runCatching emptyList<SportsEvent>()
             val now = Instant.now().toString()
             listOf(SportsEvent(
