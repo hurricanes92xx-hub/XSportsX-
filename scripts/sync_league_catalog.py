@@ -3,7 +3,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Authoritative catalog: name, display glyph, ESPN sport, ESPN league id.
+# Authoritative catalog: display name, glyph, ESPN sport, ESPN league id.
 LEAGUES = [
     ("NFL", "NFL", "football", "nfl"), ("NBA", "NBA", "basketball", "nba"), ("WNBA", "WNBA", "basketball", "wnba"),
     ("NCAA FB", "NCAA", "football", "college-football"), ("NCAA FCS", "FCS", "football", "college-football"),
@@ -20,30 +20,45 @@ LEAGUES = [
     ("BOXING", "BOX", "boxing", "boxing"),
 ]
 
+
+def replace_between(text: str, start: str, end: str, replacement: str) -> str:
+    a = text.find(start)
+    if a < 0:
+        raise SystemExit(f"Missing catalog marker: {start}")
+    b = text.find(end, a)
+    if b < 0:
+        raise SystemExit(f"Missing catalog end marker: {end}")
+    return text[:a] + replacement + text[b:]
+
+
+# Mobile: replace only the catalog block; never depend on formatting inside it.
 mobile = ROOT / "app/src/main/java/com/xsportsx/app/FuturisticSports.kt"
 text = mobile.read_text()
-items = ",\n".join(f'    SportVisual("{name}", "{icon}", "")' for name, icon, _, _ in LEAGUES)
-replacement = f'private val sports = listOf(\n{items}\n)'
-text, count = re.subn(r'private val sports = listOf\(.*?\n\)\n\n@Composable private fun SportGlyph', replacement + '\n\n@Composable private fun SportGlyph', text, count=1, flags=re.S)
-if count != 1:
-    raise SystemExit("Could not locate mobile sports catalog")
+mobile_items = ",\n".join(f'    SportVisual("{name}", "{icon}", "")' for name, icon, _, _ in LEAGUES)
+mobile_block = f"private val sports = listOf(\n{mobile_items}\n)\n\n"
+text = replace_between(text, "private val sports = listOf(", "@Composable private fun SportGlyph", mobile_block)
 mobile.write_text(text)
 
+# TV: replace both catalogs without touching the rest of the UI.
 tv = ROOT / "app/src/main/java/com/xsportsx/app/TvHome.kt"
 text = tv.read_text()
-tv_live = 'val liveLeagues = listOf(' + ','.join(f'TvLeague("{name}", "{sport}", "{league_id}")' for name, _, sport, league_id in LEAGUES) + ')'
-tv_sports = 'private val tvSports = listOf(' + ','.join(f'TvSport("{name}", "{icon}")' for name, icon, _, _ in LEAGUES) + ')'
-text, count = re.subn(r'val liveLeagues = listOf\(.*?\)\nprivate val tvSports = listOf\(.*?\)\n', tv_live + '\n' + tv_sports + '\n', text, count=1, flags=re.S)
+tv_live = "val liveLeagues = listOf(" + ",".join(
+    f'TvLeague("{name}", "{sport}", "{league_id}")' for name, _, sport, league_id in LEAGUES
+) + ")\n"
+tv_sports = "private val tvSports = listOf(" + ",".join(
+    f'TvSport("{name}", "{icon}")' for name, icon, _, _ in LEAGUES
+) + ")\n"
+text = replace_between(text, "val liveLeagues = listOf(", "private val tvNetworks", tv_live + tv_sports)
+
+# Replace the legacy fixed nine-league + special-event routing with one generic route.
+legacy = re.compile(
+    r'\n\s*"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->\{.*?\}\n\s*"UFC","BOXING"->\{.*?\}',
+    re.S,
+)
+generic = '''\n                    else->{\n                        TvSection(selectedNav,"LIVE + UPCOMING")\n                        val games=(liveGames+upcomingGames)\n                            .filter{it.league==selectedNav}\n                            .distinctBy{it.league+it.home+it.away+it.timestamp}\n                        if(games.isNotEmpty()) TvGameRow(games,onNetwork)\n                        else TvEmpty("No ${selectedNav} events in the current schedule window")\n                    }'''
+text, count = legacy.subn(generic, text, count=1)
 if count != 1:
-    raise SystemExit("Could not locate TV league catalogs")
-# Every league in the catalog must be selectable. Keep UFC/BOXING on their event UI,
-# while all other leagues use the same live/upcoming game rows.
-old = '"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->{TvSection(selectedNav,"LIVE FEED");val games=liveGames.filter{it.league==selectedNav};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)}'
-new = 'else->{TvSection(selectedNav,"LIVE + UPCOMING");val games=(liveGames+upcomingGames).filter{it.league==selectedNav}.distinctBy{it.league+it.home+it.away+it.timestamp};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvEmpty("No ${selectedNav} events in the current schedule window")}'
-if old not in text:
-    raise SystemExit("Could not locate TV league routing")
-text = text.replace(old, new)
-# Remove the old UFC/BOXING special branches; the generic route now covers them too.
-text = re.sub(r'\n\s*"UFC","BOXING"->\{TvSection\(selectedNav,"EVENT FEED"\);TvSportRow\(tvSports\.filter\{it\.name==selectedNav\},onNetwork\);Spacer\(Modifier\.height\(14\.dp\)\);TvEmpty\("Select \$\{selectedNav\} to browse available events"\)\}', '', text)
+    raise SystemExit("Missing legacy TV league routing block")
 tv.write_text(text)
+
 print(f"Synchronized {len(LEAGUES)} leagues across Mobile and TV")
