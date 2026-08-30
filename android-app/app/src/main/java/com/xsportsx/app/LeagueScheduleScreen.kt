@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,14 +35,12 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var reloadToken by remember(canonicalLeague) { mutableIntStateOf(0) }
 
     LaunchedEffect(canonicalLeague, reloadToken) {
-        loading = true
-        error = null
+        loading = true; error = null
         runCatching {
             SportsScheduleService.load().filter {
                 SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague
             }
-        }.onSuccess { events = it }
-            .onFailure { error = it.message ?: "Unable to load schedule" }
+        }.onSuccess { events = it }.onFailure { error = it.message ?: "Unable to load schedule" }
         loading = false
     }
 
@@ -50,7 +49,18 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         return
     }
 
-    val visible = events.filter { if (tab == "LIVE") it.isLive else it.isUpcoming || it.isPregame() }
+    // Keep the feed complete in memory/background, but render only the requested 3-day
+    // window. A live event is never allowed to fall out of the upcoming list merely
+    // because its provider clock moved a few minutes forward/backward.
+    val now = remember { Instant.now() }
+    val horizon = remember(now) { now.plus(3, ChronoUnit.DAYS) }
+    val visible = events.filter { event ->
+        if (tab == "LIVE") event.isLive
+        else {
+            val start = runCatching { Instant.parse(event.startUtc) }.getOrNull()
+            start != null && !start.isBefore(now.minus(15, ChronoUnit.MINUTES)) && start.isBefore(horizon)
+        }
+    }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
     Column(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
@@ -95,10 +105,5 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
 }
 
-private fun dayLabel(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
-}.getOrElse { "SCHEDULE" }
-
-private fun formatTime(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
-}.getOrElse { startUtc }
+private fun dayLabel(startUtc: String): String = runCatching { SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { "SCHEDULE" }
+private fun formatTime(startUtc: String): String = runCatching { SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { startUtc }
