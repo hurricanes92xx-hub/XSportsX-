@@ -31,21 +31,54 @@ import java.util.TimeZone
 data class LeagueGame(val id:String,val away:String,val home:String,val start:Long,val status:String,val detail:String)
 data class LeagueFeed(val sport:String,val id:String)
 
+// Every league exposed by the app gets an explicit ESPN scoreboard feed here.
+// Keeping this map centralized prevents the mobile screen from falling into the
+// misleading "League not configured" state.
 private val feeds=mapOf(
- "NFL" to LeagueFeed("football","nfl"), "NCAA FB" to LeagueFeed("football","college-football"),
- "NBA" to LeagueFeed("basketball","nba"), "WNBA" to LeagueFeed("basketball","wnba"),
- "NCAA BB" to LeagueFeed("basketball","mens-college-basketball"), "NCAA WBB" to LeagueFeed("basketball","womens-college-basketball"),
- "MLB" to LeagueFeed("baseball","mlb"), "NCAA Baseball" to LeagueFeed("baseball","college-baseball"), "NCAA Softball" to LeagueFeed("softball","college-softball"),
- "NHL" to LeagueFeed("hockey","nhl"), "NCAA Hockey" to LeagueFeed("hockey","mens-college-hockey"),
- "MLS" to LeagueFeed("soccer","usa.1"), "NWSL" to LeagueFeed("soccer","usa.nwsl"), "EPL" to LeagueFeed("soccer","eng.1"),
- "Championship" to LeagueFeed("soccer","eng.2"), "UCL" to LeagueFeed("soccer","uefa.champions"), "UEL" to LeagueFeed("soccer","uefa.europa"),
- "LaLiga" to LeagueFeed("soccer","esp.1"), "Serie A" to LeagueFeed("soccer","ita.1"), "Bundesliga" to LeagueFeed("soccer","ger.1"),
- "Ligue 1" to LeagueFeed("soccer","fra.1"), "Liga MX" to LeagueFeed("soccer","mex.1"), "Brasileirao" to LeagueFeed("soccer","bra.1"),
- "Tennis ATP" to LeagueFeed("tennis","atp"), "Tennis WTA" to LeagueFeed("tennis","wta"),
- "F1" to LeagueFeed("racing","f1"), "NASCAR" to LeagueFeed("racing","nascar-premier"), "IndyCar" to LeagueFeed("racing","irl"),
- "Golf PGA" to LeagueFeed("golf","pga"), "Golf LPGA" to LeagueFeed("golf","lpga"),
- "Lacrosse" to LeagueFeed("lacrosse","pll"), "Rugby" to LeagueFeed("rugby","rugby-union"),
- "UFC" to LeagueFeed("mma","ufc"), "Boxing" to LeagueFeed("boxing","boxing")
+ "NFL" to LeagueFeed("football","nfl"),
+ "NBA" to LeagueFeed("basketball","nba"),
+ "WNBA" to LeagueFeed("basketball","wnba"),
+ "NCAA FB" to LeagueFeed("football","college-football"),
+ "NCAA FCS" to LeagueFeed("football","college-football"),
+ "NCAA BB" to LeagueFeed("basketball","mens-college-basketball"),
+ "NCAA WBB" to LeagueFeed("basketball","womens-college-basketball"),
+ "MLB" to LeagueFeed("baseball","mlb"),
+ "NCAA Baseball" to LeagueFeed("baseball","college-baseball"),
+ "NCAA Softball" to LeagueFeed("softball","college-softball"),
+ "NHL" to LeagueFeed("hockey","nhl"),
+ "NCAA Hockey" to LeagueFeed("hockey","mens-college-hockey"),
+ "NCAA Men's Hockey" to LeagueFeed("hockey","mens-college-hockey"),
+ "NCAA Women's Hockey" to LeagueFeed("hockey","womens-college-hockey"),
+ "NCAA VB" to LeagueFeed("volleyball","womens-college-volleyball"),
+ "NCAA Volleyball" to LeagueFeed("volleyball","womens-college-volleyball"),
+ "NCAA Men's Soccer" to LeagueFeed("soccer","usa.ncaa.m.1"),
+ "NCAA Women's Soccer" to LeagueFeed("soccer","usa.ncaa.w.1"),
+ "NCAA Men's Lacrosse" to LeagueFeed("lacrosse","mens-college-lacrosse"),
+ "NCAA Women's Lacrosse" to LeagueFeed("lacrosse","womens-college-lacrosse"),
+ "MLS" to LeagueFeed("soccer","usa.1"),
+ "NWSL" to LeagueFeed("soccer","usa.nwsl"),
+ "EPL" to LeagueFeed("soccer","eng.1"),
+ "Championship" to LeagueFeed("soccer","eng.2"),
+ "UCL" to LeagueFeed("soccer","uefa.champions"),
+ "UEL" to LeagueFeed("soccer","uefa.europa"),
+ "LaLiga" to LeagueFeed("soccer","esp.1"),
+ "Serie A" to LeagueFeed("soccer","ita.1"),
+ "Bundesliga" to LeagueFeed("soccer","ger.1"),
+ "Ligue 1" to LeagueFeed("soccer","fra.1"),
+ "Liga MX" to LeagueFeed("soccer","mex.1"),
+ "Brasileirao" to LeagueFeed("soccer","bra.1"),
+ "Tennis ATP" to LeagueFeed("tennis","atp"),
+ "Tennis WTA" to LeagueFeed("tennis","wta"),
+ "F1" to LeagueFeed("racing","f1"),
+ "NASCAR" to LeagueFeed("racing","nascar-premier"),
+ "IndyCar" to LeagueFeed("racing","irl"),
+ "MotoGP" to LeagueFeed("racing","motogp"),
+ "Golf PGA" to LeagueFeed("golf","pga"),
+ "Golf LPGA" to LeagueFeed("golf","lpga"),
+ "Lacrosse" to LeagueFeed("lacrosse","pll"),
+ "Rugby" to LeagueFeed("rugby","rugby-union"),
+ "UFC" to LeagueFeed("mma","ufc"),
+ "Boxing" to LeagueFeed("boxing","boxing")
 )
 
 private fun dateKey(offset:Int):String {
@@ -61,7 +94,7 @@ private suspend fun games(feed:LeagueFeed):List<LeagueGame> = withContext(Dispat
   val body=runCatching{
    val c=URL(url).openConnection() as HttpURLConnection
    c.connectTimeout=3500;c.readTimeout=5500;c.requestMethod="GET"
-   c.setRequestProperty("User-Agent","XSportsX/2.1")
+   c.setRequestProperty("User-Agent","XSportsX/2.2")
    try{if(c.responseCode in 200..299)c.inputStream.bufferedReader().use{it.readText()}else null}finally{c.disconnect()}
   }.getOrNull() ?: continue
   val json=runCatching{JSONObject(body)}.getOrNull() ?: continue
@@ -79,7 +112,7 @@ private suspend fun games(feed:LeagueFeed):List<LeagueGame> = withContext(Dispat
    val start=runCatching{Instant.parse(e.optString("date")).toEpochMilli()}.getOrDefault(0)
    val ty=comp.optJSONObject("status")?.optJSONObject("type")
    val state=ty?.optString("state").orEmpty()
-   val status=if(state=="in")"LIVE"else if(state=="post")"FINAL"else"UPCOMING"
+   val status=when(state){"in"->"LIVE";"post"->"FINAL";else->"UPCOMING"}
    out+=LeagueGame(e.optString("id"),away,home,start,status,ty?.optString("shortDetail").orEmpty())
   }
  }
