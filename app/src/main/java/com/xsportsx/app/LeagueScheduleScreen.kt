@@ -16,8 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -58,9 +56,9 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         return
     }
 
-    val visible = allEvents.filter { event ->
-        if (tab == "LIVE") event.isLive else event.isUpcoming || event.isPregame()
-    }
+    val visible = allEvents
+        .filter { event -> if (tab == "LIVE") event.isLive else event.isUpcoming || event.isPregame() }
+        .sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
     Column(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
@@ -73,7 +71,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Text(canonicalLeague, color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Black)
                 Text(
-                    "${canonicalLeague} GAMES • NEXT 3 DAYS",
+                    "${canonicalLeague} GAMES • NEXT 14 DAYS",
                     color = Color(0xFF737B89),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
@@ -100,7 +98,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
             visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
                     if (tab == "LIVE") "No live ${canonicalLeague} games right now"
-                    else "No upcoming ${canonicalLeague} games in the next 3 days",
+                    else "No upcoming ${canonicalLeague} games in the next 14 days",
                     color = Color(0xFF858B98)
                 )
             }
