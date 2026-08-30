@@ -24,6 +24,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -44,51 +45,87 @@ private val leagueFeeds = mapOf(
     "NBA" to LeagueFeed("basketball", "nba", "NBA"),
     "WNBA" to LeagueFeed("basketball", "wnba", "WNBA"),
     "NCAA BB" to LeagueFeed("basketball", "mens-college-basketball", "NCAA BB"),
+    "NCAA WBB" to LeagueFeed("basketball", "womens-college-basketball", "NCAA WBB"),
     "MLB" to LeagueFeed("baseball", "mlb", "MLB"),
+    "NCAA Baseball" to LeagueFeed("baseball", "college-baseball", "NCAA Baseball"),
+    "NCAA Softball" to LeagueFeed("softball", "college-softball", "NCAA Softball"),
     "NHL" to LeagueFeed("hockey", "nhl", "NHL"),
+    "NCAA Hockey" to LeagueFeed("hockey", "mens-college-hockey", "NCAA Hockey"),
     "MLS" to LeagueFeed("soccer", "usa.1", "MLS"),
     "EPL" to LeagueFeed("soccer", "eng.1", "EPL"),
     "UCL" to LeagueFeed("soccer", "uefa.champions", "UCL"),
     "LaLiga" to LeagueFeed("soccer", "esp.1", "LaLiga"),
     "Serie A" to LeagueFeed("soccer", "ita.1", "Serie A"),
     "Bundesliga" to LeagueFeed("soccer", "ger.1", "Bundesliga"),
-    "Ligue 1" to LeagueFeed("soccer", "fra.1", "Ligue 1")
+    "Ligue 1" to LeagueFeed("soccer", "fra.1", "Ligue 1"),
+    "NCAA Soccer" to LeagueFeed("soccer", "usa.ncaa", "NCAA Soccer"),
+    "NCAA Volleyball" to LeagueFeed("volleyball", "womens-college-volleyball", "NCAA Volleyball"),
+    "NCAA Men's Volleyball" to LeagueFeed("volleyball", "mens-college-volleyball", "NCAA Men's Volleyball"),
+    "NCAA Lacrosse" to LeagueFeed("lacrosse", "mens-college-lacrosse", "NCAA Lacrosse"),
+    "NCAA Wrestling" to LeagueFeed("wrestling", "college-wrestling", "NCAA Wrestling"),
+    "NCAA Gymnastics" to LeagueFeed("gymnastics", "womens-college-gymnastics", "NCAA Gymnastics"),
+    "PGA" to LeagueFeed("golf", "pga", "PGA"),
+    "ATP" to LeagueFeed("tennis", "atp", "ATP"),
+    "WTA" to LeagueFeed("tennis", "wta", "WTA"),
+    "F1" to LeagueFeed("racing", "f1", "F1"),
+    "NASCAR" to LeagueFeed("racing", "nascar", "NASCAR")
 )
 
-private fun dayKey(offset: Int): String {
-    val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+private fun localDayKey(offset: Int): String {
+    val cal = Calendar.getInstance()
     cal.add(Calendar.DAY_OF_YEAR, offset)
     return SimpleDateFormat("yyyyMMdd", Locale.US).format(cal.time)
 }
 
+private fun readScoreboard(url: String): JSONObject? = runCatching {
+    val c = URL(url).openConnection() as HttpURLConnection
+    c.connectTimeout = 5000
+    c.readTimeout = 8000
+    c.requestMethod = "GET"
+    c.setRequestProperty("User-Agent", "XSportsX/1.8")
+    c.setRequestProperty("Accept", "application/json")
+    try {
+        if (c.responseCode in 200..299) {
+            c.inputStream.bufferedReader().use { JSONObject(it.readText()) }
+        } else null
+    } finally {
+        c.disconnect()
+    }
+}.getOrNull()
+
 private suspend fun fetchLeagueGames(feed: LeagueFeed): List<LeagueGame> = withContext(Dispatchers.IO) {
     val all = mutableListOf<LeagueGame>()
     for (offset in 0..2) {
-        val url = "https://site.api.espn.com/apis/site/v2/sports/${feed.sport}/${feed.id}/scoreboard?dates=${dayKey(offset)}&limit=100"
-        val json = runCatching {
-            val c = URL(url).openConnection() as HttpURLConnection
-            c.connectTimeout = 3500
-            c.readTimeout = 5500
-            c.requestMethod = "GET"
-            c.setRequestProperty("User-Agent", "XSportsX/1.8")
-            try { if (c.responseCode in 200..299) c.inputStream.bufferedReader().use { it.readText() } else null } finally { c.disconnect() }
-        }.getOrNull()?.let { runCatching { JSONObject(it) }.getOrNull() } ?: continue
+        val date = localDayKey(offset)
+        val primary = "https://site.api.espn.com/apis/site/v2/sports/${feed.sport}/${feed.id}/scoreboard?dates=$date&limit=100"
+        val json = readScoreboard(primary) ?: run {
+            // ESPN occasionally returns a transient failure on the first request.
+            kotlinx.coroutines.delay(250)
+            readScoreboard(primary)
+        } ?: continue
+
         val events = json.optJSONArray("events") ?: continue
         for (i in 0 until events.length()) {
             val e = events.optJSONObject(i) ?: continue
             val comp = e.optJSONArray("competitions")?.optJSONObject(0) ?: continue
             val teams = comp.optJSONArray("competitors") ?: continue
-            var away = "TBD"; var home = "TBD"
+            var away = "TBD"
+            var home = "TBD"
             for (j in 0 until teams.length()) {
                 val t = teams.optJSONObject(j) ?: continue
                 val name = t.optJSONObject("team")?.optString("displayName").orEmpty().ifBlank { "TBD" }
                 if (t.optString("homeAway") == "home") home = name else away = name
             }
             val start = runCatching { Instant.parse(e.optString("date")).toEpochMilli() }.getOrDefault(0L)
+            if (start == 0L) continue
             val type = comp.optJSONObject("status")?.optJSONObject("type")
             val state = type?.optString("state").orEmpty().ifBlank { "pre" }
             val detail = type?.optString("shortDetail").orEmpty()
-            val status = when (state) { "in" -> "LIVE"; "post" -> "FINAL"; else -> "UPCOMING" }
+            val status = when (state) {
+                "in" -> "LIVE"
+                "post" -> "FINAL"
+                else -> "UPCOMING"
+            }
             all += LeagueGame(e.optString("id"), away, home, start, state, detail, status)
         }
     }
@@ -103,16 +140,21 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var error by remember(league) { mutableStateOf<String?>(null) }
     var mode by remember(league) { mutableStateOf("UPCOMING") }
     var playerFilter by remember { mutableStateOf<String?>(null) }
+    var reloadToken by remember(league) { mutableIntStateOf(0) }
 
-    suspend fun load() {
-        if (feed == null) { error = "League schedule is not configured"; loading = false; return }
-        loading = true; error = null
+    LaunchedEffect(league, reloadToken) {
+        if (feed == null) {
+            error = "League schedule is not configured"
+            loading = false
+            return@LaunchedEffect
+        }
+        loading = true
+        error = null
         runCatching { fetchLeagueGames(feed) }
             .onSuccess { games = it }
             .onFailure { error = it.message ?: "Unable to load league schedule" }
         loading = false
     }
-    LaunchedEffect(league) { load() }
 
     if (playerFilter != null) {
         LiveChannelsScreen(filter = playerFilter, onBack = { playerFilter = null })
@@ -127,9 +169,11 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(league, color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Black)
-                Text("${league} GAMES • 3-DAY WINDOW", color = Color(0xFF737B89), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("${league} GAMES • NEXT 3 DAYS", color = Color(0xFF737B89), fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
-            TextButton(onClick = { /* LaunchedEffect handles the initial load */ }) { Text("LIVE") }
+            TextButton(onClick = { reloadToken++ }, enabled = !loading) {
+                Text(if (loading) "LOADING" else "REFRESH")
+            }
         }
         Row(Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(selected = mode == "LIVE", onClick = { mode = "LIVE" }, label = { Text("LIVE") })
@@ -137,12 +181,24 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         }
         Spacer(Modifier.height(10.dp))
         when {
-            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
-            error != null -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) { Text(error!!, color = Color.White) }
-            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (mode == "LIVE") "No live ${league} games right now" else "No upcoming ${league} games in the next 3 days", color = Color(0xFF858B98)) }
+            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFFFF1744))
+            }
+            error != null -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) {
+                Text(error!!, color = Color.White)
+            }
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    if (mode == "LIVE") "No live ${league} games right now"
+                    else "No upcoming ${league} games in the next 3 days",
+                    color = Color(0xFF858B98)
+                )
+            }
             else -> LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, dayGames) ->
-                    item { Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)) }
+                    item {
+                        Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp, bottom = 2.dp))
+                    }
                     items(dayGames, key = { it.id }) { game ->
                         LeagueGameCard(league, game) { playerFilter = "$league ${game.away} ${game.home}" }
                     }
@@ -152,7 +208,8 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
 }
 
-@Composable private fun LeagueGameCard(league: String, game: LeagueGame, onWatch: () -> Unit) {
+@Composable
+private fun LeagueGameCard(league: String, game: LeagueGame, onWatch: () -> Unit) {
     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
             Text(game.away, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -168,5 +225,5 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
 }
 
-private fun dayLabel(epoch: Long): String = SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(java.util.Date(epoch))
-private fun formatGameTime(epoch: Long): String = SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(java.util.Date(epoch))
+private fun dayLabel(epoch: Long): String = SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date(epoch))
+private fun formatGameTime(epoch: Long): String = SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date(epoch))
