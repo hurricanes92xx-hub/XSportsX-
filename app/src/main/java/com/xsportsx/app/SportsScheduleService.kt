@@ -21,10 +21,11 @@ private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {
 }
 
 object SportsScheduleService {
-    // The UI only fetches the three-day window. Broader reconciliation is explicitly background-only.
-    private const val DAYS_AHEAD = 2
-    private const val BACKGROUND_DAYS_AHEAD = 14
-    private const val MAX_GAMES_PER_LEAGUE = 150
+    // Foreground schedule coverage must be broad enough that an event can be found
+    // before it becomes live. Keep the request fan-out bounded for fast loading.
+    private const val DAYS_AHEAD = 14
+    private const val BACKGROUND_DAYS_AHEAD = 30
+    private const val MAX_GAMES_PER_LEAGUE = 2_000
     private const val HTTP_TIMEOUT_MS = 4_500L
     private const val CONNECT_TIMEOUT_MS = 1_800
 
@@ -94,10 +95,7 @@ object SportsScheduleService {
         "UFC", "BOXING"
     )
 
-    /** Foreground/UI load: deliberately limited to today + the next two days. */
     suspend fun load(): List<SportsEvent> = loadWindow(DAYS_AHEAD)
-
-    /** Background reconciliation: broader window, never required to render the UI. */
     suspend fun loadBackground(): List<SportsEvent> = loadWindow(BACKGROUND_DAYS_AHEAD)
 
     private suspend fun loadWindow(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
@@ -113,7 +111,7 @@ object SportsScheduleService {
     }
 
     private fun buildWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
-        val windows = ArrayList<ScheduleWindow>(3)
+        val windows = ArrayList<ScheduleWindow>(4)
         windows += ScheduleWindow(today, today)
         var cursor = today.plusDays(1)
         val end = today.plusDays(daysAhead.toLong())
@@ -135,10 +133,17 @@ object SportsScheduleService {
 
     private suspend fun fetchWindowWithFallbacks(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
         val primary = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspn(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-        if (primary.isNotEmpty()) return primary
+        if (primary.isNotEmpty()) {
+            // A response near the API's 1000-event ceiling can be incomplete. Probe
+            // v3 only in that case so healthy/normal schedules keep the fast path.
+            if (primary.size >= 950) {
+                val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
+                return (primary + v3).distinctBy { canonicalKey(it) }
+            }
+            return primary
+        }
         val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
         if (v3.isNotEmpty()) return v3
-        // Secondary source is consulted only on an ESPN miss. It cannot add latency to a healthy ESPN response.
         return withTimeoutOrNull(HTTP_TIMEOUT_MS) {
             runCatching { ScheduleFallbackProvider.fetch(league.league, league.sport, window.start, window.end) }.getOrDefault(emptyList())
         }.orEmpty()
