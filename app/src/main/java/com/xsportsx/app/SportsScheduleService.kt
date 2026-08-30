@@ -21,21 +21,21 @@ private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {
 }
 
 object SportsScheduleService {
-    // Foreground schedule coverage must be broad enough that an event can be found
-    // before it becomes live. Keep the request fan-out bounded for fast loading.
-    private const val DAYS_AHEAD = 14
+    // The league screen only needs the next few days. Keep this path small and
+    // deterministic; the background loader can still request a larger window.
+    private const val DAYS_AHEAD = 3
     private const val BACKGROUND_DAYS_AHEAD = 30
     private const val MAX_GAMES_PER_LEAGUE = 2_000
     private const val HTTP_TIMEOUT_MS = 4_500L
     private const val CONNECT_TIMEOUT_MS = 1_800
 
     private val ESPN_BASES = listOf(
-        "https://site.web.api.espn.com/apis/site/v2",
-        "https://site.api.espn.com/apis/site/v2"
+        "https://site.api.espn.com/apis/site/v2",
+        "https://site.web.api.espn.com/apis/site/v2"
     )
     private val ESPN_V3_BASES = listOf(
-        "https://site.web.api.espn.com/apis/site/v3",
-        "https://site.api.espn.com/apis/site/v3"
+        "https://site.api.espn.com/apis/site/v3",
+        "https://site.web.api.espn.com/apis/site/v3"
     )
 
     private val leagues = listOf(
@@ -98,16 +98,39 @@ object SportsScheduleService {
     suspend fun load(): List<SportsEvent> = loadWindow(DAYS_AHEAD)
     suspend fun loadBackground(): List<SportsEvent> = loadWindow(BACKGROUND_DAYS_AHEAD)
 
+    /** Fast path for a league screen: fetch only the selected league. */
+    suspend fun loadForLeague(label: String, daysAhead: Int = DAYS_AHEAD): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = canonicalLeagueFor(label)
+        val league = leagues.firstOrNull { canonicalLeagueFor(it.league) == canonical } ?: return@withContext emptyList()
+        val today = LocalDate.now(ZoneId.systemDefault())
+        val windows = buildDailyWindows(today, daysAhead)
+        val limiter = Semaphore(4)
+        loadLeague(league, windows, limiter)
+            .filter { canonicalLeagueFor(it.league) == canonical }
+            .map { it.copy(league = canonical) }
+            .distinctBy { canonicalKey(it) }
+            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+    }
+
     private suspend fun loadWindow(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
         val today = LocalDate.now(ZoneId.systemDefault())
-        val windows = buildWindows(today, daysAhead)
+        val windows = if (daysAhead <= DAYS_AHEAD) buildDailyWindows(today, daysAhead) else buildWindows(today, daysAhead)
         val limiter = Semaphore(12)
         val results = coroutineScope { leagues.map { league -> async { loadLeague(league, windows, limiter) } }.awaitAll() }
         (results.flatten() + MonsterJamLiveResolver.loadLive())
-            .filter { event -> event.league.equals("Monster Jam", true) || leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming) }
+            .filter { event -> event.league.equals("Monster Jam", true) || leagues.any { it.league.equals(normalizeLeague(event.league), true) } && (event.isLive || event.isPregame() || event.isUpcoming) }
             .map { it.copy(league = normalizeLeague(it.league)) }
             .distinctBy { it.id.ifBlank { listOf(it.league, normalize(it.home), normalize(it.away), it.startUtc).joinToString("|") } }
             .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+    }
+
+    private fun buildDailyWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
+        val windows = ArrayList<ScheduleWindow>(daysAhead + 1)
+        for (offset in 0..daysAhead) {
+            val day = today.plusDays(offset.toLong())
+            windows += ScheduleWindow(day, day)
+        }
+        return windows
     }
 
     private fun buildWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
@@ -134,8 +157,6 @@ object SportsScheduleService {
     private suspend fun fetchWindowWithFallbacks(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
         val primary = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspn(league, window) }.getOrDefault(emptyList()) }.orEmpty()
         if (primary.isNotEmpty()) {
-            // A response near the API's 1000-event ceiling can be incomplete. Probe
-            // v3 only in that case so healthy/normal schedules keep the fast path.
             if (primary.size >= 950) {
                 val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
                 return (primary + v3).distinctBy { canonicalKey(it) }
