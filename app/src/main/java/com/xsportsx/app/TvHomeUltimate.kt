@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.async
 
 private val TvUltimateRed = Color(0xFFFF1838)
 private val TvUltimateBlue = Color(0xFF2E8BFF)
@@ -27,10 +29,8 @@ private val TvUltimateBg = Color(0xFF03060B)
 private val TvUltimatePanel = Color(0xFF0B111A)
 private val TvUltimateMuted = Color(0xFF8993A2)
 
-private val tvUltimateSports = listOf(
-    "NFL", "NBA", "WNBA", "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB", "MLB", "NHL",
-    "MLS", "EPL", "LaLiga", "Bundesliga", "Serie A", "Ligue 1", "UCL", "UEL", "NWSL", "UFC", "BOXING"
-)
+private val tvUltimateSports = (SportsScheduleService.uiLeagueChoices + listOf("WWE", "AEW", "TNA", "Monster Jam"))
+    .distinctBy { SportsScheduleService.canonicalLeagueFor(it) }
 
 @Composable
 fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {}) {
@@ -40,14 +40,18 @@ fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {})
 
     LaunchedEffect(Unit) {
         while (isActive) {
-            val scheduled = runCatching { SportsScheduleService.load() }.getOrDefault(emptyList())
-            val live = runCatching { FreshLiveScheduleProvider.load() }.getOrDefault(emptyList())
-            val merged = (scheduled.filterNot { it.isLive } + live)
-                .distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }
-                .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
-            if (merged.isNotEmpty()) events = merged
+            val result = runCatching {
+                coroutineScope {
+                    val upcoming = async { ScheduleSnapshotRepository.upcoming() }
+                    val live = async { ScheduleSnapshotRepository.live() }
+                    (upcoming.await() + live.await())
+                }
+            }.getOrDefault(emptyList())
+            if (result.isNotEmpty()) {
+                events = result.distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }
+            }
             loading = events.isEmpty()
-            delay(60_000L)
+            delay(30_000L)
         }
     }
 
@@ -72,14 +76,14 @@ fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {})
             }
             when (tab) {
                 "LIVE" -> { item { TvUltimateSection("LIVE NOW", "${live.size} LIVE") }; item { if (live.isEmpty()) TvUltimateEmpty(if (loading) "CHECKING LIVE SPORTS…" else "NO LIVE GAMES RIGHT NOW") else TvUltimateEventRow(live, onNetwork) } }
-                "UPCOMING" -> { item { TvUltimateSection("UPCOMING", "${upcoming.size} EVENTS") }; item { if (upcoming.isEmpty()) TvUltimateEmpty(if (loading) "LOADING UPCOMING…" else "NO UPCOMING EVENTS FOUND") else TvUltimateEventRow(upcoming, onNetwork) } }
+                "UPCOMING" -> { item { TvUltimateSection("UPCOMING", "${upcoming.size} EVENTS • NEXT 3 DAYS") }; item { if (upcoming.isEmpty()) TvUltimateEmpty(if (loading) "LOADING UPCOMING…" else "NO UPCOMING EVENTS FOUND") else TvUltimateEventRow(upcoming, onNetwork) } }
                 else -> {
                     item { TvUltimateHero(onClick = { tab = "LIVE" }) }
-                    item { TvUltimateSection("LIVE NOW", "${live.size} LIVE • FRESH") }
+                    item { TvUltimateSection("LIVE NOW", "${live.size} LIVE • SHARED FEED") }
                     item { if (live.isEmpty()) TvUltimateEmpty(if (loading) "CHECKING LIVE SPORTS…" else "NO LIVE GAMES RIGHT NOW") else TvUltimateEventRow(live, onNetwork) }
                     item { TvUltimateSection("UPCOMING", "${upcoming.size} EVENTS • NEXT 3 DAYS") }
                     item { if (upcoming.isEmpty()) TvUltimateEmpty(if (loading) "LOADING UPCOMING…" else "NO UPCOMING EVENTS FOUND") else TvUltimateEventRow(upcoming, onNetwork) }
-                    item { TvUltimateSection("TOP SPORTS", "ALL 20 LEAGUE CENTERS") }
+                    item { TvUltimateSection("TOP SPORTS", "${tvUltimateSports.size} LEAGUE CENTERS") }
                     item { TvUltimateSportRow(onNetwork) }
                     item { TvUltimateSection("SPORTS NETWORKS", "LIVE SOURCES") }
                     item { TvUltimateNetworkRow(onNetwork) }
@@ -99,8 +103,7 @@ fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {})
         TvUltimateRailItem("UPCOMING", tab == "UPCOMING") { onSelect("UPCOMING") }
         Spacer(Modifier.height(18.dp))
         Text("SPORTS", color = TvUltimateMuted, fontSize = 9.sp, fontWeight = FontWeight.Black, letterSpacing = 1.3.sp)
-        Spacer(Modifier.height(6.dp)
-        )
+        Spacer(Modifier.height(6.dp))
         tvUltimateSports.forEach { league -> TvUltimateRailItem(league, false, blue = true) { onNetwork("LEAGUE:$league") } }
         Spacer(Modifier.weight(1f))
         Text("TV MODE", color = Color(0xFF596371), fontSize = 10.sp, fontWeight = FontWeight.Bold)
