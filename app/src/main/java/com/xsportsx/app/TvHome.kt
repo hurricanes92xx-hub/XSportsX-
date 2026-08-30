@@ -59,7 +59,43 @@ private data class TvNetwork(val name:String,val mark:String)
 data class TvLeague(val name:String,val sport:String,val id:String)
 
 val liveLeagues = listOf(TvLeague("NFL","football","nfl"),TvLeague("NCAA FB","football","college-football"),TvLeague("NBA","basketball","nba"),TvLeague("WNBA","basketball","wnba"),TvLeague("NCAA BB","basketball","mens-college-basketball"),TvLeague("MLB","baseball","mlb"),TvLeague("NHL","hockey","nhl"),TvLeague("MLS","soccer","usa.1"),TvLeague("EPL","soccer","eng.1"))
-private val tvSports = listOf(TvSport("NFL","NFL"),TvSport("NBA","NBA"),TvSport("NCAA FB","NCAA"),TvSport("NCAA BB","NCAA"),TvSport("MLB","MLB"),TvSport("NHL","NHL"),TvSport("UFC","UFC"),TvSport("BOXING","BOX"))
+
+// Shared-facing TV catalog: keep this list aligned with the sports supported by the schedule layer.
+// LazyRow makes the full catalog horizontally navigable on TV without making the home screen taller.
+private val tvSports = listOf(
+    TvSport("NFL","NFL"),
+    TvSport("NBA","NBA"),
+    TvSport("WNBA","WNBA"),
+    TvSport("NCAA FB","NCAA"),
+    TvSport("NCAA FCS","NCAA"),
+    TvSport("NCAA BB","NCAA"),
+    TvSport("NCAA WBB","NCAA"),
+    TvSport("NCAA VB","NCAA"),
+    TvSport("NCAA FCS","FCS"),
+    TvSport("MLB","MLB"),
+    TvSport("NHL","NHL"),
+    TvSport("MLS","MLS"),
+    TvSport("EPL","EPL"),
+    TvSport("LALIGA","LALIGA"),
+    TvSport("BUNDESLIGA","BUND"),
+    TvSport("SERIE A","SERIE A"),
+    TvSport("LIGUE 1","L1"),
+    TvSport("NWSL","NWSL"),
+    TvSport("UFC","UFC"),
+    TvSport("BOXING","BOX"),
+    TvSport("WWE","WWE"),
+    TvSport("AEW","AEW"),
+    TvSport("TNA","TNA"),
+    TvSport("MONSTER JAM","MJ"),
+    TvSport("NCAA SOCCER","SOCCER"),
+    TvSport("NCAA W SOCCER","SOCCER"),
+    TvSport("NCAA W VB","VB"),
+    TvSport("NCAA WRESTLING","WREST"),
+    TvSport("NCAA LAX","LAX"),
+    TvSport("NCAA BASEBALL","NCAA"),
+    TvSport("NCAA SOFTBALL","NCAA")
+)
+
 private val tvNetworks = listOf(TvNetwork("ESPN","ESPN"),TvNetwork("ESPN2","ESPN2"),TvNetwork("ESPNU","ESPNU"),TvNetwork("NFL NETWORK","NFL"),TvNetwork("FS1","FS1"),TvNetwork("CBS SPORTS","CBS"),TvNetwork("SEC NETWORK","SEC"),TvNetwork("ACC NETWORK","ACC"),TvNetwork("BIG TEN NETWORK","B1G"),TvNetwork("ESPN+","ESPN+"))
 
 private fun dateRange():String { val fmt=SimpleDateFormat("yyyyMMdd",Locale.US).apply{timeZone=TimeZone.getTimeZone("UTC")}; val cal=Calendar.getInstance(TimeZone.getTimeZone("UTC")); val today=fmt.format(cal.time); cal.add(Calendar.DAY_OF_YEAR,3); return "$today-${fmt.format(cal.time)}" }
