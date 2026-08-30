@@ -28,6 +28,14 @@ jobs:
           ref: android-app
           fetch-depth: 1
 
+      - name: Apply canonical TV schedule source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/apply_canonical_tv_schedule.py
+          grep -q 'SportsScheduleService.load()' app/src/main/java/com/xsportsx/app/TvHome.kt
+          echo 'TV schedule source now uses canonical schedule service.'
+
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
@@ -62,6 +70,7 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           test -s app/src/main/java/com/xsportsx/app/TvHome.kt
           test -s app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          test -s app/src/main/java/com/xsportsx/app/CanonicalScheduleProvider.kt
           test -s app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
           test -s app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
           grep -q 'versionCode' app/build.gradle.kts
