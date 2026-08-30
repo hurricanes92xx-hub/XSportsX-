@@ -1,0 +1,35 @@
+name: Integrate Monster Jam live events
+on:
+  push:
+    branches: [android-app]
+    paths: ['.github/MONSTER_JAM_LIVE_TRIGGER']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: android-app
+          fetch-depth: 1
+      - name: Add Monster Jam live events to schedule
+        shell: bash
+        run: |
+          set -euo pipefail
+          f='app/src/main/java/com/xsportsx/app/SportsScheduleService.kt'
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('app/src/main/java/com/xsportsx/app/SportsScheduleService.kt')
+          s=p.read_text()
+          old='''        results.flatten()\n            .filter { event -> leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming) }'''
+          new='''        (results.flatten() + MonsterJamLiveResolver.loadLive())\n            .filter { event -> event.league.equals("Monster Jam", true) || leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming) }'''
+          if old not in s:
+              raise SystemExit('schedule load anchor not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
+          git commit -m 'feat: surface Monster Jam official YouTube live events' || exit 0
+          git push origin android-app
