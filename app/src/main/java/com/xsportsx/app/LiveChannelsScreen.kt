@@ -36,9 +36,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             error = null
             runCatching {
                 if (selectedEvent != null) StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
-                else if (filter.isNullOrBlank()) SportsScheduleService.load().filter { it.isLive }
-                    .distinctBy { it.id.ifBlank { "${it.league}|${it.home}|${it.away}|${it.startUtc}" } }
-                    .sortedWith(compareBy<SportsEvent> { it.league.lowercase() }.thenBy { it.startUtc })
+                else if (filter.isNullOrBlank()) FreshLiveScheduleProvider.load()
                 else StreamResolver(context).loadMatchingStreams(filter, force)
             }
                 .onSuccess { result ->
