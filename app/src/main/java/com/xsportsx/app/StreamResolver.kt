@@ -106,20 +106,16 @@ class StreamResolver(context: Context) {
 
     /**
      * Xtream providers commonly label a channel by network rather than by the teams playing.
-     * The old matcher required an exact normalized event field to appear in the channel name,
-     * which made valid ESPN/FS1/etc. channels disappear for otherwise live events.
      * Score several independent signals and keep strong network matches even when team names
      * are absent. This also tolerates punctuation/spacing differences such as ESPN+ vs ESPN +.
      */
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
         if (streams.isEmpty()) return emptyList()
-
         val titleTerms = splitTerms(event.title)
         val teamTerms = splitTerms("${event.home} ${event.away}")
         val leagueTerms = splitTerms(event.league)
         val broadcastTerms = broadcastAliases(event.broadcast)
         val eventIsLive = event.isLive
-
         data class Scored(val score: Int, val stream: ResolvedStream)
         val scored = streams.mapNotNull { stream ->
             val haystack = normalize("${stream.name} ${stream.group} ${stream.url}")
@@ -135,9 +131,6 @@ class StreamResolver(context: Context) {
             if (eventIsLive && networkHits > 0) score += 6
             if (networkHits > 0 || teamHits > 0 || titleHits > 0) Scored(score, stream) else null
         }
-
-        // Network matches are intentional: a live game carried by ESPN should surface the
-        // user's ESPN channel even when the provider channel name contains no team names.
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() })
             .map { it.stream }
             .take(12)
@@ -169,7 +162,7 @@ class StreamResolver(context: Context) {
 
     private fun normalize(value: String): String = value.lowercase()
         .replace('&', ' ')
-        .replace('+', " plus ")
+        .replace("+", " plus ")
         .replace(Regex("[^a-z0-9]+"), " ")
         .trim()
         .replace(Regex("\\s+"), " ")
