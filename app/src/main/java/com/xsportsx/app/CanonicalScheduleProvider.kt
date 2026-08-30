@@ -40,11 +40,13 @@ object CanonicalScheduleProvider {
                 if (canonical != null && SportsScheduleService.canonicalLeagueFor(rawLeague) != canonical) continue
 
                 val start = parseInstant(e.optString("start")) ?: continue
-                if (start.isBefore(now.minus(10, ChronoUnit.MINUTES)) || !start.isBefore(cutoff)) continue
+                val tag = e.optString("tag").uppercase()
+                val isLive = tag == "LIVE"
+                if (!isLive && start.isBefore(now.minus(10, ChronoUnit.MINUTES))) continue
+                if (!isLive && !start.isBefore(cutoff)) continue
 
                 val title = e.optString("title").trim()
                 val teams = splitMatchup(title)
-                val tag = e.optString("tag").uppercase()
                 val state = when (tag) {
                     "LIVE" -> "in"
                     "FINAL" -> "post"
