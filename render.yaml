@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: xsportsx
+    name: xsportsx-sports-source
     runtime: node
     plan: free
     autoDeploy: true
@@ -14,11 +14,9 @@ services:
         sync: false
       - key: XTREAM_PASSWORD
         sync: false
-      - key: XSPORTSX_CONFIG_SECRET
-        sync: false
-      - key: CACHE_TTL_SECONDS
-        value: "300"
-      - key: SCOREBOARD_TTL_SECONDS
+      - key: NCAA_API_BASE_URL
+        value: "https://ncaa-api.henrygd.me"
+      - key: SCHEDULE_TTL_SECONDS
         value: "60"
       - key: REQUEST_TIMEOUT_MS
         value: "8000"
