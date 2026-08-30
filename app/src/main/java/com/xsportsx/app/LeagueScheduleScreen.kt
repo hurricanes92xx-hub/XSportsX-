@@ -28,9 +28,9 @@ import java.util.TimeZone
  * One schedule path for every league.
  *
  * The screen uses the shared SportsScheduleService first. If that provider is
- * temporarily throttled or returns an empty response, the throttling-safe
- * recovery path retries the selected league without fan-out and preserves the
- * last known-good result. Mobile and TV therefore use the same event model.
+ * throttled, stale, or returns no events inside the actual three-day window,
+ * the throttling-safe recovery path retries the selected league without
+ * request fan-out and preserves its last known-good result.
  */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
@@ -53,15 +53,14 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        runCatching {
-            SportsScheduleService.loadForLeague(canonicalLeague, 3)
-        }
+        runCatching { SportsScheduleService.loadForLeague(canonicalLeague, 3) }
             .onSuccess { serviceEvents ->
-                if (serviceEvents.isNotEmpty()) {
+                val serviceHasWindow = hasWindowEvents(serviceEvents, Instant.now())
+                if (serviceHasWindow) {
                     allEvents = serviceEvents
                 } else {
                     val recovered = ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
-                    if (recovered.isNotEmpty()) allEvents = recovered
+                    if (recovered.isNotEmpty()) allEvents = recovered else allEvents = serviceEvents
                 }
             }
             .onFailure {
@@ -97,24 +96,14 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
     Column(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-        Row(
-            Modifier.fillMaxWidth().padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("‹", color = Color.White, fontSize = 36.sp, modifier = Modifier.clickable { onBack() })
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(canonicalLeague, color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Black)
-                Text(
-                    "${canonicalLeague} GAMES • NEXT 3 DAYS",
-                    color = Color(0xFF737B89),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("${canonicalLeague} GAMES • NEXT 3 DAYS", color = Color(0xFF737B89), fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
-            TextButton(onClick = { reloadToken++ }, enabled = !loading) {
-                Text(if (loading) "LOADING" else "REFRESH")
-            }
+            TextButton(onClick = { reloadToken++ }, enabled = !loading) { Text(if (loading) "LOADING" else "REFRESH") }
         }
 
         Row(Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -137,24 +126,13 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
                     color = Color(0xFF858B98)
                 )
             }
-            else -> LazyColumn(
-                contentPadding = PaddingValues(20.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+            else -> LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, events) ->
                     item {
-                        Text(
-                            day,
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
+                        Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp))
                     }
                     items(events, key = { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }) { event ->
-                        LeagueEventCard(event) {
-                            streamFilter = "${event.league} ${event.away} ${event.home}"
-                        }
+                        LeagueEventCard(event) { streamFilter = "${event.league} ${event.away} ${event.home}" }
                     }
                 }
             }
@@ -162,13 +140,19 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
 }
 
+private fun hasWindowEvents(events: List<SportsEvent>, now: Instant): Boolean {
+    val cutoff = now.plus(3, ChronoUnit.DAYS)
+    val grace = now.minus(10, ChronoUnit.MINUTES)
+    return events.any { event ->
+        val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@any false
+        event.isLive || (!start.isBefore(grace) && start.isBefore(cutoff))
+    }
+}
+
 @Composable
 private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF10141C))
-            .padding(16.dp),
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
@@ -176,20 +160,14 @@ private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
             Text("@ ${event.home.ifBlank { "TBD" }}", color = Color(0xFFB6BDCA), fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(5.dp))
             Text(
-                if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}"
-                else formatTime(event.startUtc),
+                if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}" else formatTime(event.startUtc),
                 color = if (event.isLive) Color(0xFFFF536C) else Color(0xFF7F8795),
                 fontSize = 10.sp
             )
-            if (event.broadcast.isNotBlank()) {
-                Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+            if (event.broadcast.isNotBlank()) Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         if (event.isLive) {
-            Button(
-                onClick = onWatch,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744))
-            ) { Text("WATCH") }
+            Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744))) { Text("WATCH") }
         } else {
             Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 9.sp, fontWeight = FontWeight.Black)
         }
@@ -197,11 +175,9 @@ private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
 }
 
 private fun dayLabel(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }
-        .format(Date.from(Instant.parse(startUtc)))
+    SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
 }.getOrElse { "SCHEDULE" }
 
 private fun formatTime(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }
-        .format(Date.from(Instant.parse(startUtc)))
+    SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
 }.getOrElse { startUtc }
