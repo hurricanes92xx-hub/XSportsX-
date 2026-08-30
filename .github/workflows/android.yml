@@ -50,13 +50,10 @@ jobs:
           assert upcoming, 'canonical feed has no upcoming events'
           print(f'canonical schedule: {len(events)} events, {len(upcoming)} upcoming')
           PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json
-          if ! git diff --cached --quiet; then
-            git commit -m 'chore: refresh canonical schedule feed [skip ci]'
-            git push origin HEAD:android-app
-          fi
+          # Validate the refreshed feed locally only. Do not commit/push from
+          # the APK workflow: that races the push-triggered build and can
+          # cancel the very build we are trying to produce.
+          git diff -- data/schedule_feed.json || true
 
       - name: Apply canonical TV schedule source
         shell: bash
