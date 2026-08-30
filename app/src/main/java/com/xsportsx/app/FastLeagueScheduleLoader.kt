@@ -3,15 +3,14 @@ package com.xsportsx.app
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Fast league-screen facade. The canonical server-refreshed feed is the first
- * source; SportsScheduleService retains direct ESPN/NCAA recovery when needed.
- */
+/** Shared three-day league facade. No screen performs its own provider fan-out. */
 object FastLeagueScheduleLoader {
     suspend fun load(league: String, daysAhead: Int = 3): List<SportsEvent> = withContext(Dispatchers.IO) {
         val canonical = SportsScheduleService.canonicalLeagueFor(league)
-        val feed = CanonicalScheduleProvider.load(canonical, daysAhead)
-        if (feed.isNotEmpty()) return@withContext feed
-        SportsScheduleService.loadForLeague(league, daysAhead)
+        if (daysAhead <= 3) {
+            ScheduleSnapshotRepository.upcoming(canonical)
+        } else {
+            ScheduleSnapshotRepository.all().filter { SportsScheduleService.canonicalLeagueFor(it.league) == canonical }
+        }
     }
 }
