@@ -29,5 +29,12 @@ replacement = '''private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvG
 }
 
 '''
+imports = "import kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.withContext\n"
+if "import kotlinx.coroutines.Dispatchers" not in text:
+    marker = "import kotlinx.coroutines.awaitAll\n"
+    if marker in text:
+        text = text.replace(marker, marker + imports, 1)
+    else:
+        text = text.replace("import kotlinx.coroutines.async\n", "import kotlinx.coroutines.async\n" + imports, 1)
 path.write_text(text[:start] + replacement + text[end:], encoding="utf-8")
-print("TV schedule source patched to SportsScheduleService without pre-render truncation")
+print("TV schedule source patched to SportsScheduleService with coroutine IO imports")
