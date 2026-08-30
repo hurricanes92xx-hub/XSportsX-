@@ -21,8 +21,6 @@ private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {
 }
 
 object SportsScheduleService {
-    // The league screen only needs the next few days. Keep this path small and
-    // deterministic; the background loader can still request a larger window.
     private const val DAYS_AHEAD = 3
     private const val BACKGROUND_DAYS_AHEAD = 30
     private const val MAX_GAMES_PER_LEAGUE = 2_000
@@ -95,11 +93,27 @@ object SportsScheduleService {
         "UFC", "BOXING"
     )
 
-    suspend fun load(): List<SportsEvent> = loadWindow(DAYS_AHEAD)
-    suspend fun loadBackground(): List<SportsEvent> = loadWindow(BACKGROUND_DAYS_AHEAD)
+    /** Canonical feed first; direct providers are recovery only. */
+    suspend fun load(): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = CanonicalScheduleProvider.load(null, DAYS_AHEAD)
+        if (canonical.isNotEmpty()) return@withContext canonical
+        loadDirect(DAYS_AHEAD)
+    }
 
-    /** Fast path for a league screen: fetch only the selected league. */
+    suspend fun loadBackground(): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = CanonicalScheduleProvider.load(null, BACKGROUND_DAYS_AHEAD)
+        if (canonical.isNotEmpty()) return@withContext canonical
+        loadDirect(BACKGROUND_DAYS_AHEAD)
+    }
+
+    /** Canonical feed first for a league; direct ESPN/NCAA is only recovery. */
     suspend fun loadForLeague(label: String, daysAhead: Int = DAYS_AHEAD): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = CanonicalScheduleProvider.load(canonicalLeagueFor(label), daysAhead)
+        if (canonical.isNotEmpty()) return@withContext canonical
+        loadDirectForLeague(label, daysAhead)
+    }
+
+    private suspend fun loadDirectForLeague(label: String, daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
         val canonical = canonicalLeagueFor(label)
         val league = leagues.firstOrNull { canonicalLeagueFor(it.league) == canonical } ?: return@withContext emptyList()
         val today = LocalDate.now(ZoneId.systemDefault())
@@ -112,7 +126,7 @@ object SportsScheduleService {
             .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
     }
 
-    private suspend fun loadWindow(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
+    private suspend fun loadDirect(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
         val today = LocalDate.now(ZoneId.systemDefault())
         val windows = if (daysAhead <= DAYS_AHEAD) buildDailyWindows(today, daysAhead) else buildWindows(today, daysAhead)
         val limiter = Semaphore(12)
@@ -156,15 +170,17 @@ object SportsScheduleService {
 
     private suspend fun fetchWindowWithFallbacks(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
         val primary = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspn(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-        if (primary.isNotEmpty()) {
-            if (primary.size >= 950) {
+        val primaryUpcoming = primary.filter { it.isUpcoming || it.isPregame() || it.isLive }
+        if (primaryUpcoming.isNotEmpty()) {
+            if (primaryUpcoming.size >= 950) {
                 val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
                 return (primary + v3).distinctBy { canonicalKey(it) }
             }
             return primary
         }
         val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-        if (v3.isNotEmpty()) return v3
+        val v3Upcoming = v3.filter { it.isUpcoming || it.isPregame() || it.isLive }
+        if (v3Upcoming.isNotEmpty()) return v3
         return withTimeoutOrNull(HTTP_TIMEOUT_MS) {
             runCatching { ScheduleFallbackProvider.fetch(league.league, league.sport, window.start, window.end) }.getOrDefault(emptyList())
         }.orEmpty()
@@ -237,7 +253,10 @@ object SportsScheduleService {
 
     private fun http(target: String): String {
         val connection = (URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"; connectTimeout = CONNECT_TIMEOUT_MS; readTimeout = HTTP_TIMEOUT_MS.toInt(); instanceFollowRedirects = true
+            requestMethod = "GET"
+            connectTimeout = CONNECT_TIMEOUT_MS
+            readTimeout = HTTP_TIMEOUT_MS.toInt()
+            instanceFollowRedirects = true
             setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/136.0 Mobile Safari/537.36")
             setRequestProperty("Accept", "application/json, text/plain, */*")
             setRequestProperty("Accept-Language", "en-US,en;q=0.9")
