@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.text.SimpleDateFormat
@@ -26,8 +27,10 @@ import java.util.TimeZone
 /**
  * One schedule path for every league.
  *
- * The screen uses SportsScheduleService.loadForLeague() so opening MLB/WNBA
- * does not wait for every other sport to finish loading.
+ * The screen uses the shared SportsScheduleService first. If that provider is
+ * temporarily throttled or returns an empty response, the throttling-safe
+ * recovery path retries the selected league without fan-out and preserves the
+ * last known-good result. Mobile and TV therefore use the same event model.
  */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
@@ -38,6 +41,14 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var tab by remember(canonicalLeague) { mutableStateOf("UPCOMING") }
     var streamFilter by remember { mutableStateOf<String?>(null) }
     var reloadToken by remember(canonicalLeague) { mutableIntStateOf(0) }
+    var now by remember(canonicalLeague) { mutableStateOf(Instant.now()) }
+
+    LaunchedEffect(canonicalLeague) {
+        while (true) {
+            now = Instant.now()
+            delay(30_000L)
+        }
+    }
 
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
@@ -45,8 +56,24 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         runCatching {
             SportsScheduleService.loadForLeague(canonicalLeague, 3)
         }
-            .onSuccess { allEvents = it }
-            .onFailure { error = it.message ?: "Unable to load schedule" }
+            .onSuccess { serviceEvents ->
+                if (serviceEvents.isNotEmpty()) {
+                    allEvents = serviceEvents
+                } else {
+                    val recovered = ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
+                    if (recovered.isNotEmpty()) allEvents = recovered
+                }
+            }
+            .onFailure {
+                val recovered = runCatching {
+                    ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
+                }.getOrDefault(emptyList())
+                if (recovered.isNotEmpty()) {
+                    allEvents = recovered
+                } else {
+                    error = it.message ?: "Unable to load schedule"
+                }
+            }
         loading = false
     }
 
@@ -55,15 +82,16 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         return
     }
 
-    val now = remember { Instant.now() }
-    val threeDayCutoff = remember { now.plus(3, ChronoUnit.DAYS) }
+    val threeDayCutoff = now.plus(3, ChronoUnit.DAYS)
+    val transitionGrace = now.minus(10, ChronoUnit.MINUTES)
     val visible = allEvents
         .filter { event ->
-            if (tab == "LIVE") event.isLive
-            else (event.isUpcoming || event.isPregame()) && runCatching {
-                val start = Instant.parse(event.startUtc)
-                !start.isBefore(now) && start.isBefore(threeDayCutoff)
-            }.getOrDefault(false)
+            val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
+            if (tab == "LIVE") {
+                event.isLive
+            } else {
+                !event.isLive && !start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)
+            }
         }
         .sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
