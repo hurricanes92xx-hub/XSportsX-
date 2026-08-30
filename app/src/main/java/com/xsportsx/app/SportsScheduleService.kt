@@ -1,71 +1,30 @@
 package com.xsportsx.app
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.net.URLEncoder
 
-private data class ScheduleLeague(val league: String, val sport: String, val path: String, val officialUrl: String, val query: String = "")
-private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {
-    fun query(): String = if (start == end) start.format(DateTimeFormatter.BASIC_ISO_DATE) else "${start.format(DateTimeFormatter.BASIC_ISO_DATE)}-${end.format(DateTimeFormatter.BASIC_ISO_DATE)}"
-}
-
+/**
+ * Thin client for the external XSportsX Sports Source.
+ *
+ * Mobile and TV do not contact ESPN, NCAA, GitHub schedule feeds, or fallback
+ * schedule providers directly anymore. The source owns provider selection,
+ * normalization, caching and refresh, and both apps consume the same API.
+ */
 object SportsScheduleService {
-    private const val DAYS_AHEAD = 3
-    private const val BACKGROUND_DAYS_AHEAD = 30
-    private const val MAX_GAMES_PER_LEAGUE = 2_000
-    private const val HTTP_TIMEOUT_MS = 4_500L
-    private const val CONNECT_TIMEOUT_MS = 1_800
+    private const val DEFAULT_DAYS_AHEAD = 3
+    private const val HTTP_TIMEOUT_MS = 5_000
+    private const val SOURCE_URL = BuildConfig.SPORTS_SOURCE_URL
 
-    private val ESPN_BASES = listOf(
-        "https://site.api.espn.com/apis/site/v2",
-        "https://site.web.api.espn.com/apis/site/v2"
-    )
-    private val ESPN_V3_BASES = listOf(
-        "https://site.api.espn.com/apis/site/v3",
-        "https://site.web.api.espn.com/apis/site/v3"
-    )
-
-    private val leagues = listOf(
-        ScheduleLeague("NFL", "Football", "football/nfl", "https://www.nfl.com/"),
-        ScheduleLeague("NBA", "Basketball", "basketball/nba", "https://www.nba.com/"),
-        ScheduleLeague("WNBA", "Basketball", "basketball/wnba", "https://www.wnba.com/"),
-        ScheduleLeague("NCAA FB", "Football", "football/college-football", "https://www.ncaa.com/sports/football/fbs", "groups=80"),
-        ScheduleLeague("NCAA FCS", "Football", "football/college-football", "https://www.ncaa.com/sports/football/fcs", "groups=81"),
-        ScheduleLeague("NCAA BB", "Basketball", "basketball/mens-college-basketball", "https://www.ncaa.com/sports/basketball-men/d1"),
-        ScheduleLeague("NCAA WBB", "Basketball", "basketball/womens-college-basketball", "https://www.ncaa.com/sports/basketball-women/d1"),
-        ScheduleLeague("MLB", "Baseball", "baseball/mlb", "https://www.mlb.com/"),
-        ScheduleLeague("NCAA BASEBALL", "Baseball", "baseball/college-baseball", "https://www.ncaa.com/sports/baseball"),
-        ScheduleLeague("NHL", "Hockey", "hockey/nhl", "https://www.nhl.com/"),
-        ScheduleLeague("NCAA MEN HOCKEY", "Hockey", "hockey/mens-college-hockey", "https://www.ncaa.com/sports/icehockey-men/d1"),
-        ScheduleLeague("NCAA WOMEN HOCKEY", "Hockey", "hockey/womens-college-hockey", "https://www.ncaa.com/sports/icehockey-women/d1"),
-        ScheduleLeague("NCAA SOFTBALL", "Softball", "softball/college-softball", "https://www.ncaa.com/sports/softball"),
-        ScheduleLeague("NCAA VB", "Volleyball", "volleyball/womens-college-volleyball", "https://www.ncaa.com/sports/volleyball-women/d1"),
-        ScheduleLeague("NCAA MEN SOCCER", "Soccer", "soccer/usa.ncaa.m.1", "https://www.ncaa.com/sports/soccer-men/d1"),
-        ScheduleLeague("NCAA WOMEN SOCCER", "Soccer", "soccer/usa.ncaa.w.1", "https://www.ncaa.com/sports/soccer-women/d1"),
-        ScheduleLeague("NCAA MEN LAX", "Lacrosse", "lacrosse/mens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-men/d1"),
-        ScheduleLeague("NCAA WOMEN LAX", "Lacrosse", "lacrosse/womens-college-lacrosse", "https://www.ncaa.com/sports/lacrosse-women/d1"),
-        ScheduleLeague("MLS", "Soccer", "soccer/usa.1", "https://www.mlssoccer.com/"),
-        ScheduleLeague("EPL", "Soccer", "soccer/eng.1", "https://www.premierleague.com/"),
-        ScheduleLeague("LaLiga", "Soccer", "soccer/esp.1", "https://www.laliga.com/"),
-        ScheduleLeague("Bundesliga", "Soccer", "soccer/ger.1", "https://www.bundesliga.com/"),
-        ScheduleLeague("Serie A", "Soccer", "soccer/ita.1", "https://www.legaseriea.it/"),
-        ScheduleLeague("Ligue 1", "Soccer", "soccer/fra.1", "https://www.ligue1.com/"),
-        ScheduleLeague("UCL", "Soccer", "soccer/uefa.champions", "https://www.uefa.com/uefachampionsleague/"),
-        ScheduleLeague("UEL", "Soccer", "soccer/uefa.europa", "https://www.uefa.com/uefaeuropaleague/"),
-        ScheduleLeague("NWSL", "Soccer", "soccer/usa.nwsl", "https://www.nwslsoccer.com/"),
-        ScheduleLeague("UFC", "MMA", "mma/ufc", "https://www.ufc.com/"),
-        ScheduleLeague("BOXING", "Boxing", "boxing/boxing", "https://www.espn.com/boxing/")
+    private val uiChoices = listOf(
+        "NFL", "NBA", "WNBA", "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB", "MLB", "NCAA BASEBALL", "NHL",
+        "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA SOFTBALL", "NCAA VB", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER",
+        "NCAA MEN LAX", "NCAA WOMEN LAX", "MLS", "EPL", "LaLiga", "Bundesliga", "Serie A", "Ligue 1", "UCL", "UEL", "NWSL",
+        "UFC", "BOXING"
     )
 
     fun normalizeLeague(label: String): String = when (label.trim().uppercase()) {
@@ -77,196 +36,95 @@ object SportsScheduleService {
         "COLLEGE SOFTBALL" -> "NCAA SOFTBALL"
         "COLLEGE MEN'S HOCKEY" -> "NCAA MEN HOCKEY"
         "COLLEGE WOMEN'S HOCKEY" -> "NCAA WOMEN HOCKEY"
-        "COLLEGE MEN'S SOCCER" -> "NCAA MEN SOCCER"
-        "COLLEGE WOMEN'S SOCCER" -> "NCAA WOMEN SOCCER"
+        "COLLEGE MEN'S SOCCER", "NCAA MEN'S SOCCER" -> "NCAA MEN SOCCER"
+        "COLLEGE WOMEN'S SOCCER", "NCAA WOMEN'S SOCCER" -> "NCAA WOMEN SOCCER"
         "COLLEGE WOMEN'S LACROSSE" -> "NCAA WOMEN LAX"
         "COLLEGE MEN'S LACROSSE" -> "NCAA MEN LAX"
+        "NCAA VOLLEYBALL", "COLLEGE VOLLEYBALL" -> "NCAA VB"
         else -> label.trim().uppercase()
     }
 
     fun canonicalLeagueFor(label: String): String = normalizeLeague(label)
 
-    val uiLeagueChoices: List<String> = listOf(
-        "NFL", "NBA", "WNBA", "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB", "MLB", "NCAA BASEBALL", "NHL",
-        "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA SOFTBALL", "NCAA VB", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER",
-        "NCAA MEN LAX", "NCAA WOMEN LAX", "MLS", "EPL", "LaLiga", "Bundesliga", "Serie A", "Ligue 1", "UCL", "UEL", "NWSL",
-        "UFC", "BOXING"
-    )
+    val uiLeagueChoices: List<String> = uiChoices
 
-    /** Canonical feed first; direct providers are recovery only. */
-    suspend fun load(): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val canonical = CanonicalScheduleProvider.load(null, DAYS_AHEAD)
-        if (canonical.isNotEmpty()) return@withContext canonical
-        loadDirect(DAYS_AHEAD)
-    }
+    suspend fun load(): List<SportsEvent> = fetchSchedule(null, DEFAULT_DAYS_AHEAD)
 
-    suspend fun loadBackground(): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val canonical = CanonicalScheduleProvider.load(null, BACKGROUND_DAYS_AHEAD)
-        if (canonical.isNotEmpty()) return@withContext canonical
-        loadDirect(BACKGROUND_DAYS_AHEAD)
-    }
+    suspend fun loadBackground(): List<SportsEvent> = fetchSchedule(null, 7)
 
-    /** Canonical feed first for a league; direct ESPN/NCAA is only recovery. */
-    suspend fun loadForLeague(label: String, daysAhead: Int = DAYS_AHEAD): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val canonical = CanonicalScheduleProvider.load(canonicalLeagueFor(label), daysAhead)
-        if (canonical.isNotEmpty()) return@withContext canonical
-        loadDirectForLeague(label, daysAhead)
-    }
+    suspend fun loadForLeague(label: String, daysAhead: Int = DEFAULT_DAYS_AHEAD): List<SportsEvent> =
+        fetchSchedule(normalizeLeague(label), daysAhead)
 
-    private suspend fun loadDirectForLeague(label: String, daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val canonical = canonicalLeagueFor(label)
-        val league = leagues.firstOrNull { canonicalLeagueFor(it.league) == canonical } ?: return@withContext emptyList()
-        val today = LocalDate.now(ZoneId.systemDefault())
-        val windows = buildDailyWindows(today, daysAhead)
-        val limiter = Semaphore(4)
-        loadLeague(league, windows, limiter)
-            .filter { canonicalLeagueFor(it.league) == canonical }
-            .map { it.copy(league = canonical) }
-            .distinctBy { canonicalKey(it) }
-            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
-    }
-
-    private suspend fun loadDirect(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
-        val today = LocalDate.now(ZoneId.systemDefault())
-        val windows = if (daysAhead <= DAYS_AHEAD) buildDailyWindows(today, daysAhead) else buildWindows(today, daysAhead)
-        val limiter = Semaphore(12)
-        val results = coroutineScope { leagues.map { league -> async { loadLeague(league, windows, limiter) } }.awaitAll() }
-        (results.flatten() + MonsterJamLiveResolver.loadLive())
-            .filter { event -> event.league.equals("Monster Jam", true) || leagues.any { it.league.equals(normalizeLeague(event.league), true) } && (event.isLive || event.isPregame() || event.isUpcoming) }
-            .map { it.copy(league = normalizeLeague(it.league)) }
-            .distinctBy { it.id.ifBlank { listOf(it.league, normalize(it.home), normalize(it.away), it.startUtc).joinToString("|") } }
-            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
-    }
-
-    private fun buildDailyWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
-        val windows = ArrayList<ScheduleWindow>(daysAhead + 1)
-        for (offset in 0..daysAhead) {
-            val day = today.plusDays(offset.toLong())
-            windows += ScheduleWindow(day, day)
-        }
-        return windows
-    }
-
-    private fun buildWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
-        val windows = ArrayList<ScheduleWindow>(4)
-        windows += ScheduleWindow(today, today)
-        var cursor = today.plusDays(1)
-        val end = today.plusDays(daysAhead.toLong())
-        while (!cursor.isAfter(end)) {
-            val windowEnd = minOf(cursor.plusDays(13), end)
-            windows += ScheduleWindow(cursor, windowEnd)
-            cursor = windowEnd.plusDays(1)
-        }
-        return windows
-    }
-
-    private suspend fun loadLeague(league: ScheduleLeague, windows: List<ScheduleWindow>, limiter: Semaphore): List<SportsEvent> = coroutineScope {
-        windows.map { window -> async { limiter.withPermit { fetchWindowWithFallbacks(league, window) } } }.awaitAll().flatten()
-            .filter { it.league.equals(league.league, true) || normalizeLeague(it.league) == normalizeLeague(league.league) }
-            .distinctBy { canonicalKey(it) }
-            .sortedBy { it.startUtc }
-            .take(MAX_GAMES_PER_LEAGUE)
-    }
-
-    private suspend fun fetchWindowWithFallbacks(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
-        val primary = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspn(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-        val primaryUpcoming = primary.filter { it.isUpcoming || it.isPregame() || it.isLive }
-        if (primaryUpcoming.isNotEmpty()) {
-            if (primaryUpcoming.size >= 950) {
-                val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-                return (primary + v3).distinctBy { canonicalKey(it) }
+    private suspend fun fetchSchedule(league: String?, daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val query = buildString {
+            append("days=")
+            append(daysAhead.coerceIn(1, 7))
+            if (!league.isNullOrBlank()) {
+                append("&league=")
+                append(URLEncoder.encode(league, Charsets.UTF_8.name()))
             }
-            return primary
         }
-        val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
-        val v3Upcoming = v3.filter { it.isUpcoming || it.isPregame() || it.isLive }
-        if (v3Upcoming.isNotEmpty()) return v3
-        return withTimeoutOrNull(HTTP_TIMEOUT_MS) {
-            runCatching { ScheduleFallbackProvider.fetch(league.league, league.sport, window.start, window.end) }.getOrDefault(emptyList())
-        }.orEmpty()
-    }
-
-    private fun canonicalKey(event: SportsEvent): String = listOf(normalizeLeague(event.league), normalize(event.home), normalize(event.away), event.startUtc.take(16)).joinToString("|")
-    private fun normalize(value: String): String = value.lowercase().replace(Regex("\\bfc\\b"), "").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
-
-    private fun fetchEspn(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
-        for (base in ESPN_BASES) {
-            val result = runCatching { parseEspn(JSONObject(http(buildUrl(base, league, window))), league) }.getOrDefault(emptyList())
-            if (result.isNotEmpty()) return result
+        val connection = (URL("${SOURCE_URL.trimEnd('/')}/api/schedule?$query").openConnection() as HttpURLConnection).apply {
+            connectTimeout = HTTP_TIMEOUT_MS
+            readTimeout = HTTP_TIMEOUT_MS
+            requestMethod = "GET"
+            setRequestProperty("Accept", "application/json")
+            setRequestProperty("User-Agent", "XSportsX-Android/1.0")
         }
-        return emptyList()
-    }
 
-    private fun fetchEspnV3(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
-        for (base in ESPN_V3_BASES) {
-            val result = runCatching { parseEspn(JSONObject(http(buildUrl(base, league, window))), league) }.getOrDefault(emptyList())
-            if (result.isNotEmpty()) return result
+        try {
+            if (connection.responseCode !in 200..299) return@withContext emptyList()
+            val body = connection.inputStream.bufferedReader().use { it.readText() }
+            parseEvents(JSONObject(body).optJSONArray("events") ?: JSONArray())
+        } catch (_: Exception) {
+            emptyList()
+        } finally {
+            connection.disconnect()
         }
-        return emptyList()
     }
 
-    private fun buildUrl(base: String, league: ScheduleLeague, window: ScheduleWindow): String = buildString {
-        append("$base/sports/${league.path}/scoreboard?dates=${window.query()}&limit=1000")
-        if (league.query.isNotBlank()) append('&').append(league.query)
-    }
-
-    private fun parseEspn(root: JSONObject, league: ScheduleLeague): List<SportsEvent> {
-        val events = root.optJSONArray("events") ?: root.optJSONObject("content")?.optJSONArray("events") ?: return emptyList()
+    private fun parseEvents(events: JSONArray): List<SportsEvent> {
         val out = ArrayList<SportsEvent>(events.length())
         for (i in 0 until events.length()) {
-            val event = events.optJSONObject(i) ?: continue
-            val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue
-            val competitors = competition.optJSONArray("competitors") ?: continue
-            var home = ""; var away = ""; var homeLogo = ""; var awayLogo = ""
-            for (j in 0 until competitors.length()) {
-                val competitor = competitors.optJSONObject(j) ?: continue
-                val team = competitor.optJSONObject("team")
-                val name = team?.optString("displayName")?.ifBlank { team.optString("shortDisplayName") }?.ifBlank { competitor.optString("displayName") } ?: competitor.optString("displayName")
-                val logo = team?.optString("logo").orEmpty()
-                if (competitor.optString("homeAway").equals("home", true)) { home = name; homeLogo = logo } else { away = name; awayLogo = logo }
-            }
-            val status = competition.optJSONObject("status") ?: event.optJSONObject("status") ?: JSONObject()
-            val type = status.optJSONObject("type") ?: JSONObject()
-            val state = type.optString("state").ifBlank { status.optString("state") }
-            val detail = type.optString("shortDetail").ifBlank { type.optString("detail") }.ifBlank { type.optString("name") }
-            val broadcasts = competition.optJSONArray("broadcasts")
-            val broadcast = buildString {
-                if (broadcasts != null) for (j in 0 until broadcasts.length()) {
-                    val names = broadcasts.optJSONObject(j)?.optJSONArray("names") ?: continue
-                    for (k in 0 until names.length()) { val name = names.optString(k); if (name.isNotBlank()) { if (isNotEmpty()) append(", "); append(name) } }
-                }
-            }
-            val start = event.optString("date").ifBlank { competition.optString("startDate") }
-            if (start.isBlank() || home.isBlank() || away.isBlank()) continue
-            val rawName = event.optString("name").ifBlank { event.optString("shortName") }
-            val title = rawName.ifBlank { "$away vs $home" }
-            out += SportsEvent(event.optString("id"), league.sport, league.league, title, start, detail, state, home, away, homeLogo, awayLogo, broadcast, event.optString("image"), league.officialUrl, extractYouTubeId(event.optString("youtubeVideoId").ifBlank { event.optString("youtubeUrl") }))
+            val item = events.optJSONObject(i) ?: continue
+            val id = item.optString("id").trim()
+            val home = item.optString("home").trim()
+            val away = item.optString("away").trim()
+            val start = item.optString("startUtc").trim()
+            if (id.isBlank() || home.isBlank() || away.isBlank() || start.isBlank()) continue
+
+            out += SportsEvent(
+                id = id,
+                sport = item.optString("sport"),
+                league = normalizeLeague(item.optString("league")),
+                title = item.optString("title").ifBlank { "$away vs $home" },
+                startUtc = start,
+                status = item.optString("status"),
+                state = item.optString("state"),
+                home = home,
+                away = away,
+                homeLogo = item.optString("homeLogo"),
+                awayLogo = item.optString("awayLogo"),
+                broadcast = item.optString("broadcast"),
+                artUrl = item.optString("artUrl"),
+                sourceUrl = item.optString("sourceUrl")
+            )
         }
         return out
+            .distinctBy { canonicalKey(it) }
+            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
     }
 
-    private fun extractYouTubeId(value: String): String {
-        val v = value.trim()
-        if (v.matches(Regex("[A-Za-z0-9_-]{11}"))) return v
-        return Regex("(?:v=|youtu\\.be/|youtube\\.com/(?:embed/|shorts/))([A-Za-z0-9_-]{11})").find(v)?.groupValues?.getOrNull(1).orEmpty()
-    }
+    private fun canonicalKey(event: SportsEvent): String = listOf(
+        normalizeLeague(event.league),
+        normalize(event.home),
+        normalize(event.away),
+        event.startUtc.take(16)
+    ).joinToString("|")
 
-    private fun http(target: String): String {
-        val connection = (URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = CONNECT_TIMEOUT_MS
-            readTimeout = HTTP_TIMEOUT_MS.toInt()
-            instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/136.0 Mobile Safari/537.36")
-            setRequestProperty("Accept", "application/json, text/plain, */*")
-            setRequestProperty("Accept-Language", "en-US,en;q=0.9")
-            setRequestProperty("Referer", "https://www.espn.com/")
-            setRequestProperty("Connection", "keep-alive")
-        }
-        return try {
-            val code = connection.responseCode
-            if (code !in 200..299) error("Schedule HTTP $code from ${URL(target).host}")
-            connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-        } finally { connection.disconnect() }
-    }
+    private fun normalize(value: String): String = value.lowercase()
+        .replace(Regex("\\bfc\\b"), "")
+        .replace(Regex("[^a-z0-9]+"), " ")
+        .trim()
+        .replace(Regex("\\s+"), " ")
 }
