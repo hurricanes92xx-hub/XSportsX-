@@ -1,99 +1,48 @@
-name: Refresh XSportsX schedules
-
+name: Refresh complete schedules
 on:
-  schedule:
-    - cron: '17 */6 * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
   push:
     branches: [android-app]
     paths:
       - 'scripts/refresh_schedules.py'
-      - 'scripts/validate_schedule_refresh.py'
-      - 'scripts/google_sports_intelligence.py'
-      - 'scripts/refresh_sports_news.py'
-      - 'scripts/source_catalog_diff.py'
-      - 'scripts/refresh_sports_api_intelligence.py'
-      - 'data/telegram_sports_intelligence.json'
-      - 'data/epg_intelligence_sources.json'
-      - 'data/event_intelligence_graph.json'
-      - 'data/sports_api_intelligence.json'
-      - 'data/remaining_schedule_intelligence.json'
-
-permissions:
-  contents: write
-
-concurrency:
-  group: xsportsx-schedule-refresh
-  cancel-in-progress: true
-
+      - '.github/workflows/refresh-schedules.yml'
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    permissions:
+      contents: write
     steps:
-      - name: Checkout android-app
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          ref: android-app
-      - name: Refresh schedule feed (full configured windows)
+          python-version: '3.12'
+      - name: Refresh canonical schedule feed
+        run: python scripts/refresh_schedules.py
+      - name: Validate feed invariants
         run: |
-          set -euo pipefail
-          python3 scripts/refresh_schedules.py
-      - name: Validate schedule coverage
-        run: python3 scripts/validate_schedule_refresh.py
-      - name: Refresh Google sports intelligence manifest
-        run: python3 scripts/google_sports_intelligence.py
-      - name: Refresh sports news/ticker manifest
-        run: python3 scripts/refresh_sports_news.py
-      - name: Refresh supplemental source diff manifest
-        run: python3 scripts/source_catalog_diff.py
-      - name: Refresh sports API intelligence policy
-        run: python3 scripts/refresh_sports_api_intelligence.py
-      - name: Validate intelligence policy (non-blocking)
-        run: |
-          set -u
-          python3 - <<'PY'
+          python - <<'PY'
           import json
-          paths = (
-              'data/telegram_sports_intelligence.json',
-              'data/epg_intelligence_sources.json',
-              'data/event_intelligence_graph.json',
-              'data/source_catalog_diff.json',
-              'data/sports_api_intelligence.json',
-              'data/sports_api_refresh.json',
-          )
-          for p in paths:
-              try:
-                  d = json.load(open(p, encoding='utf-8'))
-              except FileNotFoundError:
-                  print(f'Optional intelligence file not present: {p}')
-                  continue
-              if 'playbackBlocking' in d and d['playbackBlocking'] is not False:
-                  print(f'WARNING: {p} playbackBlocking={d["playbackBlocking"]!r}')
-              else:
-                  print(f'Validated/accepted: {p}')
-
-          try:
-              r = json.load(open('data/remaining_schedule_intelligence.json', encoding='utf-8'))
-              if r.get('playbackBlocking') is not False:
-                  print('WARNING: remaining schedule intelligence playbackBlocking is not false')
-              rules = r.get('rules', {})
-              for key in ('retainLeagueSeparation', 'neverTreatScheduleMetadataAsPlayable', 'neverBlockPlayback'):
-                  if rules.get(key) is not True:
-                      print(f'WARNING: rule {key} is not true')
-          except FileNotFoundError:
-              print('WARNING: remaining schedule intelligence.json not present')
-          print('Schedule publication passed the feed safety gate.')
+          from datetime import datetime, timezone, timedelta
+          p=json.load(open('data/schedule_feed.json'))
+          events=p.get('events') or []
+          assert events, 'schedule feed is empty'
+          assert p.get('schema',0) >= 5, 'unexpected schedule schema'
+          assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events'
+          cutoff=datetime.now(timezone.utc)-timedelta(hours=6)
+          bad=[]
+          for e in events:
+            try: datetime.fromisoformat(e['start'].replace('Z','+00:00'))
+            except Exception: bad.append(e)
+          assert not bad, f'invalid event timestamps: {len(bad)}'
+          print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues')
+          print('failed sources:', p.get('failedSources', []))
           PY
-      - name: Commit only when data changed
+      - name: Publish schedule feed
         run: |
-          set -euo pipefail
-          git config user.name 'XSportsX Schedule Bot'
+          git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json data/google_sports_intelligence.json data/sports_news_sources.json data/telegram_sports_intelligence.json data/epg_intelligence_sources.json data/event_intelligence_graph.json data/source_catalog_diff.json data/sports_api_refresh.json data/remaining_schedule_intelligence.json
-          if git diff --cached --quiet; then
-            echo 'Schedule/intelligence feeds unchanged.'
-            exit 0
-          fi
-          git commit -m 'chore: refresh schedules and sports intelligence'
-          git push origin HEAD:android-app
+          git add data/schedule_feed.json
+          git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
+          git push
