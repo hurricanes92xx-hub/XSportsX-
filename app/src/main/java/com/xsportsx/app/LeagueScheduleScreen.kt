@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -26,7 +25,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** League schedule UI. One direct provider call per selected league; no global feed dependency. */
+/** League schedule UI backed only by the shared canonical schedule snapshot. */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val canonicalLeague = SportsScheduleService.canonicalLeagueFor(league)
@@ -48,19 +47,9 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        // Render's free tier can cold-start. The source client allows 15s, so
-        // the UI must not cancel the request first and turn a healthy source
-        // into "Schedule temporarily unavailable".
-        val loaded = withTimeoutOrNull(30_000L) {
-            runCatching { FastLeagueScheduleLoader.load(canonicalLeague, 3) }
-                .getOrDefault(emptyList())
-        }.orEmpty()
-
-        if (loaded.isNotEmpty()) {
-            allEvents = loaded
-        } else if (allEvents.isEmpty()) {
-            error = "Schedule temporarily unavailable"
-        }
+        runCatching { ScheduleSnapshotRepository.upcoming(canonicalLeague, reloadToken > 0) }
+            .onSuccess { loaded -> allEvents = loaded }
+            .onFailure { error = it.message ?: "Schedule temporarily unavailable" }
         loading = false
     }
 
@@ -78,10 +67,10 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         if (tab == "LIVE") {
             event.isLive
         } else {
-            val dateOnly = event.status.contains("upcoming", true) && event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
+            val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
             val localDate = start.atZone(zone).toLocalDate()
             val dateOnlyInWindow = dateOnly && !localDate.isBefore(today) && localDate.isBefore(today.plusDays(3))
-            event.isLive.not() && (dateOnlyInWindow || (!start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)))
+            !event.isLive && (dateOnlyInWindow || (!start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)))
         }
     }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
