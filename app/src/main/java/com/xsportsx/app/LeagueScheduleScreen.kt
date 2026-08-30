@@ -48,7 +48,10 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        val loaded = withTimeoutOrNull(14_000L) {
+        // Render's free tier can cold-start. The source client allows 15s, so
+        // the UI must not cancel the request first and turn a healthy source
+        // into "Schedule temporarily unavailable".
+        val loaded = withTimeoutOrNull(30_000L) {
             runCatching { FastLeagueScheduleLoader.load(canonicalLeague, 3) }
                 .getOrDefault(emptyList())
         }.orEmpty()
