@@ -26,9 +26,8 @@ import java.util.TimeZone
 /**
  * One schedule path for every league.
  *
- * Do not fetch ESPN directly from this screen. SportsScheduleService owns
- * league aliases, date windows, v2/v3 failover, secondary-source fallback,
- * deduplication and canonical league names.
+ * The screen uses SportsScheduleService.loadForLeague() so opening MLB/WNBA
+ * does not wait for every other sport to finish loading.
  */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
@@ -44,8 +43,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         loading = true
         error = null
         runCatching {
-            SportsScheduleService.load()
-                .filter { SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague }
+            SportsScheduleService.loadForLeague(canonicalLeague, 3)
         }
             .onSuccess { allEvents = it }
             .onFailure { error = it.message ?: "Unable to load schedule" }
