@@ -33,7 +33,9 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var tab by remember(canonicalLeague) { mutableStateOf("UPCOMING") }
     var streamFilter by remember { mutableStateOf<String?>(null) }
     var reloadToken by remember(canonicalLeague) { mutableIntStateOf(0) }
+    var now by remember { mutableStateOf(Instant.now()) }
 
+    LaunchedEffect(Unit) { while (true) { kotlinx.coroutines.delay(60_000); now = Instant.now() } }
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true; error = null
         runCatching { SportsScheduleService.load().filter { SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague } }
@@ -42,16 +44,15 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
     if (streamFilter != null) { LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null }); return }
 
-    // Keep the full schedule feed available, but render only three days. Compute the
-    // window at composition time so a long-lived screen does not freeze yesterday's date.
-    val now = Instant.now()
+    // Full feed stays available to the service/background refresh; only three days are
+    // rendered here to keep mobile/TV responsive. The 15-minute grace prevents a game
+    // from disappearing from Upcoming while its provider transitions it to LIVE.
     val horizon = now.plus(3, ChronoUnit.DAYS)
     val visible = events.filter { event ->
         if (tab == "LIVE") event.isLive
-        else {
-            val start = runCatching { Instant.parse(event.startUtc) }.getOrNull()
-            start != null && !start.isBefore(now.minus(15, ChronoUnit.MINUTES)) && start.isBefore(horizon)
-        }
+        else runCatching { Instant.parse(event.startUtc) }.getOrNull()?.let { start ->
+            !start.isBefore(now.minus(15, ChronoUnit.MINUTES)) && start.isBefore(horizon)
+        } == true
     }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
