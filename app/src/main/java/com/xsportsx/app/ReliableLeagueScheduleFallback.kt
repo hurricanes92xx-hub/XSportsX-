@@ -25,31 +25,36 @@ object ReliableLeagueScheduleFallback {
 
     private val lastKnownGood = mutableMapOf<String, List<SportsEvent>>()
 
-    private data class Endpoint(val sport: String, val league: String, val query: String = "")
+    private data class Endpoint(
+        val canonical: String,
+        val sport: String,
+        val league: String,
+        val query: String = ""
+    )
 
     private val endpoints = mapOf(
-        "NFL" to Endpoint("football", "nfl"),
-        "NBA" to Endpoint("basketball", "nba"),
-        "WNBA" to Endpoint("basketball", "wnba"),
-        "NCAA FB" to Endpoint("football", "college-football", "groups=80"),
-        "NCAA FCS" to Endpoint("football", "college-football", "groups=81"),
-        "NCAA BB" to Endpoint("basketball", "mens-college-basketball"),
-        "NCAA WBB" to Endpoint("basketball", "womens-college-basketball"),
-        "MLB" to Endpoint("baseball", "mlb"),
-        "NCAA BASEBALL" to Endpoint("baseball", "college-baseball"),
-        "NHL" to Endpoint("hockey", "nhl"),
-        "NCAA VB" to Endpoint("volleyball", "womens-college-volleyball"),
-        "MLS" to Endpoint("soccer", "usa.1"),
-        "EPL" to Endpoint("soccer", "eng.1"),
-        "LALIGA" to Endpoint("soccer", "esp.1"),
-        "BUNDESLIGA" to Endpoint("soccer", "ger.1"),
-        "SERIE A" to Endpoint("soccer", "ita.1"),
-        "LIGUE 1" to Endpoint("soccer", "fra.1"),
-        "UCL" to Endpoint("soccer", "uefa.champions"),
-        "UEL" to Endpoint("soccer", "uefa.europa"),
-        "NWSL" to Endpoint("soccer", "usa.nwsl"),
-        "UFC" to Endpoint("mma", "ufc"),
-        "BOXING" to Endpoint("boxing", "boxing")
+        "NFL" to Endpoint("NFL", "football", "nfl"),
+        "NBA" to Endpoint("NBA", "basketball", "nba"),
+        "WNBA" to Endpoint("WNBA", "basketball", "wnba"),
+        "NCAA FB" to Endpoint("NCAA FB", "football", "college-football", "groups=80"),
+        "NCAA FCS" to Endpoint("NCAA FCS", "football", "college-football", "groups=81"),
+        "NCAA BB" to Endpoint("NCAA BB", "basketball", "mens-college-basketball"),
+        "NCAA WBB" to Endpoint("NCAA WBB", "basketball", "womens-college-basketball"),
+        "MLB" to Endpoint("MLB", "baseball", "mlb"),
+        "NCAA BASEBALL" to Endpoint("NCAA BASEBALL", "baseball", "college-baseball"),
+        "NHL" to Endpoint("NHL", "hockey", "nhl"),
+        "NCAA VB" to Endpoint("NCAA VB", "volleyball", "womens-college-volleyball"),
+        "MLS" to Endpoint("MLS", "soccer", "usa.1"),
+        "EPL" to Endpoint("EPL", "soccer", "eng.1"),
+        "LALIGA" to Endpoint("LALIGA", "soccer", "esp.1"),
+        "BUNDESLIGA" to Endpoint("BUNDESLIGA", "soccer", "ger.1"),
+        "SERIE A" to Endpoint("SERIE A", "soccer", "ita.1"),
+        "LIGUE 1" to Endpoint("LIGUE 1", "soccer", "fra.1"),
+        "UCL" to Endpoint("UCL", "soccer", "uefa.champions"),
+        "UEL" to Endpoint("UEL", "soccer", "uefa.europa"),
+        "NWSL" to Endpoint("NWSL", "soccer", "usa.nwsl"),
+        "UFC" to Endpoint("UFC", "mma", "ufc"),
+        "BOXING" to Endpoint("BOXING", "boxing", "boxing")
     )
 
     suspend fun load(leagueLabel: String, daysAhead: Int = 3): List<SportsEvent> = withContext(Dispatchers.IO) {
@@ -151,7 +156,7 @@ object ReliableLeagueScheduleFallback {
             result += SportsEvent(
                 id = event.optString("id"),
                 sport = endpoint.sport,
-                league = SportsScheduleService.canonicalLeagueFor(endpoint.league),
+                league = endpoint.canonical,
                 title = event.optString("name").ifBlank { "$away @ $home" },
                 startUtc = startUtc,
                 status = detail,
