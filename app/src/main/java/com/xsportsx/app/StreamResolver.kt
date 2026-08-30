@@ -156,6 +156,11 @@ class StreamResolver(context: Context) {
             n.contains("sec network") -> aliases += listOf("sec network", "sec")
             n.contains("big ten") -> aliases += listOf("big ten network", "btn", "big ten")
             n.contains("nfl network") -> aliases += listOf("nfl network", "nfl")
+            n.contains("netflix") -> aliases += listOf("netflix", "wwe")
+            n.contains("usa network") || n == "usa" -> aliases += listOf("usa network", "usa", "wwe")
+            n.contains("wwe network") -> aliases += listOf("wwe network", "wwe")
+            n.contains("peacock") -> aliases += listOf("peacock", "wwe")
+            n == "cw" || n.contains("cw network") -> aliases += listOf("cw", "cw network", "wwe")
         }
         return aliases.map(::normalize).distinct()
     }
