@@ -38,13 +38,11 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     val resolver = StreamResolver(context)
                     resolver.loadMatchingEventStreams(selectedEvent!!, force)
                 } else if (filter.isNullOrBlank()) {
-                    // LIVE CENTER IS EVENT-FIRST: never dump the complete public IPTV catalog.
-                    // The schedule is the authoritative list of what is live; streams are loaded
-                    // only after the user selects a real live event.
+                    // Live Center is event-first. Never load the entire public IPTV catalog here.
                     SportsScheduleService.load()
                         .filter { it.isLive }
-                        .sortedBy { it.league.lowercase() }
                         .distinctBy { it.id.ifBlank { "${it.league}|${it.home}|${it.away}|${it.startUtc}" } }
+                        .sortedWith(compareBy<SportsEvent> { it.league.lowercase() }.thenBy { it.startUtc })
                 } else {
                     val resolver = StreamResolver(context)
                     resolver.loadMatchingStreams(filter, force)
@@ -129,7 +127,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                         Column(Modifier.weight(1f)) {
                             Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                             Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                            Text(game.statusDetail.ifBlank { "LIVE" }, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(game.status.ifBlank { "LIVE" }, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                         Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                     }
