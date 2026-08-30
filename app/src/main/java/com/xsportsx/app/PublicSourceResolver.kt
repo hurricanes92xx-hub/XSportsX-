@@ -12,7 +12,14 @@ import java.io.BufferedInputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-data class PublicResolvedStream(val name: String, val group: String, val url: String, val iconUrl: String = "", val sourceName: String = "Public source", val latencyMs: Int = 0)
+data class PublicResolvedStream(
+    val name: String,
+    val group: String,
+    val url: String,
+    val iconUrl: String = "",
+    val sourceName: String = "Public source",
+    val latencyMs: Int = 0
+)
 
 class PublicSourceResolver {
     companion object {
@@ -32,13 +39,45 @@ class PublicSourceResolver {
             "https://cdn.jsdelivr.net/gh/hurricanes92xx-hub/XSportsX-@main/docs/public-sources-registry.json"
         )
 
-        private val registryHosts = setOf("iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net", "dearbulut.github.io", "i.mjh.nz")
+        private val registryHosts = setOf(
+            "iptv-org.github.io", "raw.githubusercontent.com", "github.com",
+            "cdn.jsdelivr.net", "dearbulut.github.io", "i.mjh.nz"
+        )
 
-        private val networkAliases = mapOf(
-            "ESPN" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN Deportes", "ESPN News", "ESPN on ABC", "SECN+", "ACCNX"),
+        /* Broadcast map is deliberately used as a search guide. It never creates a
+           stream and never authorizes a source; it only expands a requested sport,
+           league, or network into relevant channel aliases. */
+        private val broadcastMap = linkedMapOf(
+            "NFL" to listOf("NFL Network", "NFL Channel", "ESPN", "ABC", "FOX", "FS1", "FS2", "CBS", "NBC", "USA Network", "Peacock", "Prime Video", "Tubi"),
+            "NBA" to listOf("NBA TV", "ESPN", "ABC", "NBC", "Peacock", "Prime Video"),
+            "WNBA" to listOf("ESPN", "ESPN2", "ABC", "ESPN+", "NBA TV", "CBS Sports Network", "ION"),
+            "MLB" to listOf("MLB Network", "FOX", "FS1", "ESPN", "TBS", "ABC", "NBC", "Peacock", "FOX Deportes", "Apple TV"),
+            "NHL" to listOf("NHL Network", "ESPN", "ABC", "TNT", "TNT Sports", "truTV", "Sportsnet", "TSN"),
+            "NCAA FOOTBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "FOX", "FS1", "FS2", "CBS", "CBS Sports Network", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "Pac-12 Insider"),
+            "NCAA BASKETBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "CBS", "CBS Sports Network", "FOX", "FS1", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "Pac-12 Insider"),
+            "NCAA VOLLEYBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "CBS Sports Network", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider", "NCAA", "Volleyball World"),
+            "NCAA BASEBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "CBS Sports Network", "FOX", "FS1", "MLB Network"),
+            "NCAA SOFTBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "NCAA"),
+            "SOCCER" to listOf("ESPN", "ESPN+", "ABC", "FOX", "FS1", "FOX Deportes", "CBS Sports Golazo", "TNT Sports", "Telemundo", "Universo", "TUDN", "beIN Sports", "FIFA+", "Apple TV", "Peacock"),
+            "GOLF" to listOf("Golf Channel", "NBC", "Peacock", "CBS", "CBS Sports", "ESPN", "ESPN+", "USA Network"),
+            "TENNIS" to listOf("Tennis Channel", "ESPN", "ESPN+", "ABC", "CBS", "Peacock", "T2"),
+            "MOTORSPORT" to listOf("FOX Sports", "FS1", "FS2", "NBC Sports", "NBC", "USA Network", "Peacock", "TNT Sports", "Prime Video", "MotorTrend", "MAVTV", "F1 TV"),
+            "NASCAR" to listOf("FOX", "FS1", "NBC", "USA Network", "Peacock", "Prime Video", "TNT Sports"),
+            "F1" to listOf("ESPN", "ABC", "ESPN2", "ESPN+", "F1 TV", "Sky Sports F1"),
+            "UFC" to listOf("ESPN", "ESPN+", "ABC", "TNT Sports", "TBS"),
+            "BOXING" to listOf("ESPN", "ESPN+", "DAZN", "FOX Sports", "FS1", "CBS Sports", "TNT Sports", "Prime Video"),
+            "PBR" to listOf("CBS Sports Network", "CBS", "FOX Sports", "FS1", "TUDN", "PBR"),
+            "MONSTER JAM" to listOf("Monster Jam", "YouTube", "NBC Sports", "Peacock"),
+            "COLLEGE" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "FOX", "FS1", "FS2", "CBS", "CBS Sports Network", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider"),
+            "VOLLEYBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "CBS Sports Network", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider", "NCAA", "Volleyball World"),
+            "BASKETBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "CBS", "CBS Sports Network", "FOX", "FS1", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider")
+        )
+
+        private val networkAliases = linkedMapOf(
+            "ESPN" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN Deportes", "ESPN News", "ESPN on ABC", "ESPN+"),
             "FOX" to listOf("FOX", "FOX Sports", "Fox Sports 1", "FS1", "Fox Sports 2", "FS2", "FOX Deportes"),
             "CBS" to listOf("CBS", "CBS Sports", "CBS Sports Network", "CBS Sports HQ", "CBS Sports Golazo"),
-            "NBC" to listOf("NBC", "NBC Sports", "NBC Sports NOW", "NBCSN", "Peacock", "USA Network"),
+            "NBC" to listOf("NBC", "NBC Sports", "NBC Sports NOW", "Peacock", "USA Network"),
             "ABC" to listOf("ABC", "ESPN on ABC"),
             "TNT" to listOf("TNT", "TNT Sports", "truTV"),
             "NBA" to listOf("NBA TV", "NBA"),
@@ -57,12 +96,13 @@ class PublicSourceResolver {
             "TENNIS" to listOf("Tennis Channel"),
             "MOTORSPORT" to listOf("NBC Sports", "USA Network", "FOX Sports", "FS1", "FS2", "TNT Sports", "MotorTrend", "MAVTV"),
             "SOCCER" to listOf("TNT Sports", "CBS Sports Golazo", "Telemundo", "Universo", "FOX Deportes", "TUDN", "beIN Sports", "FIFA+", "Apple TV"),
-            "COLLEGE" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "FOX", "FS1", "FS2", "CBS", "CBS Sports Network", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "CBS Sports HQ", "ACCDN", "Pac-12 Insider"),
-            "VOLLEYBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "CBS Sports Network", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider", "NCAA", "Volleyball World"),
-            "BASKETBALL" to listOf("ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "CBS", "CBS Sports Network", "FOX", "FS1", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "ACCDN", "Pac-12 Insider")
+            "MONSTER JAM" to listOf("Monster Jam", "YouTube")
         )
 
-        private val sportsTerms = Regex("\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|tru tv|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|secn|acc network|accn|accdn|big ten|btn|pac 12|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|fubo sports|fanduel|sportsgrid|stadium|fifa\\+|real madrid tv|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc|cbs|nbc|fox|cw network|peacock|paramount|red bull|rugby|volleyball|lacrosse|wrestling|mavtv|dazn|dazn combat|l'equipe|teledeporte|rta sport|rtsh sport|trace sports stars|unbeaten|world of freesports|more than sports|fuel tv|volleyball world|ncaa|pac 12 insider)\\b", RegexOption.IGNORE_CASE)
+        private val sportsTerms = Regex(
+            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|tru tv|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|secn|acc network|accn|accdn|big ten|btn|pac 12|baseball|basketball|football|hockey|soccer|tennis|golf|cbs sports|nbc sports|fubo sports|fanduel|sportsgrid|stadium|fifa\\+|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc|cbs|nbc|fox|cw network|peacock|paramount|red bull|rugby|volleyball|lacrosse|wrestling|mavtv|dazn|dazn combat|ncaa|pac 12 insider|monster jam|volleyball world)\\b",
+            RegexOption.IGNORE_CASE
+        )
     }
 
     private val cache = LruCache<String, Pair<Long, List<PublicResolvedStream>>>(1)
@@ -76,13 +116,13 @@ class PublicSourceResolver {
         val candidates = ArrayList<PublicResolvedStream>(MAX_CANDIDATES)
         for (i in 0 until sources.length()) {
             if (candidates.size >= MAX_CANDIDATES) break
-            val s = sources.optJSONObject(i) ?: continue
-            if (!s.optBoolean("enabled", false) || !s.optBoolean("public", false)) continue
-            val playlist = s.optString("playlist").trim()
+            val source = sources.optJSONObject(i) ?: continue
+            if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
+            val playlist = source.optString("playlist").trim()
             if (!isAllowedRegistryUrl(playlist)) continue
             val body = fetchText(playlist, MAX_PLAYLIST_BYTES, true) ?: continue
             val remain = MAX_CANDIDATES - candidates.size
-            candidates += parseM3u(body, s.optString("name").ifBlank { "Public source" }, s.optString("allowlist"), minOf(PER_SOURCE_CANDIDATES, remain))
+            candidates += parseM3u(body, source.optString("name").ifBlank { "Public source" }, source.optString("allowlist"), minOf(PER_SOURCE_CANDIDATES, remain))
         }
         val unique = candidates.distinctBy { it.url }.take(MAX_CANDIDATES)
         val checked = coroutineScope {
@@ -91,47 +131,57 @@ class PublicSourceResolver {
             }
         }
         val good = checked.map { it.url }.toSet()
-        val result = (checked + unique.filterNot { it.url in good }).distinctBy { it.url }.take(MAX_CANDIDATES)
+        val result = (checked + unique.filterNot { it.url in good })
+            .distinctBy { it.url }
+            .sortedWith(compareByDescending<PublicResolvedStream> { generalSportsScore(it.name, it.group) }.thenBy { it.latencyMs })
+            .take(MAX_CANDIDATES)
         cache.put("public", now to result)
         result
     }
 
     suspend fun searchTargeted(terms: List<String>): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
-        val expanded = expandNetworkTerms(terms).map(::normalize).filter { it.length >= 2 }.distinct()
+        val expanded = expandSearchTerms(terms).map(::normalize).filter { it.length >= 2 }.distinct()
         if (expanded.isEmpty()) return@withContext emptyList()
         val registry = fetchRegistry()?.let { runCatching { JSONObject(it) }.getOrNull() } ?: return@withContext emptyList()
         val sources = registry.optJSONArray("sources") ?: JSONArray()
         val configs = mutableListOf<Triple<String, String, String>>()
         for (i in 0 until sources.length()) {
-            val s = sources.optJSONObject(i) ?: continue
-            if (s.optBoolean("enabled", false) && s.optBoolean("public", false)) {
-                val p = s.optString("playlist").trim()
-                if (isAllowedRegistryUrl(p)) configs += Triple(p, s.optString("name").ifBlank { "Public source" }, s.optString("allowlist"))
-            }
+            val source = sources.optJSONObject(i) ?: continue
+            if (!source.optBoolean("enabled", false) || !source.optBoolean("public", false)) continue
+            val playlist = source.optString("playlist").trim()
+            if (isAllowedRegistryUrl(playlist)) configs += Triple(playlist, source.optString("name").ifBlank { "Public source" }, source.optString("allowlist"))
         }
         coroutineScope {
             configs.chunked(TARGETED_CONCURRENCY).flatMap { batch ->
-                batch.map { (p, n, a) ->
+                batch.map { (playlist, sourceName, allowlist) ->
                     async(Dispatchers.IO) {
                         runCatching {
-                            val body = fetchText(p, MAX_TARGETED_BYTES, true) ?: return@runCatching emptyList<PublicResolvedStream>()
-                            parseTargetedM3u(body, n, a, expanded)
+                            val body = fetchText(playlist, MAX_TARGETED_BYTES, true) ?: return@runCatching emptyList<PublicResolvedStream>()
+                            parseTargetedM3u(body, sourceName, allowlist, expanded)
                         }.getOrDefault(emptyList())
                     }
                 }.awaitAll().flatten()
             }
-        }.distinctBy { it.url }.sortedByDescending { targetedScore(it.name, it.group, expanded) }
+        }
+            .distinctBy { it.url }
+            .sortedWith(compareByDescending<PublicResolvedStream> { targetedScore(it.name, it.group, expanded) }.thenBy { it.latencyMs })
+            .take(MAX_CANDIDATES)
     }
 
-    private fun expandNetworkTerms(terms: List<String>): List<String> {
+    private fun expandSearchTerms(terms: List<String>): List<String> {
         val out = terms.toMutableList()
+        val normalizedInput = terms.map(::normalize)
+        for ((key, aliases) in broadcastMap) {
+            val keyNorm = normalize(key)
+            if (normalizedInput.any { it == keyNorm || it.contains(keyNorm) || keyNorm.contains(it) }) out += aliases
+        }
         for (term in terms) {
-            val n = normalize(term)
+            val normalized = normalize(term)
             networkAliases.entries.firstOrNull { entry ->
-                normalize(entry.key) == n || entry.value.any { normalize(it) == n }
+                normalize(entry.key) == normalized || entry.value.any { normalize(it) == normalized }
             }?.let { out += it.value }
         }
-        return out
+        return out.distinct()
     }
 
     private fun parseM3u(text: String, source: String, allow: String, max: Int): List<PublicResolvedStream> {
@@ -177,7 +227,7 @@ class PublicSourceResolver {
                 value.isNotBlank() && !value.startsWith("#") -> {
                     val score = targetedScore(name, group, terms)
                     if (name.isNotBlank() && isAllowedStream(value) && matchesAllowlist(name, group, allow) && score > 0) {
-                        result += PublicResolvedStream(name, group, value, icon, source, score)
+                        result += PublicResolvedStream(name, group, value, icon, source)
                     }
                     name = ""
                     group = "LIVE"
@@ -189,22 +239,31 @@ class PublicSourceResolver {
     }
 
     private fun matchesAllowlist(name: String, group: String, allow: String): Boolean =
-        allow.isBlank() || allow.split('|').any { it.isNotBlank() && (name.contains(it.trim(), true) || group.contains(it.trim(), true)) }
+        allow.isBlank() || allow.split('|').any { token -> token.isNotBlank() && (name.contains(token.trim(), true) || group.contains(token.trim(), true)) }
 
     private fun targetedScore(name: String, group: String, terms: List<String>): Int {
         val haystack = normalize("$name $group")
         var best = 0
         for (term in terms) {
-            if (haystack == term) best = maxOf(best, 100)
-            else if (haystack.contains(term)) best = maxOf(best, 90)
+            val normalized = normalize(term)
+            if (haystack == normalized) best = maxOf(best, 120)
+            else if (haystack.contains(normalized)) best = maxOf(best, 100)
             else {
-                val tokens = term.split(' ').filter { it.length >= 2 }
+                val tokens = normalized.split(' ').filter { it.length >= 2 }
                 val hits = tokens.count { haystack.contains(it) }
-                if (tokens.isNotEmpty() && hits == tokens.size) best = maxOf(best, 80)
-                else if (hits > 0) best = maxOf(best, 55)
+                if (tokens.isNotEmpty() && hits == tokens.size) best = maxOf(best, 85)
+                else if (hits > 0) best = maxOf(best, 35 + hits * 10)
             }
         }
         return best
+    }
+
+    private fun generalSportsScore(name: String, group: String): Int {
+        val text = "$name $group"
+        var score = 0
+        if (isSports(name, group)) score += 10
+        if (networkAliases.keys.any { text.contains(it, true) }) score += 5
+        return score
     }
 
     private suspend fun health(stream: PublicResolvedStream): PublicResolvedStream? = withContext(Dispatchers.IO) {
@@ -215,7 +274,7 @@ class PublicSourceResolver {
             connection.connectTimeout = 3000
             connection.readTimeout = 3500
             connection.instanceFollowRedirects = true
-            connection.setRequestProperty("User-Agent", "XSportsX-public-health/1.1")
+            connection.setRequestProperty("User-Agent", "XSportsX-public-health/1.2")
             val code = connection.responseCode
             if (code !in 200..299) {
                 connection.disconnect()
@@ -235,17 +294,19 @@ class PublicSourceResolver {
 
     private fun isAllowedRegistryUrl(value: String) = runCatching {
         val url = URL(value)
-        url.protocol.equals("https", true) && registryHosts.any { url.host.equals(it, true) || url.host.endsWith(".$it", true) }
+        url.protocol.equals("https", true) && registryHosts.any { host -> url.host.equals(host, true) || url.host.endsWith(".$host", true) }
     }.getOrDefault(false)
 
     private fun isAllowedStream(value: String) = runCatching { URL(value).protocol.equals("https", true) }.getOrDefault(false)
 
     private suspend fun fetchRegistry(): String? {
-        for (target in REGISTRY_URLS) fetchText(target, 256_000, true)?.let { return it }
+        for (target in REGISTRY_URLS) {
+            fetchText(target, 256_000, true)?.let { return it }
+        }
         return null
     }
 
-    private suspend fun fetchText(target: String, max: Int, registryOnly: Boolean) = withContext(Dispatchers.IO) {
+    private suspend fun fetchText(target: String, max: Int, registryOnly: Boolean): String? = withContext(Dispatchers.IO) {
         runCatching {
             if (registryOnly && !isAllowedRegistryUrl(target)) return@runCatching null
             val connection = URL(target).openConnection() as HttpURLConnection
@@ -253,7 +314,7 @@ class PublicSourceResolver {
             connection.connectTimeout = 5000
             connection.readTimeout = 10000
             connection.instanceFollowRedirects = true
-            connection.setRequestProperty("User-Agent", "XSportsX-public/1.1")
+            connection.setRequestProperty("User-Agent", "XSportsX-public/1.2")
             if (connection.responseCode !in 200..299) {
                 connection.disconnect()
                 return@runCatching null
@@ -275,7 +336,16 @@ class PublicSourceResolver {
         }.getOrNull()
     }
 
-    private fun attr(line: String, key: String) = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE).find(line)?.groupValues?.getOrNull(1).orEmpty()
+    private fun attr(line: String, key: String): String {
+        val regex = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE)
+        return regex.find(line)?.groupValues?.getOrNull(1).orEmpty()
+    }
 
-    private fun normalize(value: String) = value.lowercase().replace("’", "'").replace(Regex("[^a-z0-9+]+"), " ").trim().replace(Regex("\\s+"), " ")
+    private fun normalize(value: String): String = value
+        .lowercase()
+        .replace('&', ' ')
+        .replace('+', ' ')
+        .replace(Regex("[^a-z0-9]+"), " ")
+        .trim()
+        .replace(Regex("\\s+"), " ")
 }
