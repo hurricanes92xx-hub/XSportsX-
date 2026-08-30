@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
@@ -26,7 +28,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** League schedule UI with canonical data plus a fresh per-league recovery pass. */
+/** League schedule UI backed by the shared snapshot; UI remains limited to three days. */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val canonicalLeague = SportsScheduleService.canonicalLeagueFor(league)
@@ -49,11 +51,16 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         loading = true
         error = null
         val loaded = withTimeoutOrNull(14_000L) {
-            val canonical = runCatching { CanonicalScheduleProvider.load(canonicalLeague, 3) }.getOrDefault(emptyList())
-            val recovery = runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
-            (canonical + recovery)
-                .distinctBy { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" }
-                .sortedBy { it.startUtc }
+            runCatching {
+                coroutineScope {
+                    val upcoming = async { ScheduleSnapshotRepository.upcoming(canonicalLeague) }
+                    val live = async { ScheduleSnapshotRepository.live() }
+                    (upcoming.await() + live.await())
+                        .filter { SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague }
+                        .distinctBy { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" }
+                        .sortedBy { it.startUtc }
+                }
+            }.getOrDefault(emptyList())
         }.orEmpty()
 
         if (loaded.isNotEmpty()) {
