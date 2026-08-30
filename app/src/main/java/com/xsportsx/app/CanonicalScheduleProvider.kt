@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -38,45 +40,25 @@ object CanonicalScheduleProvider {
                 val start = parseInstant(e.optString("start")) ?: continue
                 val tag = e.optString("tag").uppercase()
                 val isLive = tag == "LIVE"
-                // UPCOMING events from NCAA feeds can have a date-only midnight timestamp.
-                // Keep explicitly tagged UPCOMING events for the current/next window; live
-                // events are always retained regardless of their nominal start time.
-                if (isLive) {
-                    // keep
-                } else if (tag == "UPCOMING") {
-                    if (start.isBefore(now.minus(18, ChronoUnit.HOURS)) || !start.isBefore(cutoff)) continue
-                } else {
+                if (!isLive && tag == "UPCOMING") {
+                    if (start.isBefore(now.minus(26, ChronoUnit.HOURS)) || !start.isBefore(cutoff)) continue
+                } else if (!isLive) {
                     if (start.isBefore(now.minus(10, ChronoUnit.MINUTES)) || !start.isBefore(cutoff)) continue
                 }
 
                 val title = e.optString("title").trim()
                 val teams = splitMatchup(title)
-                val state = when (tag) {
-                    "LIVE" -> "in"
-                    "FINAL" -> "post"
-                    else -> "pre"
-                }
+                val state = when (tag) { "LIVE" -> "in"; "FINAL" -> "post"; else -> "pre" }
                 val status = if (tag.isNotBlank()) tag else "UPCOMING"
-
                 out += SportsEvent(
                     id = e.optString("id").ifBlank { "feed-${canonicalLeague}-${start}-${title}" },
-                    sport = sportFor(canonicalLeague),
-                    league = canonicalLeague,
-                    title = title.ifBlank { "Sports event" },
-                    startUtc = start.toString(),
-                    status = status,
-                    state = state,
-                    home = teams.second,
-                    away = teams.first,
-                    homeLogo = "",
-                    awayLogo = "",
-                    broadcast = e.optString("broadcast").trim(),
-                    artUrl = e.optString("image").trim(),
-                    sourceUrl = e.optString("sourceUrl").trim(),
-                    youtubeVideoId = ""
+                    sport = sportFor(canonicalLeague), league = canonicalLeague,
+                    title = title.ifBlank { "Sports event" }, startUtc = start.toString(),
+                    status = status, state = state, home = teams.second, away = teams.first,
+                    homeLogo = "", awayLogo = "", broadcast = e.optString("broadcast").trim(),
+                    artUrl = e.optString("image").trim(), sourceUrl = e.optString("sourceUrl").trim(), youtubeVideoId = ""
                 )
             }
-
             out.distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" } }
                 .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
         }.getOrDefault(emptyList())
@@ -98,10 +80,8 @@ object CanonicalScheduleProvider {
     }
 
     private fun splitMatchup(title: String): Pair<String, String> {
-        val at = Regex("^(.+?)\\s+@\\s+(.+)$").find(title)
-        if (at != null) return at.groupValues[1].trim() to at.groupValues[2].trim()
-        val vs = Regex("^(.+?)\\s+(?:vs\\.?|versus)\\s+(.+)$", RegexOption.IGNORE_CASE).find(title)
-        if (vs != null) return vs.groupValues[1].trim() to vs.groupValues[2].trim()
+        Regex("^(.+?)\\s+@\\s+(.+)$").find(title)?.let { return it.groupValues[1].trim() to it.groupValues[2].trim() }
+        Regex("^(.+?)\\s+(?:vs\\.?|versus)\\s+(.+)$", RegexOption.IGNORE_CASE).find(title)?.let { return it.groupValues[1].trim() to it.groupValues[2].trim() }
         return "" to title.trim()
     }
 
@@ -135,10 +115,8 @@ object CanonicalScheduleProvider {
 
     private fun http(target: String): String {
         val c = URL(target).openConnection() as HttpURLConnection
-        c.connectTimeout = CONNECT_TIMEOUT_MS
-        c.readTimeout = READ_TIMEOUT_MS
-        c.requestMethod = "GET"
-        c.instanceFollowRedirects = true
+        c.connectTimeout = CONNECT_TIMEOUT_MS; c.readTimeout = READ_TIMEOUT_MS
+        c.requestMethod = "GET"; c.instanceFollowRedirects = true
         c.setRequestProperty("Accept", "application/json")
         c.setRequestProperty("User-Agent", "XSportsX/2.0 Android")
         return try {
