@@ -98,8 +98,8 @@ object SportsScheduleService {
         val windows = buildWindows(today)
         val limiter = Semaphore(12)
         val results = coroutineScope { leagues.map { league -> async { loadLeague(league, windows, limiter) } }.awaitAll() }
-        results.flatten()
-            .filter { event -> leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming) }
+        (results.flatten() + MonsterJamLiveResolver.loadLive())
+            .filter { event -> event.league.equals("Monster Jam", true) || leagues.any { it.league == normalizeLeague(event.league) } && (event.isLive || event.isPregame() || event.isUpcoming) }
             .map { it.copy(league = normalizeLeague(it.league)) }
             .distinctBy { it.id.ifBlank { listOf(it.league, normalize(it.home), normalize(it.away), it.startUtc).joinToString("|") } }
             .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
