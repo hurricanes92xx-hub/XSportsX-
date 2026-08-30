@@ -12,9 +12,12 @@ on:
 permissions:
   contents: write
 
+# Only the newest production commit should get an APK build. Older queued
+# builds are obsolete and waste runner time while competing for the same
+# release lane.
 concurrency:
   group: xsportsx-release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
