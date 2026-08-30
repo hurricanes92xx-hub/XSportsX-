@@ -10,7 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -19,13 +19,14 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** League schedule UI with a bounded canonical-first scoreboard load. */
+/** League schedule UI with canonical data plus a fresh per-league recovery pass. */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val canonicalLeague = SportsScheduleService.canonicalLeagueFor(league)
@@ -47,19 +48,21 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        val loaded = withTimeoutOrNull(11_000L) {
+        val loaded = withTimeoutOrNull(14_000L) {
             val canonical = runCatching { CanonicalScheduleProvider.load(canonicalLeague, 3) }.getOrDefault(emptyList())
-            if (canonical.isNotEmpty()) canonical
-            else runCatching { SportsScheduleService.loadForLeague(canonicalLeague, 3) }.getOrDefault(emptyList())
+            // The canonical feed is fast, but it is refreshed asynchronously. Always run
+            // the reliable league recovery pass too so a partial/stale feed cannot hide
+            // today's MLB/NHL/etc. games or newly-live events.
+            val recovery = runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
+            (canonical + recovery)
+                .distinctBy { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" }
+                .sortedBy { it.startUtc }
         }.orEmpty()
+
         if (loaded.isNotEmpty()) {
             allEvents = loaded
-        } else {
-            val recovered = withTimeoutOrNull(5_000L) {
-                runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
-            }.orEmpty()
-            if (recovered.isNotEmpty()) allEvents = recovered
-            else if (allEvents.isEmpty()) error = "Schedule temporarily unavailable"
+        } else if (allEvents.isEmpty()) {
+            error = "Schedule temporarily unavailable"
         }
         loading = false
     }
@@ -69,12 +72,20 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         return
     }
 
+    val zone = ZoneId.systemDefault()
+    val today = now.atZone(zone).toLocalDate()
     val threeDayCutoff = now.plus(3, ChronoUnit.DAYS)
     val transitionGrace = now.minus(10, ChronoUnit.MINUTES)
     val visible = allEvents.filter { event ->
         val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
-        if (tab == "LIVE") event.isLive
-        else !event.isLive && !start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)
+        if (tab == "LIVE") {
+            event.isLive
+        } else {
+            val dateOnly = event.status.contains("upcoming", true) && event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
+            val localDate = start.atZone(zone).toLocalDate()
+            val dateOnlyInWindow = dateOnly && !localDate.isBefore(today) && localDate.isBefore(today.plusDays(3))
+            event.isLive.not() && (dateOnlyInWindow || (!start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)))
+        }
     }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
