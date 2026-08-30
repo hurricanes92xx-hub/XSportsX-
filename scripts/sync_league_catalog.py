@@ -3,25 +3,26 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# One authoritative catalog. Keep this in lock-step with SportsScheduleService.uiLeagueChoices.
+# Authoritative catalog: name, display glyph, ESPN sport, ESPN league id.
 LEAGUES = [
-    ("NFL", "NFL"), ("NBA", "NBA"), ("WNBA", "WNBA"),
-    ("NCAA FB", "NCAA"), ("NCAA FCS", "FCS"), ("NCAA BB", "NCAA"), ("NCAA WBB", "NCAA"),
-    ("MLB", "MLB"), ("NCAA BASEBALL", "NCAA"), ("NHL", "NHL"),
-    ("NCAA MEN HOCKEY", "NCAA"), ("NCAA WOMEN HOCKEY", "NCAA"),
-    ("NCAA SOFTBALL", "NCAA"), ("NCAA VB", "VB"),
-    ("NCAA MEN SOCCER", "NCAA"), ("NCAA WOMEN SOCCER", "NCAA"),
-    ("NCAA MEN LAX", "LAX"), ("NCAA WOMEN LAX", "LAX"),
-    ("MLS", "MLS"), ("EPL", "EPL"), ("LaLiga", "LALIGA"),
-    ("Bundesliga", "BUND"), ("Serie A", "SERIE A"), ("Ligue 1", "L1"),
-    ("UCL", "UCL"), ("UEL", "UEL"), ("NWSL", "NWSL"),
-    ("UFC", "UFC"), ("BOXING", "BOX"),
+    ("NFL", "NFL", "football", "nfl"), ("NBA", "NBA", "basketball", "nba"), ("WNBA", "WNBA", "basketball", "wnba"),
+    ("NCAA FB", "NCAA", "football", "college-football"), ("NCAA FCS", "FCS", "football", "college-football"),
+    ("NCAA BB", "NCAA", "basketball", "mens-college-basketball"), ("NCAA WBB", "NCAA", "basketball", "womens-college-basketball"),
+    ("MLB", "MLB", "baseball", "mlb"), ("NCAA BASEBALL", "NCAA", "baseball", "college-baseball"),
+    ("NHL", "NHL", "hockey", "nhl"), ("NCAA MEN HOCKEY", "NCAA", "hockey", "mens-college-hockey"),
+    ("NCAA WOMEN HOCKEY", "NCAA", "hockey", "womens-college-hockey"), ("NCAA SOFTBALL", "NCAA", "softball", "college-softball"),
+    ("NCAA VB", "VB", "volleyball", "womens-college-volleyball"), ("NCAA MEN SOCCER", "NCAA", "soccer", "usa.ncaa.m.1"),
+    ("NCAA WOMEN SOCCER", "NCAA", "soccer", "usa.ncaa.w.1"), ("NCAA MEN LAX", "LAX", "lacrosse", "mens-college-lacrosse"),
+    ("NCAA WOMEN LAX", "LAX", "lacrosse", "womens-college-lacrosse"), ("MLS", "MLS", "soccer", "usa.1"),
+    ("EPL", "EPL", "soccer", "eng.1"), ("LaLiga", "LALIGA", "soccer", "esp.1"), ("Bundesliga", "BUND", "soccer", "ger.1"),
+    ("Serie A", "SERIE A", "soccer", "ita.1"), ("Ligue 1", "L1", "soccer", "fra.1"), ("UCL", "UCL", "soccer", "uefa.champions"),
+    ("UEL", "UEL", "soccer", "uefa.europa"), ("NWSL", "NWSL", "soccer", "usa.nwsl"), ("UFC", "UFC", "mma", "ufc"),
+    ("BOXING", "BOX", "boxing", "boxing"),
 ]
 
 mobile = ROOT / "app/src/main/java/com/xsportsx/app/FuturisticSports.kt"
 text = mobile.read_text()
-# Remove stale hard-coded action-sports/esports entries and make the displayed league cards authoritative.
-items = ",\n".join(f'    SportVisual("{name}", "{icon}", "")' for name, icon in LEAGUES)
+items = ",\n".join(f'    SportVisual("{name}", "{icon}", "")' for name, icon, _, _ in LEAGUES)
 replacement = f'private val sports = listOf(\n{items}\n)'
 text, count = re.subn(r'private val sports = listOf\(.*?\n\)\n\n@Composable private fun SportGlyph', replacement + '\n\n@Composable private fun SportGlyph', text, count=1, flags=re.S)
 if count != 1:
@@ -30,17 +31,10 @@ mobile.write_text(text)
 
 tv = ROOT / "app/src/main/java/com/xsportsx/app/TvHome.kt"
 text = tv.read_text()
-# TV navigation must expose every configured league, not just the legacy nine-league subset.
-tv_items = ",".join(f'TvLeague("{name}", "", "")' for name, _ in LEAGUES)
-tv_live = 'val liveLeagues = listOf(' + ','.join(f'TvLeague("{name}", "", "")' for name, _ in LEAGUES) + ')'
-tv_sports = 'private val tvSports = listOf(' + ','.join(f'TvSport("{name}", "{icon}")' for name, icon in LEAGUES) + ')'
-text, c1 = re.subn(r'val liveLeagues = listOf\(.*?\)\nprivate val tvSports = listOf\(.*?\)\n', tv_live + '\n' + tv_sports + '\n', text, count=1, flags=re.S)
-if c1 != 1:
+tv_live = 'val liveLeagues = listOf(' + ','.join(f'TvLeague("{name}", "{sport}", "{league_id}")' for name, _, sport, league_id in LEAGUES) + ')'
+tv_sports = 'private val tvSports = listOf(' + ','.join(f'TvSport("{name}", "{icon}")' for name, icon, _, _ in LEAGUES) + ')'
+text, count = re.subn(r'val liveLeagues = listOf\(.*?\)\nprivate val tvSports = listOf\(.*?\)\n', tv_live + '\n' + tv_sports + '\n', text, count=1, flags=re.S)
+if count != 1:
     raise SystemExit("Could not locate TV league catalogs")
-# Keep the existing ESPN live loader working by deriving sport/feed IDs from the canonical schedule service.
-text = text.replace(
-    'private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = withContext(Dispatchers.IO) {',
-    'private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = withContext(Dispatchers.IO) {'
-)
 tv.write_text(text)
 print(f"Synchronized {len(LEAGUES)} leagues across Mobile and TV")
