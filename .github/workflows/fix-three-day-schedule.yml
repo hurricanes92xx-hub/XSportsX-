@@ -1,0 +1,119 @@
+name: Fix three-day schedule loading
+on:
+  push:
+    branches: [android-app]
+    paths: ['.github/SCHEDULE_FIX_TRIGGER']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: android-app, fetch-depth: 1}
+      - name: Patch schedule service and league screen
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          service = Path('app/src/main/java/com/xsportsx/app/SportsScheduleService.kt')
+          s = service.read_text()
+          old = '''    /** Fast path for a league screen: fetch only the selected league. */
+    suspend fun loadForLeague(label: String, daysAhead: Int = DAYS_AHEAD): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = canonicalLeagueFor(label)
+        val league = leagues.firstOrNull { canonicalLeagueFor(it.league) == canonical } ?: return@withContext emptyList()
+        val today = LocalDate.now(ZoneId.systemDefault())
+        val windows = buildDailyWindows(today, daysAhead)
+        val limiter = Semaphore(4)
+        loadLeague(league, windows, limiter)
+            .filter { canonicalLeagueFor(it.league) == canonical }
+            .map { it.copy(league = canonical) }
+            .distinctBy { canonicalKey(it) }
+            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+    }
+'''
+          new = '''    /** Fast, throttling-safe path for a league screen. */
+    suspend fun loadForLeague(label: String, daysAhead: Int = DAYS_AHEAD): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val canonical = canonicalLeagueFor(label)
+        val league = leagues.firstOrNull { canonicalLeagueFor(it.league) == canonical } ?: return@withContext emptyList()
+        val today = LocalDate.now(ZoneId.systemDefault())
+        val end = today.plusDays(daysAhead.toLong())
+
+        // Do not fan out daily requests for a single league. One range request is
+        // materially less likely to be throttled and is what ESPN supports.
+        val range = withTimeoutOrNull(12_000L) {
+            runCatching { fetchWindowWithFallbacks(league, ScheduleWindow(today, end)) }.getOrDefault(emptyList())
+        }.orEmpty()
+        val validRange = validLeagueWindow(range, canonical)
+        if (validRange.isNotEmpty()) return@withContext validRange
+
+        // Recovery: serialize daily requests so a transient ESPN throttle does not
+        // turn into an empty schedule.
+        val recovered = ArrayList<SportsEvent>()
+        var day = today
+        while (!day.isAfter(end)) {
+            val daily = withTimeoutOrNull(12_000L) {
+                runCatching { fetchWindowWithFallbacks(league, ScheduleWindow(day, day)) }.getOrDefault(emptyList())
+            }.orEmpty()
+            recovered += daily
+            val valid = validLeagueWindow(recovered, canonical)
+            if (valid.isNotEmpty()) return@withContext valid
+            day = day.plusDays(1)
+        }
+
+        // Last recovery layer uses the dedicated throttling-safe provider.
+        ReliableLeagueScheduleFallback.load(canonical, daysAhead)
+    }
+
+    private fun validLeagueWindow(events: List<SportsEvent>, canonical: String): List<SportsEvent> {
+        val now = java.time.Instant.now()
+        val lower = now.minusSeconds(10L * 60L)
+        val upper = now.plusSeconds(DAYS_AHEAD.toLong() * 24L * 60L * 60L)
+        return events
+            .filter { canonicalLeagueFor(it.league) == canonical || it.league.equals(canonical, true) }
+            .map { it.copy(league = canonical) }
+            .filter {
+                val start = runCatching { java.time.Instant.parse(it.startUtc) }.getOrNull() ?: return@filter false
+                start >= lower && start <= upper
+            }
+            .distinctBy { canonicalKey(it) }
+            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+            .take(MAX_GAMES_PER_LEAGUE)
+    }
+'''
+          if old not in s: raise SystemExit('SportsScheduleService loadForLeague anchor not found')
+          service.write_text(s.replace(old,new,1))
+
+          screen = Path('app/src/main/java/com/xsportsx/app/LeagueScheduleScreen.kt')
+          q = screen.read_text()
+          old2 = '''            SportsScheduleService.loadForLeague(canonicalLeague, 3)
+        }
+            .onSuccess { serviceEvents ->
+                if (serviceEvents.isNotEmpty()) {
+                    allEvents = serviceEvents
+                } else {
+                    val recovered = ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
+                    if (recovered.isNotEmpty()) allEvents = recovered
+                }
+            }
+'''
+          new2 = '''            SportsScheduleService.loadForLeague(canonicalLeague, 3)
+        }
+            .onSuccess { serviceEvents ->
+                if (serviceEvents.isNotEmpty()) {
+                    allEvents = serviceEvents
+                } else {
+                    val recovered = ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
+                    if (recovered.isNotEmpty()) allEvents = recovered
+                }
+            }
+'''
+          if old2 not in q: raise SystemExit('LeagueScheduleScreen anchor not found')
+          screen.write_text(q.replace(old2,new2,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/SportsScheduleService.kt app/src/main/java/com/xsportsx/app/LeagueScheduleScreen.kt
+          git commit -m 'fix: make three-day league schedules resilient to throttling' || exit 0
+          git push origin android-app
