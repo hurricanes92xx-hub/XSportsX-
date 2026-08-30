@@ -129,6 +129,7 @@ private val sports = listOf(
 
 @Composable
 fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {}) {
+    var selectedSport by remember { mutableStateOf<String?>(null) }
     val context = androidx.compose.ui.platform.LocalContext.current
     val sourceConfigured = remember { SourceStore(context).load().isConfigured() }
     var selectedSection by remember { mutableStateOf("HOME") }
@@ -141,7 +142,13 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
             Column(Modifier.fillMaxSize()) {
                 Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 92.dp)) {
                     MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))
-                    when (selectedSection) { "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork); "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork); "FAVORITES" -> MobileFavorites(onConnect); else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) }
+                    when {
+    selectedSport != null -> LiveChannelsScreen(filter = mobileSportFilter(selectedSport!!), onBack = { selectedSport = null })
+    selectedSection == "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork)
+    selectedSection == "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork)
+    selectedSection == "FAVORITES" -> MobileFavorites(onConnect)
+    else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) { selectedSport = it }
+}
                 }
                 MobileBottomNav(selectedSection) { selectedSection = it }
             }
@@ -150,15 +157,40 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
 }
 
 @Composable private fun MobileHeader(sourceConfigured: Boolean, pulseAlpha: Float, onConnect: () -> Unit) { Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) { XtremeLogo(size = 56.dp); Spacer(Modifier.width(10.dp)); Column(Modifier.weight(1f)) { Text("XSPORTS", color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp); Text("NEXT-GEN SPORTS COMMAND", color = Color(0xFF687180), fontSize = 8.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.8.sp) }; Box(Modifier.clip(RoundedCornerShape(18.dp)).background(if (sourceConfigured) Color(0x2219FF72) else Color(0x22FF1744)).clickable { onConnect() }.padding(horizontal = 10.dp, vertical = 7.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Box(Modifier.size(7.dp).alpha(pulseAlpha).clip(RoundedCornerShape(50)).background(if (sourceConfigured) Color(0xFF22FF7A) else XRed)); Spacer(Modifier.width(6.dp)); Text(if (sourceConfigured) "SOURCE READY" else "ADD SOURCE", color = if (sourceConfigured) Color(0xFF74FFAA) else Color(0xFFFF7185), fontSize = 8.sp, fontWeight = FontWeight.Black) } } } }
-@Composable private fun MobileHomeContent(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) {
+@Composable private fun MobileHomeContent(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit, onSport: (String) -> Unit) {
     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).clickable { onConnect() }.background(Brush.horizontalGradient(listOf(Color(0xFF3A0812), Color(0xFF111827), Color(0xFF30100A)))).padding(20.dp), verticalAlignment = Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Row(verticalAlignment = Alignment.CenterVertically) { Box(Modifier.clip(RoundedCornerShape(7.dp)).background(XRed).padding(horizontal = 8.dp, vertical = 5.dp)) { Text("LIVE", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) }; Spacer(Modifier.width(8.dp)); Text("LIVE CENTER", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Black, letterSpacing = 1.2.sp) }; Spacer(Modifier.height(10.dp)); Text("YOUR GAMES.\nONE COMMAND CENTER.", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black, lineHeight = 28.sp); Spacer(Modifier.height(7.dp)); Text(if (sourceConfigured) "Source connected. Browse events and networks." else "Connect your authorized source to unlock live event matching and network streams.", color = Color(0xFF9BA4B2), fontSize = 11.sp, lineHeight = 16.sp); Spacer(Modifier.height(12.dp)); Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).padding(horizontal = 13.dp, vertical = 8.dp)) { Text(if (sourceConfigured) "BROWSE LIVE →" else "CONNECT NOW →", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) } }; Text("◈", color = XRed, fontSize = 58.sp, fontWeight = FontWeight.Black) }
-    Spacer(Modifier.height(20.dp)); MobileSectionLabel("TOP SPORTS", null); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(sports, key = { it.name }) { sport -> SportBadgeCard(sport) { onConnect() } } }
+    Spacer(Modifier.height(20.dp)); MobileSectionLabel("TOP SPORTS", null); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(sports, key = { it.name }) { sport -> SportBadgeCard(sport) { onSport(sport.name) } } }
     Spacer(Modifier.height(20.dp)); MobileSectionLabel("NETWORKS", null); Spacer(Modifier.height(8.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(xNetworks, key = { it.name }) { NetworkCard(it, onNetwork) } }
     Spacer(Modifier.height(20.dp)); MobileSectionLabel("UP NEXT", "SPORTS FEED"); Spacer(Modifier.height(8.dp)); UpcomingStrip()
 }
 @Composable private fun MobileLiveCenter(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) { MobileSectionLabel("LIVE CENTER", if (sourceConfigured) "SOURCE READY" else "CONNECT SOURCE"); Spacer(Modifier.height(10.dp)); if (!sourceConfigured) ActionPanel("CONNECT YOUR SOURCE", "Connect Xtream/M3U, then XSportsX can match your live events and networks.", "CONNECT SOURCE →", onConnect) else { ActionPanel("LIVE EVENT MATCHING", "Your source is connected. Choose a network to browse matched streams.", "REFRESH LIVE →", onConnect); Spacer(Modifier.height(18.dp)); LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(xNetworks.take(8)) { NetworkCard(it, onNetwork) } } } }
 @Composable private fun MobileNetworks(sourceConfigured: Boolean, onConnect: () -> Unit, onNetwork: (XNetwork) -> Unit) { MobileSectionLabel("NETWORKS", "SOURCE MATCH"); Spacer(Modifier.height(10.dp)); if (!sourceConfigured) { ActionPanel("NETWORKS ARE READY", "Connect your authorized source to turn these cards into playable source matches.", "ADD SOURCE →", onConnect); Spacer(Modifier.height(16.dp)) }; LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(end = 8.dp)) { items(xNetworks, key = { it.name }) { NetworkCard(it, onNetwork) } } }
 @Composable private fun MobileFavorites(onConnect: () -> Unit) { MobileSectionLabel("FAVORITES", "YOUR PICKS"); Spacer(Modifier.height(12.dp)); ActionPanel("YOUR FAVORITES LIVE HERE", "Pin teams, networks and events once your source is connected.", "ADD SOURCE →", onConnect) }
+private fun mobileSportFilter(sport: String): String = when (sport.uppercase()) {
+    "NFL" -> "nfl||nfl network"
+    "NBA" -> "nba"
+    "NCAA FB" -> "ncaaf||ncaa football||college football"
+    "NCAA BB" -> "ncaab||ncaa basketball||college basketball"
+    "MLB" -> "mlb||major league baseball"
+    "NHL" -> "nhl||national hockey league"
+    "UFC" -> "ufc||ultimate fighting championship"
+    "BOXING" -> "boxing||world boxing"
+    "RUGBY" -> "rugby||rugby pass"
+    "VOLLEYBALL" -> "volleyball||fivb"
+    "LACROSSE" -> "lacrosse||world lacrosse"
+    "WRESTLING" -> "wrestling||wwe||aew"
+    "MOTOGP" -> "motogp||moto gp"
+    "WRC" -> "wrc||world rally championship"
+    "WEC" -> "wec||world endurance championship"
+    "IMSA" -> "imsa"
+    "FORMULA E" -> "formula e||formulae"
+    "MXGP" -> "mxgp||motocross"
+    "MONSTER JAM" -> "monster jam"
+    "ESPORTS" -> "esports"
+    "ACTION SPORTS" -> "action sports"
+    else -> sport
+}
+
 @Composable private fun MobileSectionLabel(title: String, eyebrow: String?) { Row(verticalAlignment = Alignment.CenterVertically) { Text(title, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp); eyebrow?.let { Spacer(Modifier.width(8.dp)); Text(it, color = Muted, fontSize = 8.sp, fontWeight = FontWeight.Black, letterSpacing = .8.sp) } } }
 @Composable private fun ActionPanel(title: String, body: String, button: String, onClick: () -> Unit) { Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF111722), Color(0xFF2A0D14)))).padding(18.dp)) { Text(title, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black); Spacer(Modifier.height(6.dp)); Text(body, color = Color(0xFF8F98A7), fontSize = 11.sp, lineHeight = 16.sp); Spacer(Modifier.height(13.dp)); Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).clickable { onClick() }.padding(horizontal = 14.dp, vertical = 9.dp)) { Text(button, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Black) } } }
 @Composable private fun SportPill(sport: SportVisual, onClick: () -> Unit) { Row(Modifier.clip(RoundedCornerShape(15.dp)).background(Panel2).clickable { onClick() }.padding(horizontal = 13.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) { SportGlyph(sport.icon, 26.dp); Spacer(Modifier.width(7.dp)); Text(sport.name, color = Color(0xFFDCE1E9), fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1) } }
