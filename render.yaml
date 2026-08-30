@@ -3,8 +3,9 @@ services:
     name: xsportsx-sports-source
     runtime: node
     plan: free
+    branch: android-app
     autoDeploy: true
-    buildCommand: npm install
+    buildCommand: npm install && npm run check
     startCommand: npm start
     healthCheckPath: /health
     envVars:
@@ -18,5 +19,7 @@ services:
         value: "https://ncaa-api.henrygd.me"
       - key: SCHEDULE_TTL_SECONDS
         value: "60"
+      - key: XTREAM_TTL_SECONDS
+        value: "300"
       - key: REQUEST_TIMEOUT_MS
         value: "8000"
