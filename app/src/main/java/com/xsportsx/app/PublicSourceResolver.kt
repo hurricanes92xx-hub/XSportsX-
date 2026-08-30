@@ -25,9 +25,9 @@ class PublicSourceResolver {
     companion object {
         private const val CACHE_TTL_MS = 15 * 60 * 1000L
         private const val MAX_PLAYLIST_BYTES = 8_000_000
-        private const val MAX_CANDIDATES = 240
-        private const val PER_SOURCE_CANDIDATES = 60
-        private const val MAX_HEALTH_CHECKS = 96
+        private const val MAX_CANDIDATES = 320
+        private const val PER_SOURCE_CANDIDATES = 100
+        private const val MAX_HEALTH_CHECKS = 128
         private const val HEALTH_CONCURRENCY = 12
         private const val MAX_TARGETED_BYTES = 8_000_000
         private const val TARGETED_CONCURRENCY = 6
@@ -42,8 +42,10 @@ class PublicSourceResolver {
             "iptv-org.github.io", "raw.githubusercontent.com", "github.com", "cdn.jsdelivr.net",
             "dearbulut.github.io", "i.mjh.nz"
         )
+        // Network/broadcaster aliases are deliberately broad: public US/CA/FAST playlists
+        // frequently place sports networks in a generic group rather than "Sports".
         private val sportsTerms = Regex(
-            "\\b(sport|sports|espn|fox sports|fs1|fs2|tnt|tbs|nba|mlb|nhl|nfl|ncaaf|ncaab|wnba|sec network|acc network|accdn|big ten|btn|pac 12|pac-12|baseball|basketball|football|hockey|soccer|cbs sports|nbc sports|fubo sports|fanduel|sportsgrid|stadium|fifa\\+|real madrid tv|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc|cbs|nbc|fox|the cw|cw network|peacock|paramount|red bull|rugby|volleyball|lacrosse|wrestling|mavtv|tvs sports|dazn combat|glory kickboxing|l\\'equipe|teledeporte|rta sport|rtsh sport|san marino rtv sport|trace sports stars|unbeaten|world of freesports|more than sports|fuel tv|w14dk)\\b",
+            "\\b(sport|sports|espn|espn2|espnu|espn deportes|espn news|fox sports|fox sports 1|fox sports 2|fs1|fs2|fox deportes|tnt sports|tbs|nba tv|mlb network|nhl network|nfl network|ncaaf|ncaab|wnba|sec network|acc network|accdn|big ten|btn|pac 12|pac-12|baseball|basketball|football|hockey|soccer|cbs sports|cbs sports network|cbs sports hq|cbs sports golazo|nbc sports|nbc sports network|nbc sports now|fubo sports|fanduel tv|fanduel racing|sportsgrid|stadium|fifa\\+|real madrid tv|motorsport|f1|formula|racing|ufc|boxing|nascar|sportsnet|tsn|fifa|abc sports|cbs|nbc|fox|the cw|cw network|peacock|paramount|paramount\\+|red bull tv|rugby|volleyball|lacrosse|wrestling|mavtv|tvs sports|tvs sports bureau|tvs women sports|dazn|dazn combat|glory kickboxing|l\\'equipe|teledeporte|rta sport|rtsh sport|san marino rtv sport|trace sports stars|unbeaten|world of freesports|more than sports|fuel tv|w14dk|w14dk-d 14\\.5)\\b",
             RegexOption.IGNORE_CASE
         )
     }
@@ -85,8 +87,13 @@ class PublicSourceResolver {
         result
     }
 
+    /**
+     * Targeted public-source lookup. Callers can pass event/team/league/broadcast terms.
+     * Network aliases are matched even when a playlist uses a generic group-title.
+     */
     suspend fun searchTargeted(terms: List<String>): List<PublicResolvedStream> = withContext(Dispatchers.IO) {
-        val normalized = terms.map(::normalize).filter { it.length >= 2 }.distinct()
+        val normalized = terms.flatMap { expandNetworkAliases(it) }
+            .map(::normalize).filter { it.length >= 2 }.distinct()
         if (normalized.isEmpty()) return@withContext emptyList()
         val registryText = fetchRegistry() ?: return@withContext emptyList()
         val registry = runCatching { JSONObject(registryText) }.getOrNull() ?: return@withContext emptyList()
@@ -144,6 +151,28 @@ class PublicSourceResolver {
             }
         }
         return result
+    }
+
+    private fun expandNetworkAliases(term: String): List<String> {
+        val n = normalize(term)
+        val aliases = linkedSetOf(term)
+        when {
+            n == "espn" -> aliases += listOf("ESPN2", "ESPNU", "ESPN Deportes", "ESPN News")
+            n == "fox sports" || n == "fox sports 1" -> aliases += listOf("FS1", "FS2", "FOX Deportes")
+            n == "cbs sports" -> aliases += listOf("CBS Sports HQ", "CBS Sports Network", "CBS Sports Golazo")
+            n == "nbc sports" -> aliases += listOf("NBC Sports Now", "NBC Sports Network")
+            n == "tnt sports" -> aliases += listOf("TNT", "TNT Sports")
+            n == "fanduel tv" -> aliases += listOf("FanDuel Racing")
+            n == "dazn" -> aliases += listOf("DAZN Combat")
+            n == "sec network" -> aliases += listOf("SEC Network+")
+            n == "acc network" -> aliases += listOf("ACCN", "ACCDN")
+            n == "big ten network" -> aliases += listOf("BTN")
+            n == "mlb" -> aliases += listOf("MLB Network")
+            n == "nfl" -> aliases += listOf("NFL Network")
+            n == "nba" -> aliases += listOf("NBA TV")
+            n == "nhl" -> aliases += listOf("NHL Network")
+        }
+        return aliases.toList()
     }
 
     private fun targetedScore(name: String, group: String, terms: List<String>): Int {
