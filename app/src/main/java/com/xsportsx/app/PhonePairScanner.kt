@@ -53,7 +53,6 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         require(uri.scheme == "http" && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()) {
             "Scan the QR code shown by the XSportsX TV app"
         }
-
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val network = cm?.activeNetwork
         var lastError: Throwable? = null
@@ -88,10 +87,7 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
             }
             if (attempt < 2) kotlinx.coroutines.delay(500L * (attempt + 1))
         }
-        throw IllegalStateException(
-            lastError?.message?.takeIf { it.isNotBlank() }
-                ?: "Could not reach the TV. Make sure both devices are on the same Wi-Fi network and Local network access is allowed."
-        )
+        throw IllegalStateException(lastError?.message?.takeIf { it.isNotBlank() } ?: "Could not reach the TV. Make sure both devices are on the same Wi-Fi network and Local network access is allowed.")
     }
 
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
@@ -118,18 +114,18 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         if (granted) scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
         else status = "Local network access is required to connect to your TV"
     }
+
+    val startScanner: () -> Unit = {
+        if (source.isConfigured()) {
+            if (Build.VERSION.SDK_INT >= 37 && !localNetworkGranted()) permissionLocal.launch(ACCESS_LOCAL_NETWORK)
+            else scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
+        }
+    }
+
     val permissionCamera = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) startScannerAfterCamera()
+        if (granted) startScanner()
         else status = "Camera permission is required to scan the TV code"
     }
-
-    fun startScanner() {
-        if (!source.isConfigured()) return
-        if (Build.VERSION.SDK_INT >= 37 && !localNetworkGranted()) permissionLocal.launch(ACCESS_LOCAL_NETWORK)
-        else scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
-    }
-
-    fun startScannerAfterCamera() { startScanner() }
 
     Box(Modifier.fillMaxSize().background(Color(0xFF03060B)), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)) {
