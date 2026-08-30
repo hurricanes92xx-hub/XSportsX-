@@ -43,6 +43,18 @@ NCAA_LEAGUES = [
     ('NCAA Beach Volleyball','beach-volleyball','d1','🏐'),
 ]
 WRESTLING_FALLBACK = [
+    # WWE Raw is a recurring weekly program; keep explicit future dates so a
+    # partial official-page scrape cannot make Raw disappear from the feed.
+    ('WWE','Monday Night Raw','2026-08-31T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-09-07T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-09-14T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-09-21T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-09-28T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-10-05T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-10-12T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-10-19T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-10-26T00:00:00Z','SPECIAL','🏆'),
+    ('WWE','Monday Night Raw','2026-11-02T00:00:00Z','SPECIAL','🏆'),
     ('WWE','NXT Heatwave','2026-08-30T17:00:00Z','SPECIAL','🏆'), ('WWE',"Sunday Night's Main Event",'2026-09-07T00:00:00Z','SPECIAL','🏆'),
     ('WWE','Worlds Collide','2026-09-27T00:00:00Z','SPECIAL','🏆'), ('WWE','Money in the Bank','2026-10-10T22:00:00Z','PLE','🏆'),
     ('WWE','Survivor Series: WarGames','2026-11-29T00:00:00Z','PLE','🏆'), ('AEW','All In: London','2026-08-30T15:30:00Z','PPV','🤼'),
@@ -119,20 +131,23 @@ def jsonld_objects(html):
         except Exception:continue
 
 def add_wrestling(events):
-    found=set()
+    found_events=set()
     for brand,url,icon in OFFICIAL_WRESTLING:
         try: html=get(url).decode('utf-8','ignore')
         except Exception: continue
-        n=0
         for o in jsonld_objects(html):
             kind=o.get('@type'); title=str(o.get('name') or '').strip(); start=str(o.get('startDate') or '').strip()
             if (kind=='Event' or (isinstance(kind,list) and 'Event' in kind)) and title and start:
                 try: dt=datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(timezone.utc)
                 except Exception: continue
-                if dt>=datetime.now(timezone.utc)-timedelta(hours=6): events.append({'league':brand,'title':title,'start':dt.isoformat().replace('+00:00','Z'),'tag':'SPECIAL','icon':icon}); n+=1
-        if n:found.add(brand)
+                if dt>=datetime.now(timezone.utc)-timedelta(hours=6):
+                    events.append({'league':brand,'title':title,'start':dt.isoformat().replace('+00:00','Z'),'tag':'SPECIAL','icon':icon})
+                    found_events.add((brand, title, dt.strftime('%Y-%m-%d')))
     for brand,title,start,tag,icon in WRESTLING_FALLBACK:
-        if brand not in found and datetime.fromisoformat(start.replace('Z','+00:00'))>=datetime.now(timezone.utc)-timedelta(hours=6):events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon})
+        dt=datetime.fromisoformat(start.replace('Z','+00:00'))
+        key=(brand,title,dt.strftime('%Y-%m-%d'))
+        if key not in found_events and dt>=datetime.now(timezone.utc)-timedelta(hours=6):
+            events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon})
 
 def main():
     events=[]; failures=[]; counts={}
