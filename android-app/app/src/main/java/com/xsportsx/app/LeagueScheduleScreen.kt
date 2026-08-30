@@ -36,24 +36,16 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
 
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true; error = null
-        runCatching {
-            SportsScheduleService.load().filter {
-                SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague
-            }
-        }.onSuccess { events = it }.onFailure { error = it.message ?: "Unable to load schedule" }
+        runCatching { SportsScheduleService.load().filter { SportsScheduleService.canonicalLeagueFor(it.league) == canonicalLeague } }
+            .onSuccess { events = it }.onFailure { error = it.message ?: "Unable to load schedule" }
         loading = false
     }
+    if (streamFilter != null) { LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null }); return }
 
-    if (streamFilter != null) {
-        LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null })
-        return
-    }
-
-    // Keep the feed complete in memory/background, but render only the requested 3-day
-    // window. A live event is never allowed to fall out of the upcoming list merely
-    // because its provider clock moved a few minutes forward/backward.
-    val now = remember { Instant.now() }
-    val horizon = remember(now) { now.plus(3, ChronoUnit.DAYS) }
+    // Keep the full schedule feed available, but render only three days. Compute the
+    // window at composition time so a long-lived screen does not freeze yesterday's date.
+    val now = Instant.now()
+    val horizon = now.plus(3, ChronoUnit.DAYS)
     val visible = events.filter { event ->
         if (tab == "LIVE") event.isLive
         else {
@@ -81,9 +73,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) { Text(error!!, color = Color.White) }
-            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} games in the next 3 days", color = Color(0xFF858B98))
-            }
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} games in the next 3 days", color = Color(0xFF858B98)) }
             else -> LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, dayEvents) ->
                     item { Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp)) }
@@ -104,6 +94,5 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         }
     }
 }
-
 private fun dayLabel(startUtc: String): String = runCatching { SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { "SCHEDULE" }
 private fun formatTime(startUtc: String): String = runCatching { SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { startUtc }
