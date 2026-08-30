@@ -23,24 +23,21 @@ data class SportsEvent(
 
     private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
 
-    /** True for scheduled events beginning within the next 30 minutes. */
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
         val start = startMillis()
         return start > nowMillis && start <= nowMillis + 30L * 60L * 1000L && !isLive
     }
 
-    /** Feed events explicitly tagged UPCOMING remain visible when a provider supplied date-only midnight. */
+    /** Explicit UPCOMING/SCHEDULED feed rows remain visible on game day even when only a date was supplied. */
     val isUpcoming: Boolean
         get() {
             if (isLive) return false
             val start = startMillis()
             val now = System.currentTimeMillis()
             if (status.contains("upcoming", true) || status.contains("scheduled", true)) {
-                return start >= now - 18L * 60L * 60L * 1000L
+                return start >= now - 26L * 60L * 60L * 1000L
             }
             if (start <= now) return false
-            return state.equals("pre", true) ||
-                state.equals("scheduled", true) ||
-                state.isBlank()
+            return state.equals("pre", true) || state.equals("scheduled", true) || state.isBlank()
         }
 }
