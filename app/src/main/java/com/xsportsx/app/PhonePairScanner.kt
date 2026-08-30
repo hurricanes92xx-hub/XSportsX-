@@ -27,6 +27,8 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
+private const val ACCESS_LOCAL_NETWORK = "android.permission.ACCESS_LOCAL_NETWORK"
+
 @Composable
 fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
     val context = LocalContext.current
@@ -43,6 +45,9 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         put("m3uUrl", source.m3uUrl)
     }
 
+    fun localNetworkGranted(): Boolean = Build.VERSION.SDK_INT < 37 ||
+        ContextCompat.checkSelfPermission(context, ACCESS_LOCAL_NETWORK) == PackageManager.PERMISSION_GRANTED
+
     suspend fun approveLocal(raw: String) = withContext(Dispatchers.IO) {
         val uri = Uri.parse(raw)
         require(uri.scheme == "http" && uri.path == "/pair" && !uri.getQueryParameter("code").isNullOrBlank()) {
@@ -52,13 +57,9 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val network = cm?.activeNetwork
         var lastError: Throwable? = null
-        repeat(2) { attempt ->
+        repeat(3) { attempt ->
             val connection = runCatching {
-                val rawConnection = if (network != null) {
-                    network.openConnection(URL(raw))
-                } else {
-                    URL(raw).openConnection()
-                }
+                val rawConnection = if (network != null) network.openConnection(URL(raw)) else URL(raw).openConnection()
                 (rawConnection as HttpURLConnection).apply {
                     requestMethod = "POST"
                     doOutput = true
@@ -72,15 +73,12 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
                 lastError = it
                 return@repeat
             }
-
             try {
                 connection.outputStream.use { it.write(sourceJson().toString().toByteArray(Charsets.UTF_8)) }
                 val code = connection.responseCode
                 val stream = if (code in 200..299) connection.inputStream else connection.errorStream
                 val body = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-                if (code !in 200..299) {
-                    throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
-                }
+                if (code !in 200..299) throw IllegalStateException(JSONObject(body.ifBlank { "{}" }).optString("error", "TV pairing failed ($code)"))
                 if (!JSONObject(body.ifBlank { "{}" }).optBoolean("ok", false)) throw IllegalStateException("TV did not accept the source")
                 return@withContext true
             } catch (t: Throwable) {
@@ -88,16 +86,20 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
             } finally {
                 connection.disconnect()
             }
-            if (attempt == 0) kotlinx.coroutines.delay(350)
+            if (attempt < 2) kotlinx.coroutines.delay(500L * (attempt + 1))
         }
         throw IllegalStateException(
             lastError?.message?.takeIf { it.isNotBlank() }
-                ?: "Could not reach the TV. Make sure both devices are on the same Wi-Fi network and allow XSportsX to access nearby devices."
+                ?: "Could not reach the TV. Make sure both devices are on the same Wi-Fi network and Local network access is allowed."
         )
     }
 
     val scanner = rememberLauncherForActivityResult(ScanContract()) { result ->
         val raw = result.contents ?: return@rememberLauncherForActivityResult
+        if (!localNetworkGranted()) {
+            status = "Allow Local network access, then scan the TV QR code again"
+            return@rememberLauncherForActivityResult
+        }
         busy = true
         scope.launch {
             runCatching { approveLocal(raw) }
@@ -114,7 +116,13 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
 
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
-        else status = "Camera permission is required to scan the TV code"
+        else status = "Local network access is required to connect to your TV"
+    }
+
+    fun startScanner() {
+        if (!source.isConfigured()) return
+        if (Build.VERSION.SDK_INT >= 37 && !localNetworkGranted()) permission.launch(ACCESS_LOCAL_NETWORK)
+        else scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
     }
 
     Box(Modifier.fillMaxSize().background(Color(0xFF03060B)), contentAlignment = Alignment.Center) {
@@ -125,9 +133,8 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
             Text(status, color = Color(0xFFB9BFCA))
             Spacer(Modifier.height(28.dp))
             Button(enabled = !busy && source.isConfigured(), onClick = {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-                    scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
-                else permission.launch(Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) startScanner()
+                else permissionCamera.launch(Manifest.permission.CAMERA)
             }) { Text(if (busy) "CONNECTING…" else "SCAN TV QR CODE") }
             if (!source.isConfigured()) Text("Connect a source on this phone first.", color = Color(0xFFFF6B7D), modifier = Modifier.padding(top = 12.dp))
             TextButton(onClick = onCancel) { Text("CANCEL") }
