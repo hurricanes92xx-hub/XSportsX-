@@ -73,7 +73,7 @@ object SportsScheduleService {
 
         // Prefer the live normalized source. If Render is asleep, missing, or
         // returns an empty payload, fall back immediately to the canonical feed.
-        repeat(MAX_ATTEMPTS) { attempt ->
+        repeat(MAX_ATTEMPTS) {
             val connection = runCatching { URL(target).openConnection() as HttpURLConnection }.getOrNull()
                 ?: return@repeat
             connection.connectTimeout = HTTP_TIMEOUT_MS
@@ -92,8 +92,6 @@ object SportsScheduleService {
             } finally {
                 connection.disconnect()
             }
-
-            if (attempt < MAX_ATTEMPTS - 1) continue
         }
 
         loadCanonicalFallback(league, daysAhead)
