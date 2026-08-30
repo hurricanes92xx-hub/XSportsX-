@@ -7,9 +7,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 /**
- * Matches schedule events to the public-source catalog without requiring an
- * Xtream or M3U login. Matching is deliberately event-first: teams/fighters,
- * league, sport and broadcast/network are scored before a stream is offered.
+ * Event-first matcher for public sports sources. Broadcast aliases are expanded
+ * by sport/league so smaller college events can resolve through conference,
+ * school, and national network feeds instead of requiring an exact channel name.
  */
 class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSourceResolver()) {
     suspend fun find(event: SportsEvent, force: Boolean = false, maxResults: Int = 8): List<PublicResolvedStream> =
@@ -21,12 +21,8 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
             }.sortedByDescending { it.first }
 
             coroutineScope {
-                ranked.take(maxResults * 3).map { (score, stream) ->
-                    async(Dispatchers.IO) {
-                        // The public resolver already health-checks its catalog;
-                        // event matching only ranks those verified candidates.
-                        score to stream
-                    }
+                ranked.take(maxResults * 4).map { (score, stream) ->
+                    async(Dispatchers.IO) { score to stream }
                 }.awaitAll()
             }.sortedByDescending { it.first }.take(maxResults).map { it.second }
         }
@@ -41,12 +37,11 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
         val sport = normalize(event.sport)
         var score = 0
 
-        // Exact event/team/fighter references are strongest.
+        // Exact event/team references remain the strongest signal.
         if (title.length >= 4 && haystack.contains(title)) score += 100
         if (home.length >= 3 && haystack.contains(home)) score += 75
         if (away.length >= 3 && haystack.contains(away)) score += 75
 
-        // Common abbreviated team names are useful for M3U labels.
         val homeTokens = meaningfulTokens(home)
         val awayTokens = meaningfulTokens(away)
         if (homeTokens.isNotEmpty() && homeTokens.any { haystack.contains(it) }) score += 25
@@ -56,12 +51,94 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
         if (broadcast.length >= 3 && haystack.contains(broadcast)) score += 45
         if (sport.length >= 3 && haystack.contains(sport)) score += 10
 
-        // Network fallback: if no event/team label exists, a matching official
-        // network remains useful for the event's broadcast.
-        val networkTerms = listOf("espn", "espn2", "espnu", "espn+", "fox sports", "fs1", "fs2", "tnt", "tbs", "tru tv", "nbc", "cbs", "abc", "nfl network", "nba tv", "mlb network", "nhl network", "sec network", "acc network", "big ten network", "the cw")
-        if (networkTerms.any { haystack.contains(it) && (broadcast.contains(it) || broadcast.isBlank()) }) score += 18
+        // Expand current broadcast names into the same aliases used by the
+        // resolver. This is especially important for ESPN+, SECN+, ACCNX,
+        // BTN and regional/school college streams.
+        val broadcastAliases = broadcastAliasesFor(event)
+        for (alias in broadcastAliases) {
+            val n = normalize(alias)
+            if (n.length >= 3 && haystack.contains(n)) {
+                score += if (n == broadcast) 50 else 22
+                break
+            }
+        }
+
+        // College events frequently have no national network in the feed. A
+        // recognized college/school/conference sports source is still useful.
+        if (isCollege(event)) {
+            val collegeTerms = listOf(
+                "ncaa", "college", "university", "volleyball", "basketball",
+                "acccdn", "accdn", "acc network", "accnx", "secn", "sec network",
+                "btn", "big ten network", "pac 12 insider", "espn+", "espn plus",
+                "school", "athletics", "conference"
+            )
+            if (collegeTerms.any { haystack.contains(normalize(it)) }) score += 14
+        }
 
         return score
+    }
+
+    private fun broadcastAliasesFor(event: SportsEvent): List<String> {
+        val base = listOf(event.broadcast, event.league, event.sport)
+        val key = normalize("${event.league} ${event.sport} ${event.broadcast}")
+        val aliases = mutableListOf<String>()
+        aliases += base
+
+        fun add(vararg values: String) { aliases += values }
+
+        when {
+            key.contains("volleyball") -> add(
+                "ESPN", "ESPN2", "ESPNU", "ESPN+", "ESPN Plus", "SEC Network", "SECN+",
+                "ACC Network", "ACCNX", "ACCDN", "Big Ten Network", "BTN", "CBS Sports Network",
+                "The CW", "CW Sports", "Pac-12 Insider", "NCAA", "Volleyball World"
+            )
+            key.contains("basketball") -> add(
+                "ESPN", "ESPN2", "ESPNU", "ESPN+", "ESPN Plus", "ABC", "CBS", "CBS Sports Network",
+                "FOX", "FS1", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network", "ACCNX",
+                "ACCDN", "Big Ten Network", "BTN", "The CW", "CW Sports", "Pac-12 Insider"
+            )
+            key.contains("football") -> add(
+                "ESPN", "ESPN2", "ESPNU", "ESPN+", "ABC", "FOX", "FS1", "FS2", "CBS",
+                "CBS Sports Network", "NBC", "Peacock", "SEC Network", "SECN+", "ACC Network",
+                "ACCNX", "Big Ten Network", "BTN", "The CW", "CW Sports", "Pac-12 Insider"
+            )
+            key.contains("baseball") -> add(
+                "ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX",
+                "Big Ten Network", "BTN", "CBS Sports Network", "FOX", "FS1", "MLB Network", "NCAA"
+            )
+            key.contains("softball") -> add(
+                "ESPN", "ESPN2", "ESPNU", "ESPN+", "SEC Network", "SECN+", "ACC Network", "ACCNX",
+                "Big Ten Network", "BTN", "CBS Sports Network", "NCAA"
+            )
+            key.contains("soccer") -> add(
+                "ESPN+", "ESPN Plus", "ACC Network", "ACCNX", "SEC Network", "SECN+", "Big Ten Network",
+                "BTN", "CBS Sports Golazo", "The CW", "Peacock", "FOX Sports", "TUDN", "Telemundo", "Universo"
+            )
+            key.contains("lacrosse") -> add(
+                "ESPN+", "ESPN Plus", "ESPNU", "ACC Network", "ACCNX", "Big Ten Network", "BTN", "NCAA"
+            )
+            key.contains("wrestling") -> add(
+                "ESPN+", "ESPN Plus", "Big Ten Network", "BTN", "ESPNU", "ACC Network", "ACCNX", "NCAA"
+            )
+            key.contains("gymnastics") -> add(
+                "ESPN+", "ESPN Plus", "SEC Network", "SECN+", "Big Ten Network", "BTN", "ACC Network", "ACCNX"
+            )
+            key.contains("hockey") -> add(
+                "ESPN+", "ESPN Plus", "Big Ten Network", "BTN", "ESPNU", "NHL Network", "NCAA"
+            )
+            key.contains("track") || key.contains("cross country") -> add(
+                "ESPN+", "ESPN Plus", "SEC Network+", "SECN+", "ACC Network", "ACCNX", "NCAA"
+            )
+            else -> add("ESPN", "ESPN+", "ESPN Plus", "CBS Sports Network", "The CW", "CW Sports", "NCAA")
+        }
+
+        return aliases.distinct()
+    }
+
+    private fun isCollege(event: SportsEvent): Boolean {
+        val value = normalize("${event.league} ${event.sport} ${event.title}")
+        return value.contains("ncaa") || value.contains("college") ||
+            value.contains("university") || value.contains("mens college") || value.contains("womens college")
     }
 
     private fun meaningfulTokens(value: String): List<String> =
@@ -70,7 +147,8 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
     private fun normalize(value: String): String = value.lowercase()
         .replace("&", " and ")
         .replace("’", "'")
-        .replace(Regex("[^a-z0-9+]+"), " ")
+        .replace("+", " plus ")
+        .replace(Regex("[^a-z0-9]+"), " ")
         .trim()
         .replace(Regex("\\s+"), " ")
 
