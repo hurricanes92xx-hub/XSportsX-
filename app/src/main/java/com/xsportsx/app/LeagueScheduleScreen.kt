@@ -10,7 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.clip
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,9 +50,6 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         error = null
         val loaded = withTimeoutOrNull(14_000L) {
             val canonical = runCatching { CanonicalScheduleProvider.load(canonicalLeague, 3) }.getOrDefault(emptyList())
-            // The canonical feed is fast, but it is refreshed asynchronously. Always run
-            // the reliable league recovery pass too so a partial/stale feed cannot hide
-            // today's MLB/NHL/etc. games or newly-live events.
             val recovery = runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
             (canonical + recovery)
                 .distinctBy { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" }
