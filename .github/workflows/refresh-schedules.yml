@@ -35,12 +35,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: android-app
-      - name: Refresh schedule feed (3-day window)
+      - name: Refresh schedule feed (full configured windows)
         run: |
           set -euo pipefail
-          # Keep the existing league/source implementation intact while
-          # reducing the refresh horizon and request fan-out.
-          sed -i -E "s/\], 180\)/\], 3)/g; s/\], 60\)/\], 3)/g; s/\], 30\)/\], 3)/g" scripts/refresh_schedules.py || true
           python3 scripts/refresh_schedules.py
       - name: Validate schedule coverage
         run: python3 scripts/validate_schedule_refresh.py
@@ -85,7 +82,7 @@ jobs:
                   if rules.get(key) is not True:
                       print(f'WARNING: rule {key} is not true')
           except FileNotFoundError:
-              print('WARNING: remaining_schedule_intelligence.json not present')
+              print('WARNING: remaining schedule intelligence.json not present')
           print('Schedule publication passed the feed safety gate.')
           PY
       - name: Commit only when data changed
