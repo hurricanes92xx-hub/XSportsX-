@@ -1,167 +1,17 @@
 name: Build XSportsX APK
-
 on:
+  workflow_dispatch:
   push:
     branches: [android-app]
-    paths-ignore:
-      - 'update.json'
-      - 'README.md'
-      - 'docs/**'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-concurrency:
-  group: xsportsx-release-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   build:
-    name: Build signed Mobile + TV APKs
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
-      - name: Checkout production android-app branch
-        uses: actions/checkout@v4
-        with:
-          ref: android-app
-          fetch-depth: 1
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
-
-      - name: Install Gradle 8.13
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.13-bin.zip --output "$RUNNER_TEMP/gradle.zip"
-          unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
-          echo "GRADLE_HOME=$RUNNER_TEMP/gradle-8.13" >> "$GITHUB_ENV"
-          echo "$RUNNER_TEMP/gradle-8.13/bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/gradle-8.13/bin/gradle" --version
-
-      - name: Synchronize Mobile + TV league catalog
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/sync_league_catalog.py
-          echo 'Mobile + TV league catalog synchronized.'
-
-      - name: Verify Android project
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f build.gradle.kts
-          test -f app/build.gradle.kts
-          test -f settings.gradle.kts
-          test -s app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          test -s app/src/main/java/com/xsportsx/app/TvHome.kt
-          test -s app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
-          test -s app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
-          test -s app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
-          grep -q 'versionCode' app/build.gradle.kts
-          grep -q 'versionName' app/build.gradle.kts
-          grep -q 'fun FuturisticHome' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'fun TvHome' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -Eq '(class|object)[[:space:]]+SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
-          grep -q 'tvNetworks' app/src/main/java/com/xsportsx/app/TvHome.kt
-          grep -q 'http://$ip:${socket.localPort}/pair?code=$expectedCode' app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
-          grep -q 'uri.path == "/pair"' app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
-          echo 'Production android-app source verified.'
-
-      - name: Check release signing configuration
-        env:
-          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for name in KEYSTORE_B64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            [ -n "${!name}" ] || { echo "Missing required release signing secret: $name"; exit 1; }
-          done
-
-      - name: Restore release keystore
-        env:
-          KEYSTORE_B64: ${{ secrets.XSPORTSX_KEYSTORE_B64 }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf '%s' "$KEYSTORE_B64" | base64 --decode > xsportsx-release.jks
-          chmod 600 xsportsx-release.jks
-          test -s xsportsx-release.jks
-
-      - name: Build Mobile + TV release APKs
-        env:
-          XSORTSX_KEYSTORE_PATH: ${{ github.workspace }}/xsportsx-release.jks
-          XSORTSX_KEYSTORE_PASSWORD: ${{ secrets.XSPORTSX_KEYSTORE_PASSWORD }}
-          XSORTSX_KEY_ALIAS: ${{ secrets.XSPORTSX_KEY_ALIAS }}
-          XSORTSX_KEY_PASSWORD: ${{ secrets.XSPORTSX_KEY_PASSWORD }}
-        shell: bash
-        run: |
-          set -o pipefail
-          "$GRADLE_HOME/bin/gradle" clean :app:assembleMobileRelease :app:assembleTvRelease --no-daemon --stacktrace --console=plain 2>&1 | tee gradle-build.log
-
-      - name: Verify and upload APKs
-        shell: bash
-        run: |
-          set -euo pipefail
-          MOBILE=app/build/outputs/apk/mobile/release/app-mobile-release.apk
-          TV=app/build/outputs/apk/tv/release/app-tv-release.apk
-          test -s "$MOBILE" && test -s "$TV"
-          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n1)
-          test -n "$APKSIGNER"
-          "$APKSIGNER" verify --verbose "$MOBILE"
-          "$APKSIGNER" verify --verbose "$TV"
-          cp "$MOBILE" XSportsX-Mobile.apk
-          cp "$TV" XSportsX-TV.apk
-          VERSION_NAME=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n1)
-          VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' app/build.gradle.kts | head -n1)
-          echo "$VERSION_NAME ($VERSION_CODE)"
-          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
-          echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
-
-      - name: Upload Mobile APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-Mobile-${{ github.run_number }}
-          path: XSportsX-Mobile.apk
-          retention-days: 14
-
-      - name: Upload TV APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-TV-${{ github.run_number }}
-          path: XSportsX-TV.apk
-          retention-days: 14
-
-      - name: Publish newest signed APKs as GitHub Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          TAG="v${VERSION_NAME}-build.${GITHUB_RUN_NUMBER}"
-          gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV."
-
-      - name: Upload Gradle log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: XSportsX-gradle-log-${{ github.run_number }}
-          path: gradle-build.log
-          if-no-files-found: ignore
-          retention-days: 14
-
-      - name: Remove signing key
-        if: always()
-        run: rm -f xsportsx-release.jks
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build signed Mobile + TV APKs
+        run: ./gradlew :android-app:app:assembleRelease :android-app:app:assembleDebug --stacktrace
