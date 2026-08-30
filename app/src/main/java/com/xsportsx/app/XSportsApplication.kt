@@ -26,7 +26,8 @@ object ScheduleBackgroundSync {
     @Volatile var lastUpdatedMillis: Long = 0L
         private set
 
-    private const val REFRESH_MS = 5L * 60L * 1000L
+    // Broad reconciliation is intentionally slower than the UI/live refresh path.
+    private const val REFRESH_MS = 15L * 60L * 1000L
     private var started = false
 
     fun start() {
