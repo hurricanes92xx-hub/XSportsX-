@@ -62,7 +62,7 @@ val liveLeagues = listOf(TvLeague("NFL","football","nfl"),TvLeague("NCAA FB","fo
 private val tvSports = listOf(TvSport("NFL","NFL"),TvSport("NBA","NBA"),TvSport("NCAA FB","NCAA"),TvSport("NCAA BB","NCAA"),TvSport("MLB","MLB"),TvSport("NHL","NHL"),TvSport("UFC","UFC"),TvSport("BOXING","BOX"))
 private val tvNetworks = listOf(TvNetwork("ESPN","ESPN"),TvNetwork("ESPN2","ESPN2"),TvNetwork("ESPNU","ESPNU"),TvNetwork("NFL NETWORK","NFL"),TvNetwork("FS1","FS1"),TvNetwork("CBS SPORTS","CBS"),TvNetwork("SEC NETWORK","SEC"),TvNetwork("ACC NETWORK","ACC"),TvNetwork("BIG TEN NETWORK","B1G"),TvNetwork("ESPN+","ESPN+"))
 
-private fun dateRange():String { val fmt=SimpleDateFormat("yyyyMMdd",Locale.US).apply{timeZone=TimeZone.getTimeZone("UTC")}; val cal=Calendar.getInstance(TimeZone.getTimeZone("UTC")); cal.add(Calendar.DAY_OF_YEAR,-1); val yesterday=fmt.format(cal.time); cal.add(Calendar.DAY_OF_YEAR,2); return "$yesterday-${fmt.format(cal.time)}" }
+private fun dateRange():String { val fmt=SimpleDateFormat("yyyyMMdd",Locale.US).apply{timeZone=TimeZone.getTimeZone("UTC")}; val cal=Calendar.getInstance(TimeZone.getTimeZone("UTC")); val today=fmt.format(cal.time); cal.add(Calendar.DAY_OF_YEAR,3); return "$today-${fmt.format(cal.time)}" }
 private fun tvJson(url:String):JSONObject? { val c=try{URL(url).openConnection() as HttpURLConnection}catch(_:Exception){return null}; return try{c.connectTimeout=3000;c.readTimeout=5000;c.requestMethod="GET";c.setRequestProperty("User-Agent","XSportsX/1.7");c.setRequestProperty("Accept","application/json");if(c.responseCode !in 200..299)null else c.inputStream.bufferedReader().use{JSONObject(it.readText())}}catch(_:Exception){null}finally{c.disconnect()} }
 private fun eventMillis(event:JSONObject):Long=try{java.time.Instant.parse(event.optString("date")).toEpochMilli()}catch(_:Exception){0L}
 
@@ -108,12 +108,13 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = withContex
     var liveGames by remember{mutableStateOf<List<TvGame>>(emptyList())}
     var upcomingGames by remember{mutableStateOf<List<TvGame>>(emptyList())}
     var loadingLive by remember{mutableStateOf(true)}
-    var loadingUpcoming by remember{mutableStateOf(false)}
+    var loadingUpcoming by remember{mutableStateOf(true)}
     val scroll=rememberScrollState()
 
     LaunchedEffect(Unit){
         while(isActive){
             loadingLive=liveGames.isEmpty()
+            if(upcomingGames.isEmpty()) loadingUpcoming=true
             val result=runCatching{
                 kotlinx.coroutines.coroutineScope {
                     val live=async{loadTvGames(true)}
@@ -126,11 +127,12 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = withContex
                 upcomingGames=result.second
             }
             loadingLive=false
+            loadingUpcoming=false
             delay(60_000)
         }
     }
     LaunchedEffect(selectedNav){
-        if(selectedNav=="UPCOMING"&&upcomingGames.isEmpty()){
+        if(selectedNav=="UPCOMING"&&upcomingGames.isEmpty()&&!loadingUpcoming){
             loadingUpcoming=true
             upcomingGames=runCatching{loadTvGames(false)}.getOrDefault(emptyList())
             loadingUpcoming=false
@@ -148,8 +150,8 @@ private suspend fun loadTvGames(liveOnly:Boolean=true):List<TvGame> = withContex
                         TvSection("LIVE NOW",if(liveGames.isEmpty())"Waiting for live scores" else "${liveGames.size} LIVE")
                         if(liveGames.isNotEmpty())TvGameRow(liveGames,onNetwork)else TvLiveEmpty(loadingLive)
                         Spacer(Modifier.height(16.dp))
-                        TvSection("NEXT GAMES",if(upcomingGames.isEmpty())"Loading schedule…" else "${upcomingGames.size} UPCOMING")
-                        if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames.take(10),onNetwork)else TvLiveEmpty(true)
+                        TvSection("NEXT GAMES",when { loadingUpcoming -> "Loading schedule…"; upcomingGames.isNotEmpty() -> "${upcomingGames.size} UPCOMING"; else -> "NO UPCOMING GAMES" })
+                        if(upcomingGames.isNotEmpty())TvGameRow(upcomingGames.take(10),onNetwork)else TvLiveEmpty(loadingUpcoming)
                         Spacer(Modifier.height(16.dp));TvSection("TOP SPORTS","FAST ACCESS");TvSportRow(tvSports,onNetwork)
                         Spacer(Modifier.height(16.dp));TvSection("SPORTS NETWORKS","LIVE SOURCES");TvNetworkGrid(tvNetworks,onNetwork)
                     }
