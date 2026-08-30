@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Schedule publication intentionally keeps every fetched event; do not add a per-league truncation cap.
 import json, re, urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
