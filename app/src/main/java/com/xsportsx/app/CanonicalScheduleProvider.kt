@@ -4,17 +4,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-/**
- * Reads the repository's server-refreshed canonical schedule feed.
- * Mobile and TV use this same feed before falling back to direct providers.
- */
+/** Reads the repository's server-refreshed canonical schedule feed. */
 object CanonicalScheduleProvider {
     private const val FEED_URL = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/data/schedule_feed.json"
     private const val CONNECT_TIMEOUT_MS = 1_500
@@ -37,13 +32,22 @@ object CanonicalScheduleProvider {
                 val e = events.optJSONObject(i) ?: continue
                 val rawLeague = e.optString("league").trim()
                 if (rawLeague.isBlank()) continue
-                if (canonical != null && SportsScheduleService.canonicalLeagueFor(rawLeague) != canonical) continue
+                val canonicalLeague = canonicalFeedLeague(rawLeague)
+                if (canonical != null && SportsScheduleService.canonicalLeagueFor(canonicalLeague) != canonical) continue
 
                 val start = parseInstant(e.optString("start")) ?: continue
                 val tag = e.optString("tag").uppercase()
                 val isLive = tag == "LIVE"
-                if (!isLive && start.isBefore(now.minus(10, ChronoUnit.MINUTES))) continue
-                if (!isLive && !start.isBefore(cutoff)) continue
+                // UPCOMING events from NCAA feeds can have a date-only midnight timestamp.
+                // Keep explicitly tagged UPCOMING events for the current/next window; live
+                // events are always retained regardless of their nominal start time.
+                if (isLive) {
+                    // keep
+                } else if (tag == "UPCOMING") {
+                    if (start.isBefore(now.minus(18, ChronoUnit.HOURS)) || !start.isBefore(cutoff)) continue
+                } else {
+                    if (start.isBefore(now.minus(10, ChronoUnit.MINUTES)) || !start.isBefore(cutoff)) continue
+                }
 
                 val title = e.optString("title").trim()
                 val teams = splitMatchup(title)
@@ -53,7 +57,6 @@ object CanonicalScheduleProvider {
                     else -> "pre"
                 }
                 val status = if (tag.isNotBlank()) tag else "UPCOMING"
-                val canonicalLeague = SportsScheduleService.canonicalLeagueFor(rawLeague)
 
                 out += SportsEvent(
                     id = e.optString("id").ifBlank { "feed-${canonicalLeague}-${start}-${title}" },
@@ -79,6 +82,21 @@ object CanonicalScheduleProvider {
         }.getOrDefault(emptyList())
     }
 
+    private fun canonicalFeedLeague(label: String): String = when (label.trim().uppercase()) {
+        "NCAA MEN'S SOCCER", "NCAA MEN SOCCER" -> "NCAA MEN SOCCER"
+        "NCAA WOMEN'S SOCCER", "NCAA WOMEN SOCCER" -> "NCAA WOMEN SOCCER"
+        "NCAA MEN'S VOLLEYBALL", "NCAA WOMEN'S VOLLEYBALL", "NCAA VB" -> "NCAA VB"
+        "NCAA MEN'S BASKETBALL" -> "NCAA BB"
+        "NCAA WOMEN'S BASKETBALL" -> "NCAA WBB"
+        "NCAA BASEBALL" -> "NCAA BASEBALL"
+        "NCAA SOFTBALL" -> "NCAA SOFTBALL"
+        "NCAA MEN'S HOCKEY" -> "NCAA MEN HOCKEY"
+        "NCAA WOMEN'S HOCKEY" -> "NCAA WOMEN HOCKEY"
+        "NCAA MEN'S LACROSSE" -> "NCAA MEN LAX"
+        "NCAA WOMEN'S LACROSSE" -> "NCAA WOMEN LAX"
+        else -> label.trim()
+    }
+
     private fun splitMatchup(title: String): Pair<String, String> {
         val at = Regex("^(.+?)\\s+@\\s+(.+)$").find(title)
         if (at != null) return at.groupValues[1].trim() to at.groupValues[2].trim()
@@ -94,7 +112,7 @@ object CanonicalScheduleProvider {
         league.contains("NHL") || league.contains("HOCKEY") -> "Hockey"
         league.contains("SOCCER") || league in setOf("MLS", "EPL", "LALIGA", "BUNDESLIGA", "SERIE A", "LIGUE 1", "UCL", "UEL", "NWSL") -> "Soccer"
         league.contains("VOLLEY") -> "Volleyball"
-        league.contains("LACROSSE") -> "Lacrosse"
+        league.contains("LACROSSE") || league.contains("LAX") -> "Lacrosse"
         league.contains("GOLF") || league in setOf("PGA", "LPGA", "LIV GOLF") -> "Golf"
         league.contains("TENNIS") || league in setOf("ATP", "WTA") -> "Tennis"
         league == "UFC" -> "MMA"
@@ -105,12 +123,8 @@ object CanonicalScheduleProvider {
         val v = value.trim()
         if (v.isBlank()) return null
         runCatching { return Instant.parse(v) }
-        runCatching {
-            return java.time.OffsetDateTime.parse(v, DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ssX")).toInstant()
-        }
-        runCatching {
-            return java.time.LocalDateTime.parse(v, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("UTC")).toInstant()
-        }
+        runCatching { return java.time.OffsetDateTime.parse(v, DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ssX")).toInstant() }
+        runCatching { return java.time.LocalDateTime.parse(v, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("UTC")).toInstant() }
         return null
     }
 
@@ -130,8 +144,6 @@ object CanonicalScheduleProvider {
         return try {
             if (c.responseCode !in 200..299) error("Schedule feed HTTP ${c.responseCode}")
             c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-        } finally {
-            c.disconnect()
-        }
+        } finally { c.disconnect() }
     }
 }
