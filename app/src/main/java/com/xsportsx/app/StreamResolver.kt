@@ -62,30 +62,21 @@ class StreamResolver(context: Context) {
     suspend fun loadMatchingStreams(filter: String?, force: Boolean = false): List<ResolvedStream> {
         val all = loadLiveStreams(force); val terms = filter?.split("||")?.map { it.trim() }?.filter { it.length >= 3 }.orEmpty()
         if (terms.isEmpty()) return all
-        return all.filter { stream -> val haystack = (stream.name + " " + stream.group).lowercase(); terms.any { haystack.contains(it.lowercase()) } }
+        return all.filter { stream -> val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); terms.any { haystack.contains(normalize(it)) } }
     }
 
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load()
         val eventKey = eventCacheKey(config, event)
         val now = System.currentTimeMillis()
-        if (!force) {
-            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
-        }
-
+        if (!force) eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
         val existing = eventInFlight[eventKey]
         if (existing != null) return@withContext existing.await()
-
         coroutineScope {
-            val work = async(Dispatchers.IO) {
-                resolveEventStreams(config, eventKey, event, force)
-            }
+            val work = async(Dispatchers.IO) { resolveEventStreams(config, eventKey, event, force) }
             val winner = eventInFlight.putIfAbsent(eventKey, work) ?: work
-            try {
-                return@coroutineScope winner.await()
-            } finally {
-                if (winner === work) eventInFlight.remove(eventKey, work)
-            }
+            try { return@coroutineScope winner.await() }
+            finally { if (winner === work) eventInFlight.remove(eventKey, work) }
         }
     }
 
@@ -100,58 +91,136 @@ class StreamResolver(context: Context) {
             matchEventAgainstStreams(event, private)
         } else emptyList()
 
-        val indexed = publicHealthIndex.rankResolved(
-            eventId = event.id,
-            sport = event.sport,
-            league = event.league,
-            network = event.broadcast,
-            limit = 8
-        ).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
-
-        val discovered = if (force || indexed.size < 2) {
-            runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList())
-        } else emptyList()
-
+        val indexed = publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 8)
+            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+        val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
-
         val publicMatches = indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let {
             ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it")
         }
         val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
-        eventCacheMutex.withLock {
-            eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis()))
-        }
+        eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
         return resolved
     }
 
+    /**
+     * Xtream providers commonly label a channel by network rather than by the teams playing.
+     * The old matcher required an exact normalized event field to appear in the channel name,
+     * which made valid ESPN/FS1/etc. channels disappear for otherwise live events.
+     * Score several independent signals and keep strong network matches even when team names
+     * are absent. This also tolerates punctuation/spacing differences such as ESPN+ vs ESPN +.
+     */
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
-        val eventTerms = listOf(event.title, event.home, event.away, event.league, event.broadcast).map { normalize(it) }.filter { it.length >= 3 }
-        if (eventTerms.isEmpty()) return emptyList()
-        return streams.mapNotNull { stream -> val haystack = normalize("${stream.name} ${stream.group}"); val hits = eventTerms.count { term -> haystack.contains(term) }; if (hits == 0) null else hits to stream }
-            .sortedByDescending { it.first }.map { it.second }.take(12)
+        if (streams.isEmpty()) return emptyList()
+
+        val titleTerms = splitTerms(event.title)
+        val teamTerms = splitTerms("${event.home} ${event.away}")
+        val leagueTerms = splitTerms(event.league)
+        val broadcastTerms = broadcastAliases(event.broadcast)
+        val eventIsLive = event.isLive
+
+        data class Scored(val score: Int, val stream: ResolvedStream)
+        val scored = streams.mapNotNull { stream ->
+            val haystack = normalize("${stream.name} ${stream.group} ${stream.url}")
+            var score = 0
+            val teamHits = teamTerms.count { term -> term.length >= 4 && haystack.contains(term) }
+            val titleHits = titleTerms.count { term -> term.length >= 4 && haystack.contains(term) }
+            val leagueHits = leagueTerms.count { term -> term.length >= 3 && haystack.contains(term) }
+            val networkHits = broadcastTerms.count { term -> term.length >= 3 && haystack.contains(term) }
+            score += teamHits * 8
+            score += titleHits * 5
+            score += leagueHits * 3
+            score += networkHits * 12
+            if (eventIsLive && networkHits > 0) score += 6
+            if (networkHits > 0 || teamHits > 0 || titleHits > 0) Scored(score, stream) else null
+        }
+
+        // Network matches are intentional: a live game carried by ESPN should surface the
+        // user's ESPN channel even when the provider channel name contains no team names.
+        return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() })
+            .map { it.stream }
+            .take(12)
     }
 
-    private fun normalize(value: String): String = value.lowercase().replace("&", " and ").replace(Regex("[^a-z0-9+]+"), " ").trim().replace(Regex("\\s+"), " ")
+    private fun splitTerms(value: String): List<String> = normalize(value)
+        .split(' ')
+        .filter { it.length >= 3 }
+        .distinct()
+
+    private fun broadcastAliases(value: String): List<String> {
+        val n = normalize(value)
+        if (n.isBlank()) return emptyList()
+        val aliases = linkedSetOf(n)
+        when {
+            n.contains("espn plus") || n == "espn+" -> aliases += listOf("espn+", "espn plus", "espn")
+            n.contains("espn2") -> aliases += listOf("espn2", "espn 2", "espn")
+            n.contains("espnu") -> aliases += listOf("espnu", "espn u", "espn")
+            n.contains("fs1") -> aliases += listOf("fs1", "fox sports 1", "fox sports")
+            n.contains("fs2") -> aliases += listOf("fs2", "fox sports 2", "fox sports")
+            n.contains("cbs sports") -> aliases += listOf("cbs sports", "cbs")
+            n.contains("acc network") -> aliases += listOf("acc network", "acc")
+            n.contains("sec network") -> aliases += listOf("sec network", "sec")
+            n.contains("big ten") -> aliases += listOf("big ten network", "btn", "big ten")
+            n.contains("nfl network") -> aliases += listOf("nfl network", "nfl")
+        }
+        return aliases.map(::normalize).distinct()
+    }
+
+    private fun normalize(value: String): String = value.lowercase()
+        .replace('&', ' ')
+        .replace('+', " plus ")
+        .replace(Regex("[^a-z0-9]+"), " ")
+        .trim()
+        .replace(Regex("\\s+"), " ")
+
     private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl, BuildConfig.PAIRING_BASE_URL).joinToString("|")
     private fun eventCacheKey(config: SourceConfig, event: SportsEvent): String = listOf(cacheKey(config), event.id, event.title, event.home, event.away, event.league, event.broadcast).joinToString("|")
     private fun dedupe(streams: List<ResolvedStream>): List<ResolvedStream> { val seen = HashSet<String>(); return streams.filter { seen.add(it.url) } }
 
     private fun loadXtream(config: SourceConfig): List<ResolvedStream> {
-        val base = config.server.trim().removeSuffix("/"); val query = "username=${enc(config.username)}&password=${enc(config.password)}"; val array = JSONArray(http("$base/player_api.php?$query&action=get_live_streams")); val result = ArrayList<ResolvedStream>(array.length())
-        for (i in 0 until array.length()) { val o = array.optJSONObject(i) ?: continue; val id = o.optString("stream_id"); val name = o.optString("name").trim(); if (id.isBlank() || name.isBlank()) continue; val category = o.optString("category_name").ifBlank { "LIVE" }; val icon = o.optString("stream_icon"); val hls = "$base/live/${enc(config.username)}/${enc(config.password)}/$id.m3u8"; result += ResolvedStream(name, category, hls, icon) }
+        val base = config.server.trim().removeSuffix("/")
+        val query = "username=${enc(config.username)}&password=${enc(config.password)}"
+        val array = JSONArray(http("$base/player_api.php?$query&action=get_live_streams"))
+        val result = ArrayList<ResolvedStream>(array.length())
+        for (i in 0 until array.length()) {
+            val o = array.optJSONObject(i) ?: continue
+            val id = o.optString("stream_id")
+            val name = o.optString("name").trim()
+            if (id.isBlank() || name.isBlank()) continue
+            val category = o.optString("category_name").ifBlank { "LIVE" }
+            val icon = o.optString("stream_icon")
+            val hls = "$base/live/${enc(config.username)}/${enc(config.password)}/$id.m3u8"
+            result += ResolvedStream(name, category, hls, icon)
+        }
         return result
     }
 
     private fun loadM3u(url: String): List<ResolvedStream> {
         val result = ArrayList<ResolvedStream>(); var name = ""; var group = "LIVE"; var icon = ""
-        for (line in http(url).lineSequence()) { val trimmed = line.trim(); when { trimmed.startsWith("#EXTINF", true) -> { name = trimmed.substringAfterLast(',', "Unnamed").trim(); group = attr(trimmed, "group-title").ifBlank { "LIVE" }; icon = attr(trimmed, "tvg-logo") }; trimmed.isNotBlank() && !trimmed.startsWith("#") -> { if (name.isNotBlank()) result += ResolvedStream(name, group, trimmed, icon); name = ""; group = "LIVE"; icon = "" } } }
+        for (line in http(url).lineSequence()) {
+            val trimmed = line.trim()
+            when {
+                trimmed.startsWith("#EXTINF", true) -> { name = trimmed.substringAfterLast(',', "Unnamed").trim(); group = attr(trimmed, "group-title").ifBlank { "LIVE" }; icon = attr(trimmed, "tvg-logo") }
+                trimmed.isNotBlank() && !trimmed.startsWith("#") -> { if (name.isNotBlank()) result += ResolvedStream(name, group, trimmed, icon); name = ""; group = "LIVE"; icon = "" }
+            }
+        }
         return result
     }
 
     private fun http(target: String): String {
-        val c = (URL(target).openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 5000; readTimeout = 15000; instanceFollowRedirects = true; useCaches = true; setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json, text/plain, */*"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive") }
-        return try { val code = c.responseCode; if (code !in 200..299) error("Source returned HTTP $code"); val raw: InputStream = BufferedInputStream(c.inputStream); val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw; input.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { c.disconnect() }
+        val c = (URL(target).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"; connectTimeout = 5000; readTimeout = 15000; instanceFollowRedirects = true; useCaches = true
+            setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json, text/plain, */*")
+            setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive")
+        }
+        return try {
+            val code = c.responseCode
+            if (code !in 200..299) error("Source returned HTTP $code")
+            val raw: InputStream = BufferedInputStream(c.inputStream)
+            val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw
+            input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { c.disconnect() }
     }
     private fun enc(value: String): String = URLEncoder.encode(value, "UTF-8")
     private fun attr(line: String, key: String): String { val regex = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE); return regex.find(line)?.groupValues?.getOrNull(1).orEmpty() }
