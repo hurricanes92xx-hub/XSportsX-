@@ -35,9 +35,13 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             loading = true
             error = null
             runCatching {
-                if (selectedEvent != null) StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
-                else if (filter.isNullOrBlank()) FreshLiveScheduleProvider.load()
-                else StreamResolver(context).loadMatchingStreams(filter, force)
+                if (selectedEvent != null) {
+                    StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
+                } else if (filter.isNullOrBlank()) {
+                    ScheduleSnapshotRepository.live(force)
+                } else {
+                    StreamResolver(context).loadMatchingStreams(filter, force)
+                }
             }
                 .onSuccess { result ->
                     if (selectedEvent != null || !filter.isNullOrBlank()) {
@@ -57,7 +61,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         reload(false)
         if (selectedEvent == null && filter.isNullOrBlank()) {
             while (true) {
-                delay(60_000L)
+                delay(30_000L)
                 reload(false)
             }
         }
