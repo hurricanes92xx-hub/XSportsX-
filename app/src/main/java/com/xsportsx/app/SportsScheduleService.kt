@@ -21,11 +21,12 @@ private data class ScheduleWindow(val start: LocalDate, val end: LocalDate) {
 }
 
 object SportsScheduleService {
-    private const val DAYS_AHEAD = 30
+    // The UI only fetches the three-day window. Broader reconciliation is explicitly background-only.
+    private const val DAYS_AHEAD = 2
+    private const val BACKGROUND_DAYS_AHEAD = 14
     private const val MAX_GAMES_PER_LEAGUE = 150
     private const val HTTP_TIMEOUT_MS = 4_500L
     private const val CONNECT_TIMEOUT_MS = 1_800
-    // TSDB_LONG_TAIL_BACKUP_V1: long-tail metadata fallback remains non-blocking.
 
     private val ESPN_BASES = listOf(
         "https://site.web.api.espn.com/apis/site/v2",
@@ -93,9 +94,15 @@ object SportsScheduleService {
         "UFC", "BOXING"
     )
 
-    suspend fun load(): List<SportsEvent> = withContext(Dispatchers.IO) {
+    /** Foreground/UI load: deliberately limited to today + the next two days. */
+    suspend fun load(): List<SportsEvent> = loadWindow(DAYS_AHEAD)
+
+    /** Background reconciliation: broader window, never required to render the UI. */
+    suspend fun loadBackground(): List<SportsEvent> = loadWindow(BACKGROUND_DAYS_AHEAD)
+
+    private suspend fun loadWindow(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
         val today = LocalDate.now(ZoneId.systemDefault())
-        val windows = buildWindows(today)
+        val windows = buildWindows(today, daysAhead)
         val limiter = Semaphore(12)
         val results = coroutineScope { leagues.map { league -> async { loadLeague(league, windows, limiter) } }.awaitAll() }
         (results.flatten() + MonsterJamLiveResolver.loadLive())
@@ -105,11 +112,11 @@ object SportsScheduleService {
             .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
     }
 
-    private fun buildWindows(today: LocalDate): List<ScheduleWindow> {
+    private fun buildWindows(today: LocalDate, daysAhead: Int): List<ScheduleWindow> {
         val windows = ArrayList<ScheduleWindow>(3)
         windows += ScheduleWindow(today, today)
         var cursor = today.plusDays(1)
-        val end = today.plusDays(DAYS_AHEAD.toLong())
+        val end = today.plusDays(daysAhead.toLong())
         while (!cursor.isAfter(end)) {
             val windowEnd = minOf(cursor.plusDays(13), end)
             windows += ScheduleWindow(cursor, windowEnd)
@@ -120,7 +127,7 @@ object SportsScheduleService {
 
     private suspend fun loadLeague(league: ScheduleLeague, windows: List<ScheduleWindow>, limiter: Semaphore): List<SportsEvent> = coroutineScope {
         windows.map { window -> async { limiter.withPermit { fetchWindowWithFallbacks(league, window) } } }.awaitAll().flatten()
-            .filter { it.league.equals(league.league, true) }
+            .filter { it.league.equals(league.league, true) || normalizeLeague(it.league) == normalizeLeague(league.league) }
             .distinctBy { canonicalKey(it) }
             .sortedBy { it.startUtc }
             .take(MAX_GAMES_PER_LEAGUE)
@@ -129,7 +136,12 @@ object SportsScheduleService {
     private suspend fun fetchWindowWithFallbacks(league: ScheduleLeague, window: ScheduleWindow): List<SportsEvent> {
         val primary = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspn(league, window) }.getOrDefault(emptyList()) }.orEmpty()
         if (primary.isNotEmpty()) return primary
-        return withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
+        val v3 = withTimeoutOrNull(HTTP_TIMEOUT_MS) { runCatching { fetchEspnV3(league, window) }.getOrDefault(emptyList()) }.orEmpty()
+        if (v3.isNotEmpty()) return v3
+        // Secondary source is consulted only on an ESPN miss. It cannot add latency to a healthy ESPN response.
+        return withTimeoutOrNull(HTTP_TIMEOUT_MS) {
+            runCatching { ScheduleFallbackProvider.fetch(league.league, league.sport, window.start, window.end) }.getOrDefault(emptyList())
+        }.orEmpty()
     }
 
     private fun canonicalKey(event: SportsEvent): String = listOf(normalizeLeague(event.league), normalize(event.home), normalize(event.away), event.startUtc.take(16)).joinToString("|")
