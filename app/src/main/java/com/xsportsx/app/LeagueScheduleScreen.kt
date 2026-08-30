@@ -25,7 +25,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** League schedule UI with a single bounded scoreboard request. */
+/** League schedule UI with a bounded canonical-first scoreboard load. */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val canonicalLeague = SportsScheduleService.canonicalLeagueFor(league)
@@ -47,11 +47,15 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        val fast = withTimeoutOrNull(7_500L) { FastLeagueScheduleLoader.load(canonicalLeague, 3) }.orEmpty()
-        if (fast.isNotEmpty()) {
-            allEvents = fast
+        val loaded = withTimeoutOrNull(11_000L) {
+            val canonical = runCatching { CanonicalScheduleProvider.load(canonicalLeague, 3) }.getOrDefault(emptyList())
+            if (canonical.isNotEmpty()) canonical
+            else runCatching { SportsScheduleService.loadForLeague(canonicalLeague, 3) }.getOrDefault(emptyList())
+        }.orEmpty()
+        if (loaded.isNotEmpty()) {
+            allEvents = loaded
         } else {
-            val recovered = withTimeoutOrNull(3_000L) {
+            val recovered = withTimeoutOrNull(5_000L) {
                 runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
             }.orEmpty()
             if (recovered.isNotEmpty()) allEvents = recovered
