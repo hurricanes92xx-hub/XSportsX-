@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
+        android:name=".XSportsApplication"
         android:theme="@style/Theme.XSportsX"
         android:label="XSportsX"
         android:icon="@drawable/xsportsx_launcher"
