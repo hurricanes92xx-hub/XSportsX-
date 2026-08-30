@@ -5,29 +5,40 @@ import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-/** Single cached schedule snapshot shared by Mobile and TV. */
+/** Single canonical schedule snapshot shared by Mobile and TV. */
 object ScheduleSnapshotRepository {
     private const val SNAPSHOT_TTL_MS = 5 * 60_000L
     private const val LIVE_TTL_MS = 60_000L
     private const val UI_DAYS = 3
-    private const val SNAPSHOT_DAYS = 30
+    private const val SNAPSHOT_DAYS = 7
+
     private val snapshotMutex = Mutex()
     private val liveMutex = Mutex()
     @Volatile private var snapshotCache: CachedEvents? = null
     @Volatile private var liveCache: CachedEvents? = null
+
     private data class CachedEvents(val events: List<SportsEvent>, val loadedAtMs: Long)
 
     suspend fun all(force: Boolean = false): List<SportsEvent> {
         val cached = snapshotCache
-        if (!force && cached != null && System.currentTimeMillis() - cached.loadedAtMs < SNAPSHOT_TTL_MS) return cached.events
+        if (!force && cached != null && age(cached) < SNAPSHOT_TTL_MS) return cached.events
+
         return snapshotMutex.withLock {
             val again = snapshotCache
-            if (!force && again != null && System.currentTimeMillis() - again.loadedAtMs < SNAPSHOT_TTL_MS) return@withLock again.events
-            val canonical = runCatching { CanonicalScheduleProvider.load(null, SNAPSHOT_DAYS) }.getOrDefault(emptyList())
-            val events = if (canonical.isNotEmpty()) canonical else runCatching { SportsScheduleService.loadBackground() }.getOrDefault(emptyList()).ifEmpty { again?.events.orEmpty() }
-            val normalized = normalize(events)
-            if (normalized.isNotEmpty()) snapshotCache = CachedEvents(normalized, System.currentTimeMillis())
-            normalized.ifEmpty { again?.events.orEmpty() }
+            if (!force && again != null && age(again) < SNAPSHOT_TTL_MS) return@withLock again.events
+
+            val fresh = runCatching {
+                CanonicalScheduleProvider.load(null, SNAPSHOT_DAYS)
+            }.getOrDefault(emptyList())
+            val normalized = normalize(fresh)
+
+            if (normalized.isNotEmpty()) {
+                snapshotCache = CachedEvents(normalized, System.currentTimeMillis())
+                normalized
+            } else {
+                // Never erase a good schedule because the feed is temporarily unavailable.
+                again?.events.orEmpty()
+            }
         }
     }
 
@@ -35,14 +46,15 @@ object ScheduleSnapshotRepository {
         val canonical = league?.let(SportsScheduleService::canonicalLeagueFor)
         val now = Instant.now()
         val cutoff = now.plus(UI_DAYS.toLong(), ChronoUnit.DAYS)
+
         return all(force).asSequence()
             .filter { !it.isLive }
             .filter { event -> canonical == null || SportsScheduleService.canonicalLeagueFor(event.league) == canonical }
             .filter { event ->
                 val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
-                val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
-                val today = now.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
                 val localDate = start.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                val today = now.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
                 val dateOnlyInWindow = dateOnly && !localDate.isBefore(today) && localDate.isBefore(today.plusDays(UI_DAYS.toLong()))
                 dateOnlyInWindow || (!start.isBefore(now.minus(10, ChronoUnit.MINUTES)) && start.isBefore(cutoff))
             }
@@ -51,26 +63,35 @@ object ScheduleSnapshotRepository {
     }
 
     suspend fun live(force: Boolean = false): List<SportsEvent> {
-        val base = all(false).filter { it.isLive }
         val cached = liveCache
-        if (!force && cached != null && System.currentTimeMillis() - cached.loadedAtMs < LIVE_TTL_MS) return mergeLive(base, cached.events)
+        if (!force && cached != null && age(cached) < LIVE_TTL_MS) return cached.events
+
         return liveMutex.withLock {
             val again = liveCache
-            if (!force && again != null && System.currentTimeMillis() - again.loadedAtMs < LIVE_TTL_MS) return@withLock mergeLive(base, again.events)
-            val recovery = runCatching { FreshLiveScheduleProvider.load() }.getOrDefault(emptyList())
-            val merged = mergeLive(base, recovery)
-            liveCache = CachedEvents(merged, System.currentTimeMillis())
-            merged
+            if (!force && again != null && age(again) < LIVE_TTL_MS) return@withLock again.events
+
+            // Live status is read from the same canonical feed as upcoming events.
+            val fresh = runCatching { CanonicalScheduleProvider.load(null, 1) }
+                .getOrDefault(emptyList())
+            val normalized = normalize(fresh).filter { it.isLive }
+            if (normalized.isNotEmpty() || fresh.isNotEmpty()) {
+                liveCache = CachedEvents(normalized, System.currentTimeMillis())
+                normalized
+            } else {
+                again?.events.orEmpty()
+            }
         }
     }
 
-    fun clear() { snapshotCache = null; liveCache = null }
+    fun clear() {
+        snapshotCache = null
+        liveCache = null
+    }
 
-    private fun mergeLive(first: List<SportsEvent>, second: List<SportsEvent>): List<SportsEvent> =
-        normalize(first + second).filter { it.isLive }.sortedWith(compareBy<SportsEvent> { it.league.lowercase() }.thenBy { it.startUtc })
+    private fun age(cache: CachedEvents): Long = System.currentTimeMillis() - cache.loadedAtMs
 
-    private fun normalize(events: List<SportsEvent>): List<SportsEvent> =
-        events.map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
-            .distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" } }
-            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+    private fun normalize(events: List<SportsEvent>): List<SportsEvent> = events
+        .map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
+        .distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" } }
+        .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
 }
