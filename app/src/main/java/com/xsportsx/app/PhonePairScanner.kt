@@ -114,16 +114,22 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         }
     }
 
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+    val permissionLocal = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
         else status = "Local network access is required to connect to your TV"
+    }
+    val permissionCamera = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) startScannerAfterCamera()
+        else status = "Camera permission is required to scan the TV code"
     }
 
     fun startScanner() {
         if (!source.isConfigured()) return
-        if (Build.VERSION.SDK_INT >= 37 && !localNetworkGranted()) permission.launch(ACCESS_LOCAL_NETWORK)
+        if (Build.VERSION.SDK_INT >= 37 && !localNetworkGranted()) permissionLocal.launch(ACCESS_LOCAL_NETWORK)
         else scanner.launch(ScanOptions().apply { setPrompt("Scan the XSportsX TV QR code") })
     }
+
+    fun startScannerAfterCamera() { startScanner() }
 
     Box(Modifier.fillMaxSize().background(Color(0xFF03060B)), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)) {
