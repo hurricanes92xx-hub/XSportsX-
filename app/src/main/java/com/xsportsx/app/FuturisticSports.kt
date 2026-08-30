@@ -140,17 +140,20 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onNetwork: (XNetwork) -> Unit = {
         Box(Modifier.fillMaxSize().background(Brush.radialGradient(listOf(Color(0xFF16080D), Color(0xFF080A10), Void)))) {
             GlowingCracks(Modifier.fillMaxSize(), crackAlpha)
             Column(Modifier.fillMaxSize()) {
-                Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 92.dp)) {
-                    MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))
-                    when {
-    selectedSport != null -> LiveChannelsScreen(filter = mobileSportFilter(selectedSport!!), onBack = { selectedSport = null })
-    selectedSection == "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork)
-    selectedSection == "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork)
-    selectedSection == "FAVORITES" -> MobileFavorites(onConnect)
-    else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) { selectedSport = it }
-}
+                if (selectedSport != null) {
+                    LeagueScheduleScreen(selectedSport!!, onBack = { selectedSport = null })
+                } else {
+                    Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 92.dp)) {
+                        MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))
+                        when (selectedSection) {
+                            "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork)
+                            "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork)
+                            "FAVORITES" -> MobileFavorites(onConnect)
+                            else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) { selectedSport = it }
+                        }
+                    }
+                    MobileBottomNav(selectedSection) { selectedSection = it }
                 }
-                MobileBottomNav(selectedSection) { selectedSection = it }
             }
         }
     }
