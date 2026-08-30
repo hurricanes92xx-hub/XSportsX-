@@ -44,23 +44,20 @@ mobile.write_text(text)
 
 tv = ROOT / "app/src/main/java/com/xsportsx/app/TvHome.kt"
 text = tv.read_text()
-tv_live = "val liveLeagues = listOf(" + ",".join(
-    f'TvLeague("{name}", "{sport}", "{league_id}")' for name, _, sport, league_id in LEAGUES
-) + ")\n"
 tv_sports = "private val tvSports = listOf(" + ",".join(
     f'TvSport("{name}", "{icon}")' for name, icon, _, _ in LEAGUES
 ) + ")\n"
-text = replace_between(text, "val liveLeagues = listOf(", "private val tvNetworks", tv_live + tv_sports)
+# Canonical TV source owns liveLeagues; only synchronize the visible TV sports catalog.
+text = replace_between(text, "private val tvSports = listOf(", "private val tvNetworks", tv_sports)
 
 # Keep SETTINGS before else (Kotlin requires else to be the final when branch).
 legacy = re.compile(
     r'\n\s*"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->\{.*?\}\n\s*"UFC","BOXING"->\{.*?\}\n\s*"SETTINGS"->TvSettings\{onConnect\(\)\}',
     re.S,
 )
-generic = '''\n                    "SETTINGS"->TvSettings{onConnect()}\n                    else->{\n                        TvSection(selectedNav,"LIVE + UPCOMING")\n                        val games=(liveGames+upcomingGames)\n                            .filter{it.league==selectedNav}\n                            .distinctBy{it.league+it.home+it.away+it.timestamp}\n                        if(games.isNotEmpty()) TvGameRow(games,onNetwork)\n                        else TvEmpty("No ${selectedNav} events in the current schedule window")\n                    }'''
-text, count = legacy.subn(generic, text, count=1)
-if count != 1:
-    raise SystemExit("Missing legacy TV league/settings routing block")
+if legacy.search(text):
+    generic = '''\n                    "SETTINGS"->TvSettings{onConnect()}\n                    else->{\n                        TvSection(selectedNav,"LIVE + UPCOMING")\n                        val games=(liveGames+upcomingGames)\n                            .filter{it.league==selectedNav}\n                            .distinctBy{it.league+it.home+it.away+it.timestamp}\n                        if(games.isNotEmpty()) TvGameRow(games,onNetwork)\n                        else TvEmpty("No ${selectedNav} events in the current schedule window")\n                    }'''
+    text = legacy.sub(generic, text, count=1)
 tv.write_text(text)
 
 print(f"Synchronized {len(LEAGUES)} leagues across Mobile and TV")
