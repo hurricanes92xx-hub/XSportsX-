@@ -7,10 +7,8 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
 
 /**
@@ -70,7 +68,7 @@ object CanonicalScheduleProvider {
                     broadcast = e.optString("broadcast").trim(),
                     artUrl = e.optString("image").trim(),
                     sourceUrl = e.optString("sourceUrl").trim(),
-                    youtubeId = ""
+                    youtubeVideoId = ""
                 )
             }
 
