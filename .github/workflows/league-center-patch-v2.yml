@@ -1,0 +1,30 @@
+name: Apply three-day league center v2
+on:
+  push:
+    branches: [android-app]
+    paths: ['.github/LEAGUE_CENTER_TRIGGER_V2']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: android-app, fetch-depth: 1}
+      - name: Fix league navigation and nested scrolling
+        shell: bash
+        run: |
+          set -euo pipefail
+          f='app/src/main/java/com/xsportsx/app/FuturisticSports.kt'
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('app/src/main/java/com/xsportsx/app/FuturisticSports.kt'); s=p.read_text()
+          old='''                Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 92.dp)) {\n                    MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))\n                    when {\n    selectedSport != null -> LiveChannelsScreen(filter = mobileSportFilter(selectedSport!!), onBack = { selectedSport = null })\n    selectedSection == "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork)\n    selectedSection == "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork)\n    selectedSection == "FAVORITES" -> MobileFavorites(onConnect)\n    else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) { selectedSport = it }\n}\n                }\n                MobileBottomNav(selectedSection) { selectedSection = it }'''
+          new='''                if (selectedSport != null) {\n                    LeagueScheduleScreen(selectedSport!!, onBack = { selectedSport = null })\n                } else {\n                    Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 92.dp)) {\n                        MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))\n                        when (selectedSection) {\n                            "LIVE" -> MobileLiveCenter(sourceConfigured, onConnect, onNetwork)\n                            "NETWORKS" -> MobileNetworks(sourceConfigured, onConnect, onNetwork)\n                            "FAVORITES" -> MobileFavorites(onConnect)\n                            else -> MobileHomeContent(sourceConfigured, onConnect, onNetwork) { selectedSport = it }\n                        }\n                    }\n                    MobileBottomNav(selectedSection) { selectedSection = it }\n                }'''
+          if old not in s: raise SystemExit('anchor not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          git commit -m 'fix: use three-day league game center without nested scroll' || exit 0
+          git push origin android-app
