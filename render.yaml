@@ -30,3 +30,30 @@ services:
         value: "3500"
       - key: PUBLIC_SOURCE_MAX_BYTES
         value: "30000000"
+
+  # The Android/TV apps consume this service directly. Keep it pinned to the
+  # android-app branch so Render never boots the legacy main-branch server.
+  - type: web
+    name: xsportsx-sports-source
+    runtime: node
+    plan: free
+    branch: android-app
+    autoDeploy: true
+    buildCommand: npm install && npm run check
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: XTREAM_BASE_URL
+        sync: false
+      - key: XTREAM_USERNAME
+        sync: false
+      - key: XTREAM_PASSWORD
+        sync: false
+      - key: NCAA_API_BASE_URL
+        value: "https://ncaa-api.henrygd.me"
+      - key: SCHEDULE_TTL_SECONDS
+        value: "60"
+      - key: XTREAM_TTL_SECONDS
+        value: "300"
+      - key: REQUEST_TIMEOUT_MS
+        value: "8000"
