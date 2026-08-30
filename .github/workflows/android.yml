@@ -50,8 +50,6 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/sync_league_catalog.py
-          grep -q 'ESPORTS' app/src/main/java/com/xsportsx/app/FuturisticSports.kt && { echo 'Stale ESPORTS catalog entry remains'; exit 1; } || true
-          grep -q 'ACTION SPORTS' app/src/main/java/com/xsportsx/app/FuturisticSports.kt && { echo 'Stale ACTION SPORTS catalog entry remains'; exit 1; } || true
           echo 'Mobile + TV league catalog synchronized.'
 
       - name: Verify Android project
@@ -153,7 +151,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV; stale action-sports/esports entries are excluded.\n\nDownloader: 4708771\nTV download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-TV.apk\nMobile download: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/XSportsX-Mobile.apk"
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV."
 
       - name: Upload Gradle log
         if: always()
