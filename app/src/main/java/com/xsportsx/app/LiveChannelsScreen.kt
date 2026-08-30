@@ -10,12 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,17 +36,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             error = null
             runCatching {
                 if (selectedEvent != null) {
-                    val resolver = StreamResolver(context)
-                    resolver.loadMatchingEventStreams(selectedEvent!!, force)
+                    StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
                 } else if (filter.isNullOrBlank()) {
-                    // Live Center is event-first. Never load the entire public IPTV catalog here.
                     SportsScheduleService.load()
                         .filter { it.isLive }
                         .distinctBy { it.id.ifBlank { "${it.league}|${it.home}|${it.away}|${it.startUtc}" } }
                         .sortedWith(compareBy<SportsEvent> { it.league.lowercase() }.thenBy { it.startUtc })
                 } else {
-                    val resolver = StreamResolver(context)
-                    resolver.loadMatchingStreams(filter, force)
+                    StreamResolver(context).loadMatchingStreams(filter, force)
                 }
             }
                 .onSuccess { result ->
@@ -62,7 +60,17 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         }
     }
 
-    LaunchedEffect(filter, selectedEvent?.id) { reload(false) }
+    LaunchedEffect(filter, selectedEvent?.id) {
+        reload(false)
+        // Live status changes quickly. Refresh the event index automatically while
+        // the Live Center is open, without repeatedly reloading the stream catalog.
+        if (selectedEvent == null && filter.isNullOrBlank()) {
+            while (isActive) {
+                delay(60_000L)
+                reload(false)
+            }
+        }
+    }
 
     if (playerStream != null) {
         NativePlayerScreen(playerStream!!.url, playerStream!!.name) { playerStream = null }
@@ -77,11 +85,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    when {
-                        selectedEvent != null -> "GAME STREAMS"
-                        filter.isNullOrBlank() -> "LIVE GAMES"
-                        else -> "GAME STREAMS"
-                    },
+                    when { selectedEvent != null -> "GAME STREAMS"; filter.isNullOrBlank() -> "LIVE GAMES"; else -> "GAME STREAMS" },
                     color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black
                 )
                 Text(
@@ -97,9 +101,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         }
 
         when {
-            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color(0xFFFF1744))
-            }
+            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
