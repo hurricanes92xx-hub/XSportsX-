@@ -11,13 +11,15 @@ import java.net.URLEncoder
 /**
  * Thin client for the external XSportsX Sports Source.
  *
- * Mobile and TV do not contact ESPN, NCAA, GitHub schedule feeds, or fallback
- * schedule providers directly anymore. The source owns provider selection,
- * normalization, caching and refresh, and both apps consume the same API.
+ * Mobile and TV use this single source for schedule data. The source owns
+ * provider selection, normalization, caching and refresh.
  */
 object SportsScheduleService {
     private const val DEFAULT_DAYS_AHEAD = 3
-    private const val HTTP_TIMEOUT_MS = 5_000
+    // Render free services can cold-start; 15s prevents a healthy source from
+    // being reported as unavailable while the container is waking up.
+    private const val HTTP_TIMEOUT_MS = 15_000
+    private const val MAX_ATTEMPTS = 2
     private const val SOURCE_URL = BuildConfig.SPORTS_SOURCE_URL
 
     private val uiChoices = listOf(
@@ -45,13 +47,10 @@ object SportsScheduleService {
     }
 
     fun canonicalLeagueFor(label: String): String = normalizeLeague(label)
-
     val uiLeagueChoices: List<String> = uiChoices
 
     suspend fun load(): List<SportsEvent> = fetchSchedule(null, DEFAULT_DAYS_AHEAD)
-
     suspend fun loadBackground(): List<SportsEvent> = fetchSchedule(null, 7)
-
     suspend fun loadForLeague(label: String, daysAhead: Int = DEFAULT_DAYS_AHEAD): List<SportsEvent> =
         fetchSchedule(normalizeLeague(label), daysAhead)
 
@@ -64,23 +63,29 @@ object SportsScheduleService {
                 append(URLEncoder.encode(league, Charsets.UTF_8.name()))
             }
         }
-        val connection = (URL("${SOURCE_URL.trimEnd('/')}/api/schedule?$query").openConnection() as HttpURLConnection).apply {
-            connectTimeout = HTTP_TIMEOUT_MS
-            readTimeout = HTTP_TIMEOUT_MS
-            requestMethod = "GET"
-            setRequestProperty("Accept", "application/json")
-            setRequestProperty("User-Agent", "XSportsX-Android/1.0")
-        }
+        val target = "${SOURCE_URL.trimEnd('/')}/api/schedule?$query"
 
-        try {
-            if (connection.responseCode !in 200..299) return@withContext emptyList()
-            val body = connection.inputStream.bufferedReader().use { it.readText() }
-            parseEvents(JSONObject(body).optJSONArray("events") ?: JSONArray())
-        } catch (_: Exception) {
-            emptyList()
-        } finally {
-            connection.disconnect()
+        repeat(MAX_ATTEMPTS) { attempt ->
+            val connection = runCatching { URL(target).openConnection() as HttpURLConnection }.getOrNull()
+                ?: return@repeat
+            connection.connectTimeout = HTTP_TIMEOUT_MS
+            connection.readTimeout = HTTP_TIMEOUT_MS
+            connection.requestMethod = "GET"
+            connection.setRequestProperty("Accept", "application/json")
+            connection.setRequestProperty("User-Agent", "XSportsX-Android/2.0")
+            try {
+                if (connection.responseCode in 200..299) {
+                    val body = connection.inputStream.bufferedReader().use { it.readText() }
+                    val parsed = parseEvents(JSONObject(body).optJSONArray("events") ?: JSONArray())
+                    if (parsed.isNotEmpty() || attempt == MAX_ATTEMPTS - 1) return@withContext parsed
+                }
+            } catch (_: Exception) {
+                if (attempt == MAX_ATTEMPTS - 1) return@withContext emptyList()
+            } finally {
+                connection.disconnect()
+            }
         }
+        emptyList()
     }
 
     private fun parseEvents(events: JSONArray): List<SportsEvent> {
@@ -92,7 +97,6 @@ object SportsScheduleService {
             val away = item.optString("away").trim()
             val start = item.optString("startUtc").trim()
             if (id.isBlank() || home.isBlank() || away.isBlank() || start.isBlank()) continue
-
             out += SportsEvent(
                 id = id,
                 sport = item.optString("sport"),
