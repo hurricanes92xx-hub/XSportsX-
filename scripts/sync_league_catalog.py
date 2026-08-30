@@ -36,5 +36,14 @@ tv_sports = 'private val tvSports = listOf(' + ','.join(f'TvSport("{name}", "{ic
 text, count = re.subn(r'val liveLeagues = listOf\(.*?\)\nprivate val tvSports = listOf\(.*?\)\n', tv_live + '\n' + tv_sports + '\n', text, count=1, flags=re.S)
 if count != 1:
     raise SystemExit("Could not locate TV league catalogs")
+# Every league in the catalog must be selectable. Keep UFC/BOXING on their event UI,
+# while all other leagues use the same live/upcoming game rows.
+old = '"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->{TvSection(selectedNav,"LIVE FEED");val games=liveGames.filter{it.league==selectedNav};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvLiveEmpty(false)}'
+new = 'else->{TvSection(selectedNav,"LIVE + UPCOMING");val games=(liveGames+upcomingGames).filter{it.league==selectedNav}.distinctBy{it.league+it.home+it.away+it.timestamp};if(games.isNotEmpty())TvGameRow(games,onNetwork)else TvEmpty("No ${selectedNav} events in the current schedule window")}'
+if old not in text:
+    raise SystemExit("Could not locate TV league routing")
+text = text.replace(old, new)
+# Remove the old UFC/BOXING special branches; the generic route now covers them too.
+text = re.sub(r'\n\s*"UFC","BOXING"->\{TvSection\(selectedNav,"EVENT FEED"\);TvSportRow\(tvSports\.filter\{it\.name==selectedNav\},onNetwork\);Spacer\(Modifier\.height\(14\.dp\)\);TvEmpty\("Select \$\{selectedNav\} to browse available events"\)\}', '', text)
 tv.write_text(text)
 print(f"Synchronized {len(LEAGUES)} leagues across Mobile and TV")
