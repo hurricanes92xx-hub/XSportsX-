@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.text.SimpleDateFormat
@@ -25,12 +26,9 @@ import java.util.Locale
 import java.util.TimeZone
 
 /**
- * One schedule path for every league.
- *
- * The screen uses the shared SportsScheduleService first. If that provider is
- * throttled, stale, or returns no events inside the actual three-day window,
- * the throttling-safe recovery path retries the selected league without
- * request fan-out and preserves its last known-good result.
+ * League schedule UI. The visible horizon is always three days, while the
+ * loader uses one bounded scoreboard request instead of waiting on a fan-out
+ * of daily requests and nested provider retries.
  */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
@@ -44,7 +42,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var now by remember(canonicalLeague) { mutableStateOf(Instant.now()) }
 
     LaunchedEffect(canonicalLeague) {
-        while (true) {
+        while (isActive) {
             now = Instant.now()
             delay(30_000L)
         }
@@ -53,26 +51,20 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true
         error = null
-        runCatching { SportsScheduleService.loadForLeague(canonicalLeague, 3) }
-            .onSuccess { serviceEvents ->
-                val serviceHasWindow = hasWindowEvents(serviceEvents, Instant.now())
-                if (serviceHasWindow) {
-                    allEvents = serviceEvents
-                } else {
-                    val recovered = ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
-                    if (recovered.isNotEmpty()) allEvents = recovered else allEvents = serviceEvents
-                }
-            }
-            .onFailure {
-                val recovered = runCatching {
-                    ReliableLeagueScheduleFallback.load(canonicalLeague, 3)
-                }.getOrDefault(emptyList())
-                if (recovered.isNotEmpty()) {
-                    allEvents = recovered
-                } else {
-                    error = it.message ?: "Unable to load schedule"
-                }
-            }
+        val fast = withTimeoutOrNull(7_500L) {
+            FastLeagueScheduleLoader.load(canonicalLeague, 3)
+        }.orEmpty()
+        if (fast.isNotEmpty()) {
+            allEvents = fast
+        } else {
+            // Short, bounded safety net. Never allow the old retry cascade to
+            // hold the screen indefinitely.
+            val recovered = withTimeoutOrNull(3_000L) {
+                runCatching { ReliableLeagueScheduleFallback.load(canonicalLeague, 3) }.getOrDefault(emptyList())
+            }.orEmpty()
+            if (recovered.isNotEmpty()) allEvents = recovered
+            else if (allEvents.isEmpty()) error = "Schedule temporarily unavailable"
+        }
         loading = false
     }
 
@@ -116,7 +108,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color(0xFFFF1744))
             }
-            error != null -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) {
+            error != null && visible.isEmpty() -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) {
                 Text(error!!, color = Color.White)
             }
             visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -137,15 +129,6 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
                 }
             }
         }
-    }
-}
-
-private fun hasWindowEvents(events: List<SportsEvent>, now: Instant): Boolean {
-    val cutoff = now.plus(3, ChronoUnit.DAYS)
-    val grace = now.minus(10, ChronoUnit.MINUTES)
-    return events.any { event ->
-        val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@any false
-        event.isLive || (!start.isBefore(grace) && start.isBefore(cutoff))
     }
 }
 
