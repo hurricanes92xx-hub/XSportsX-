@@ -8,7 +8,7 @@ on:
     paths:
       - 'scripts/refresh_schedules.py'
       - 'scripts/refresh_schedules_engine.py'
-      - 'scripts/refresh_schedules_resilient.py'
+      - 'scripts/repair_schedule_sources.py'
       - 'scripts/official_api_adapters.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
@@ -26,26 +26,45 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Refresh canonical schedule feed through resilient season-aware engine
-        run: python scripts/refresh_schedules_resilient.py
+      - name: Refresh canonical schedule feed through guarded season-aware engine
+        run: python scripts/refresh_schedules_engine.py
+      - name: Repair known source endpoint drift
+        run: python scripts/repair_schedule_sources.py
       - name: Add authoritative official API schedules
         run: python scripts/official_api_adapters.py
-      - name: Validate feed invariants
+      - name: Normalize adapter timestamps and validate feed invariants
         run: |
           python - <<'PY'
           import json
           from datetime import datetime, timezone
-          p=json.load(open('data/schedule_feed.json'))
+          from pathlib import Path
+          pth=Path('data/schedule_feed.json')
+          p=json.loads(pth.read_text())
           events=p.get('events') or []
           assert events, 'schedule feed is empty'
           assert p.get('schema',0) >= 5, 'unexpected schedule schema'
-          assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events'
+          fixed=0
           bad=[]
           for e in events:
-            try: datetime.fromisoformat(e['start'].replace('Z','+00:00'))
-            except Exception: bad.append(e)
+            raw=e.get('start')
+            text=str(raw or '').strip()
+            normalized=None
+            for candidate in (text,text.replace('Z','+00:00'),text.replace('z','+00:00')):
+              try:
+                normalized=datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+                break
+              except ValueError: pass
+            if normalized is None: bad.append(e)
+            elif raw != normalized:
+              e['start']=normalized; fixed += 1
           assert not bad, f'invalid event timestamps: {len(bad)}'
-          print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues')
+          assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events'
+          p['events']=events
+          p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})}
+          p['generatedAt']=datetime.now(timezone.utc).isoformat()
+          p.setdefault('repairReport',{})['adapterTimestampsNormalized']=fixed
+          pth.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n')
+          print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues; normalized={fixed}')
           print('official source failures:', p.get('officialSourceFailures', []))
           print('provider failures:', p.get('failedSources', []))
           print('official API adapters:', p.get('officialApiAdapterReport', {}))
