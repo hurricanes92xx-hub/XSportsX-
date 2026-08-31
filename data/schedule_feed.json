@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T21:13:41.169332+00:00",
+  "generatedAt": "2026-08-31T21:21:27.534507+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -19,6 +19,8 @@
     "Ligue 1": 27,
     "MLB": 2883,
     "MLS": 75,
+    "MXGP": 19,
+    "MotoGP": 40,
     "NASCAR Cup": 51,
     "NASCAR Truck": 21,
     "NASCAR Xfinity": 30,
@@ -47,13 +49,9 @@
   "failedSources": [],
   "officialSourceFailures": [
     "NBA",
-    "PLL",
-    "NLL",
     "Rugby World Cup",
     "Six Nations",
-    "MotoGP",
     "FORMULA E",
-    "MXGP",
     "MONSTER JAM",
     "AAA Wrestling"
   ],
@@ -58633,7 +58631,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Northeastern at Siena",
       "start": "2026-08-31T21:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -71773,7 +71771,7 @@
       "league": "NCAA Women's Soccer",
       "title": "Delaware State at Manhattan",
       "start": "2026-08-31T19:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -72509,6 +72507,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Washington State at Utah Valley",
+      "start": "2026-09-03T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Tennessee Tech at Vanderbilt",
       "start": "2026-09-03T23:00:00Z",
       "tag": "UPCOMING",
@@ -72997,15 +73004,6 @@
       "league": "NCAA Women's Soccer",
       "title": "North Dakota at UC Santa Barbara",
       "start": "2026-09-04T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Washington State at Utah Valley",
-      "start": "2026-09-03T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -131069,10 +131067,482 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "MotoGP",
+      "title": "VALENCIA TEST",
+      "start": "2025-11-18T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PRIMA PRAMAC YAMAHA MotoGP PRESENTATION",
+      "start": "2026-01-13T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PERTAMINA ENDURO VR46 RACING TEAM PRESENTATION",
+      "start": "2026-01-14T10:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "APRILIA RACING TEAM PRESENTATION",
+      "start": "2026-01-15T10:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "DUCATI LENOVO TEAM PRESENTATION",
+      "start": "2026-01-19T09:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY YAMAHA MotoGP PRESENTATION",
+      "start": "2026-01-21T07:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "TRACKHOUSE MotoGP TEAM PRESENTATION",
+      "start": "2026-01-21T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "RED BULL KTM FACTORY RACING AND TECH3 PRESENTATIONS",
+      "start": "2026-01-27T08:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SHAKEDOWN TEST",
+      "start": "2026-01-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BK8 GRESINI RACING MotoGP PRESENTATION",
+      "start": "2026-01-31T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "LCR HONDA PRESENTATION",
+      "start": "2026-02-01T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "HONDA HRC CASTROL PRESENTATION",
+      "start": "2026-02-02T08:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SEPANG TEST",
+      "start": "2026-02-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SEASON LAUNCH",
+      "start": "2026-02-07T11:25:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BURIRAM TEST",
+      "start": "2026-02-21T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PT GRAND PRIX OF THAILAND ",
+      "start": "2026-02-27T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF BRAZIL ",
+      "start": "2026-03-20T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "RED BULL GRAND PRIX OF THE UNITED STATES ",
+      "start": "2026-03-27T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF SPAIN ",
+      "start": "2026-04-24T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "JEREZ TEST ",
+      "start": "2026-04-27T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MICHELIN® GRAND PRIX OF FRANCE ",
+      "start": "2026-05-08T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY GRAND PRIX OF CATALUNYA ",
+      "start": "2026-05-15T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BARCELONA TEST ",
+      "start": "2026-05-18T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BREMBO GRAND PRIX OF ITALY ",
+      "start": "2026-05-29T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF HUNGARY ",
+      "start": "2026-06-05T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY GRAND PRIX OF CZECHIA ",
+      "start": "2026-06-19T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "TISSOT GRAND PRIX OF THE NETHERLANDS ",
+      "start": "2026-06-26T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "WORLD DUCATI WEEK",
+      "start": "2026-07-05T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "LIQUI MOLY GRAND PRIX OF GERMANY ",
+      "start": "2026-07-10T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "QATAR AIRWAYS GRAND PRIX OF GREAT BRITAIN ",
+      "start": "2026-08-07T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MICHELIN® GRAND PRIX OF ARAGON ",
+      "start": "2026-08-28T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "RED BULL GRAND PRIX OF SAN MARINO AND THE RIMINI RIVIERA ",
+      "start": "2026-09-11T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF AUSTRIA ",
+      "start": "2026-09-18T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MOTUL GRAND PRIX OF JAPAN ",
+      "start": "2026-10-01T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PERTAMINA GRAND PRIX OF INDONESIA ",
+      "start": "2026-10-09T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF AUSTRALIA ",
+      "start": "2026-10-22T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PETRONAS GRAND PRIX OF MALAYSIA ",
+      "start": "2026-10-30T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "QATAR AIRWAYS GRAND PRIX OF QATAR ",
+      "start": "2026-11-06T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "REPSOL GRAND PRIX OF PORTUGAL ",
+      "start": "2026-11-20T08:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MOTUL GRAND PRIX OF VALENCIA",
+      "start": "2026-11-27T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "motogp.pulselive.com"
+    },
+    {
+      "league": "MXGP",
+      "title": "Bariloche, Argentina View Reports MXGP of Andalucia",
+      "start": "2026-03-21T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Almonte, Spain View Reports MXGP of Switzerland",
+      "start": "2026-03-28T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Frauenfeld, Switzerland View Reports MXGP of Sardegna",
+      "start": "2026-04-11T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Riola Sardo, Italy View Reports MXGP of Trentino",
+      "start": "2026-04-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Pietramurata, Italy View Reports MXGP of France",
+      "start": "2026-05-23T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Lacapelle-Marival, France View Reports MXGP of Germany",
+      "start": "2026-05-30T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Teutschenthal, Germany View Reports MXGP of Latvia",
+      "start": "2026-06-06T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Kegums, Latvia View Reports MXGP of Italy",
+      "start": "2026-06-20T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Montevarchi, Italy View Reports MXGP of Portugal",
+      "start": "2026-06-27T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Agueda, Portugal View Reports MXGP of South Africa",
+      "start": "2026-07-04T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Johannesburg, South Africa View Reports MXGP of Great Britain",
+      "start": "2026-07-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Foxhills, United Kingdom View Reports MXGP of Czech Republic",
+      "start": "2026-07-25T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Loket, Czechia View Reports MXGP of Flanders",
+      "start": "2026-08-01T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Lommel, Belgium View Reports MXGP of Sweden",
+      "start": "2026-08-15T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Uddevalla, Sweden View Reports MXGP of Netherlands",
+      "start": "2026-08-22T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Arnhem, Netherlands (the) View Reports MXGP of Turkiye",
+      "start": "2026-09-05T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Afyonkarahisar, Turkey View Reports MXGP of China",
+      "start": "2026-09-12T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Shanghai, China View Reports MXGP of Australia",
+      "start": "2026-09-19T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
+    },
+    {
+      "league": "MXGP",
+      "title": "Darwin, Australia View Reports Monster Energy FIM MXoN",
+      "start": "2026-10-03T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️",
+      "source": "honda.racing"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T21:12:23.529616+00:00",
+    "generatedAt": "2026-08-31T21:20:48.436381+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -132702,6 +133172,26 @@
       "added": 0,
       "parsed": 74,
       "request_failures": 0
+    },
+    "PLL": {
+      "source": "ESPN lacrosse scoreboard",
+      "added": 0,
+      "healthy": true
+    },
+    "NLL": {
+      "source": "ESPN lacrosse scoreboard",
+      "added": 0,
+      "healthy": true
+    },
+    "MotoGP": {
+      "source": "MotoGP public API",
+      "parsed": 46,
+      "added": 40
+    },
+    "MXGP": {
+      "source": "Honda Racing MXGP calendar",
+      "parsed": 19,
+      "added": 19
     }
   }
 }
