@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""ESPN-backed NCAA schedule adapter with sport-specific routing and season guards."""
+"""ESPN-backed NCAA schedule adapter with sport-specific routing, FCS coverage, and season guards."""
 from __future__ import annotations
 import json, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.7','Accept':'application/json,text/plain,*/*'}
+HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.8','Accept':'application/json,text/plain,*/*'}
 NOW=datetime.now(timezone.utc); HORIZON=NOW+timedelta(days=370)
 SPORTS=[
- ('NCAA FB','football','college-football','🏈','always'),
- ('NCAA BB','basketball','mens-college-basketball','🏀','winter'),('NCAA WBB','basketball','womens-college-basketball','🏀','winter'),
- ('NCAA Baseball','baseball','college-baseball','⚾','spring'),('NCAA Softball','softball','college-softball','🥎','spring'),
- ("NCAA Men's Soccer",'soccer','usa.ncaa.m.1','⚽','fall'),("NCAA Women's Soccer",'soccer','usa.ncaa.w.1','⚽','fall'),
- ("NCAA Men's Volleyball",'volleyball','mens-college-volleyball','🏐','winter'),("NCAA Women's Volleyball",'volleyball','womens-college-volleyball','🏐','fall'),
- ("NCAA Men's Hockey",'hockey','mens-college-hockey','🏒','winter'),("NCAA Women's Hockey",'hockey','womens-college-hockey','🏒','winter'),
- ("NCAA Women's Field Hockey",'field-hockey','ncaa-field-hockey','🏑','fall')]
+ ('NCAA FB','football','college-football','🏈','always',None),
+ ('NCAA FCS','football','college-football','🏈','always','81'),
+ ('NCAA BB','basketball','mens-college-basketball','🏀','winter',None),('NCAA WBB','basketball','womens-college-basketball','🏀','winter',None),
+ ('NCAA Baseball','baseball','college-baseball','⚾','spring',None),('NCAA Softball','softball','college-softball','🥎','spring',None),
+ ("NCAA Men's Soccer",'soccer','usa.ncaa.m.1','⚽','fall',None),("NCAA Women's Soccer",'soccer','usa.ncaa.w.1','⚽','fall',None),
+ ("NCAA Men's Volleyball",'volleyball','mens-college-volleyball','🏐','winter',None),("NCAA Women's Volleyball",'volleyball','womens-college-volleyball','🏐','fall',None),
+ ("NCAA Men's Hockey",'hockey','mens-college-hockey','🏒','winter',None),("NCAA Women's Hockey",'hockey','womens-college-hockey','🏒','winter',None),
+ ("NCAA Women's Field Hockey",'field-hockey','ncaa-field-hockey','🏑','fall',None)]
 
 def get_json(url):
  req=urllib.request.Request(url,headers=HEADERS)
@@ -32,10 +33,11 @@ def in_season(kind,dt):
  return {'always':True,'fall':m in (8,9,10,11),'winter':m in (11,12,1,2,3,4,5),'spring':m in (2,3,4,5,6)}[kind]
 def add_events(events,report):
  existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}; start=NOW.date()
- for league,sport,slug,icon,season in SPORTS:
+ for league,sport,slug,icon,season,group in SPORTS:
   added=raw=errors=0; cursor=start
   while cursor<=HORIZON.date():
-   end=min(cursor+timedelta(days=29),HORIZON.date()); url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={cursor:%Y%m%d}-{end:%Y%m%d}&limit=1000'
+   end=min(cursor+timedelta(days=29),HORIZON.date()); extra=f'&groups={group}' if group else ''
+   url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={cursor:%Y%m%d}-{end:%Y%m%d}&limit=1000{extra}'
    try:root=get_json(url)
    except Exception: errors+=1; cursor=end+timedelta(days=1); continue
    for g in root.get('events') or []:
@@ -48,7 +50,7 @@ def add_events(events,report):
     title=g.get('name') or (f'{away} @ {home}' if away and home else league); key=(league,title,dt)
     if key in existing:continue
     state=((g.get('status') or {}).get('type') or {}).get('state','');tag='LIVE' if state=='in' else ('FINAL' if state=='post' else 'UPCOMING')
-    events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'ESPN NCAA scoreboard'});existing.add(key);added+=1
+    events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':f'ESPN NCAA scoreboard'+(' FCS group' if group else '')});existing.add(key);added+=1
    cursor=end+timedelta(days=1)
   status='added' if added else ('duplicate_only' if raw and errors==0 else 'empty')
   report[league]=f'espn:{added}; raw_events:{raw}; requests:{((HORIZON.date()-start).days//30)+1}; errors:{errors}; season:{season}; status:{status}'
