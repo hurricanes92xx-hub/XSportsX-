@@ -6,7 +6,6 @@ from pathlib import Path
 
 FEED = Path("data/schedule_feed.json")
 POLICY = Path("data/schedule_season_policy.json")
-REFERENCE_DATE = datetime(2026, 8, 31, tzinfo=timezone.utc)
 LOOKAHEAD_DAYS = 370
 
 if not FEED.exists():
@@ -48,11 +47,9 @@ for league, minimum in (("NCAA Men's Soccer", 1), ("NCAA Women's Soccer", 1), ("
     if league in counts and counts[league] < minimum:
         raise SystemExit(f"REFRESH REJECTED: {league} unexpectedly empty")
 
-# Phase 1 verification must distinguish legitimate historical schedule rows from
-# repaired/current coverage. The final feed can intentionally retain historical
-# rows for continuity, so a March 2026 MXGP event must not invalidate an adapter
-# that also supplies September 2026/future events. What must fail closed is a
-# repaired league that has NO event in the current/future publication window.
+# Phase 1 verification distinguishes legitimate historical rows from repaired/current
+# coverage. Historical rows may remain for continuity; a repaired league must retain
+# at least one event in the rolling current/future publication window.
 if POLICY.exists():
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
     season_windows = policy.get("leagueWindows") or {}
@@ -60,6 +57,18 @@ else:
     season_windows = {}
 
 phase1 = root.get("phase1RepairReport") or {}
+
+# Roll forward automatically on every refresh. Prefer the feed generation date because
+# the feed is the artifact being validated; fall back to the runner's UTC date if the
+# generation timestamp is unavailable or malformed.
+def rolling_reference_date():
+    try:
+        generated = datetime.fromisoformat(str(root.get("generatedAt")).replace("Z", "+00:00"))
+        return generated.astimezone(timezone.utc)
+    except Exception:
+        return datetime.now(timezone.utc)
+
+REFERENCE_DATE = rolling_reference_date()
 window_end = REFERENCE_DATE + timedelta(days=LOOKAHEAD_DAYS)
 
 def in_season_window(dt, window):
@@ -87,13 +96,14 @@ for league in sorted(phase1):
         policy_text = str(season_window) if season_window else "all-year/unspecified"
         raise SystemExit(
             f"REFRESH REJECTED: Phase 1 {league} has no current/future coverage; "
-            f"reference=2026-08-31T00:00:00Z horizon={window_end.isoformat().replace('+00:00','Z')} "
+            f"reference={REFERENCE_DATE.isoformat().replace('+00:00','Z')} horizon={window_end.isoformat().replace('+00:00','Z')} "
             f"season={policy_text} final_min={minimum} final_max={maximum} "
             f"stale_or_outside={len(stale_or_outside)}"
         )
 
     print(
         f"Phase 1 date validation passed: {league}; "
+        f"reference={REFERENCE_DATE.isoformat().replace('+00:00','Z')}; "
         f"current_future={len(valid)}; stale_or_outside={len(stale_or_outside)}; "
         f"final_min={min(starts).isoformat().replace('+00:00','Z')}; "
         f"final_max={max(starts).isoformat().replace('+00:00','Z')}"
