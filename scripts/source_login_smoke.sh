@@ -4,6 +4,7 @@ APK="${1:?APK required}"
 OUT="${2:-source-login-output}"
 PKG="${QA_PACKAGE:-com.xsportsx.app}"
 SOURCE_BASE="${QA_SOURCE_BASE:-http://127.0.0.1:8765}"
+ACTIVITY="$PKG/.MainActivityFuture"
 mkdir -p "$OUT"
 
 adb wait-for-device
@@ -11,7 +12,9 @@ adb get-state
 adb reverse tcp:8765 tcp:8765 >/dev/null
 adb install -r -d "$APK"
 adb shell am force-stop "$PKG" || true
-adb shell monkey -p "$PKG" 1 >/dev/null
+# Debug-only deterministic entrypoint. This deliberately bypasses the visual
+# home/TV navigation because the source form itself is what this test validates.
+adb shell am start -n "$ACTIVITY" --ez QA_OPEN_SOURCE true >/dev/null
 sleep 2
 
 snapshot(){
@@ -49,16 +52,6 @@ raise SystemExit(0 if any(n.attrib.get('resource-id','') == wanted for n in root
 PY
 }
 
-click_id(){
-  local id="$1" bounds x y
-  snapshot "probe-${id}"
-  bounds="$(bounds_for_id "$OUT/probe-${id}.xml" "$id" 2>/dev/null || true)"
-  [ -n "$bounds" ] || return 1
-  read -r x y <<< "$bounds"
-  adb shell input tap "$x" "$y"
-  return 0
-}
-
 field_text(){
   local file="$1" id="$2"
   python3 - "$file" "$id" <<'PY'
@@ -72,14 +65,17 @@ raise SystemExit(1)
 PY
 }
 
+click_id(){
+  local id="$1" bounds x y
+  bounds="$(bounds_for_id "$OUT/source-form.xml" "$id" 2>/dev/null || true)"
+  [ -n "$bounds" ] || return 1
+  read -r x y <<< "$bounds"
+  adb shell input tap "$x" "$y"
+}
+
 set_field(){
   local id="$1" value="$2" bounds x y observed
-  for _ in $(seq 1 10); do
-    snapshot "field-${id}"
-    bounds="$(bounds_for_id "$OUT/field-${id}.xml" "$id" 2>/dev/null || true)"
-    [ -n "$bounds" ] && break
-    sleep 0.5
-  done
+  bounds="$(bounds_for_id "$OUT/source-form.xml" "$id" 2>/dev/null || true)"
   [ -n "$bounds" ] || { echo "Missing field resource: $id"; return 1; }
   read -r x y <<< "$bounds"
   adb shell input tap "$x" "$y"
@@ -98,54 +94,51 @@ set_field(){
   fi
 }
 
-# The production Compose hierarchy now exposes stable resource IDs through
-# testTagsAsResourceId. This avoids guessing from labels, merged semantics,
-# keyboard focus, or screen coordinates. It is the Android-recommended bridge
-# for UIAutomator to interact with Compose nodes.
-for attempt in $(seq 1 15); do
-  snapshot "nav-${attempt}"
-  if exists_id "$OUT/nav-${attempt}.xml" "source_server"; then
-    break
-  fi
-  if click_id "nav_sources"; then
-    sleep 1
-  else
-    sleep 0.5
-  fi
-done
-
 snapshot "source-form"
-exists_id "$OUT/source-form.xml" "source_server" || { echo "Missing source server field"; exit 1; }
-exists_id "$OUT/source-form.xml" "source_username" || { echo "Missing source username field"; exit 1; }
-exists_id "$OUT/source-form.xml" "source_password" || { echo "Missing source password field"; exit 1; }
-exists_id "$OUT/source-form.xml" "source_connect" || { echo "Missing source connect action"; exit 1; }
+for id in source_server source_username source_password source_connect; do
+  exists_id "$OUT/source-form.xml" "$id" || { echo "Missing source control: $id"; exit 1; }
+done
 
 set_field "source_server" "$SOURCE_BASE"
 set_field "source_username" "qauser"
 set_field "source_password" "qapass"
 
-# Keep the keyboard out of the way before invoking the real connection action.
 adb shell input keyevent KEYCODE_BACK || true
 sleep 0.5
+snapshot "ready-to-connect"
 click_id "source_connect" || { echo "Unable to click source connect action"; exit 1; }
 
-for attempt in $(seq 1 40); do
+for attempt in $(seq 1 60); do
   sleep 0.25
   snapshot "result-${attempt}"
   XML="$OUT/result-${attempt}.xml"
-  if grep -Eqi 'SOURCE CONNECTION ERROR|Connection failed|invalid data|did not return a valid' "$XML"; then
+  if grep -Eqi 'SOURCE CONNECTION ERROR|Xtream rejected|Connection failed|could not save source|invalid data|did not return a valid' "$XML"; then
     cp "$XML" "$OUT/connection-error.xml"
     cp "$OUT/result-${attempt}.png" "$OUT/connection-error.png"
     echo "Source connection reached an explicit error state"
     exit 1
   fi
-  if grep -Eqi 'SOURCE SAVED|SOURCE CONNECTED|Connection successful' "$XML" || exists_id "$XML" "source_saved" 2>/dev/null; then
-    cp "$XML" "$OUT/connected.xml"
-    cp "$OUT/result-${attempt}.png" "$OUT/connected.png"
-    echo "Xtream source login/pull smoke test passed"
-    exit 0
+  # Successful SourceConnectScreen calls onSaved(), which closes the screen.
+  if ! exists_id "$XML" "source_connect"; then
+    break
   fi
 done
 
-echo "Source connection did not reach a success state"
-exit 1
+# Re-open the debug source screen and verify that the successfully tested
+# credentials were persisted by SourceStore. This makes the test a real
+# login/connect/persistence check rather than a button-click smoke test.
+adb shell am force-stop "$PKG" || true
+adb shell am start -n "$ACTIVITY" --ez QA_OPEN_SOURCE true >/dev/null
+sleep 1
+snapshot "persisted"
+server="$(field_text "$OUT/persisted.xml" "source_server" 2>/dev/null || true)"
+user="$(field_text "$OUT/persisted.xml" "source_username" 2>/dev/null || true)"
+if [ "$server" != "$SOURCE_BASE" ] || [ "$user" != "qauser" ]; then
+  echo "Source connection did not persist verified credentials"
+  echo "Observed server: $server"
+  echo "Observed username: $user"
+  exit 1
+fi
+
+echo "Xtream source login/pull/persistence smoke test passed"
+exit 0
