@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Authoritative schedule adapters for sources whose web pages/providers are unreliable."""
+"""Authoritative schedule adapters for unreliable providers."""
 from __future__ import annotations
 import json
 import urllib.request
@@ -8,9 +8,8 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'XSportsX-Schedule/5.2','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
-NOW=datetime.now(timezone.utc)
-HORIZON=NOW+timedelta(days=370)
+HEADERS={'User-Agent':'XSportsX-Schedule/5.3','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
+NOW=datetime.now(timezone.utc); HORIZON=NOW+timedelta(days=370)
 NCAA=[
  ('NCAA BB','basketball-men','d1','🏀'),('NCAA WBB','basketball-women','d1','🏀'),('NCAA Baseball','baseball','d1','⚾'),('NCAA Softball','softball','d1','🥎'),
  ("NCAA Men's Hockey",'icehockey-men','d1','🏒'),("NCAA Women's Hockey",'icehockey-women','d1','🏒'),("NCAA Men's Soccer",'soccer-men','d1','⚽'),("NCAA Women's Soccer",'soccer-women','d1','⚽'),
@@ -20,7 +19,7 @@ NASCAR=[('NASCAR Cup',1,'🏁'),('NASCAR Xfinity',2,'🏁'),('NASCAR Truck',3,'�
 
 def get_json(url):
  req=urllib.request.Request(url,headers=HEADERS)
- with urllib.request.urlopen(req,timeout=20) as r:return json.loads(r.read().decode('utf-8','ignore'))
+ with urllib.request.urlopen(req,timeout=30) as r:return json.loads(r.read().decode('utf-8','ignore'))
 
 def iso(v):
  if v is None:return None
@@ -45,63 +44,64 @@ def team(v):
  return ''
 
 def ncaa_games(root):
- """Normalize both the public wrapper's games[] and its modern GraphQL data.contests[]."""
- games=root.get('games') if isinstance(root,dict) else None
- modern=False
- if not isinstance(games,list):
-  contests=((root.get('data') or {}).get('contests') if isinstance(root,dict) else None)
-  if isinstance(contests,list):
-   games=contests; modern=True
- if not isinstance(games,list):games=[]
- out=[]
- for g in games:
-  if not isinstance(g,dict):continue
-  if modern:
+ """Normalize modern NCAA GraphQL contests and legacy games."""
+ contests=((root.get('data') or {}).get('contests') if isinstance(root,dict) else None)
+ if isinstance(contests,list):
+  out=[]
+  for g in contests:
+   if not isinstance(g,dict):continue
    teams=g.get('teams') or []
-   if not isinstance(teams,list):continue
-   home_obj=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is True),None)
-   away_obj=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is False),None)
-   away=team(away_obj);home=team(home_obj)
-  else:
-   away=team(g.get('away') or g.get('awayTeam') or g.get('visitor'))
-   home=team(g.get('home') or g.get('homeTeam') or g.get('host'))
+   home=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is True),None)
+   away=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is False),None)
+   dt=iso(g.get('startTimeEpoch')) or iso(g.get('startDateTimeUtc'))
+   if not dt and g.get('startDate') and g.get('startTime'):
+    try:dt=datetime.fromisoformat(f"{g['startDate']}T{g['startTime']}").replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z')
+    except ValueError:dt=None
+   if dt and (home or away):out.append((team(away),team(home),dt,str(g.get('title') or '').strip()))
+  return out
+ games=root.get('games') if isinstance(root,dict) else None
+ out=[]
+ for g in games if isinstance(games,list) else []:
+  if not isinstance(g,dict):continue
+  away=team(g.get('away') or g.get('awayTeam') or g.get('visitor'));home=team(g.get('home') or g.get('homeTeam') or g.get('host'))
   dt=iso(g.get('startTimeEpoch') or g.get('startDateTimeUtc') or g.get('startDateTime'))
   if not dt and g.get('startDate') and g.get('startTime'):
-   text=f"{g['startDate']} {g['startTime']}"
-   for fmt in ('%Y-%m-%d %I:%M%p ET','%Y-%m-%d %I:%M %p ET','%Y-%m-%d %I:%M%p'):
-    try:
-     dt=datetime.strptime(text,fmt).replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z');break
-    except ValueError:pass
-  if dt and (away or home or g.get('title') or g.get('contestId')):
-   out.append((away,home,dt,str(g.get('title') or '').strip()))
+   try:dt=datetime.strptime(f"{g['startDate']} {g['startTime']}",'%Y-%m-%d %I:%M%p ET').replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z')
+   except ValueError:dt=None
+  if dt and (away or home or g.get('title')):out.append((away,home,dt,str(g.get('title') or '').strip()))
  return out
 
 def add_ncaa(events,report):
+ """Use NCAA's current season schedule GraphQL route, not the now-unreliable daily scoreboard wrapper."""
  existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
+ season=NOW.year
  for league,sport,division,icon in NCAA:
-  added=0;errors=[];requested=0
-  for day in range(0,15):
-   d=(NOW+timedelta(days=day)).date();url=f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{d.year}/{d.month:02d}/{d.day:02d}/all-conf';requested+=1
-   try:root=get_json(url)
-   except Exception as exc:errors.append(str(exc));continue
-   for away,home,dt,raw in ncaa_games(root):
-    try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
-    except ValueError:continue
-    if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
-    title=f'{away} @ {home}' if away and home else (raw or home or away or league)
-    key=(league,title,dt)
-    if key in existing:continue
-    tag='LIVE' if o<=NOW+timedelta(minutes=5) else ('FINAL' if o<=NOW else 'UPCOMING')
-    events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'NCAA scoreboard API'});existing.add(key);added+=1
-  report.setdefault('ncaa',{})[league]=f'official_api:{added}; requests:{requested}; errors:{len(errors)}'
-  if added==0:print(f'WARNING NCAA adapter returned zero normalized events for {league}')
+  added=0;errors=[]
+  # schedule-alt is the maintained API's modern season-wide route. One request per sport.
+  url=f'https://ncaa-api.henrygd.me/schedule-alt/{sport}/{division}/{season}'
+  try:root=get_json(url)
+  except Exception as exc:
+   report.setdefault('ncaa',{})[league]=f'official_api:0; requests:1; errors:1; error:{exc}'
+   print(f'WARNING NCAA adapter request failed for {league}: {exc}');continue
+  games=ncaa_games(root)
+  for away,home,dt,raw in games:
+   try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
+   except ValueError:continue
+   if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
+   title=f'{away} @ {home}' if away and home else (raw or home or away or league)
+   key=(league,title,dt)
+   if key in existing:continue
+   tag='LIVE' if o<=NOW+timedelta(minutes=5) else ('FINAL' if o<=NOW else 'UPCOMING')
+   events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'NCAA season schedule API'});existing.add(key);added+=1
+  report.setdefault('ncaa',{})[league]=f'official_api:{added}; requests:1; errors:0; raw_events:{len(games)}'
+  if added==0:print(f'WARNING NCAA adapter returned zero in-horizon events for {league}; raw_events={len(games)}')
 
 def nascar_races(root,series_id):
  rows=[]
  def walk(v,ctx=None):
   if isinstance(v,dict):
    c=dict(ctx or {});c.update({k:v[k] for k in ('series_id','seriesId','race_id','race_name','track_name','event_name','date_scheduled','race_date','start_time_utc','startTimeUtc') if k in v})
-   if v.get('schedule') and isinstance(v['schedule'],list):
+   if isinstance(v.get('schedule'),list):
     for s in v['schedule']:
      if isinstance(s,dict):rows.append({**c,**s})
    elif v.get('start_time_utc') or v.get('startTimeUtc'):rows.append(c)
