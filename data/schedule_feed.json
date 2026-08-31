@@ -1,8 +1,9 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T21:21:27.534507+00:00",
+  "generatedAt": "2026-08-31T21:30:09.481894+00:00",
   "refreshHours": 6,
   "eventCounts": {
+    "AAA Wrestling": 2,
     "AEW": 4,
     "AFL": 4,
     "ATP": 5,
@@ -11,6 +12,7 @@
     "CFL": 90,
     "EPL": 31,
     "F1": 3,
+    "FORMULA E": 21,
     "IPL": 74,
     "IndyCar": 1,
     "LIV Golf": 1,
@@ -19,6 +21,7 @@
     "Ligue 1": 27,
     "MLB": 2883,
     "MLS": 75,
+    "MONSTER JAM": 7,
     "MXGP": 19,
     "MotoGP": 40,
     "NASCAR Cup": 51,
@@ -38,6 +41,7 @@
     "NWSL": 43,
     "PGA": 3,
     "Serie A": 32,
+    "Six Nations": 15,
     "TNA": 1,
     "UCL": 18,
     "UEL": 108,
@@ -47,14 +51,7 @@
     "WWE": 13
   },
   "failedSources": [],
-  "officialSourceFailures": [
-    "NBA",
-    "Rugby World Cup",
-    "Six Nations",
-    "FORMULA E",
-    "MONSTER JAM",
-    "AAA Wrestling"
-  ],
+  "officialSourceFailures": [],
   "officialSourceCounts": {
     "NFL": 16,
     "NCAA FB": 1488,
@@ -111,12 +108,12 @@
     "WWE": 13,
     "AEW": 4,
     "TNA": 1,
-    "MotoGP": 0,
+    "MotoGP": 40,
     "WRC": 0,
     "WEC": 0,
     "IMSA": 0,
     "FORMULA E": 0,
-    "MXGP": 0,
+    "MXGP": 19,
     "MONSTER JAM": 0,
     "ESPORTS": 0,
     "ESPORTS - Rocket League": 0,
@@ -128,6 +125,146 @@
     "NASCAR Truck": 0
   },
   "events": [
+    {
+      "league": "MotoGP",
+      "title": "VALENCIA TEST",
+      "start": "2025-11-18T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PRIMA PRAMAC YAMAHA MotoGP PRESENTATION",
+      "start": "2026-01-13T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PERTAMINA ENDURO VR46 RACING TEAM PRESENTATION",
+      "start": "2026-01-14T10:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "APRILIA RACING TEAM PRESENTATION",
+      "start": "2026-01-15T10:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "DUCATI LENOVO TEAM PRESENTATION",
+      "start": "2026-01-19T09:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY YAMAHA MotoGP PRESENTATION",
+      "start": "2026-01-21T07:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "TRACKHOUSE MotoGP TEAM PRESENTATION",
+      "start": "2026-01-21T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "RED BULL KTM FACTORY RACING AND TECH3 PRESENTATIONS",
+      "start": "2026-01-27T08:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SHAKEDOWN TEST",
+      "start": "2026-01-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BK8 GRESINI RACING MotoGP PRESENTATION",
+      "start": "2026-01-31T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "LCR HONDA PRESENTATION",
+      "start": "2026-02-01T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "HONDA HRC CASTROL PRESENTATION",
+      "start": "2026-02-02T08:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SEPANG TEST",
+      "start": "2026-02-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "SEASON LAUNCH",
+      "start": "2026-02-07T11:25:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BURIRAM TEST",
+      "start": "2026-02-21T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PT GRAND PRIX OF THAILAND ",
+      "start": "2026-02-27T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF BRAZIL ",
+      "start": "2026-03-20T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MXGP",
+      "title": "Bariloche, Argentina View Reports MXGP of Andalucia",
+      "start": "2026-03-21T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MotoGP",
+      "title": "RED BULL GRAND PRIX OF THE UNITED STATES ",
+      "start": "2026-03-27T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MXGP",
+      "title": "Almonte, Spain View Reports MXGP of Switzerland",
+      "start": "2026-03-28T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
     {
       "league": "IPL",
       "title": "Sunrisers Hyderabad @ Royal Challengers Bengaluru",
@@ -248,6 +385,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MXGP",
+      "title": "Frauenfeld, Switzerland View Reports MXGP of Sardegna",
+      "start": "2026-04-11T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Delhi Capitals @ Chennai Super Kings",
       "start": "2026-04-11T14:00:00Z",
@@ -311,6 +455,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MXGP",
+      "title": "Riola Sardo, Italy View Reports MXGP of Trentino",
+      "start": "2026-04-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Chennai Super Kings @ Sunrisers Hyderabad",
       "start": "2026-04-18T14:00:00Z",
@@ -360,6 +511,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MotoGP",
+      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF SPAIN ",
+      "start": "2026-04-24T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Gujarat Titans @ Royal Challengers Bengaluru",
       "start": "2026-04-24T14:00:00Z",
@@ -393,6 +551,13 @@
       "start": "2026-04-26T14:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏏"
+    },
+    {
+      "league": "MotoGP",
+      "title": "JEREZ TEST ",
+      "start": "2026-04-27T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "IPL",
@@ -479,6 +644,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MotoGP",
+      "title": "MICHELIN® GRAND PRIX OF FRANCE ",
+      "start": "2026-05-08T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Kolkata Knight Riders @ Delhi Capitals",
       "start": "2026-05-08T14:00:00Z",
@@ -535,6 +707,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY GRAND PRIX OF CATALUNYA ",
+      "start": "2026-05-15T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Chennai Super Kings @ Lucknow Super Giants",
       "start": "2026-05-15T14:00:00Z",
@@ -561,6 +740,13 @@
       "start": "2026-05-17T14:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏏"
+    },
+    {
+      "league": "MotoGP",
+      "title": "BARCELONA TEST ",
+      "start": "2026-05-18T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "IPL",
@@ -610,6 +796,13 @@
       "start": "2026-05-22T19:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Pietramurata, Italy View Reports MXGP of France",
+      "start": "2026-05-23T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "IPL",
@@ -668,6 +861,13 @@
       "icon": "🏏"
     },
     {
+      "league": "MotoGP",
+      "title": "BREMBO GRAND PRIX OF ITALY ",
+      "start": "2026-05-29T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Rajasthan Royals @ Gujarat Titans",
       "start": "2026-05-29T14:00:00Z",
@@ -703,6 +903,13 @@
       "icon": "🏈"
     },
     {
+      "league": "MXGP",
+      "title": "Lacapelle-Marival, France View Reports MXGP of Germany",
+      "start": "2026-05-30T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Gujarat Titans @ Royal Challengers Bengaluru",
       "start": "2026-05-31T14:00:00Z",
@@ -717,11 +924,25 @@
       "icon": "🏈"
     },
     {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF HUNGARY ",
+      "start": "2026-06-05T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "WPG @ CGY",
       "start": "2026-06-05T21:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Teutschenthal, Germany View Reports MXGP of Latvia",
+      "start": "2026-06-06T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -752,11 +973,25 @@
       "icon": "🏈"
     },
     {
+      "league": "MotoGP",
+      "title": "MONSTER ENERGY GRAND PRIX OF CZECHIA ",
+      "start": "2026-06-19T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "BC @ HAM",
       "start": "2026-06-19T19:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Kegums, Latvia View Reports MXGP of Italy",
+      "start": "2026-06-20T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -787,11 +1022,25 @@
       "icon": "🏈"
     },
     {
+      "league": "MotoGP",
+      "title": "TISSOT GRAND PRIX OF THE NETHERLANDS ",
+      "start": "2026-06-26T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "TOR @ SSK",
       "start": "2026-06-26T21:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Montevarchi, Italy View Reports MXGP of Portugal",
+      "start": "2026-06-27T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -822,11 +1071,25 @@
       "icon": "🏈"
     },
     {
+      "league": "MXGP",
+      "title": "Agueda, Portugal View Reports MXGP of South Africa",
+      "start": "2026-07-04T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "EDM @ BC",
       "start": "2026-07-04T19:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MotoGP",
+      "title": "WORLD DUCATI WEEK",
+      "start": "2026-07-05T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -841,6 +1104,13 @@
       "start": "2026-07-09T21:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MotoGP",
+      "title": "LIQUI MOLY GRAND PRIX OF GERMANY ",
+      "start": "2026-07-10T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -869,6 +1139,13 @@
       "start": "2026-07-17T21:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Johannesburg, South Africa View Reports MXGP of Great Britain",
+      "start": "2026-07-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -906,6 +1183,13 @@
       "icon": "🏈"
     },
     {
+      "league": "MXGP",
+      "title": "Foxhills, United Kingdom View Reports MXGP of Czech Republic",
+      "start": "2026-07-25T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "TOR @ BC",
       "start": "2026-07-25T19:00:00Z",
@@ -934,6 +1218,13 @@
       "icon": "🏈"
     },
     {
+      "league": "MXGP",
+      "title": "Loket, Czechia View Reports MXGP of Flanders",
+      "start": "2026-08-01T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "CGY @ HAM",
       "start": "2026-08-01T15:00:00Z",
@@ -953,6 +1244,13 @@
       "start": "2026-08-06T19:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MotoGP",
+      "title": "QATAR AIRWAYS GRAND PRIX OF GREAT BRITAIN ",
+      "start": "2026-08-07T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -990,6 +1288,13 @@
       "icon": "🏈"
     },
     {
+      "league": "MXGP",
+      "title": "Lommel, Belgium View Reports MXGP of Sweden",
+      "start": "2026-08-15T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "TOR @ EDM",
       "start": "2026-08-15T15:00:00Z",
@@ -1016,6 +1321,13 @@
       "start": "2026-08-21T21:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "MXGP",
+      "title": "Uddevalla, Sweden View Reports MXGP of Netherlands",
+      "start": "2026-08-22T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -1058,6 +1370,13 @@
       "start": "2026-08-27T04:00:00Z",
       "tag": "FINAL",
       "icon": "⛳"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MICHELIN® GRAND PRIX OF ARAGON ",
+      "start": "2026-08-28T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -2607,6 +2926,13 @@
       "start": "2026-09-05T11:30:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "MXGP",
+      "title": "Arnhem, Netherlands (the) View Reports MXGP of Turkiye",
+      "start": "2026-09-05T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "Serie A",
@@ -5600,6 +5926,13 @@
       "icon": "⛳"
     },
     {
+      "league": "MotoGP",
+      "title": "RED BULL GRAND PRIX OF SAN MARINO AND THE RIMINI RIVIERA ",
+      "start": "2026-09-11T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "F1",
       "title": "Tag Heuer Spanish Grand Prix",
       "start": "2026-09-11T11:30:00Z",
@@ -5998,6 +6331,13 @@
       "start": "2026-09-12T12:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "MXGP",
+      "title": "Afyonkarahisar, Turkey View Reports MXGP of China",
+      "start": "2026-09-12T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "CFL",
@@ -9223,6 +9563,13 @@
       "icon": "🏀"
     },
     {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF AUSTRIA ",
+      "start": "2026-09-18T06:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "EDM @ TOR",
       "start": "2026-09-18T15:00:00Z",
@@ -9633,6 +9980,13 @@
       "start": "2026-09-19T12:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "MXGP",
+      "title": "Shanghai, China View Reports MXGP of Australia",
+      "start": "2026-09-19T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "Serie A",
@@ -15690,6 +16044,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "MotoGP",
+      "title": "MOTUL GRAND PRIX OF JAPAN ",
+      "start": "2026-10-01T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "NCAA FB",
       "title": "Western KY @ New Mexico St",
       "start": "2026-10-02T00:00:00Z",
@@ -16695,6 +17056,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "MXGP",
+      "title": "Darwin, Australia View Reports Monster Energy FIM MXoN",
+      "start": "2026-10-03T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "CFL",
       "title": "BC @ TOR",
       "start": "2026-10-03T15:00:00Z",
@@ -17399,6 +17767,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "MotoGP",
+      "title": "PERTAMINA GRAND PRIX OF INDONESIA ",
+      "start": "2026-10-09T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -20708,6 +21083,13 @@
       "icon": "⚽"
     },
     {
+      "league": "MotoGP",
+      "title": "GRAND PRIX OF AUSTRALIA ",
+      "start": "2026-10-22T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "NCAA FB",
       "title": "James Madison @ App State",
       "start": "2026-10-22T23:00:00Z",
@@ -22178,6 +22560,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "MotoGP",
+      "title": "PETRONAS GRAND PRIX OF MALAYSIA ",
+      "start": "2026-10-30T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Robert Morris @ Lindenwood",
       "start": "2026-10-30T00:15:00Z",
@@ -23522,6 +23911,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "MotoGP",
+      "title": "QATAR AIRWAYS GRAND PRIX OF QATAR ",
+      "start": "2026-11-06T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -25792,6 +26188,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "MotoGP",
+      "title": "REPSOL GRAND PRIX OF PORTUGAL ",
+      "start": "2026-11-20T08:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Boston University @ Providence",
       "start": "2026-11-20T16:00:00Z",
@@ -27038,6 +27441,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "MotoGP",
+      "title": "MOTUL GRAND PRIX OF VALENCIA",
+      "start": "2026-11-27T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
     },
     {
       "league": "NCAA FB",
@@ -131069,480 +131479,368 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
-      "league": "MotoGP",
-      "title": "VALENCIA TEST",
-      "start": "2025-11-18T07:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Melbourne — AAMI Park",
+      "start": "2026-10-03T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "PRIMA PRAMAC YAMAHA MotoGP PRESENTATION",
-      "start": "2026-01-13T16:30:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Sydney — Accor Stadium",
+      "start": "2026-10-10T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "PERTAMINA ENDURO VR46 RACING TEAM PRESENTATION",
-      "start": "2026-01-14T10:30:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Zurich — Hallenstadion",
+      "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "APRILIA RACING TEAM PRESENTATION",
-      "start": "2026-01-15T10:30:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Stockholm — Strawberry Arena\n                    [StartDate] => 2027-02-13T00:00:00\n                    [EndDate] => 2027-02-14T00:00:00\n                    [ShowCode] => MJ-I-S1\n                    [ShowName] => Int Monster Jam Stadium 1\n                    [CityName] => Stockholm, Sverige\n                    [Country] => Sverige\n                    [Distance] => 0\n                    [EarliestSaleDate] => 0001-01-01T00:00:00\n                    [EngagementUrl] => https://www.ticketmaster.se/artist/monster-jam-tickets/771563?camefrom=CFC_FELD_WEBSITE\n                    [SaleBeginDate] => 0001-01-01T00:00:00\n                    [ShowTourName] => EMEA-Int Monster Jam Stadium 1\n                    [ShowUrl] => \n                    [State] => Sverige\n                    [StateCode] => 4N\n                    [StorefrontVenueName] => Strawberry Arena\n                    [TourId] => 1579\n                    [VenueAddress] => Råsta Strandväg 1\n                    [VenueZip] => 16979\n                    [MinimumPriceAmount] => 0\n                    [FormattedMinimumPriceAmount] => \n                    [DateRange] => Feb 13, 2027 - Feb 14, 2027\n                    [RelatedUrls] => \n                    [GroupSales] => \n                    [TicketsByPhone] => \n                    [Outlets] => \n                    [EngagementLanguage] => Local\n                    [StateName] => Foreign\n                    [SortOrder] => 0\n                    [IsPreviewEngagement] => \n                    [WebSaleDate] => 2026-04-29T00:00:00\n                    [WebSaleDateString] => Wednesday, April 29 2026\n                    [LocationOverride] => \n                    [FmsEngagementInfo] => Array\n                        (\n                            [FmsEngagementTitle] => \n                            [FmsAdditionalFeesInfo] => \n                            [FmsAdditionalFeesBoilerplate] => Market pricing applies to all tickets. Prices can fluctuate based on factors that affect supply and demand. Lock in your price and location today! <i>Additional fees may apply</i>.\n                            [FmsDayOfShowPriceChanges] => \n                            [FmsTruckDisplays] => Array\n                                (\n                                )\n\n                            [FmsTruckLineups] => Array\n                                (\n                                    [0] => Array\n                                        (\n                                            [TruckName] => Grave Digger\n                                            [TruckDriverName] => Driver TBA\n                                        )\n\n                                )\n\n                            [FmsSponsorOffers] => Array\n                                (\n                                )\n\n                            [FmsKidsPrices] => Array\n                                (\n                                )\n\n                            [FmsAdditionalEntertainment] => Array\n                                (\n                                )\n\n                        )\n\n                )\n\n            [4] => Array\n                (\n                    [EngagementId] => 120515\n                    [NearYou] => \n                    [Featured] => \n                    [City] => Antwerp\n                    [VenueName] => AFAS Dome\n                    [StartDate] => 2027-03-20T00:00:00\n                    [EndDate] => 2027-03-21T00:00:00\n                    [ShowCode] => MJ-I-S1\n                    [ShowName] => Int Monster Jam Stadium 1\n                    [CityName] => Antwerp, Belgium\n                    [Country] => Belgium\n                    [Distance] => 0\n                    [EarliestSaleDate] => 0001-01-01T00:00:00\n                    [EngagementUrl] => https://www.ticketmaster.be/artist/monster-jam-tickets/771563?startDate=2027-03-20&endDate=2027-03-21&camefrom=CFC_FELD_WEBSITE\n                    [SaleBeginDate] => 0001-01-01T00:00:00\n                    [ShowTourName] => EMEA-Int Monster Jam Stadium 1\n                    [ShowUrl] => \n                    [State] => Belgium\n                    [StateCode] => 4N\n                    [StorefrontVenueName] => AFAS Dome\n                    [TourId] => 1579\n                    [VenueAddress] => \n                    [VenueZip] => \n                    [MinimumPriceAmount] => 0\n                    [FormattedMinimumPriceAmount] => \n                    [DateRange] => Mar 20, 2027 - Mar 21, 2027\n                    [RelatedUrls] => \n                    [GroupSales] => \n                    [TicketsByPhone] => \n                    [Outlets] => \n                    [EngagementLanguage] => Local\n                    [StateName] => Foreign\n                    [SortOrder] => 0\n                    [IsPreviewEngagement] => \n                    [WebSaleDate] => 2025-12-11T00:00:00\n                    [WebSaleDateString] => Thursday, December 11 2025\n                    [LocationOverride] => \n                    [FmsEngagementInfo] => Array\n                        (\n                            [FmsEngagementTitle] => \n                            [FmsAdditionalFeesInfo] => \n                            [FmsAdditionalFeesBoilerplate] => \n                            [FmsDayOfShowPriceChanges] => \n                            [FmsTruckDisplays] => Array\n                                (\n                                )\n\n                            [FmsTruckLineups] => Array\n                                (\n                                )\n\n                            [FmsSponsorOffers] => Array\n                                (\n                                )\n\n                            [FmsKidsPrices] => Array\n                                (\n                                )\n\n                            [FmsAdditionalEntertainment] => Array\n                                (\n                                )\n\n                        )\n\n                )\n\n            [5] => Array\n                (\n                    [EngagementId] => 119998\n                    [NearYou] => \n                    [Featured] => \n                    [City] => Mexico City\n                    [VenueName] => Palacio de los Deportes",
+      "start": "2026-10-02T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "DUCATI LENOVO TEAM PRESENTATION",
-      "start": "2026-01-19T09:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MONSTER ENERGY YAMAHA MotoGP PRESENTATION",
-      "start": "2026-01-21T07:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "TRACKHOUSE MotoGP TEAM PRESENTATION",
-      "start": "2026-01-21T13:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "RED BULL KTM FACTORY RACING AND TECH3 PRESENTATIONS",
-      "start": "2026-01-27T08:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "SHAKEDOWN TEST",
-      "start": "2026-01-29T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "BK8 GRESINI RACING MotoGP PRESENTATION",
-      "start": "2026-01-31T11:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "LCR HONDA PRESENTATION",
-      "start": "2026-02-01T07:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "HONDA HRC CASTROL PRESENTATION",
-      "start": "2026-02-02T08:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "SEPANG TEST",
-      "start": "2026-02-03T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "SEASON LAUNCH",
-      "start": "2026-02-07T11:25:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "BURIRAM TEST",
-      "start": "2026-02-21T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "PT GRAND PRIX OF THAILAND ",
-      "start": "2026-02-27T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF BRAZIL ",
-      "start": "2026-03-20T11:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "RED BULL GRAND PRIX OF THE UNITED STATES ",
-      "start": "2026-03-27T13:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "ESTRELLA GALICIA 0,0 GRAND PRIX OF SPAIN ",
-      "start": "2026-04-24T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "JEREZ TEST ",
-      "start": "2026-04-27T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MICHELIN® GRAND PRIX OF FRANCE ",
-      "start": "2026-05-08T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MONSTER ENERGY GRAND PRIX OF CATALUNYA ",
-      "start": "2026-05-15T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "BARCELONA TEST ",
-      "start": "2026-05-18T07:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "BREMBO GRAND PRIX OF ITALY ",
-      "start": "2026-05-29T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "GRAND PRIX OF HUNGARY ",
-      "start": "2026-06-05T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MONSTER ENERGY GRAND PRIX OF CZECHIA ",
-      "start": "2026-06-19T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "TISSOT GRAND PRIX OF THE NETHERLANDS ",
-      "start": "2026-06-26T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "WORLD DUCATI WEEK",
-      "start": "2026-07-05T07:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "LIQUI MOLY GRAND PRIX OF GERMANY ",
-      "start": "2026-07-10T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "QATAR AIRWAYS GRAND PRIX OF GREAT BRITAIN ",
-      "start": "2026-08-07T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MICHELIN® GRAND PRIX OF ARAGON ",
-      "start": "2026-08-28T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "RED BULL GRAND PRIX OF SAN MARINO AND THE RIMINI RIVIERA ",
-      "start": "2026-09-11T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "GRAND PRIX OF AUSTRIA ",
-      "start": "2026-09-18T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "MOTUL GRAND PRIX OF JAPAN ",
-      "start": "2026-10-01T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "PERTAMINA GRAND PRIX OF INDONESIA ",
-      "start": "2026-10-09T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "GRAND PRIX OF AUSTRALIA ",
-      "start": "2026-10-22T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
-    },
-    {
-      "league": "MotoGP",
-      "title": "PETRONAS GRAND PRIX OF MALAYSIA ",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — San Juan — Coliseo de Puerto Rico",
       "start": "2026-10-30T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "QATAR AIRWAYS GRAND PRIX OF QATAR ",
-      "start": "2026-11-06T05:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Stockholm — Strawberry Arena\n                            [StartDate] => 2027-02-13T00:00:00\n                            [EndDate] => 2027-02-14T00:00:00\n                            [ShowCode] => MJ-I-S1\n                            [ShowName] => Int Monster Jam Stadium 1\n                            [CityName] => Stockholm, Sverige\n                            [Country] => Sverige\n                            [Distance] => 0\n                            [EarliestSaleDate] => 0001-01-01T00:00:00\n                            [EngagementUrl] => https://www.ticketmaster.se/artist/monster-jam-tickets/771563?camefrom=CFC_FELD_WEBSITE\n                            [SaleBeginDate] => 0001-01-01T00:00:00\n                            [ShowTourName] => EMEA-Int Monster Jam Stadium 1\n                            [ShowUrl] => \n                            [State] => Sverige\n                            [StateCode] => 4N\n                            [StorefrontVenueName] => Strawberry Arena\n                            [TourId] => 1579\n                            [VenueAddress] => Råsta Strandväg 1\n                            [VenueZip] => 16979\n                            [MinimumPriceAmount] => 0\n                            [FormattedMinimumPriceAmount] => \n                            [DateRange] => Feb 13, 2027 - Feb 14, 2027\n                            [RelatedUrls] => \n                            [GroupSales] => \n                            [TicketsByPhone] => \n                            [Outlets] => \n                            [EngagementLanguage] => Local\n                            [StateName] => Foreign\n                            [SortOrder] => 0\n                            [IsPreviewEngagement] => \n                            [WebSaleDate] => 2026-04-29T00:00:00\n                            [WebSaleDateString] => Wednesday, April 29 2026\n                            [LocationOverride] => \n                            [FmsEngagementInfo] => Array\n                                (\n                                    [FmsEngagementTitle] => \n                                    [FmsAdditionalFeesInfo] => \n                                    [FmsAdditionalFeesBoilerplate] => Market pricing applies to all tickets. Prices can fluctuate based on factors that affect supply and demand. Lock in your price and location today! <i>Additional fees may apply</i>.\n                                    [FmsDayOfShowPriceChanges] => \n                                    [FmsTruckDisplays] => Array\n                                        (\n                                        )\n\n                                    [FmsTruckLineups] => Array\n                                        (\n                                            [0] => Array\n                                                (\n                                                    [TruckName] => Grave Digger\n                                                    [TruckDriverName] => Driver TBA\n                                                )\n\n                                        )\n\n                                    [FmsSponsorOffers] => Array\n                                        (\n                                        )\n\n                                    [FmsKidsPrices] => Array\n                                        (\n                                        )\n\n                                    [FmsAdditionalEntertainment] => Array\n                                        (\n                                        )\n\n                                )\n\n                        )\n\n                    [4] => Array\n                        (\n                            [EngagementId] => 120515\n                            [NearYou] => \n                            [Featured] => \n                            [City] => Antwerp\n                            [VenueName] => AFAS Dome\n                            [StartDate] => 2027-03-20T00:00:00\n                            [EndDate] => 2027-03-21T00:00:00\n                            [ShowCode] => MJ-I-S1\n                            [ShowName] => Int Monster Jam Stadium 1\n                            [CityName] => Antwerp, Belgium\n                            [Country] => Belgium\n                            [Distance] => 0\n                            [EarliestSaleDate] => 0001-01-01T00:00:00\n                            [EngagementUrl] => https://www.ticketmaster.be/artist/monster-jam-tickets/771563?startDate=2027-03-20&endDate=2027-03-21&camefrom=CFC_FELD_WEBSITE\n                            [SaleBeginDate] => 0001-01-01T00:00:00\n                            [ShowTourName] => EMEA-Int Monster Jam Stadium 1\n                            [ShowUrl] => \n                            [State] => Belgium\n                            [StateCode] => 4N\n                            [StorefrontVenueName] => AFAS Dome\n                            [TourId] => 1579\n                            [VenueAddress] => \n                            [VenueZip] => \n                            [MinimumPriceAmount] => 0\n                            [FormattedMinimumPriceAmount] => \n                            [DateRange] => Mar 20, 2027 - Mar 21, 2027\n                            [RelatedUrls] => \n                            [GroupSales] => \n                            [TicketsByPhone] => \n                            [Outlets] => \n                            [EngagementLanguage] => Local\n                            [StateName] => Foreign\n                            [SortOrder] => 0\n                            [IsPreviewEngagement] => \n                            [WebSaleDate] => 2025-12-11T00:00:00\n                            [WebSaleDateString] => Thursday, December 11 2025\n                            [LocationOverride] => \n                            [FmsEngagementInfo] => Array\n                                (\n                                    [FmsEngagementTitle] => \n                                    [FmsAdditionalFeesInfo] => \n                                    [FmsAdditionalFeesBoilerplate] => \n                                    [FmsDayOfShowPriceChanges] => \n                                    [FmsTruckDisplays] => Array\n                                        (\n                                        )\n\n                                    [FmsTruckLineups] => Array\n                                        (\n                                        )\n\n                                    [FmsSponsorOffers] => Array\n                                        (\n                                        )\n\n                                    [FmsKidsPrices] => Array\n                                        (\n                                        )\n\n                                    [FmsAdditionalEntertainment] => Array\n                                        (\n                                        )\n\n                                )\n\n                        )\n\n                    [5] => Array\n                        (\n                            [EngagementId] => 119998\n                            [NearYou] => \n                            [Featured] => \n                            [City] => Mexico City\n                            [VenueName] => Palacio de los Deportes",
+      "start": "2026-10-02T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "REPSOL GRAND PRIX OF PORTUGAL ",
-      "start": "2026-11-20T08:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Mexico City — Palacio de los Deportes",
+      "start": "2026-10-02T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏁",
+      "source": "monsterjam.com"
     },
     {
-      "league": "MotoGP",
-      "title": "MOTUL GRAND PRIX OF VALENCIA",
-      "start": "2026-11-27T07:00:00Z",
+      "league": "Six Nations",
+      "title": "Ireland @ England",
+      "start": "2027-02-05T20:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "motogp.pulselive.com"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Bariloche, Argentina View Reports MXGP of Andalucia",
-      "start": "2026-03-21T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Scotland @ Italy",
+      "start": "2027-02-06T14:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Almonte, Spain View Reports MXGP of Switzerland",
-      "start": "2026-03-28T12:00:00Z",
+      "league": "Six Nations",
+      "title": "France @ Wales",
+      "start": "2027-02-06T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Frauenfeld, Switzerland View Reports MXGP of Sardegna",
-      "start": "2026-04-11T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Italy @ Ireland",
+      "start": "2027-02-13T14:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Riola Sardo, Italy View Reports MXGP of Trentino",
-      "start": "2026-04-18T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Scotland @ Wales",
+      "start": "2027-02-13T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Pietramurata, Italy View Reports MXGP of France",
-      "start": "2026-05-23T12:00:00Z",
+      "league": "Six Nations",
+      "title": "England @ France",
+      "start": "2027-02-14T15:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Lacapelle-Marival, France View Reports MXGP of Germany",
-      "start": "2026-05-30T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Wales @ Ireland",
+      "start": "2027-02-20T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Teutschenthal, Germany View Reports MXGP of Latvia",
-      "start": "2026-06-06T12:00:00Z",
+      "league": "Six Nations",
+      "title": "England @ Italy",
+      "start": "2027-02-20T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Kegums, Latvia View Reports MXGP of Italy",
-      "start": "2026-06-20T12:00:00Z",
+      "league": "Six Nations",
+      "title": "France @ Scotland",
+      "start": "2027-02-21T15:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Montevarchi, Italy View Reports MXGP of Portugal",
-      "start": "2026-06-27T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Scotland @ Ireland",
+      "start": "2027-03-05T20:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Agueda, Portugal View Reports MXGP of South Africa",
-      "start": "2026-07-04T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Italy @ France",
+      "start": "2027-03-06T14:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Johannesburg, South Africa View Reports MXGP of Great Britain",
-      "start": "2026-07-18T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Wales @ England",
+      "start": "2027-03-06T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Foxhills, United Kingdom View Reports MXGP of Czech Republic",
-      "start": "2026-07-25T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Italy @ Wales",
+      "start": "2027-03-13T14:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Loket, Czechia View Reports MXGP of Flanders",
-      "start": "2026-08-01T12:00:00Z",
+      "league": "Six Nations",
+      "title": "England @ Scotland",
+      "start": "2027-03-13T16:40:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Lommel, Belgium View Reports MXGP of Sweden",
-      "start": "2026-08-15T12:00:00Z",
+      "league": "Six Nations",
+      "title": "Ireland @ France",
+      "start": "2027-03-13T20:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏉",
+      "source": "RFU/Scottish Rugby/Italian Rugby"
     },
     {
-      "league": "MXGP",
-      "title": "Uddevalla, Sweden View Reports MXGP of Netherlands",
-      "start": "2026-08-22T12:00:00Z",
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah, Saudi Arabia",
+      "start": "2026-12-18T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
     },
     {
-      "league": "MXGP",
-      "title": "Arnhem, Netherlands (the) View Reports MXGP of Turkiye",
-      "start": "2026-09-05T12:00:00Z",
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah, Saudi Arabia",
+      "start": "2026-12-19T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
     },
     {
-      "league": "MXGP",
-      "title": "Afyonkarahisar, Turkey View Reports MXGP of China",
-      "start": "2026-09-12T12:00:00Z",
+      "league": "FORMULA E",
+      "title": "Formula E — Mexico City, Mexico",
+      "start": "2027-01-16T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
     },
     {
-      "league": "MXGP",
-      "title": "Shanghai, China View Reports MXGP of Australia",
-      "start": "2026-09-19T12:00:00Z",
+      "league": "FORMULA E",
+      "title": "Formula E — Austin, USA",
+      "start": "2027-02-06T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
     },
     {
-      "league": "MXGP",
-      "title": "Darwin, Australia View Reports Monster Energy FIM MXoN",
-      "start": "2026-10-03T12:00:00Z",
+      "league": "FORMULA E",
+      "title": "Formula E — Miami, USA",
+      "start": "2027-02-20T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "honda.racing"
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — São Paulo, Brazil",
+      "start": "2027-03-13T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Sanya, China",
+      "start": "2027-04-17T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin, Germany",
+      "start": "2027-05-08T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin, Germany",
+      "start": "2027-05-09T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco, Monaco",
+      "start": "2027-05-15T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco, Monaco",
+      "start": "2027-05-16T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — London, UK",
+      "start": "2027-05-29T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — London, UK",
+      "start": "2027-05-30T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Zandvoort, Netherlands",
+      "start": "2027-06-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Zandvoort, Netherlands",
+      "start": "2027-06-19T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Madrid, Spain",
+      "start": "2027-06-26T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Madrid, Spain",
+      "start": "2027-06-27T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai, China",
+      "start": "2027-07-10T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai, China",
+      "start": "2027-07-11T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo, Japan",
+      "start": "2027-07-24T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo, Japan",
+      "start": "2027-07-25T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "fiaformulae.com"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Triplemanía 34 — Night 1",
+      "start": "2026-09-11T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "WWE/AAA official announcement"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Triplemanía 34 — Night 2",
+      "start": "2026-09-13T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "WWE/AAA official announcement"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T21:20:48.436381+00:00",
+    "generatedAt": "2026-08-31T21:29:26.217475+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -132314,7 +132612,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             2,
@@ -132325,8 +132623,8 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
-        "observedRecent": 0,
+        "observedUpcoming": 9,
+        "observedRecent": 2,
         "provider": "official"
       },
       {
@@ -132405,7 +132703,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             2,
@@ -132416,8 +132714,8 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
-        "observedRecent": 0,
+        "observedUpcoming": 4,
+        "observedRecent": 5,
         "provider": "official"
       },
       {
@@ -133186,12 +133484,42 @@
     "MotoGP": {
       "source": "MotoGP public API",
       "parsed": 46,
-      "added": 40
+      "added": 0
     },
     "MXGP": {
       "source": "Honda Racing MXGP calendar",
       "parsed": 19,
-      "added": 19
+      "added": 0
+    },
+    "MONSTER JAM": {
+      "source": "MonsterJam official tickets API payload",
+      "parsed": 15,
+      "added": 7
+    },
+    "NBA": {
+      "source": "FixtureDownload NBA 2026/27",
+      "parsed": 1207,
+      "added": 0
+    },
+    "Rugby World Cup": {
+      "source": "FixtureDownload Rugby World Cup 2027",
+      "parsed": 52,
+      "added": 0
+    },
+    "Six Nations": {
+      "source": "official 2027 federation schedules",
+      "parsed": 15,
+      "added": 15
+    },
+    "FORMULA E": {
+      "source": "FIA Formula E official 2026-27 calendar",
+      "parsed": 21,
+      "added": 21
+    },
+    "AAA Wrestling": {
+      "source": "WWE/AAA official Triplemanía announcement",
+      "parsed": 2,
+      "added": 2
     }
   }
 }
