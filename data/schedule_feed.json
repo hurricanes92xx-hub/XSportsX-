@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T18:02:15.126183+00:00",
+  "generatedAt": "2026-08-31T18:15:28.617748+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -36046,7 +36046,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T18:01:13.707938+00:00",
+    "generatedAt": "2026-08-31T18:14:21.425241+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -37672,21 +37672,22 @@
   },
   "officialApiAdapterReport": {
     "ncaa": {
-      "NCAA BB": "official_api:0",
-      "NCAA WBB": "official_api:0",
-      "NCAA Baseball": "official_api:0",
-      "NCAA Softball": "official_api:0",
-      "NCAA Men's Hockey": "official_api:0",
-      "NCAA Men's Soccer": "official_api:0",
-      "NCAA Women's Soccer": "official_api:0",
-      "NCAA Men's Lacrosse": "official_api:0",
-      "NCAA Women's Lacrosse": "official_api:0",
-      "NCAA Men's Volleyball": "official_api:0",
-      "NCAA Women's Volleyball": "official_api:0",
-      "NCAA Men's Water Polo": "official_api:0",
-      "NCAA Women's Water Polo": "official_api:0",
-      "NCAA Women's Field Hockey": "official_api:0; errors:15",
-      "NCAA Beach Volleyball": "official_api:0"
+      "NCAA BB": "official_api:0; requests:15; errors:0",
+      "NCAA WBB": "official_api:0; requests:15; errors:0",
+      "NCAA Baseball": "official_api:0; requests:15; errors:0",
+      "NCAA Softball": "official_api:0; requests:15; errors:0",
+      "NCAA Men's Hockey": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Hockey": "official_api:0; requests:15; errors:0",
+      "NCAA Men's Soccer": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Soccer": "official_api:0; requests:15; errors:0",
+      "NCAA Men's Lacrosse": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Lacrosse": "official_api:0; requests:15; errors:0",
+      "NCAA Men's Volleyball": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Volleyball": "official_api:0; requests:15; errors:0",
+      "NCAA Men's Water Polo": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Water Polo": "official_api:0; requests:15; errors:0",
+      "NCAA Women's Field Hockey": "official_api:0; requests:15; errors:15",
+      "NCAA Beach Volleyball": "official_api:0; requests:15; errors:0"
     },
     "nascar": {
       "NASCAR Cup": "official_api:51",
