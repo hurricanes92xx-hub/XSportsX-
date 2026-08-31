@@ -12,6 +12,7 @@ on:
       - 'scripts/official_api_adapters.py'
       - 'scripts/espn_ncaa_adapter.py'
       - 'scripts/easy_provider_repairs.py'
+      - 'scripts/ipl_core_adapter.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
       - 'scripts/schedule_engine_safe.py'
@@ -38,6 +39,8 @@ jobs:
         run: python scripts/espn_ncaa_adapter.py
       - name: Repair easy provider endpoints
         run: python scripts/easy_provider_repairs.py
+      - name: Repair IPL through ESPN cricket Core API
+        run: python scripts/ipl_core_adapter.py
       - name: Normalize adapter timestamps and validate feed invariants
         run: |
           python - <<'PY'
