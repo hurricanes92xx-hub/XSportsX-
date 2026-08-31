@@ -21,17 +21,21 @@ click_text(){
   read -r x1 y1 x2 y2 <<< "$bounds"
   adb shell input tap $(( (x1+x2)/2 )) $(( (y1+y2)/2 ))
 }
-# Production app has a single SOURCE CENTER screen; do not expect an obsolete provider chooser.
-click_text "Sources" || click_text "Source Center" || click_text "SOURCES" || true
-sleep 1
-snapshot 01-source
-if ! grep -Eq 'Server URL|XTREAM CODES|CONNECT SOURCE' "$OUT/01-source.xml"; then
-  click_text "SOURCES" || click_text "Sources" || true
-  sleep 1
-  snapshot 02-source-retry
-fi
+# Production has SOURCE CENTER directly in the main activity; navigate there if needed.
+for attempt in $(seq 1 5); do
+  snapshot "source-nav-${attempt}"
+  if grep -Eq 'Server URL|XTREAM CODES|CONNECT SOURCE' "$OUT/source-nav-${attempt}.xml"; then
+    cp "$OUT/source-nav-${attempt}.xml" "$OUT/01-source.xml"; cp "$OUT/source-nav-${attempt}.png" "$OUT/01-source.png"; break
+  fi
+  click_text "Sources" || click_text "Source Center" || click_text "SOURCES" || true
+  sleep 2
+  snapshot "source-nav-post-${attempt}"
+  if grep -Eq 'Server URL|XTREAM CODES|CONNECT SOURCE' "$OUT/source-nav-post-${attempt}.xml"; then
+    cp "$OUT/source-nav-post-${attempt}.xml" "$OUT/01-source.xml"; cp "$OUT/source-nav-post-${attempt}.png" "$OUT/01-source.png"; break
+  fi
+done
 SOURCE_XML="$OUT/01-source.xml"
-[ -s "$SOURCE_XML" ] || SOURCE_XML="$OUT/02-source-retry.xml"
+[ -s "$SOURCE_XML" ] || { echo "Missing production source form"; exit 1; }
 grep -Eq 'Server URL|XTREAM CODES|CONNECT SOURCE' "$SOURCE_XML" || { echo "Missing production source form"; exit 1; }
 QA_SOURCE_BASE="$SOURCE_BASE" python3 - "$SOURCE_XML" <<'PY'
 import re, subprocess, os, sys
