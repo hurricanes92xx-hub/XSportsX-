@@ -7,6 +7,7 @@ on:
     branches: [android-app]
     paths:
       - 'scripts/refresh_schedules.py'
+      - 'data/official_schedule_sources.json'
       - '.github/workflows/refresh-schedules.yml'
 jobs:
   refresh:
@@ -37,7 +38,8 @@ jobs:
             except Exception: bad.append(e)
           assert not bad, f'invalid event timestamps: {len(bad)}'
           print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues')
-          print('failed sources:', p.get('failedSources', []))
+          print('official source failures:', p.get('officialSourceFailures', []))
+          print('provider failures:', p.get('failedSources', []))
           PY
       - name: Publish schedule feed
         run: |
