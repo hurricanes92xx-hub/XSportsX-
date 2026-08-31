@@ -8,9 +8,11 @@ on:
     paths:
       - 'scripts/refresh_schedules.py'
       - 'scripts/refresh_schedules_engine.py'
+      - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
       - 'scripts/schedule_engine_safe.py'
       - 'data/official_schedule_sources.json'
+      - 'data/schedule_season_policy.json'
       - '.github/workflows/refresh-schedules.yml'
 jobs:
   refresh:
@@ -22,7 +24,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Refresh canonical schedule feed through guarded engine
+      - name: Refresh canonical schedule feed through guarded season-aware engine
         run: python scripts/refresh_schedules_engine.py
       - name: Validate feed invariants
         run: |
@@ -42,6 +44,8 @@ jobs:
           print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues')
           print('official source failures:', p.get('officialSourceFailures', []))
           print('provider failures:', p.get('failedSources', []))
+          si=p.get('seasonIntelligence',{})
+          print('season intelligence decisions:', len(si.get('providerDecisions',[])))
           PY
       - name: Publish schedule feed
         run: |
