@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'XSportsX-Schedule/5.3','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
+HEADERS={'User-Agent':'XSportsX-Schedule/5.4','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
 NOW=datetime.now(timezone.utc); HORIZON=NOW+timedelta(days=370)
 NCAA=[
  ('NCAA BB','basketball-men','d1','🏀'),('NCAA WBB','basketball-women','d1','🏀'),('NCAA Baseball','baseball','d1','⚾'),('NCAA Softball','softball','d1','🥎'),
@@ -44,47 +44,70 @@ def team(v):
  return ''
 
 def ncaa_games(root):
- """Normalize modern NCAA GraphQL contests and legacy games."""
- contests=((root.get('data') or {}).get('contests') if isinstance(root,dict) else None)
- if isinstance(contests,list):
-  out=[]
-  for g in contests:
-   if not isinstance(g,dict):continue
-   teams=g.get('teams') or []
-   home=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is True),None)
-   away=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is False),None)
-   dt=iso(g.get('startTimeEpoch')) or iso(g.get('startDateTimeUtc'))
-   if not dt and g.get('startDate') and g.get('startTime'):
-    try:dt=datetime.fromisoformat(f"{g['startDate']}T{g['startTime']}").replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z')
-    except ValueError:dt=None
-   if dt and (home or away):out.append((team(away),team(home),dt,str(g.get('title') or '').strip()))
-  return out
- games=root.get('games') if isinstance(root,dict) else None
+ """Normalize NCAA schedule-alt responses from both wrapper and GraphQL shapes."""
+ candidates=[]
+ if isinstance(root,dict):
+  for path in (
+   ('games',),('events',),('schedule',),('data','contests'),('data','games'),('data','events'),
+  ):
+   cur=root
+   for key in path:
+    cur=cur.get(key) if isinstance(cur,dict) else None
+   if isinstance(cur,list):candidates=cur;break
+  if not candidates:
+   # Some NCAA schedule responses nest the contests one level deeper.
+   def find_lists(v):
+    if isinstance(v,dict):
+     for k,x in v.items():
+      if k.lower() in ('contests','games','events','schedule') and isinstance(x,list) and x:
+       return x
+      r=find_lists(x)
+      if r:return r
+    elif isinstance(v,list):
+     for x in v:
+      r=find_lists(x)
+      if r:return r
+    return None
+   candidates=find_lists(root) or []
  out=[]
- for g in games if isinstance(games,list) else []:
+ for g in candidates:
   if not isinstance(g,dict):continue
-  away=team(g.get('away') or g.get('awayTeam') or g.get('visitor'));home=team(g.get('home') or g.get('homeTeam') or g.get('host'))
-  dt=iso(g.get('startTimeEpoch') or g.get('startDateTimeUtc') or g.get('startDateTime'))
+  teams=g.get('teams') or []
+  home=away=None
+  if isinstance(teams,list):
+   home=next((t for t in teams if isinstance(t,dict) and (t.get('isHome') is True or str(t.get('home','')).lower()=='true')),None)
+   away=next((t for t in teams if isinstance(t,dict) and (t.get('isHome') is False or str(t.get('home','')).lower()=='false')),None)
+  if not home:home=g.get('home') or g.get('homeTeam') or g.get('host')
+  if not away:away=g.get('away') or g.get('awayTeam') or g.get('visitor')
+  dt=iso(g.get('startTimeEpoch') or g.get('startTime') or g.get('startDateTimeUtc') or g.get('startDateTime') or g.get('gameDate'))
   if not dt and g.get('startDate') and g.get('startTime'):
-   try:dt=datetime.strptime(f"{g['startDate']} {g['startTime']}",'%Y-%m-%d %I:%M%p ET').replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z')
-   except ValueError:dt=None
-  if dt and (away or home or g.get('title')):out.append((away,home,dt,str(g.get('title') or '').strip()))
+   raw=f"{g['startDate']} {g['startTime']}".strip()
+   for fmt in ('%Y-%m-%d %I:%M%p ET','%Y-%m-%d %I:%M %p ET','%Y-%m-%d %H:%M','%Y-%m-%d %I:%M%p'):
+    try:dt=datetime.strptime(raw,fmt).replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z');break
+    except ValueError:pass
+  title=str(g.get('title') or g.get('eventName') or g.get('name') or '').strip()
+  if dt and (home or away or title or g.get('contestId') or g.get('id')):out.append((team(away),team(home),dt,title))
  return out
 
 def add_ncaa(events,report):
- """Use NCAA's current season schedule GraphQL route, not the now-unreliable daily scoreboard wrapper."""
- existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
- season=NOW.year
+ existing={(e.get('league'),e.get('title'),e.get('start')) for e in events};season=NOW.year
  for league,sport,division,icon in NCAA:
-  added=0;errors=[]
-  # schedule-alt is the maintained API's modern season-wide route. One request per sport.
-  url=f'https://ncaa-api.henrygd.me/schedule-alt/{sport}/{division}/{season}'
-  try:root=get_json(url)
-  except Exception as exc:
-   report.setdefault('ncaa',{})[league]=f'official_api:0; requests:1; errors:1; error:{exc}'
-   print(f'WARNING NCAA adapter request failed for {league}: {exc}');continue
-  games=ncaa_games(root)
-  for away,home,dt,raw in games:
+  added=0;raw_count=0;errors=[]
+  # Prefer the documented direct NCAA JSON season feed. Fall back to the maintained
+  # GraphQL wrapper only when the direct feed is unavailable or empty.
+  urls=[
+   f'https://data.ncaa.com/casablanca/schedule/{sport}/{division}/{season}/08/schedule-all-conf.json',
+   f'https://data.ncaa.com/casablanca/schedule/{sport}/{division}/{season}/09/schedule-all-conf.json',
+   f'https://data.ncaa.com/casablanca/schedule/{sport}/{division}/{season}/10/schedule-all-conf.json',
+   f'https://ncaa-api.henrygd.me/schedule-alt/{sport}/{division}/{season}',
+  ]
+  seen_raw=[]
+  for url in urls:
+   try:root=get_json(url)
+   except Exception as exc:errors.append(str(exc));continue
+   games=ncaa_games(root);raw_count+=len(games);seen_raw.extend(games)
+   if games:break
+  for away,home,dt,raw in seen_raw:
    try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
    except ValueError:continue
    if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
@@ -92,9 +115,9 @@ def add_ncaa(events,report):
    key=(league,title,dt)
    if key in existing:continue
    tag='LIVE' if o<=NOW+timedelta(minutes=5) else ('FINAL' if o<=NOW else 'UPCOMING')
-   events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'NCAA season schedule API'});existing.add(key);added+=1
-  report.setdefault('ncaa',{})[league]=f'official_api:{added}; requests:1; errors:0; raw_events:{len(games)}'
-  if added==0:print(f'WARNING NCAA adapter returned zero in-horizon events for {league}; raw_events={len(games)}')
+   events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'NCAA direct schedule API'});existing.add(key);added+=1
+  report.setdefault('ncaa',{})[league]=f'official_api:{added}; requests:{len(urls)}; errors:{len(errors)}; raw_events:{raw_count}'
+  if added==0:print(f'WARNING NCAA adapter returned zero in-horizon events for {league}; raw_events={raw_count}')
 
 def nascar_races(root,series_id):
  rows=[]
