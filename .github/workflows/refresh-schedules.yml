@@ -15,6 +15,7 @@ on:
       - 'scripts/ipl_core_adapter.py'
       - 'scripts/special_schedule_repairs.py'
       - 'scripts/phase1_schedule_repairs.py'
+      - 'scripts/validate_schedule_refresh.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
       - 'scripts/schedule_engine_safe.py'
@@ -97,6 +98,8 @@ jobs:
           si=p.get('seasonIntelligence',{})
           print('season intelligence decisions:', len(si.get('providerDecisions',[])))
           PY
+      - name: Strict Phase 1 date-window verification
+        run: python scripts/validate_schedule_refresh.py
       - name: Publish schedule feed
         run: |
           git config user.name 'github-actions[bot]'
