@@ -2,21 +2,20 @@
 """Authoritative schedule adapters for sources whose web pages/providers are unreliable."""
 from __future__ import annotations
 import json
-import re
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'XSportsX-Schedule/5.1','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
+HEADERS={'User-Agent':'XSportsX-Schedule/5.2','Accept':'application/json,text/plain,*/*','Accept-Language':'en-US,en;q=0.9'}
 NOW=datetime.now(timezone.utc)
 HORIZON=NOW+timedelta(days=370)
 NCAA=[
  ('NCAA BB','basketball-men','d1','🏀'),('NCAA WBB','basketball-women','d1','🏀'),('NCAA Baseball','baseball','d1','⚾'),('NCAA Softball','softball','d1','🥎'),
- ("NCAA Men's Hockey",'icehockey-men','d1','🏒'),("NCAA Men's Soccer",'soccer-men','d1','⚽'),("NCAA Women's Soccer",'soccer-women','d1','⚽'),("NCAA Men's Lacrosse",'lacrosse-men','d1','🥍'),
- ("NCAA Women's Lacrosse",'lacrosse-women','d1','🥍'),("NCAA Men's Volleyball",'volleyball-men','d1','🏐'),("NCAA Women's Volleyball",'volleyball-women','d1','🏐'),("NCAA Men's Water Polo",'waterpolo-men','d1','🤽'),
- ("NCAA Women's Water Polo",'waterpolo-women','d1','🤽'),("NCAA Women's Field Hockey",'fieldhockey-women','d1','🏑'),('NCAA Beach Volleyball','beach-volleyball','d1','🏐')]
+ ("NCAA Men's Hockey",'icehockey-men','d1','🏒'),("NCAA Women's Hockey",'icehockey-women','d1','🏒'),("NCAA Men's Soccer",'soccer-men','d1','⚽'),("NCAA Women's Soccer",'soccer-women','d1','⚽'),
+ ("NCAA Men's Lacrosse",'lacrosse-men','d1','🥍'),("NCAA Women's Lacrosse",'lacrosse-women','d1','🥍'),("NCAA Men's Volleyball",'volleyball-men','d1','🏐'),("NCAA Women's Volleyball",'volleyball-women','d1','🏐'),
+ ("NCAA Men's Water Polo",'waterpolo-men','d1','🤽'),("NCAA Women's Water Polo",'waterpolo-women','d1','🤽'),("NCAA Women's Field Hockey",'fieldhockey-women','d1','🏑'),('NCAA Beach Volleyball','beach-volleyball','d1','🏐')]
 NASCAR=[('NASCAR Cup',1,'🏁'),('NASCAR Xfinity',2,'🏁'),('NASCAR Truck',3,'🏁')]
 
 def get_json(url):
@@ -27,7 +26,7 @@ def iso(v):
  if v is None:return None
  if isinstance(v,(int,float)):
   try:return datetime.fromtimestamp(float(v)/1000 if float(v)>10_000_000_000 else float(v),tz=timezone.utc).isoformat().replace('+00:00','Z')
-  except:return None
+  except Exception:return None
  s=str(v).strip()
  for x in (s,s.replace('Z','+00:00'),s.replace('z','+00:00')):
   try:return datetime.fromisoformat(x).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
@@ -39,10 +38,14 @@ def team(v):
  if isinstance(v,dict):
   for k in ('nameShort','shortName','short','displayName','fullName','name','title','teamName'):
    if isinstance(v.get(k),str) and v[k].strip():return v[k].strip()
+  names=v.get('names')
+  if isinstance(names,dict):
+   for k in ('short','medium','full','char6'):
+    if isinstance(names.get(k),str) and names[k].strip():return names[k].strip()
  return ''
 
 def ncaa_games(root):
- """Read the normalized games shape returned by the maintained NCAA API wrapper."""
+ """Extract games from the maintained NCAA API's normalized response."""
  games=root.get('games') if isinstance(root,dict) else None
  if not isinstance(games,list):
   contests=((root.get('data') or {}).get('contests') if isinstance(root,dict) else None)
@@ -57,33 +60,32 @@ def ncaa_games(root):
   if not dt and g.get('startDate') and g.get('startTime'):
    text=f"{g['startDate']} {g['startTime']}"
    for fmt in ('%Y-%m-%d %I:%M%p ET','%Y-%m-%d %I:%M %p ET','%Y-%m-%d %I:%M%p'):
-    try:dt=datetime.strptime(text,fmt).replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z');break
+    try:
+     dt=datetime.strptime(text,fmt).replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z');break
     except ValueError:pass
   if dt and (away or home or g.get('title')):out.append((away,home,dt,str(g.get('title') or '').strip()))
  return out
 
 def add_ncaa(events,report):
  existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
- # Current NCAA data is date/scoreboard based. Pull every day in the next 14 days,
- # plus a longer weekly window for sports that publish farther ahead through schedule.
+ # NCAA scoreboard uses YYYY/MM/DD for non-football sports. Football uses YYYY/WK.
+ # Pull one exact date at a time so the current 2026 scoreboard backend is addressed correctly.
  for league,sport,division,icon in NCAA:
-  added=0; errors=[]
+  added=0; errors=[]; requested=0
   for day in range(0,15):
-   d=(NOW+timedelta(days=day)).date(); year=d.year; month=d.month; week=d.isocalendar().week
-   # Public wrapper documents scoreboard as /scoreboard/{sport}/{division}/{year}/{week}/all-conf.
-   # Its conversion uses NCAA's modern GraphQL backend and returns normalized `games`.
-   url=f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{year}/{week}/all-conf'
+   d=(NOW+timedelta(days=day)).date(); url=f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{d.year}/{d.month:02d}/{d.day:02d}/all-conf'; requested+=1
    try:root=get_json(url)
    except Exception as exc:errors.append(str(exc));continue
    for away,home,dt,raw in ncaa_games(root):
     try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
-    except:continue
+    except ValueError:continue
     if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
     title=f'{away} @ {home}' if away and home else (raw or home or away or league)
     key=(league,title,dt)
     if key in existing:continue
-    events.append({'league':league,'title':title,'start':dt,'tag':'LIVE' if o<=NOW+timedelta(minutes=5) else 'UPCOMING','icon':icon,'source':'official_api','sourceDetail':'NCAA scoreboard API'});existing.add(key);added+=1
-  report.setdefault('ncaa',{})[league]=f'official_api:{added}' if not errors else f'official_api:{added}; errors:{len(errors)}'
+    tag='LIVE' if o<=NOW+timedelta(minutes=5) else ('FINAL' if o<=NOW else 'UPCOMING')
+    events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'NCAA scoreboard API'});existing.add(key);added+=1
+  report.setdefault('ncaa',{})[league]=f'official_api:{added}; requests:{requested}; errors:{len(errors)}'
   if added==0:print(f'WARNING NCAA adapter returned zero normalized events for {league}')
 
 def nascar_races(root,series_id):
@@ -112,7 +114,7 @@ def add_nascar(events,report):
    dt=iso(r.get('start_time_utc') or r.get('startTimeUtc') or r.get('date_scheduled') or r.get('race_date'))
    if not dt:continue
    try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
-   except:continue
+   except ValueError:continue
    if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
    title=' — '.join(x for x in (str(r.get('race_name') or r.get('event_name') or league),str(r.get('track_name') or '')) if x)
    key=(league,title,dt)
