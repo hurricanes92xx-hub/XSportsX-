@@ -45,17 +45,26 @@ def team(v):
  return ''
 
 def ncaa_games(root):
- """Extract games from the maintained NCAA API's normalized response."""
+ """Normalize both the public wrapper's games[] and its modern GraphQL data.contests[]."""
  games=root.get('games') if isinstance(root,dict) else None
+ modern=False
  if not isinstance(games,list):
   contests=((root.get('data') or {}).get('contests') if isinstance(root,dict) else None)
-  if isinstance(contests,list):games=contests
+  if isinstance(contests,list):
+   games=contests; modern=True
  if not isinstance(games,list):games=[]
  out=[]
  for g in games:
   if not isinstance(g,dict):continue
-  away=team(g.get('away') or g.get('awayTeam') or g.get('visitor'))
-  home=team(g.get('home') or g.get('homeTeam') or g.get('host'))
+  if modern:
+   teams=g.get('teams') or []
+   if not isinstance(teams,list):continue
+   home_obj=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is True),None)
+   away_obj=next((t for t in teams if isinstance(t,dict) and t.get('isHome') is False),None)
+   away=team(away_obj);home=team(home_obj)
+  else:
+   away=team(g.get('away') or g.get('awayTeam') or g.get('visitor'))
+   home=team(g.get('home') or g.get('homeTeam') or g.get('host'))
   dt=iso(g.get('startTimeEpoch') or g.get('startDateTimeUtc') or g.get('startDateTime'))
   if not dt and g.get('startDate') and g.get('startTime'):
    text=f"{g['startDate']} {g['startTime']}"
@@ -63,17 +72,16 @@ def ncaa_games(root):
     try:
      dt=datetime.strptime(text,fmt).replace(tzinfo=timezone.utc).isoformat().replace('+00:00','Z');break
     except ValueError:pass
-  if dt and (away or home or g.get('title')):out.append((away,home,dt,str(g.get('title') or '').strip()))
+  if dt and (away or home or g.get('title') or g.get('contestId')):
+   out.append((away,home,dt,str(g.get('title') or '').strip()))
  return out
 
 def add_ncaa(events,report):
  existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
- # NCAA scoreboard uses YYYY/MM/DD for non-football sports. Football uses YYYY/WK.
- # Pull one exact date at a time so the current 2026 scoreboard backend is addressed correctly.
  for league,sport,division,icon in NCAA:
-  added=0; errors=[]; requested=0
+  added=0;errors=[];requested=0
   for day in range(0,15):
-   d=(NOW+timedelta(days=day)).date(); url=f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{d.year}/{d.month:02d}/{d.day:02d}/all-conf'; requested+=1
+   d=(NOW+timedelta(days=day)).date();url=f'https://ncaa-api.henrygd.me/scoreboard/{sport}/{division}/{d.year}/{d.month:02d}/{d.day:02d}/all-conf';requested+=1
    try:root=get_json(url)
    except Exception as exc:errors.append(str(exc));continue
    for away,home,dt,raw in ncaa_games(root):
@@ -103,7 +111,7 @@ def nascar_races(root,series_id):
  walk(root);return [r for r in rows if int(r.get('series_id') or r.get('seriesId') or 0)==series_id]
 
 def add_nascar(events,report):
- year=NOW.year; urls={1:f'https://cf.nascar.com/cacher/{year}/1/race_list_basic.json',2:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json',3:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json'};loaded={}
+ year=NOW.year;urls={1:f'https://cf.nascar.com/cacher/{year}/1/race_list_basic.json',2:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json',3:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json'};loaded={}
  for sid in (1,2,3):
   try:loaded[sid]=get_json(urls[sid])
   except Exception as exc:report.setdefault('nascar',{})[next(n for n,s,_ in NASCAR if s==sid)]=f'failed: {exc}'
@@ -116,8 +124,7 @@ def add_nascar(events,report):
    try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
    except ValueError:continue
    if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
-   title=' — '.join(x for x in (str(r.get('race_name') or r.get('event_name') or league),str(r.get('track_name') or '')) if x)
-   key=(league,title,dt)
+   title=' — '.join(x for x in (str(r.get('race_name') or r.get('event_name') or league),str(r.get('track_name') or '')) if x);key=(league,title,dt)
    if key in existing:continue
    events.append({'league':league,'title':title,'start':dt,'tag':'LIVE' if o<=NOW else 'UPCOMING','icon':icon,'source':'official_api','sourceDetail':'NASCAR CF schedule cache'});existing.add(key);added+=1
   report.setdefault('nascar',{})[league]=f'official_api:{added}'
