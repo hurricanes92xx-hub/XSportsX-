@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,13 +54,13 @@ fun XSportsXApp() {
     var selectedGame by remember { mutableStateOf<Game?>(null) }
 
     MaterialTheme(colorScheme = darkColorScheme(
-        primary = Color(0xFFFF1744),
-        secondary = Color(0xFFFF6D00),
-        background = Color(0xFF07080C),
-        surface = Color(0xFF10131A),
-        surfaceVariant = Color(0xFF171B24)
+        primary = Color(0xFFFF1744), secondary = Color(0xFFFF6D00),
+        background = Color(0xFF07080C), surface = Color(0xFF10131A), surfaceVariant = Color(0xFF171B24)
     )) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF07080C)) {
+        Surface(
+            modifier = Modifier.fillMaxSize().semantics { testTagsAsResourceId = true },
+            color = Color(0xFF07080C)
+        ) {
             Row(Modifier.fillMaxSize()) {
                 SideRail(tab) { tab = it }
                 Box(Modifier.weight(1f).fillMaxHeight()) {
@@ -88,7 +91,12 @@ fun SideRail(tab: String, onTab: (String) -> Unit) {
         listOf("🏠" to "HOME", "🔴" to "LIVE", "⌕" to "SEARCH", "▣" to "SOURCES", "⚙" to "SETTINGS").forEach { (icon, id) ->
             val active = tab == id
             Column(
-                Modifier.padding(vertical = 7.dp).clip(RoundedCornerShape(18.dp)).background(if (active) Color(0xFF25121A) else Color.Transparent).clickable { onTab(id) }.padding(horizontal = 12.dp, vertical = 10.dp),
+                Modifier.padding(vertical = 7.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(if (active) Color(0xFF25121A) else Color.Transparent)
+                    .clickable { onTab(id) }
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .semantics { testTag = "nav_${id.lowercase()}" },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(icon, fontSize = 22.sp)
@@ -151,9 +159,7 @@ fun HeroBanner(onClick: () -> Unit) {
 fun LeagueChips(selected: String, onSelect: (String) -> Unit) {
     val leagues = listOf("ALL", "NFL", "NBA", "NCAA", "MLB", "NHL", "UFC", "BOXING", "SOCCER")
     LazyRow(contentPadding = PaddingValues(horizontal = 34.dp, vertical = 22.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(leagues) { l ->
-            FilterChip(selected = selected == l, onClick = { onSelect(l) }, label = { Text(l, fontWeight = FontWeight.Bold) })
-        }
+        items(leagues) { l -> FilterChip(selected = selected == l, onClick = { onSelect(l) }, label = { Text(l, fontWeight = FontWeight.Bold) }) }
     }
 }
 
@@ -161,9 +167,7 @@ fun LeagueChips(selected: String, onSelect: (String) -> Unit) {
 
 @Composable
 fun GameRow(list: List<Game>, onGame: (Game) -> Unit) {
-    LazyRow(contentPadding = PaddingValues(horizontal = 34.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        items(list) { game -> GameCard(game, onGame) }
-    }
+    LazyRow(contentPadding = PaddingValues(horizontal = 34.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) { items(list) { game -> GameCard(game, onGame) } }
 }
 
 @Composable
@@ -176,8 +180,7 @@ fun GameCard(game: Game, onGame: (Game) -> Unit) {
         Column(Modifier.padding(15.dp)) {
             Text(game.league, color = Color(0xFFFF536C), fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
             Text(game.matchup, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Spacer(Modifier.height(7.dp))
-            Text(game.time, color = Color(0xFF8D94A2), fontSize = 11.sp)
+            Spacer(Modifier.height(7.dp)); Text(game.time, color = Color(0xFF8D94A2), fontSize = 11.sp)
         }
     }
 }
@@ -211,10 +214,10 @@ fun SourcesScreen() {
         Header("SOURCE CENTER", "Connect your authorized Xtream Codes or M3U source")
         Column(Modifier.padding(horizontal = 34.dp).widthIn(max = 720.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("XTREAM CODES", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
-            OutlinedTextField(host, { host = it }, Modifier.fillMaxWidth(), label = { Text("Server URL") }, placeholder = { Text("https://provider.example") }, singleLine = true)
-            OutlinedTextField(user, { user = it }, Modifier.fillMaxWidth(), label = { Text("Username") }, singleLine = true)
-            OutlinedTextField(pass, { pass = it }, Modifier.fillMaxWidth(), label = { Text("Password") }, singleLine = true)
-            Button(onClick = { saved = true }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(14.dp)) { Text(if (saved) "SOURCE SAVED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black) }
+            OutlinedTextField(host, { host = it }, Modifier.fillMaxWidth().semantics { testTag = "source_server" }, label = { Text("Server URL") }, placeholder = { Text("https://provider.example") }, singleLine = true)
+            OutlinedTextField(user, { user = it }, Modifier.fillMaxWidth().semantics { testTag = "source_username" }, label = { Text("Username") }, singleLine = true)
+            OutlinedTextField(pass, { pass = it }, Modifier.fillMaxWidth().semantics { testTag = "source_password" }, label = { Text("Password") }, singleLine = true)
+            Button(onClick = { saved = true }, Modifier.fillMaxWidth().height(52.dp).semantics { testTag = "source_connect" }, shape = RoundedCornerShape(14.dp)) { Text(if (saved) "SOURCE SAVED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black) }
             Text("Credentials are kept on-device in the production build. Stream discovery only uses the source you connect.", color = Color(0xFF737A87), fontSize = 12.sp)
         }
     }
@@ -241,11 +244,9 @@ fun EventSheet(game: Game, onClose: () -> Unit) {
     Box(Modifier.fillMaxSize().background(Color(0x99000000)), contentAlignment = Alignment.BottomCenter) {
         Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)).background(Color(0xFF10131A)).padding(28.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) { Text(game.icon, fontSize = 42.sp); Spacer(Modifier.width(16.dp)); Column(Modifier.weight(1f)) { Text(game.matchup, color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Black); Text(game.league + " • " + game.time, color = Color(0xFF8A919E)) }; TextButton(onClick = onClose) { Text("CLOSE") } }
-            Spacer(Modifier.height(22.dp))
-            Text("SOURCE MATCHING", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
+            Spacer(Modifier.height(22.dp)); Text("SOURCE MATCHING", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
             Text("XSportsX will search your connected Xtream/M3U source using team/fighter names, aliases, league and event metadata.", color = Color(0xFF9AA1AE), fontSize = 13.sp)
-            Spacer(Modifier.height(18.dp))
-            Button(onClick = { }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(15.dp)) { Text("FIND AVAILABLE STREAMS", fontWeight = FontWeight.Black) }
+            Spacer(Modifier.height(18.dp)); Button(onClick = { }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(15.dp)) { Text("FIND AVAILABLE STREAMS", fontWeight = FontWeight.Black) }
         }
     }
 }
