@@ -95,8 +95,15 @@ click_id(){
 }
 
 set_field(){
-  local id="$1" value="$2" secret="${3:-false}" bounds x y observed
-  bounds="$(bounds_for_id "$OUT/source-form.xml" "$id" 2>/dev/null || true)"
+  local id="$1" value="$2" secret="${3:-false}" bounds x y observed before
+
+  # Android TV's on-screen keyboard can resize/scroll the Compose hierarchy.
+  # Never reuse coordinates captured while another field's keyboard is open.
+  adb shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 0.3
+  before="before-${id}"
+  snapshot "$before"
+  bounds="$(bounds_for_id "$OUT/${before}.xml" "$id" 2>/dev/null || true)"
   [ -n "$bounds" ] || { echo "Missing source field: $id ($(label_for "$id"))"; return 1; }
   read -r x y <<< "$bounds"
   adb shell input tap "$x" "$y"
@@ -123,6 +130,10 @@ set_field(){
     echo "Observed: $observed"
     return 1
   fi
+
+  # Ensure the next field is laid out normally before its coordinates are read.
+  adb shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 0.3
 }
 
 snapshot "source-form"
