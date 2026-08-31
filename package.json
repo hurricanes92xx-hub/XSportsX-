@@ -1,13 +1,13 @@
 {
   "name": "xsportsx-sports-source",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "private": true,
-  "description": "Centralized XSportsX sports schedule source and authorized Xtream event matcher.",
-  "main": "sports-source.js",
+  "description": "Centralized XSportsX canonical sports schedule source and authorized Xtream event matcher.",
+  "main": "sports-source-canonical.js",
   "scripts": {
-    "start": "node sports-source.js",
-    "dev": "node --watch sports-source.js",
-    "check": "node --check sports-source.js"
+    "start": "node sports-source-canonical.js",
+    "dev": "node --watch sports-source-canonical.js",
+    "check": "node --check sports-source-canonical.js"
   },
   "engines": { "node": ">=20" },
   "dependencies": {
