@@ -24,8 +24,9 @@ class MainActivityFuture : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (BuildConfig.IS_TV_BUILD) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        val qaOpenSource = BuildConfig.DEBUG && intent?.getBooleanExtra("QA_OPEN_SOURCE", false) == true
         setContent {
-            var connectSource by remember { mutableStateOf(false) }
+            var connectSource by remember { mutableStateOf(qaOpenSource) }
             var tvConnectChooser by remember { mutableStateOf(false) }
             var mobilePair by remember { mutableStateOf(false) }
             var tvPair by remember { mutableStateOf(false) }
@@ -48,16 +49,11 @@ class MainActivityFuture : ComponentActivity() {
                 checkForUpdate()
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
-
             LaunchedEffect(Unit) {
-                if (!BuildConfig.IS_TV_BUILD) {
-                    scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
-                }
+                if (!BuildConfig.IS_TV_BUILD) scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
             }
             LaunchedEffect(sourceVersion, connected) {
-                if (sourceVersion > 0 && !BuildConfig.IS_TV_BUILD) {
-                    runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
-                }
+                if (sourceVersion > 0 && !BuildConfig.IS_TV_BUILD) runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
             }
 
             if (availableUpdate != null) {
@@ -70,10 +66,7 @@ class MainActivityFuture : ComponentActivity() {
             updateMessage?.let { AlertDialog(onDismissRequest = { updateMessage = null }, title = { Text("UPDATE") }, text = { Text(it) }, confirmButton = { TextButton(onClick = { updateMessage = null }) { Text("OK") } }) }
             when {
                 tvConnectChooser -> TvSourceChooser(onQr = { tvConnectChooser = false; tvPair = true }, onManual = { tvConnectChooser = false; connectSource = true }, onBack = { tvConnectChooser = false })
-                tvPair -> LocalQrPairingScreen(
-                    onCancel = { tvPair = false; tvConnectChooser = true },
-                    onConnected = { sourceVersion++; tvPair = false; tvConnectChooser = false }
-                )
+                tvPair -> LocalQrPairingScreen(onCancel = { tvPair = false; tvConnectChooser = true }, onConnected = { sourceVersion++; tvPair = false; tvConnectChooser = false })
                 mobilePair -> PhonePairScanner(onConnected = { mobilePair = false }, onCancel = { mobilePair = false })
                 connectSource -> SourceConnectScreen(onBack = { connectSource = false }, onSaved = { sourceVersion++; connectSource = false })
                 schedules -> SportsScheduleScreen(initialLeague = selectedScheduleLeague, onBack = { schedules = false }, onEvent = { event -> selectedEvent = event; liveFilter = null; schedules = false })
@@ -83,37 +76,18 @@ class MainActivityFuture : ComponentActivity() {
                     if (BuildConfig.IS_TV_BUILD) TvAdaptiveHost(
                         onConnect = { tvConnectChooser = true },
                         onNetwork = { network ->
-                            if (network.startsWith("LEAGUE:")) {
-                                selectedScheduleLeague = network.removePrefix("LEAGUE:")
-                                schedules = true
-                            } else {
-                                selectedEvent = null
-                                liveFilter = network
-                            }
+                            if (network.startsWith("LEAGUE:")) { selectedScheduleLeague = network.removePrefix("LEAGUE:"); schedules = true }
+                            else { selectedEvent = null; liveFilter = network }
                         }
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
                         FuturisticHome(
-                            // A connected source must never send the user back through
-                            // the sign-in screen just because they tapped the LIVE card,
-                            // a sport tile, or another browse action. Those controls call
-                            // this callback, so route them into the live channel resolver
-                            // once credentials are already configured.
                             onConnect = {
-                                if (sourceStore.load().isConfigured()) {
-                                    selectedEvent = null
-                                    liveFilter = ""
-                                } else {
-                                    connectSource = true
-                                }
+                                if (sourceStore.load().isConfigured()) { selectedEvent = null; liveFilter = "" }
+                                else connectSource = true
                             },
                             onNetwork = { network ->
-                                if (network.type == "LEAGUE") {
-                                    selectedScheduleLeague = network.name
-                                    schedules = true
-                                } else {
-                                    selectedEvent = null
-                                    liveFilter = network.name
-                                }
+                                if (network.type == "LEAGUE") { selectedScheduleLeague = network.name; schedules = true }
+                                else { selectedEvent = null; liveFilter = network.name }
                             }
                         )
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
