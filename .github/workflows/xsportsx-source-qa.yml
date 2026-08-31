@@ -102,8 +102,8 @@ jobs:
           avd-name: xsportsx-source-mobile
           force-avd-creation: true
           cores: 4
-          ram-size: 4096M
-          heap-size: 512M
+          ram-size: 4096
+          heap-size: 512
           disk-size: 8G
           emulator-boot-timeout: 600
           # swiftshader_indirect is deprecated in current Emulator releases;
@@ -111,13 +111,13 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            set -e
+            set -euo pipefail
             sudo chmod 666 /dev/kvm
             test -r /dev/kvm
             test -w /dev/kvm
             adb start-server
-            command -v emulator
-            emulator -accel-check
+            test -x "$ANDROID_HOME/emulator/emulator"
+            "$ANDROID_HOME/emulator/emulator" -accel-check
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh "$MOBILE_APK" source-ui
@@ -173,20 +173,20 @@ jobs:
           avd-name: xsportsx-source-tv
           force-avd-creation: true
           cores: 4
-          ram-size: 4096M
-          heap-size: 512M
+          ram-size: 4096
+          heap-size: 512
           disk-size: 8G
           emulator-boot-timeout: 600
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            set -e
+            set -euo pipefail
             sudo chmod 666 /dev/kvm
             test -r /dev/kvm
             test -w /dev/kvm
             adb start-server
-            command -v emulator
-            emulator -accel-check
+            test -x "$ANDROID_HOME/emulator/emulator"
+            "$ANDROID_HOME/emulator/emulator" -accel-check
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh "$TV_APK" source-ui
