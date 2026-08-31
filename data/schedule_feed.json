@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T20:47:49.852787+00:00",
+  "generatedAt": "2026-08-31T20:58:11.322131+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -11,6 +11,7 @@
     "CFL": 90,
     "EPL": 31,
     "F1": 3,
+    "IPL": 74,
     "IndyCar": 1,
     "LIV Golf": 1,
     "LPGA": 3,
@@ -43,16 +44,13 @@
     "WTA": 17,
     "WWE": 13
   },
-  "failedSources": [
-    "IPL"
-  ],
+  "failedSources": [],
   "officialSourceFailures": [
     "NBA",
     "PLL",
     "NLL",
     "Rugby World Cup",
     "Six Nations",
-    "IPL",
     "MotoGP",
     "FORMULA E",
     "MXGP",
@@ -58108,7 +58106,7 @@
       "league": "NCAA Men's Soccer",
       "title": "VMI at Central Connecticut",
       "start": "2026-08-31T18:00:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -59132,15 +59130,6 @@
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "St. Thomas at Milwaukee",
-      "start": "2026-09-05T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Men's Soccer",
       "title": "Bob Jones at Radford",
       "start": "2026-09-05T18:00:00Z",
       "tag": "UPCOMING",
@@ -59268,6 +59257,15 @@
     {
       "league": "NCAA Men's Soccer",
       "title": "Canisius at Mercyhurst",
+      "start": "2026-09-05T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Men's Soccer",
+      "title": "St. Thomas at Milwaukee",
       "start": "2026-09-05T22:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -71462,6 +71460,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Arkansas State at Southern Indiana",
+      "start": "2026-09-03T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Jacksonville State at Southern Miss",
       "start": "2026-09-03T21:00:00Z",
       "tag": "UPCOMING",
@@ -72263,15 +72270,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Arkansas State at Southern Indiana",
-      "start": "2026-09-04T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "TCU at Texas A&M",
       "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
@@ -72489,7 +72487,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Washington State at Utah Valley",
-      "start": "2026-09-03T23:00:00Z",
+      "start": "2026-09-04T02:30:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -91902,7 +91900,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "Idaho State Bengals at UNLV Rebels",
-      "start": "2026-09-03T21:30:00Z",
+      "start": "2026-09-03T21:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -95340,7 +95338,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "Oakland Golden Grizzlies at Cincinnati Bearcats",
-      "start": "2026-09-06T17:00:00Z",
+      "start": "2026-09-06T16:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -95358,7 +95356,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "UNC Asheville Bulldogs at Jacksonville State Gamecocks",
-      "start": "2026-09-07T03:00:00Z",
+      "start": "2026-09-06T16:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -95394,7 +95392,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "South Alabama Jaguars at Lipscomb Bisons",
-      "start": "2026-09-06T18:00:00Z",
+      "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -95583,7 +95581,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "George Washington Revolutionaries at Wofford Terriers",
-      "start": "2026-09-06T16:00:00Z",
+      "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -125023,7 +125021,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Central Michigan Chippewas at Stanford Cardinal",
       "start": "2026-08-31T19:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -130553,10 +130551,602 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Royal Challengers Bengaluru",
+      "start": "2026-03-28T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Mumbai Indians",
+      "start": "2026-03-29T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Rajasthan Royals",
+      "start": "2026-03-30T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Punjab Kings",
+      "start": "2026-03-31T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Lucknow Super Giants",
+      "start": "2026-04-01T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Kolkata Knight Riders",
+      "start": "2026-04-02T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Chennai Super Kings",
+      "start": "2026-04-03T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Delhi Capitals",
+      "start": "2026-04-04T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Gujarat Titans",
+      "start": "2026-04-04T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Sunrisers Hyderabad",
+      "start": "2026-04-05T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Royal Challengers Bengaluru",
+      "start": "2026-04-05T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Kolkata Knight Riders",
+      "start": "2026-04-06T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Rajasthan Royals",
+      "start": "2026-04-07T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Delhi Capitals",
+      "start": "2026-04-08T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Kolkata Knight Riders",
+      "start": "2026-04-09T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Rajasthan Royals",
+      "start": "2026-04-10T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Punjab Kings",
+      "start": "2026-04-11T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Chennai Super Kings",
+      "start": "2026-04-11T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Lucknow Super Giants",
+      "start": "2026-04-12T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Mumbai Indians",
+      "start": "2026-04-12T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Sunrisers Hyderabad",
+      "start": "2026-04-13T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Chennai Super Kings",
+      "start": "2026-04-14T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Royal Challengers Bengaluru",
+      "start": "2026-04-15T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Mumbai Indians",
+      "start": "2026-04-16T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Gujarat Titans",
+      "start": "2026-04-17T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Royal Challengers Bengaluru",
+      "start": "2026-04-18T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Sunrisers Hyderabad",
+      "start": "2026-04-18T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Kolkata Knight Riders",
+      "start": "2026-04-19T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Punjab Kings",
+      "start": "2026-04-19T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Gujarat Titans",
+      "start": "2026-04-20T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Sunrisers Hyderabad",
+      "start": "2026-04-21T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Lucknow Super Giants",
+      "start": "2026-04-22T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Mumbai Indians",
+      "start": "2026-04-23T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Royal Challengers Bengaluru",
+      "start": "2026-04-24T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Delhi Capitals",
+      "start": "2026-04-25T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Rajasthan Royals",
+      "start": "2026-04-25T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Chennai Super Kings",
+      "start": "2026-04-26T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Lucknow Super Giants",
+      "start": "2026-04-26T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Delhi Capitals",
+      "start": "2026-04-27T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Punjab Kings",
+      "start": "2026-04-28T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Mumbai Indians",
+      "start": "2026-04-29T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Gujarat Titans",
+      "start": "2026-04-30T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Rajasthan Royals",
+      "start": "2026-05-01T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Chennai Super Kings",
+      "start": "2026-05-02T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Sunrisers Hyderabad",
+      "start": "2026-05-03T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Gujarat Titans",
+      "start": "2026-05-03T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Mumbai Indians",
+      "start": "2026-05-04T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Delhi Capitals",
+      "start": "2026-05-05T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Sunrisers Hyderabad",
+      "start": "2026-05-06T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Lucknow Super Giants",
+      "start": "2026-05-07T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Delhi Capitals",
+      "start": "2026-05-08T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Rajasthan Royals",
+      "start": "2026-05-09T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Chennai Super Kings",
+      "start": "2026-05-10T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Royal Challengers Bengaluru",
+      "start": "2026-05-10T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Punjab Kings",
+      "start": "2026-05-11T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Gujarat Titans",
+      "start": "2026-05-12T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Kolkata Knight Riders @ Royal Challengers Bengaluru",
+      "start": "2026-05-13T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Punjab Kings",
+      "start": "2026-05-14T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Lucknow Super Giants",
+      "start": "2026-05-15T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Kolkata Knight Riders",
+      "start": "2026-05-16T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Punjab Kings",
+      "start": "2026-05-17T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Delhi Capitals",
+      "start": "2026-05-17T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Sunrisers Hyderabad @ Chennai Super Kings",
+      "start": "2026-05-18T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Lucknow Super Giants @ Rajasthan Royals",
+      "start": "2026-05-19T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Mumbai Indians @ Kolkata Knight Riders",
+      "start": "2026-05-20T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Chennai Super Kings @ Gujarat Titans",
+      "start": "2026-05-21T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Royal Challengers Bengaluru @ Sunrisers Hyderabad",
+      "start": "2026-05-22T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Punjab Kings @ Lucknow Super Giants",
+      "start": "2026-05-23T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Mumbai Indians",
+      "start": "2026-05-24T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Delhi Capitals @ Kolkata Knight Riders",
+      "start": "2026-05-24T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Royal Challengers Bengaluru",
+      "start": "2026-05-26T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Sunrisers Hyderabad",
+      "start": "2026-05-27T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Rajasthan Royals @ Gujarat Titans",
+      "start": "2026-05-29T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
+    },
+    {
+      "league": "IPL",
+      "title": "Gujarat Titans @ Royal Challengers Bengaluru",
+      "start": "2026-05-31T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏏",
+      "source": "fixturedownload"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T20:47:14.841416+00:00",
+    "generatedAt": "2026-08-31T20:57:22.718575+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -132181,11 +132771,11 @@
       "added": 0
     },
     "IPL": {
-      "source": "ESPN cricket Core API",
-      "added": 0,
-      "resolved": 0,
-      "pages": 1,
-      "request_failures": 1
+      "source": "FixtureDownload IPL season page",
+      "season": 2026,
+      "added": 74,
+      "parsed": 74,
+      "request_failures": 0
     }
   }
 }
