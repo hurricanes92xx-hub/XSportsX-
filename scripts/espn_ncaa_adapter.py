@@ -5,7 +5,7 @@ import json, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.8','Accept':'application/json,text/plain,*/*'}
+HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.9','Accept':'application/json,text/plain,*/*'}
 NOW=datetime.now(timezone.utc); HORIZON=NOW+timedelta(days=370)
 SPORTS=[
  ('NCAA FB','football','college-football','🏈','always',None),
@@ -15,7 +15,7 @@ SPORTS=[
  ("NCAA Men's Soccer",'soccer','usa.ncaa.m.1','⚽','fall',None),("NCAA Women's Soccer",'soccer','usa.ncaa.w.1','⚽','fall',None),
  ("NCAA Men's Volleyball",'volleyball','mens-college-volleyball','🏐','winter',None),("NCAA Women's Volleyball",'volleyball','womens-college-volleyball','🏐','fall',None),
  ("NCAA Men's Hockey",'hockey','mens-college-hockey','🏒','winter',None),("NCAA Women's Hockey",'hockey','womens-college-hockey','🏒','winter',None),
- ("NCAA Women's Field Hockey",'field-hockey','ncaa-field-hockey','🏑','fall',None)]
+ ("NCAA Women's Field Hockey",'field-hockey','womens-college-field-hockey','🏑','fall',None)]
 
 def get_json(url):
  req=urllib.request.Request(url,headers=HEADERS)
