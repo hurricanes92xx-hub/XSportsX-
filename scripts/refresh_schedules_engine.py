@@ -48,6 +48,39 @@ def _iso(value):
     if not value: return None
     try: return datetime.fromisoformat(str(value).replace('Z','+00:00')).astimezone(timezone.utc)
     except Exception: return None
+def _normalize_timestamp(value):
+    """Normalize all supported provider timestamp variants to UTC ISO-8601."""
+    if value is None: return None
+    text=str(value).strip()
+    if not text: return None
+    candidates=(text, text.replace('Z','+00:00'), text.replace('z','+00:00'))
+    for candidate in candidates:
+        try:
+            return datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+        except ValueError:
+            pass
+    # Some preserved/provider rows use US date notation with an ISO-style time.
+    for fmt in ('%m/%d/%YT%H:%M:%SZ','%m/%d/%YT%H:%M:%S%z','%m/%d/%YT%H:%M:%S','%m/%d/%Y %H:%M:%S','%m/%d/%Y'):
+        try:
+            dt=datetime.strptime(text,fmt)
+            if dt.tzinfo is None: dt=dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+        except ValueError:
+            pass
+    return None
+def normalize_feed_timestamps(payload):
+    events=payload.get('events') or []
+    invalid=[]; changed=0
+    for event in events:
+        raw=event.get('start')
+        normalized=_normalize_timestamp(raw)
+        if normalized is None:
+            invalid.append(event)
+            continue
+        if raw != normalized:
+            event['start']=normalized
+            changed += 1
+    return changed, invalid
 def _embedded_json_documents(html):
     text=html.decode('utf-8','ignore') if isinstance(html,(bytes,bytearray)) else str(html)
     patterns=[r'<script[^>]+type=["\']application/json["\'][^>]*>(.*?)</script>',r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>']
@@ -100,5 +133,11 @@ refresh.get=guarded_get; refresh.add_official_source=season_aware_official; refr
 refresh.main()
 feed=ROOT/'data/schedule_feed.json'
 try:
-    payload=json.loads(feed.read_text(encoding='utf-8')); payload['seasonIntelligence']={'generatedAt':datetime.now(timezone.utc).isoformat(),'mode':'calendar_plus_observed_activity','providerDecisions':SEASON_REPORT}; tmp=feed.with_suffix('.tmp'); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); tmp.replace(feed)
+    payload=json.loads(feed.read_text(encoding='utf-8'))
+    changed,invalid=normalize_feed_timestamps(payload)
+    print(f'normalized {changed} schedule timestamps')
+    if invalid:
+        print(f'WARNING could not normalize {len(invalid)} schedule timestamps')
+    payload['seasonIntelligence']={'generatedAt':datetime.now(timezone.utc).isoformat(),'mode':'calendar_plus_observed_activity','providerDecisions':SEASON_REPORT}
+    tmp=feed.with_suffix('.tmp'); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); tmp.replace(feed)
 except Exception as exc: print(f'WARNING season intelligence metadata: {exc}')
