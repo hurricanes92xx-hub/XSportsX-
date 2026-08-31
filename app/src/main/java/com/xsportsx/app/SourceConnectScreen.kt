@@ -72,6 +72,7 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
                     testTag = "source_status"
                     contentDescription = if (it.startsWith("Connected")) "SOURCE CONNECTED" else "SOURCE CONNECTION ERROR"
                 }
@@ -112,7 +113,11 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 }
             },
             enabled = !testing,
-            modifier = Modifier.fillMaxWidth().height(54.dp).semantics { testTag = "source_connect"; contentDescription = if (testing) "TESTING SOURCE" else "TEST & CONNECT" },
+            modifier = Modifier.fillMaxWidth().height(54.dp).semantics {
+                testTagsAsResourceId = true
+                testTag = "source_connect"
+                contentDescription = if (testing) "TESTING SOURCE" else "TEST & CONNECT"
+            },
             shape = RoundedCornerShape(16.dp)
         ) { Text(if (testing) "TESTING SOURCE…" else "TEST & CONNECT", fontWeight = FontWeight.Black) }
 
@@ -133,7 +138,11 @@ private fun SourceField(label: String, value: String, onValue: (String) -> Unit,
     OutlinedTextField(
         value = value,
         onValueChange = onValue,
-        modifier = Modifier.fillMaxWidth().semantics { this.testTag = testTag; contentDescription = label },
+        modifier = Modifier.fillMaxWidth().semantics {
+            testTagsAsResourceId = true
+            this.testTag = testTag
+            contentDescription = label
+        },
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
