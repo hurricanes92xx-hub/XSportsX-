@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,7 +35,7 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFF05060A)).padding(24.dp),
+        Modifier.fillMaxSize().background(Color(0xFF05060A)).padding(24.dp).semantics { testTagsAsResourceId = true },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -54,11 +56,11 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
 
         Column(Modifier.fillMaxWidth().widthIn(max = 620.dp), verticalArrangement = Arrangement.spacedBy(11.dp)) {
             if (config.type == "XTREAM") {
-                SourceField("Server URL", config.server, { config = config.copy(server = it) }, "https://provider.example")
-                SourceField("Username", config.username, { config = config.copy(username = it) }, "Xtream username")
-                SourceField("Password", config.password, { config = config.copy(password = it) }, "Xtream password", true)
+                SourceField("Server URL", config.server, { config = config.copy(server = it) }, "https://provider.example", testTag = "source_server")
+                SourceField("Username", config.username, { config = config.copy(username = it) }, "Xtream username", testTag = "source_username")
+                SourceField("Password", config.password, { config = config.copy(password = it) }, "Xtream password", true, testTag = "source_password")
             } else {
-                SourceField("M3U playlist URL", config.m3uUrl, { config = config.copy(m3uUrl = it) }, "https://provider.example/playlist.m3u")
+                SourceField("M3U playlist URL", config.m3uUrl, { config = config.copy(m3uUrl = it) }, "https://provider.example/playlist.m3u", testTag = "source_m3u")
             }
         }
 
@@ -69,7 +71,10 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 color = if (it.startsWith("Connected")) Color(0xFF63FF9A) else Color(0xFFFF6B7D),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.semantics { contentDescription = if (it.startsWith("Connected")) "SOURCE CONNECTED" else "SOURCE CONNECTION ERROR" }
+                modifier = Modifier.semantics {
+                    testTag = "source_status"
+                    contentDescription = if (it.startsWith("Connected")) "SOURCE CONNECTED" else "SOURCE CONNECTION ERROR"
+                }
             )
             Spacer(Modifier.height(8.dp))
         }
@@ -107,9 +112,7 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 }
             },
             enabled = !testing,
-            modifier = Modifier.fillMaxWidth().height(54.dp).semantics {
-                contentDescription = if (testing) "TESTING SOURCE" else "TEST & CONNECT"
-            },
+            modifier = Modifier.fillMaxWidth().height(54.dp).semantics { testTag = "source_connect"; contentDescription = if (testing) "TESTING SOURCE" else "TEST & CONNECT" },
             shape = RoundedCornerShape(16.dp)
         ) { Text(if (testing) "TESTING SOURCE…" else "TEST & CONNECT", fontWeight = FontWeight.Black) }
 
@@ -126,11 +129,11 @@ private fun RowScope.SourceTab(label: String, selected: Boolean, onClick: () -> 
 }
 
 @Composable
-private fun SourceField(label: String, value: String, onValue: (String) -> Unit, placeholder: String, password: Boolean = false) {
+private fun SourceField(label: String, value: String, onValue: (String) -> Unit, placeholder: String, password: Boolean = false, testTag: String) {
     OutlinedTextField(
         value = value,
         onValueChange = onValue,
-        modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
+        modifier = Modifier.fillMaxWidth().semantics { this.testTag = testTag; contentDescription = label },
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
@@ -147,11 +150,8 @@ private suspend fun testSource(config: SourceConfig): SourceTestResult = withCon
             val lines = body.lineSequence().map { it.trim() }.filter { it.isNotBlank() }.toList()
             val playableUrls = lines.count { it.startsWith("http://") || it.startsWith("https://") }
             val hasPlaylist = lines.any { it.startsWith("#EXTM3U", true) || it.startsWith("#EXTINF", true) }
-            if (hasPlaylist && playableUrls > 0) {
-                SourceTestResult(true, "Connected • M3U playlist verified ($playableUrls streams)")
-            } else {
-                SourceTestResult(false, "Connected to URL, but it did not return a valid M3U playlist.")
-            }
+            if (hasPlaylist && playableUrls > 0) SourceTestResult(true, "Connected • M3U playlist verified ($playableUrls streams)")
+            else SourceTestResult(false, "Connected to URL, but it did not return a valid M3U playlist.")
         } else {
             val base = config.server.trimEnd('/')
             val target = "$base/player_api.php?username=${URLEncoder.encode(config.username, "UTF-8")}&password=${URLEncoder.encode(config.password, "UTF-8")}"
@@ -160,14 +160,9 @@ private suspend fun testSource(config: SourceConfig): SourceTestResult = withCon
                 ?: return@withContext SourceTestResult(false, "Server responded, but the Xtream API returned invalid data.")
             val userInfo = json.optJSONObject("user_info")
             val auth = userInfo?.optInt("auth", -1) ?: -1
-            if (auth == 1) {
-                val status = userInfo.optString("status").ifBlank { "active" }
-                SourceTestResult(true, "Connected • Xtream account $status")
-            } else if (auth == 0) {
-                SourceTestResult(false, "Xtream rejected the username or password.")
-            } else {
-                SourceTestResult(false, "Server responded, but this does not look like a valid Xtream API.")
-            }
+            if (auth == 1) SourceTestResult(true, "Connected • Xtream account ${userInfo.optString("status").ifBlank { "active" }}")
+            else if (auth == 0) SourceTestResult(false, "Xtream rejected the username or password.")
+            else SourceTestResult(false, "Server responded, but this does not look like a valid Xtream API.")
         }
     } catch (e: Exception) {
         SourceTestResult(false, "Connection failed • ${e.message ?: "check source details"}")
