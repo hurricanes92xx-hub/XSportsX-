@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Recover IPL schedules through ESPN's cricket Core API.
 
-ESPN's cricket site scoreboard endpoint returns 404 for IPL. The public Core API
-is the supported path for cricket event collections, so this adapter discovers
-IPL events there and normalizes them into the canonical schedule feed.
+Cricket does not expose a usable Site API scoreboard. ESPN's documented public
+Core collection is the supported event source. Keep this adapter independent
+of the normal scoreboard/date-window path so offseason IPL does not create a
+false provider failure and the next season can be discovered automatically.
 """
 from __future__ import annotations
 
@@ -13,8 +14,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 FEED = Path('data/schedule_feed.json')
+BASE = 'https://sports.core.api.espn.com/v2/sports/cricket/leagues/ipl/events'
 HEADERS = {
-    'User-Agent': 'XSportsX-Schedule/5.4',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36',
     'Accept': 'application/json,text/plain,*/*',
 }
 
@@ -28,13 +30,13 @@ def fetch_json(url: str):
 def event_from_item(item):
     if not isinstance(item, dict):
         return None
-    # Core collections normally return {$ref: ...}. Some responses can expose
-    # the event object inline, so accept either form.
     if 'date' in item and ('competitions' in item or 'name' in item):
         return item
     ref = item.get('$ref')
     if not ref:
         return None
+    # ESPN sometimes emits an internal .pvt host in Core $ref values.
+    ref = ref.replace('sports.core.api.espn.pvt', 'sports.core.api.espn.com')
     try:
         return fetch_json(ref)
     except Exception as exc:
@@ -69,50 +71,28 @@ def main():
     payload = json.loads(FEED.read_text(encoding='utf-8'))
     events = payload.get('events') or []
     existing = {(e.get('league'), e.get('title'), e.get('start')) for e in events}
-    year = datetime.now(timezone.utc).year
-    # IPL is normally played in the spring. Use the current season year; this
-    # keeps the adapter season-aware and avoids hard-coding 2026 forever.
-    start = f'{year}0101'
-    end = f'{year}1231'
-    url = f'https://sports.core.api.espn.com/v2/sports/cricket/leagues/ipl/events?dates={start}-{end}&limit=1000'
 
-    try:
-        root = fetch_json(url)
-    except Exception as exc:
-        print(f'ERROR ESPN Core IPL: {exc}')
-        print('NO REPAIR IPL: ESPN Core API unavailable')
-        return
-
-    items = root.get('items') or []
+    # Do NOT send a dates range here. The IPL Core collection accepts the
+    # collection paging parameters; the prior dates=YYYYMMDD-YYYYMMDD request
+    # was rejected with HTTP 400 by ESPN. Historical/current collection data is
+    # useful for keeping the feed populated, while the canonical feed's normal
+    # season intelligence controls what the UI considers in-season.
+    next_url = f'{BASE}?limit=100'
+    pages = 0
     added = 0
     resolved = 0
-    for item in items:
-        event = event_from_item(item)
-        if event is None:
-            continue
-        resolved += 1
-        row = parse_event(event)
-        if not row:
-            continue
-        key = (row['league'], row['title'], row['start'])
-        if key in existing:
-            continue
-        events.append(row)
-        existing.add(key)
-        added += 1
+    failures = 0
 
-    # The collection may paginate. Follow the documented next-page link when
-    # present, while keeping a hard cap so a malformed response cannot loop.
-    next_url = (root.get('page') or {}).get('next')
-    pages = 0
-    while next_url and pages < 10:
+    while next_url and pages < 20:
         pages += 1
         try:
-            page = fetch_json(next_url)
+            root = fetch_json(next_url)
         except Exception as exc:
-            print(f'WARNING ESPN Core IPL next page failed: {exc}')
+            failures += 1
+            print(f'ERROR ESPN Core IPL page {pages}: {exc}')
             break
-        for item in page.get('items') or []:
+
+        for item in root.get('items') or []:
             event = event_from_item(item)
             if event is None:
                 continue
@@ -126,7 +106,11 @@ def main():
             events.append(row)
             existing.add(key)
             added += 1
-        next_url = (page.get('page') or {}).get('next')
+
+        page = root.get('page') or {}
+        next_url = page.get('next')
+        if next_url:
+            next_url = next_url.replace('sports.core.api.espn.pvt', 'sports.core.api.espn.com')
 
     payload['events'] = events
     payload['eventCounts'] = {
@@ -134,14 +118,23 @@ def main():
         for k in sorted({e.get('league') for e in events if e.get('league')})
     }
     report = payload.setdefault('providerRepairReport', {})
-    report['IPL'] = {'source': 'ESPN cricket Core API', 'added': added, 'resolved': resolved}
+    report['IPL'] = {
+        'source': 'ESPN cricket Core API',
+        'added': added,
+        'resolved': resolved,
+        'pages': pages,
+        'request_failures': failures,
+    }
 
-    if added:
+    # A successful collection request is a healthy source even during the
+    # IPL offseason. Only mark IPL healthy when ESPN actually answered with a
+    # valid collection; don't manufacture a failure from zero in-season games.
+    if pages > 0 and failures == 0:
         payload['officialSourceFailures'] = [x for x in payload.get('officialSourceFailures', []) if x != 'IPL']
         payload['failedSources'] = [x for x in payload.get('failedSources', []) if x != 'IPL']
-        print(f'REPAIRED IPL: added {added} ESPN Core events (resolved={resolved})')
+        print(f'IPL Core source healthy: added={added}, resolved={resolved}, pages={pages}')
     else:
-        print(f'NO REPAIR IPL: Core API returned no new events (resolved={resolved})')
+        print(f'NO REPAIR IPL: Core collection unavailable (pages={pages}, failures={failures})')
 
     payload['generatedAt'] = datetime.now(timezone.utc).isoformat()
     FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
