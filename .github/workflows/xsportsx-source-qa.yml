@@ -106,12 +106,10 @@ jobs:
           heap-size: 512
           disk-size: 8G
           emulator-boot-timeout: 600
-          # swiftshader_indirect is deprecated in current Emulator releases;
-          # use the supported SwiftShader backend and require KVM acceleration.
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            set -euo pipefail
+            set -eu
             sudo chmod 666 /dev/kvm
             test -r /dev/kvm
             test -w /dev/kvm
@@ -180,7 +178,7 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            set -euo pipefail
+            set -eu
             sudo chmod 666 /dev/kvm
             test -r /dev/kvm
             test -w /dev/kvm
