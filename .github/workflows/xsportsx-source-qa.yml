@@ -23,7 +23,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
@@ -60,7 +60,7 @@ jobs:
 
   mobile-source:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
@@ -79,15 +79,18 @@ jobs:
           echo "Using committed Mobile APK: $APK"
       - name: Start local Xtream/M3U fixture
         run: |
+          set -euo pipefail
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
           for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/health && break; sleep 1; done
           python3 scripts/qa_source_fixture_check.py
-      - name: Enable KVM
+      - name: Enable and verify KVM
         run: |
           set -euxo pipefail
           test -e /dev/kvm
           sudo chmod 666 /dev/kvm
-      - uses: reactivecircus/android-emulator-runner@v2
+          test -r /dev/kvm
+          test -w /dev/kvm
+      - uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         env:
           QA_SOURCE_BASE: http://127.0.0.1:8765
           QA_PACKAGE: com.xsportsx.app.mobile
@@ -98,15 +101,23 @@ jobs:
           profile: pixel_5
           avd-name: xsportsx-source-mobile
           force-avd-creation: true
-          ram-size: 3072M
+          cores: 4
+          ram-size: 4096M
           heap-size: 512M
-          disk-size: 6G
+          disk-size: 8G
           emulator-boot-timeout: 600
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
+          # swiftshader_indirect is deprecated in current Emulator releases;
+          # use the supported SwiftShader backend and require KVM acceleration.
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            adb kill-server || true
-            sudo chmod 666 /dev/kvm || true
+            set -e
+            sudo chmod 666 /dev/kvm
+            test -r /dev/kvm
+            test -w /dev/kvm
+            adb start-server
+            command -v emulator
+            emulator -accel-check
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh "$MOBILE_APK" source-ui
@@ -120,7 +131,7 @@ jobs:
 
   tv-source:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
@@ -139,15 +150,18 @@ jobs:
           echo "Using committed TV APK: $APK"
       - name: Start local Xtream/M3U fixture
         run: |
+          set -euo pipefail
           python3 scripts/qa_source_server.py >/tmp/xsportsx-source.log 2>&1 &
           for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/health && break; sleep 1; done
           python3 scripts/qa_source_fixture_check.py
-      - name: Enable KVM
+      - name: Enable and verify KVM
         run: |
           set -euxo pipefail
           test -e /dev/kvm
           sudo chmod 666 /dev/kvm
-      - uses: reactivecircus/android-emulator-runner@v2
+          test -r /dev/kvm
+          test -w /dev/kvm
+      - uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         env:
           QA_SOURCE_BASE: http://127.0.0.1:8765
           QA_PACKAGE: com.xsportsx.app.tv
@@ -158,15 +172,21 @@ jobs:
           profile: tv_1080p
           avd-name: xsportsx-source-tv
           force-avd-creation: true
-          ram-size: 3072M
+          cores: 4
+          ram-size: 4096M
           heap-size: 512M
-          disk-size: 6G
+          disk-size: 8G
           emulator-boot-timeout: 600
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader -accel on -no-snapshot-load -no-snapshot-save -camera-back none -camera-front none -no-metrics
           disable-animations: true
           pre-emulator-launch-script: |
-            adb kill-server || true
-            sudo chmod 666 /dev/kvm || true
+            set -e
+            sudo chmod 666 /dev/kvm
+            test -r /dev/kvm
+            test -w /dev/kvm
+            adb start-server
+            command -v emulator
+            emulator -accel-check
           script: |
             chmod +x scripts/ui_smoke_test.sh scripts/source_login_smoke.sh
             ./scripts/ui_smoke_test.sh "$TV_APK" source-ui
