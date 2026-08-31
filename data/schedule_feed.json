@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T19:50:32.147921+00:00",
+  "generatedAt": "2026-08-31T20:00:47.732587+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -27,14 +27,16 @@
     "NCAA Women's Field Hockey": 615,
     "NCAA Women's Hockey": 1486,
     "NCAA Women's Soccer": 2233,
-    "NCAA Women's Volleyball": 2999,
+    "NCAA Women's Volleyball": 3001,
     "NFL": 16,
     "NHL": 73,
     "NRL": 8,
+    "NWSL": 43,
     "PGA": 3,
     "Serie A": 32,
     "TNA": 1,
     "UCL": 18,
+    "UEL": 108,
     "UFC": 9,
     "WNBA": 30,
     "WTA": 17,
@@ -46,8 +48,6 @@
   "officialSourceFailures": [
     "CFL",
     "NBA",
-    "UEL",
-    "NWSL",
     "PLL",
     "NLL",
     "Rugby World Cup",
@@ -69776,7 +69776,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Arkansas State at Southern Indiana",
-      "start": "2026-09-03T21:00:00Z",
+      "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -70990,15 +70990,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Cincinnati at Northern Kentucky",
-      "start": "2026-09-06T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "IU Indianapolis at Notre Dame",
       "start": "2026-09-06T16:00:00Z",
       "tag": "UPCOMING",
@@ -71233,6 +71224,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Cincinnati at Northern Kentucky",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Indiana at Ohio",
       "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
@@ -71279,6 +71279,15 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Vermont at Saint Joseph's",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Idaho at South Dakota State",
       "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -71593,15 +71602,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Idaho at South Dakota State",
-      "start": "2026-09-06T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Northwestern at Tennessee",
       "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
@@ -71621,6 +71621,15 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Le Moyne at UAlbany",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Western Kentucky at UIC",
       "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -71710,6 +71719,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Utah at Oregon State",
+      "start": "2026-09-06T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Nevada at San Francisco",
       "start": "2026-09-06T19:00:00Z",
       "tag": "UPCOMING",
@@ -71766,15 +71784,6 @@
       "league": "NCAA Women's Soccer",
       "title": "Columbia at California",
       "start": "2026-09-06T20:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Utah at Oregon State",
-      "start": "2026-09-06T19:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -71899,15 +71908,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Rochester Christian at Oakland",
-      "start": "2026-09-07T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Memphis at Ohio State",
       "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
@@ -71944,8 +71944,8 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Western Kentucky at UIC",
-      "start": "2026-09-06T18:00:00Z",
+      "title": "New Mexico State at Utah Valley",
+      "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -71963,15 +71963,6 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Marshall at West Virginia",
-      "start": "2026-09-06T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "New Mexico State at Utah Valley",
       "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -72044,6 +72035,15 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Washington State at Hawai'i",
+      "start": "2026-09-07T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Rochester Christian at Oakland",
       "start": "2026-09-07T02:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -90215,7 +90215,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "Idaho State Bengals at UNLV Rebels",
-      "start": "2026-09-03T21:00:00Z",
+      "start": "2026-09-03T21:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -93653,7 +93653,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "Oakland Golden Grizzlies at Cincinnati Bearcats",
-      "start": "2026-09-06T16:00:00Z",
+      "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -93671,7 +93671,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "UNC Asheville Bulldogs at Jacksonville State Gamecocks",
-      "start": "2026-09-06T16:00:00Z",
+      "start": "2026-09-07T03:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -93707,7 +93707,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "South Alabama Jaguars at Lipscomb Bisons",
-      "start": "2026-09-06T17:00:00Z",
+      "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -116431,6 +116431,15 @@
     },
     {
       "league": "NCAA Women's Volleyball",
+      "title": "Wyoming Cowboys at New Mexico Lobos",
+      "start": "2026-11-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
       "title": "Eastern Illinois Panthers at Southeast Missouri State Redhawks",
       "start": "2026-11-18T22:00:00Z",
       "tag": "UPCOMING",
@@ -116559,6 +116568,15 @@
       "league": "NCAA Women's Volleyball",
       "title": "Utah Valley Wolverines at Cal State Bakersfield Roadrunners",
       "start": "2026-11-19T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNLV Rebels at San José State Spartans",
+      "start": "2026-11-19T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -128848,10 +128866,1218 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Boston",
+      "start": "2026-09-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Boston @ Utah",
+      "start": "2026-09-05T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Kansas City @ Bay",
+      "start": "2026-09-05T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Louisville",
+      "start": "2026-09-05T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Gotham @ Denver",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Chicago",
+      "start": "2026-09-06T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Washington @ Portland",
+      "start": "2026-09-06T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Houston @ Orlando",
+      "start": "2026-09-06T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "San Diego @ Seattle",
+      "start": "2026-09-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Gotham @ Louisville",
+      "start": "2026-09-11T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Orlando @ Kansas City",
+      "start": "2026-09-12T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Denver @ Angel City",
+      "start": "2026-09-12T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ San Diego",
+      "start": "2026-09-12T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Bay @ Seattle",
+      "start": "2026-09-13T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Utah @ Houston",
+      "start": "2026-09-13T00:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Boston @ Washington",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Chicago @ Portland",
+      "start": "2026-09-13T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Bay @ Denver",
+      "start": "2026-09-17T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Seattle @ Angel City",
+      "start": "2026-09-17T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Kansas City @ San Diego",
+      "start": "2026-09-19T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Portland @ Orlando",
+      "start": "2026-09-19T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Gotham @ North Carolina",
+      "start": "2026-09-19T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Seattle @ Denver",
+      "start": "2026-09-20T00:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Houston @ Boston",
+      "start": "2026-09-20T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Washington @ Chicago",
+      "start": "2026-09-20T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Louisville @ Bay",
+      "start": "2026-09-20T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Utah",
+      "start": "2026-09-20T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "San Diego @ Louisville",
+      "start": "2026-09-25T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Chicago @ Gotham",
+      "start": "2026-09-26T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Boston @ Seattle",
+      "start": "2026-09-26T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Denver @ Kansas City",
+      "start": "2026-09-26T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Washington",
+      "start": "2026-09-26T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Houston @ Portland",
+      "start": "2026-09-27T00:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Orlando @ Bay",
+      "start": "2026-09-27T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Utah",
+      "start": "2026-09-27T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "San Diego @ Orlando",
+      "start": "2026-10-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Seattle",
+      "start": "2026-10-03T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Utah @ Louisville",
+      "start": "2026-10-03T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Bay @ Kansas City",
+      "start": "2026-10-03T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Boston @ Portland",
+      "start": "2026-10-04T00:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Gotham",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Denver @ Chicago",
+      "start": "2026-10-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "NWSL",
+      "title": "Washington @ Houston",
+      "start": "2026-10-04T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sparta @ Ararat",
+      "start": "2026-09-16T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celta Vigo @ Omonia",
+      "start": "2026-09-16T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Benfica @ Milan",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lyon @ Anderlecht",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NK Celje @ Leverkusen",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Dinamo Zagreb @ Hapoel Be'er",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Jagiellonia  @ Olympiacos",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Rennes @ Sturm Graz",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "AZ Alkmaar @ Sunderland",
+      "start": "2026-09-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "RB Salzburg @ Levski Sofia",
+      "start": "2026-09-17T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hoffenheim @ OFI Crete",
+      "start": "2026-09-17T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Marseille @ Besiktas",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ferencvaros @ Celtic",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lech Poznan @ C Palace",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NEC @ Juventus",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Torreense @ Lillestrom",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Bournemouth @ Real Sociedad",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Union SG @ Viktoria Plzen",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hapoel Be'er @ AZ Alkmaar",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Leverkusen @ Lech Poznan",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "C Palace @ Lyon",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Omonia @ NK Celje",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Milan @ RB Salzburg",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lillestrom @ Sparta",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sunderland @ Torreense",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Real Sociedad @ Union SG",
+      "start": "2026-10-15T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sturm Graz @ Bournemouth",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celtic @ Benfica",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Juventus @ Celta Vigo",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Anderlecht @ Dinamo Zagreb",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Viktoria Plzen @ Ferencvaros",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ararat @ Jagiellonia ",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Olympiacos @ Marseille",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Levski Sofia @ NEC",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "OFI Crete @ Rennes",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Besiktas @ Hoffenheim",
+      "start": "2026-10-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "AZ Alkmaar @ Ararat",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NEC @ Dinamo Zagreb",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Torreense @ Ferencvaros",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Rennes @ Juventus",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sunderland @ Lech Poznan",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Leverkusen @ OFI Crete",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Marseille @ Sturm Graz",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hapoel Be'er @ Union SG",
+      "start": "2026-10-22T16:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Milan @ Bournemouth",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "C Palace @ Besiktas",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celta Vigo @ Celtic",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Anderlecht @ Jagiellonia ",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Real Sociedad @ Lillestrom",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "RB Salzburg @ NK Celje",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sparta @ Olympiacos",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Benfica @ Omonia",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lyon @ Hoffenheim",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Levski Sofia @ Viktoria Plzen",
+      "start": "2026-10-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ferencvaros @ Milan",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "RB Salzburg @ Anderlecht",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hoffenheim @ C Palace",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Jagiellonia  @ Levski Sofia",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Viktoria Plzen @ Lillestrom",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Omonia @ NEC",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lyon @ Real Sociedad",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Bournemouth @ Sparta",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Olympiacos @ Rennes",
+      "start": "2026-11-05T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Juventus @ AZ Alkmaar",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Marseille @ Leverkusen",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lech Poznan @ Benfica",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Union SG @ Celta Vigo",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Besiktas @ Celtic",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "OFI Crete @ Hapoel Be'er",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NK Celje @ Sturm Graz",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Dinamo Zagreb @ Sunderland",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ararat @ Torreense",
+      "start": "2026-11-05T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hapoel Be'er @ Besiktas",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Bournemouth @ Celta Vigo",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Leverkusen @ Dinamo Zagreb",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Levski Sofia @ Marseille",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Milan @ Olympiacos",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ararat @ RB Salzburg",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lech Poznan @ Union SG",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Benfica @ Viktoria Plzen",
+      "start": "2026-11-26T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Real Sociedad @ C Palace",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NK Celje @ Ferencvaros",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Omonia @ Juventus",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lillestrom @ Lyon",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Rennes @ NEC",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Anderlecht @ OFI Crete",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "AZ Alkmaar @ Sparta",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Jagiellonia  @ Sunderland",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celtic @ Torreense",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sturm Graz @ Hoffenheim",
+      "start": "2026-11-26T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Hoffenheim @ Anderlecht",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "NEC @ Ararat",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sturm Graz @ AZ Alkmaar",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Juventus @ Hapoel Be'er",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "C Palace @ Jagiellonia ",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celta Vigo @ Marseille",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Celtic @ Omonia",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Dinamo Zagreb @ Rennes",
+      "start": "2026-12-10T17:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sunderland @ Milan",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Viktoria Plzen @ Bournemouth",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Besiktas @ Leverkusen",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "OFI Crete @ Benfica",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Ferencvaros @ Lech Poznan",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Lillestrom @ Levski Sofia",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Union SG @ Lyon",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Olympiacos @ NK Celje",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Sparta @ RB Salzburg",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
+    },
+    {
+      "league": "UEL",
+      "title": "Torreense @ Real Sociedad",
+      "start": "2026-12-10T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T19:49:14.253025+00:00",
+    "generatedAt": "2026-08-31T19:59:58.071705+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -130418,7 +131644,7 @@
     "timestampsNormalized": 0,
     "invalidTimestamps": 0,
     "legacyNascarRepairDisabled": true,
-    "adapterTimestampsNormalized": 0
+    "adapterTimestampsNormalized": 151
   },
   "officialApiAdapterReport": {
     "ncaa": {
@@ -130455,10 +131681,24 @@
       "NCAA Men's Soccer": "espn:1462; raw_events:1462; requests:13; errors:0; season:fall; status:added",
       "NCAA Women's Soccer": "espn:2233; raw_events:2234; requests:13; errors:0; season:fall; status:added",
       "NCAA Men's Volleyball": "espn:0; raw_events:0; requests:13; errors:0; season:winter; status:empty",
-      "NCAA Women's Volleyball": "espn:2999; raw_events:3001; requests:13; errors:0; season:fall; status:added",
+      "NCAA Women's Volleyball": "espn:3001; raw_events:3001; requests:13; errors:0; season:fall; status:added",
       "NCAA Men's Hockey": "espn:740; raw_events:955; requests:13; errors:0; season:winter; status:added",
       "NCAA Women's Hockey": "espn:0; raw_events:743; requests:13; errors:0; season:winter; status:duplicate_only",
       "NCAA Women's Field Hockey": "espn:615; raw_events:615; requests:13; errors:0; season:fall; status:added"
+    }
+  },
+  "providerRepairReport": {
+    "NWSL": {
+      "source": "ESPN scoreboard",
+      "added": 43
+    },
+    "UEL": {
+      "source": "ESPN scoreboard",
+      "added": 108
+    },
+    "CFL": {
+      "source": "ESPN scoreboard",
+      "added": 0
     }
   }
 }
