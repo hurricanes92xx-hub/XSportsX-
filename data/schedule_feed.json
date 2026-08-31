@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T22:06:30.926879+00:00",
+  "generatedAt": "2026-08-31T22:44:09.455517+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 4,
@@ -82,11 +82,11 @@
     "LIV Golf": 1,
     "ATP": 5,
     "WTA": 17,
-    "PLL": 0,
+    "PLL": 3,
     "NLL": 0,
     "FIVB Men": 0,
     "FIVB Women": 0,
-    "Rugby World Cup": 0,
+    "Rugby World Cup": 36,
     "Six Nations": 15,
     "NRL": 8,
     "AFL": 4,
@@ -116,8 +116,8 @@
     "WEC": 0,
     "IMSA": 0,
     "FORMULA E": 38,
-    "MXGP": 19,
-    "MONSTER JAM": 7,
+    "MXGP": 23,
+    "MONSTER JAM": 10,
     "ESPORTS": 0,
     "ESPORTS - Rocket League": 0,
     "ESPORTS - Apex Legends": 0,
@@ -843,6 +843,27 @@
       "icon": "🏏"
     },
     {
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 07 Jun MXGP of Latvia Ke",
+      "start": "2026-05-24T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 07 Jun MXGP of Latvia Kegums 28 Jun MXGP of Portugal Agueda 19 Jul Monst",
+      "start": "2026-05-24T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 19 Jul Monster Energy MX",
+      "start": "2026-05-24T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
       "league": "IPL",
       "title": "Delhi Capitals @ Kolkata Knight Riders",
       "start": "2026-05-24T14:00:00Z",
@@ -909,6 +930,13 @@
       "league": "MXGP",
       "title": "Lacapelle-Marival, France View Reports MXGP of Germany",
       "start": "2026-05-30T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏍️"
+    },
+    {
+      "league": "MXGP",
+      "title": "of Germany Teutschenthal 07 Jun MXGP of Latvia Kegums 21 Jun MXGP of Italy Montevarchi 28 Jun MXGP o",
+      "start": "2026-05-31T12:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏍️"
     },
@@ -5047,6 +5075,13 @@
       "icon": "⚽"
     },
     {
+      "league": "PLL",
+      "title": "Denver Outlaws @ Utah Archers",
+      "start": "2026-09-07T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🥍"
+    },
+    {
       "league": "MLB",
       "title": "Twins @ Tigers",
       "start": "2026-09-07T19:10:00Z",
@@ -5082,6 +5117,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "PLL",
+      "title": "Boston Cannons @ Philadelphia Waterdogs",
+      "start": "2026-09-07T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🥍"
     },
     {
       "league": "NCAA FB",
@@ -11792,6 +11834,13 @@
       "start": "2026-09-20T16:30:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "PLL",
+      "title": "PLL U.S. Bank Championship",
+      "start": "2026-09-20T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🥍"
     },
     {
       "league": "WNBA",
@@ -32213,6 +32262,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Anaheim — Angel Stadium",
+      "start": "2026-12-19T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁"
+    },
+    {
       "league": "NCAA FB",
       "title": "TBD at TBD",
       "start": "2026-12-19T01:00:00Z",
@@ -36601,6 +36657,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Stockholm — Strawberry Arena",
+      "start": "2027-02-13T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Anselm @ Post University",
       "start": "2027-02-13T00:45:00Z",
@@ -37446,6 +37509,13 @@
       "start": "2027-03-13T20:10:00Z",
       "tag": "UPCOMING",
       "icon": "🏉"
+    },
+    {
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Antwerp — AFAS Dome",
+      "start": "2027-03-20T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁"
     },
     {
       "league": "FORMULA E",
@@ -54293,6 +54363,258 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ Australia",
+      "start": "2027-10-01T10:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ Wales",
+      "start": "2027-10-02T02:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Chile @ New Zealand",
+      "start": "2027-10-02T05:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "USA @ France",
+      "start": "2027-10-02T07:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Tonga @ England",
+      "start": "2027-10-02T10:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Samoa @ Japan",
+      "start": "2027-10-03T01:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Italy @ South Africa",
+      "start": "2027-10-03T03:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Uruguay @ Scotland",
+      "start": "2027-10-03T06:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Romania @ Georgia",
+      "start": "2027-10-03T10:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Spain @ Fiji",
+      "start": "2027-10-04T03:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Ireland",
+      "start": "2027-10-04T06:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Canada @ Argentina",
+      "start": "2027-10-04T08:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Tonga @ Wales",
+      "start": "2027-10-08T07:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ England",
+      "start": "2027-10-08T09:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Samoa @ USA",
+      "start": "2027-10-09T04:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Australia @ New Zealand",
+      "start": "2027-10-09T06:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Japan @ France",
+      "start": "2027-10-09T08:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ Chile",
+      "start": "2027-10-09T10:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Canada @ Fiji",
+      "start": "2027-10-10T01:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Spain @ Argentina",
+      "start": "2027-10-10T04:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Georgia @ South Africa",
+      "start": "2027-10-10T06:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Scotland @ Ireland",
+      "start": "2027-10-10T09:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Uruguay",
+      "start": "2027-10-11T06:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Romania @ Italy",
+      "start": "2027-10-11T08:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ New Zealand",
+      "start": "2027-10-15T06:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "USA @ Japan",
+      "start": "2027-10-15T09:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ Tonga",
+      "start": "2027-10-15T10:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Fiji @ Argentina",
+      "start": "2027-10-16T02:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Chile @ Australia",
+      "start": "2027-10-16T05:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Wales @ England",
+      "start": "2027-10-16T08:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Canada @ Spain",
+      "start": "2027-10-16T10:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Georgia @ Italy",
+      "start": "2027-10-17T01:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Uruguay @ Ireland",
+      "start": "2027-10-17T03:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Scotland",
+      "start": "2027-10-17T06:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Samoa @ France",
+      "start": "2027-10-17T08:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
+      "league": "Rugby World Cup",
+      "title": "Romania @ South Africa",
+      "start": "2027-10-17T11:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏉"
+    },
+    {
       "league": "NASCAR Cup",
       "title": "Cook Out Southern 500 — Darlington Raceway",
       "start": "2026-09-04T21:00:00Z",
@@ -62252,7 +62574,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Yale at Army",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -62261,7 +62583,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Wake Forest at Bowling Green",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -62270,7 +62592,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Memphis at Butler",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -62279,7 +62601,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Rider at Fairleigh Dickinson",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -62288,7 +62610,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Florida Gulf Coast at Virginia",
       "start": "2026-08-31T22:03:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -75392,7 +75714,7 @@
       "league": "NCAA Women's Soccer",
       "title": "Niagara at St Bonaventure",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -95480,7 +95802,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Dayton Flyers at Louisville Cardinals",
       "start": "2026-08-31T22:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
@@ -134679,378 +135001,10 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "PLL",
-      "title": "Denver Outlaws @ Utah Archers",
-      "start": "2026-09-07T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🥍",
-      "source": "premierlacrosseleague.com/schedule"
-    },
-    {
-      "league": "PLL",
-      "title": "Boston Cannons @ Philadelphia Waterdogs",
-      "start": "2026-09-07T21:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🥍",
-      "source": "premierlacrosseleague.com/schedule"
-    },
-    {
-      "league": "PLL",
-      "title": "PLL U.S. Bank Championship",
-      "start": "2026-09-20T16:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🥍",
-      "source": "premierlacrosseleague.com/schedule"
-    },
-    {
-      "league": "MXGP",
-      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 07 Jun MXGP of Latvia Ke",
-      "start": "2026-05-24T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "mxgp.com/calendar"
-    },
-    {
-      "league": "MXGP",
-      "title": "of France Lacapelle Marival 07 Jun MXGP of Latvia Kegums 28 Jun MXGP of Portugal Agueda 19 Jul Monst",
-      "start": "2026-05-24T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "mxgp.com/calendar"
-    },
-    {
-      "league": "MXGP",
-      "title": "of Germany Teutschenthal 07 Jun MXGP of Latvia Kegums 21 Jun MXGP of Italy Montevarchi 28 Jun MXGP o",
-      "start": "2026-05-31T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "mxgp.com/calendar"
-    },
-    {
-      "league": "MXGP",
-      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 19 Jul Monster Energy MX",
-      "start": "2026-05-24T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏍️",
-      "source": "mxgp.com/calendar"
-    },
-    {
-      "league": "MONSTER JAM",
-      "title": "Monster Jam — Stockholm — Strawberry Arena",
-      "start": "2027-02-13T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏁",
-      "source": "monsterjam.com official engagement data"
-    },
-    {
-      "league": "MONSTER JAM",
-      "title": "Monster Jam — Antwerp — AFAS Dome",
-      "start": "2027-03-20T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏁",
-      "source": "monsterjam.com official engagement data"
-    },
-    {
-      "league": "MONSTER JAM",
-      "title": "Monster Jam — Anaheim — Angel Stadium",
-      "start": "2026-12-19T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏁",
-      "source": "monsterjam.com official engagement data"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Hong Kong China @ Australia",
-      "start": "2027-10-01T10:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Zimbabwe @ Wales",
-      "start": "2027-10-02T02:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Chile @ New Zealand",
-      "start": "2027-10-02T05:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "USA @ France",
-      "start": "2027-10-02T07:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Tonga @ England",
-      "start": "2027-10-02T10:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Samoa @ Japan",
-      "start": "2027-10-03T01:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Italy @ South Africa",
-      "start": "2027-10-03T03:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Uruguay @ Scotland",
-      "start": "2027-10-03T06:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Romania @ Georgia",
-      "start": "2027-10-03T10:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Spain @ Fiji",
-      "start": "2027-10-04T03:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Portugal @ Ireland",
-      "start": "2027-10-04T06:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Canada @ Argentina",
-      "start": "2027-10-04T08:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Tonga @ Wales",
-      "start": "2027-10-08T07:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Zimbabwe @ England",
-      "start": "2027-10-08T09:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Samoa @ USA",
-      "start": "2027-10-09T04:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Australia @ New Zealand",
-      "start": "2027-10-09T06:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Japan @ France",
-      "start": "2027-10-09T08:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Hong Kong China @ Chile",
-      "start": "2027-10-09T10:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Canada @ Fiji",
-      "start": "2027-10-10T01:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Spain @ Argentina",
-      "start": "2027-10-10T04:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Georgia @ South Africa",
-      "start": "2027-10-10T06:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Scotland @ Ireland",
-      "start": "2027-10-10T09:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Portugal @ Uruguay",
-      "start": "2027-10-11T06:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Romania @ Italy",
-      "start": "2027-10-11T08:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Hong Kong China @ New Zealand",
-      "start": "2027-10-15T06:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "USA @ Japan",
-      "start": "2027-10-15T09:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Zimbabwe @ Tonga",
-      "start": "2027-10-15T10:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Fiji @ Argentina",
-      "start": "2027-10-16T02:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Chile @ Australia",
-      "start": "2027-10-16T05:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Wales @ England",
-      "start": "2027-10-16T08:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Canada @ Spain",
-      "start": "2027-10-16T10:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Georgia @ Italy",
-      "start": "2027-10-17T01:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Uruguay @ Ireland",
-      "start": "2027-10-17T03:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Portugal @ Scotland",
-      "start": "2027-10-17T06:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Samoa @ France",
-      "start": "2027-10-17T08:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
-    },
-    {
-      "league": "Rugby World Cup",
-      "title": "Romania @ South Africa",
-      "start": "2027-10-17T11:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏉",
-      "source": "FixtureDownload / World Rugby 2027 fixture"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T22:05:17.933604+00:00",
+    "generatedAt": "2026-08-31T22:42:56.835754+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -135190,7 +135144,7 @@
           ]
         ],
         "observedUpcoming": 2883,
-        "observedRecent": 24,
+        "observedRecent": 32,
         "provider": "official"
       },
       {
@@ -135542,7 +135496,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             5,
@@ -135553,7 +135507,7 @@
             31
           ]
         ],
-        "observedUpcoming": 0,
+        "observedUpcoming": 3,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -135935,7 +135889,7 @@
         "probeHours": 1,
         "reason": "observed_activity",
         "configuredSeason": [],
-        "observedUpcoming": 7,
+        "observedUpcoming": 10,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -136107,7 +136061,7 @@
           ]
         ],
         "observedUpcoming": 2883,
-        "observedRecent": 24,
+        "observedRecent": 32,
         "provider": "espn"
       },
       {
@@ -136415,7 +136369,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             5,
@@ -136426,7 +136380,7 @@
             31
           ]
         ],
-        "observedUpcoming": 0,
+        "observedUpcoming": 3,
         "observedRecent": 0,
         "provider": "espn"
       },
@@ -136701,11 +136655,6 @@
       "parsed": 46,
       "added": 0
     },
-    "MXGP": {
-      "source": "Honda Racing MXGP calendar",
-      "parsed": 19,
-      "added": 0
-    },
     "MONSTER JAM": {
       "source": "MonsterJam official tickets API payload",
       "parsed": 15,
@@ -136736,7 +136685,7 @@
     "PLL": {
       "source": "PLL official GraphQL with official schedule fallback",
       "parsed": 1,
-      "added": 3,
+      "added": 0,
       "errors": 3
     },
     "MotoGP": {
@@ -136747,18 +136696,18 @@
     "MXGP": {
       "source": "MXGP official calendar with official-guide fallback",
       "parsed": 5,
-      "added": 4
+      "added": 0
     },
     "MONSTER JAM": {
       "source": "Monster Jam official engagement data",
       "parsed": 45,
-      "added": 3
+      "added": 0
     },
     "Rugby World Cup": {
       "source": "World Rugby 2027 fixture corroborated by FixtureDownload JSON",
       "parsed": 52,
       "concrete": 36,
-      "added": 36
+      "added": 0
     }
   }
 }
