@@ -43,8 +43,6 @@ def name(team):
 
 def add_events(events,report):
  existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
- # ESPN accepts date ranges on scoreboard. Use one 30-day request per sport to avoid
- # hundreds of daily calls; walk the horizon in 30-day windows when necessary.
  start=NOW.date()
  for league,sport,slug,icon in SPORTS:
   added=0;raw=0;errors=0;seen=set();cursor=start
@@ -52,20 +50,19 @@ def add_events(events,report):
    end=min(cursor+timedelta(days=29),HORIZON.date())
    url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={cursor:%Y%m%d}-{end:%Y%m%d}&limit=1000'
    try:root=get_json(url)
-   except Exception as exc:
+   except Exception:
     errors+=1;cursor=end+timedelta(days=1);continue
    for g in root.get('events') or []:
     raw+=1;gid=str(g.get('id') or '')
     if gid in seen:continue
-    seen.add(gid)
-    dt=iso(g.get('date'))
+    seen.add(gid);dt=iso(g.get('date'))
     if not dt:continue
     try:o=datetime.fromisoformat(dt.replace('Z','+00:00'))
     except ValueError:continue
     if not NOW-timedelta(hours=12)<=o<=HORIZON:continue
     comp=(g.get('competitions') or [{}])[0];teams=comp.get('competitors') or []
-    home=next((name(x) for x in teams if x.get('homeAway')=='home'), '')
-    away=next((name(x) for x in teams if x.get('homeAway')=='away'), '')
+    home=next((name(x) for x in teams if x.get('homeAway')=='home'),'')
+    away=next((name(x) for x in teams if x.get('homeAway')=='away'),'')
     title=g.get('name') or (f'{away} @ {home}' if away and home else league)
     key=(league,title,dt)
     if key in existing:continue
@@ -82,8 +79,9 @@ def main():
  for e in events:
   k=(e.get('league'),e.get('title'),e.get('start'))
   if k not in unique or str(e.get('source','')).startswith('official'):unique[k]=e
- p['events']=list(unique.values());p['eventCounts']={k:sum(1 for e in p['events'] if e.get('league')==k) for k in sorted({e.get('league') for e in p['events'] if e.get('league')})}
-p.setdefault('officialApiAdapterReport',{})['espnNCAA']=report
+ p['events']=list(unique.values())
+ p['eventCounts']={k:sum(1 for e in p['events'] if e.get('league')==k) for k in sorted({e.get('league') for e in p['events'] if e.get('league')})}
+ p.setdefault('officialApiAdapterReport',{})['espnNCAA']=report
  FEED.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
  print('ESPN NCAA adapter report:',json.dumps(report,sort_keys=True));print(f'ESPN NCAA adapter total events: {len(p["events"])}')
 
