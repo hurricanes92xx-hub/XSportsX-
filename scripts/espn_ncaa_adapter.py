@@ -5,16 +5,16 @@ import json, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.6','Accept':'application/json,text/plain,*/*'}
+HEADERS={'User-Agent':'Mozilla/5.0 XSportsX-Schedule/5.7','Accept':'application/json,text/plain,*/*'}
 NOW=datetime.now(timezone.utc); HORIZON=NOW+timedelta(days=370)
 SPORTS=[
  ('NCAA FB','football','college-football','🏈','always'),
  ('NCAA BB','basketball','mens-college-basketball','🏀','winter'),('NCAA WBB','basketball','womens-college-basketball','🏀','winter'),
  ('NCAA Baseball','baseball','college-baseball','⚾','spring'),('NCAA Softball','softball','college-softball','🥎','spring'),
- ("NCAA Men's Soccer",'soccer','usa.ncaa.1','⚽','fall'),("NCAA Women's Soccer",'soccer','usa.ncaa.w.1','⚽','fall'),
+ ("NCAA Men's Soccer",'soccer','usa.ncaa.m.1','⚽','fall'),("NCAA Women's Soccer",'soccer','usa.ncaa.w.1','⚽','fall'),
  ("NCAA Men's Volleyball",'volleyball','mens-college-volleyball','🏐','winter'),("NCAA Women's Volleyball",'volleyball','womens-college-volleyball','🏐','fall'),
  ("NCAA Men's Hockey",'hockey','mens-college-hockey','🏒','winter'),("NCAA Women's Hockey",'hockey','womens-college-hockey','🏒','winter'),
- ("NCAA Women's Field Hockey",'fieldhockey','ncaa-field-hockey','🏑','fall')]
+ ("NCAA Women's Field Hockey",'field-hockey','ncaa-field-hockey','🏑','fall')]
 
 def get_json(url):
  req=urllib.request.Request(url,headers=HEADERS)
@@ -44,14 +44,15 @@ def add_events(events,report):
     o=datetime.fromisoformat(dt.replace('Z','+00:00'))
     if not NOW-timedelta(hours=12)<=o<=HORIZON or not in_season(season,o):continue
     comp=(g.get('competitions') or [{}])[0];teams=comp.get('competitors') or []
-    home=next((name(x) for x in teams if x.get('homeAway')=='home'),''); away=next((name(x) for x in teams if x.get('homeAway')=='away') ,'')
+    home=next((name(x) for x in teams if x.get('homeAway')=='home'),''); away=next((name(x) for x in teams if x.get('homeAway')=='away'),'')
     title=g.get('name') or (f'{away} @ {home}' if away and home else league); key=(league,title,dt)
     if key in existing:continue
     state=((g.get('status') or {}).get('type') or {}).get('state','');tag='LIVE' if state=='in' else ('FINAL' if state=='post' else 'UPCOMING')
     events.append({'league':league,'title':title,'start':dt,'tag':tag,'icon':icon,'source':'official_api','sourceDetail':'ESPN NCAA scoreboard'});existing.add(key);added+=1
    cursor=end+timedelta(days=1)
-  report[league]=f'espn:{added}; raw_events:{raw}; requests:{((HORIZON.date()-start).days//30)+1}; errors:{errors}; season:{season}'
-  if added==0 and season not in ('spring','winter'):print(f'WARNING ESPN NCAA adapter zero for in-season {league}; raw_events={raw}; errors={errors}')
+  status='added' if added else ('duplicate_only' if raw and errors==0 else 'empty')
+  report[league]=f'espn:{added}; raw_events:{raw}; requests:{((HORIZON.date()-start).days//30)+1}; errors:{errors}; season:{season}; status:{status}'
+  if added==0 and season not in ('spring','winter') and not (raw and errors==0):print(f'WARNING ESPN NCAA adapter zero for in-season {league}; raw_events={raw}; errors={errors}')
 def main():
  p=json.loads(FEED.read_text(encoding='utf-8'));events=p.get('events') or [];report={};add_events(events,report);unique={}
  for e in events:
