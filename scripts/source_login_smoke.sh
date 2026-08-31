@@ -34,9 +34,6 @@ snapshot(){
   return 1
 }
 
-# Compose testTags are the preferred selector. UIAutomator can expose them as
-# resource IDs, but that mapping is not guaranteed across Android TV/Compose
-# versions. Also accept the field's contentDescription/visible label.
 label_for(){
   case "$1" in
     source_server) echo "Server URL" ;;
@@ -97,10 +94,10 @@ click_id(){
 set_field(){
   local id="$1" value="$2" secret="${3:-false}" bounds x y observed before
 
-  # Android TV's on-screen keyboard can resize/scroll the Compose hierarchy.
-  # Never reuse coordinates captured while another field's keyboard is open.
-  adb shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
-  sleep 0.3
+  # Do not send BACK before the first field: on a mobile emulator with no
+  # keyboard open, BACK finishes QaSourceActivity. After each field is entered,
+  # BACK is used to dismiss the keyboard, and the next invocation snapshots the
+  # now-stable layout before calculating coordinates.
   before="before-${id}"
   snapshot "$before"
   bounds="$(bounds_for_id "$OUT/${before}.xml" "$id" 2>/dev/null || true)"
@@ -116,12 +113,7 @@ set_field(){
   observed="$(field_text "$OUT/filled-${id}.xml" "$id" 2>/dev/null || true)"
 
   # PasswordVisualTransformation intentionally hides the password from the
-  # UI hierarchy. Android TV's UIAutomator may therefore report an empty
-  # text attribute even when the EditText contains the password. Treating
-  # that accessibility representation as a failed injection caused a false
-  # negative before the real Xtream authentication was ever attempted.
-  # Password correctness is verified by testSource() below: a successful
-  # auth=1 response proves the password actually reached the app and server.
+  # UI hierarchy. Authentication below is the correctness assertion.
   if [ "$secret" = "true" ]; then
     echo "Password field populated; UI hierarchy text is intentionally not asserted"
   elif [ "$observed" != "$value" ]; then
@@ -131,7 +123,6 @@ set_field(){
     return 1
   fi
 
-  # Ensure the next field is laid out normally before its coordinates are read.
   adb shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 0.3
 }
@@ -159,9 +150,6 @@ for attempt in $(seq 1 80); do
     echo "Source connection reached an explicit error state"
     exit 1
   fi
-  # A successful SourceConnectScreen saves the source and calls onSaved(),
-  # which finishes this dedicated QA activity. Its source_connect node then
-  # disappears. Do not require transient success text to render first.
   if ! exists_id "$XML" "source_connect"; then
     success=1
     break
