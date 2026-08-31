@@ -38,7 +38,7 @@ except Exception: raise SystemExit(1)
 terms=[x.strip().casefold() for x in sys.argv[2:]]
 for n in root.iter('node'):
     values=[n.attrib.get('text',''),n.attrib.get('content-desc','')]
-    if any(term in value.strip().casefold() for term in terms for value in values):
+    if any(term == value.strip().casefold() for term in terms for value in values):
         b=n.attrib.get('bounds','')
         try:
             a,c=b.split('][')
@@ -76,17 +76,60 @@ click_text(){
   return 1
 }
 
+# Compose TextField values are not reliably exposed by uiautomator as a
+# parent/child relationship. Resolve the label and the nearest editable node
+# by geometry instead, then inject the complete value in one adb input command.
 field_value(){
   local file="$1" label="$2"
   python3 - "$file" "$label" <<'PY'
 import sys,xml.etree.ElementTree as ET
 root=ET.parse(sys.argv[1]).getroot(); label=sys.argv[2].casefold()
+def box(n):
+    b=n.attrib.get('bounds','')
+    try:
+        a,c=b.split(']['); x1,y1=map(int,a.strip('[]').split(',')); x2,y2=map(int,c.strip('[]').split(',')); return x1,y1,x2,y2
+    except Exception: return None
+labels=[]
 for n in root.iter('node'):
-    if n.attrib.get('class') == 'android.widget.EditText' and any(x.attrib.get('content-desc','').strip().casefold()==label for x in n.iter('node')):
-        print(n.attrib.get('text',''))
-        raise SystemExit
+    if any(n.attrib.get(k,'').strip().casefold()==label for k in ('text','content-desc')):
+        if box(n): labels.append(box(n))
+if not labels: raise SystemExit(1)
+for n in root.iter('node'):
+    if n.attrib.get('class') not in ('android.widget.EditText','android.view.View'): continue
+    b=box(n)
+    if not b: continue
+    cx=(b[0]+b[2])//2; cy=(b[1]+b[3])//2
+    for lb in labels:
+        lcx=(lb[0]+lb[2])//2; lcy=(lb[1]+lb[3])//2
+        # TextField label/placeholder is normally inside or immediately left
+        # of the editable region. Prefer the closest editable node vertically.
+        if abs(cy-lcy) <= 180 and abs(cx-lcx) <= 700:
+            print(n.attrib.get('text',''))
+            raise SystemExit(0)
 raise SystemExit(1)
 PY
+}
+
+# Replace the contents of the focused Compose field without relying on
+# KEYCODE_* characters for punctuation. `input text` handles the complete
+# string atomically and avoids losing ':' '/' '.' during separate key events.
+set_field(){
+  local label="$1" value="$2" bounds x y
+  snapshot "before-${label// /-}"
+  bounds="$(find_bounds "$OUT/before-${label// /-}.xml" "$label" 2>/dev/null || true)"
+  [ -n "$bounds" ] || { echo "Missing field: $label"; return 1; }
+  read -r x y <<< "$bounds"
+  adb shell input tap "$x" "$y"
+  sleep 0.2
+  # Select all where supported, then delete. This works for both an empty
+  # initial TextField and a persisted value from a prior smoke-test attempt.
+  adb shell input keyevent KEYCODE_MOVE_END || true
+  for _ in $(seq 1 160); do adb shell input keyevent KEYCODE_DEL || true; done
+  # Android's input text uses %s for spaces. The QA values contain no spaces;
+  # quote the entire argument so punctuation reaches the input subsystem intact.
+  adb shell input text "$value"
+  sleep 0.4
+  snapshot "after-${label// /-}"
 }
 
 SOURCE_XML=""
@@ -106,43 +149,11 @@ done
 
 [ -n "$SOURCE_XML" ] || { echo "Missing source form"; snapshot "source-form-missing"; exit 1; }
 
-python3 - "$SOURCE_XML" <<'PY'
-import os,subprocess,sys,xml.etree.ElementTree as ET
-root=ET.parse(sys.argv[1]).getroot()
-def bound(term):
-    term=term.casefold()
-    for n in root.iter('node'):
-        if n.attrib.get('content-desc','').strip().casefold()==term or n.attrib.get('text','').strip().casefold()==term:
-            b=n.attrib.get('bounds','')
-            try:
-                a,c=b.split(']['); x1,y1=map(int,a.strip('[]').split(',')); x2,y2=map(int,c.strip('[]').split(',')); return (x1+x2)//2,(y1+y2)//2
-            except Exception: pass
-    return None
-fields=[bound('Server URL'),bound('Username'),bound('Password')]
-if any(v is None for v in fields): raise SystemExit('Expected stable source field semantics')
-values=[os.environ.get('QA_SOURCE_BASE','http://127.0.0.1:8765'),'qauser','qapass']
-for (x,y),value in zip(fields,values):
-    subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
-    subprocess.run(['adb','shell','input','keyevent','KEYCODE_MOVE_END'],check=True)
-    chunks=[]
-    def flush():
-        if chunks:
-            subprocess.run(['adb','shell','input','text',''.join(chunks).replace(' ','%s')],check=True)
-            chunks.clear()
-    for ch in value:
-        if ch.isalnum() or ch in '_-@':
-            chunks.append(ch)
-        else:
-            flush()
-            if ch == '/': subprocess.run(['adb','shell','input','keyevent','KEYCODE_SLASH'],check=True)
-            elif ch == '.': subprocess.run(['adb','shell','input','keyevent','KEYCODE_PERIOD'],check=True)
-            elif ch == ':': subprocess.run(['adb','shell','input','text',':'],check=True)
-            elif ch == ' ': subprocess.run(['adb','shell','input','keyevent','KEYCODE_SPACE'],check=True)
-            else: subprocess.run(['adb','shell','input','text',ch],check=True)
-    flush()
-PY
+set_field "Server URL" "$SOURCE_BASE"
+set_field "Username" "qauser"
+set_field "Password" "qapass"
 
-sleep 1
+sleep 0.5
 snapshot "03-filled"
 server="$(field_value "$OUT/03-filled.xml" "Server URL" 2>/dev/null || true)"
 user="$(field_value "$OUT/03-filled.xml" "Username" 2>/dev/null || true)"
@@ -153,6 +164,7 @@ if [ "$server" != "$SOURCE_BASE" ]; then
 fi
 if [ "$user" != "qauser" ]; then
   echo "Username was not injected correctly"
+  echo "Observed username field: $user"
   exit 1
 fi
 
