@@ -64,7 +64,13 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
 
         Spacer(Modifier.height(18.dp))
         status?.let {
-            Text(it, color = if (it.startsWith("Connected")) Color(0xFF63FF9A) else Color(0xFFFF6B7D), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(
+                it,
+                color = if (it.startsWith("Connected")) Color(0xFF63FF9A) else Color(0xFFFF6B7D),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.semantics { contentDescription = if (it.startsWith("Connected")) "SOURCE CONNECTED" else "SOURCE CONNECTION ERROR" }
+            )
             Spacer(Modifier.height(8.dp))
         }
 
@@ -124,7 +130,7 @@ private fun SourceField(label: String, value: String, onValue: (String) -> Unit,
     OutlinedTextField(
         value = value,
         onValueChange = onValue,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
