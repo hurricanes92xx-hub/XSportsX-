@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T20:28:33.883620+00:00",
+  "generatedAt": "2026-08-31T20:39:34.306724+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -62,7 +62,7 @@
   "officialSourceCounts": {
     "NFL": 16,
     "NCAA FB": 1488,
-    "CFL": 0,
+    "CFL": 90,
     "NBA": 0,
     "WNBA": 30,
     "NHL": 73,
@@ -133,6 +133,391 @@
   },
   "events": [
     {
+      "league": "CFL",
+      "title": "SSK @ CGY",
+      "start": "2026-05-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ MTL",
+      "start": "2026-05-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ HAM",
+      "start": "2026-05-23T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ BC",
+      "start": "2026-05-23T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ SSK",
+      "start": "2026-05-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ TOR",
+      "start": "2026-05-29T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ OTT",
+      "start": "2026-05-29T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ WPG",
+      "start": "2026-05-29T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ EDM",
+      "start": "2026-05-29T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ HAM",
+      "start": "2026-06-04T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ CGY",
+      "start": "2026-06-05T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ OTT",
+      "start": "2026-06-06T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ WPG",
+      "start": "2026-06-11T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ MTL",
+      "start": "2026-06-12T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ SSK",
+      "start": "2026-06-13T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ HAM",
+      "start": "2026-06-19T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ OTT",
+      "start": "2026-06-20T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ EDM",
+      "start": "2026-06-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ CGY",
+      "start": "2026-06-20T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ WPG",
+      "start": "2026-06-25T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ SSK",
+      "start": "2026-06-26T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ BC",
+      "start": "2026-06-27T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ MTL",
+      "start": "2026-06-28T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ CGY",
+      "start": "2026-07-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ OTT",
+      "start": "2026-07-03T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ BC",
+      "start": "2026-07-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ HAM",
+      "start": "2026-07-05T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ EDM",
+      "start": "2026-07-09T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ WPG",
+      "start": "2026-07-10T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ MTL",
+      "start": "2026-07-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ SSK",
+      "start": "2026-07-12T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ EDM",
+      "start": "2026-07-17T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ CGY",
+      "start": "2026-07-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ HAM",
+      "start": "2026-07-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ OTT",
+      "start": "2026-07-19T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ SSK",
+      "start": "2026-07-23T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ WPG",
+      "start": "2026-07-24T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ BC",
+      "start": "2026-07-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ MTL",
+      "start": "2026-07-26T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ WPG",
+      "start": "2026-07-30T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ OTT",
+      "start": "2026-07-31T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ HAM",
+      "start": "2026-08-01T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ EDM",
+      "start": "2026-08-01T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ TOR",
+      "start": "2026-08-06T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ SSK",
+      "start": "2026-08-07T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ MTL",
+      "start": "2026-08-08T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ BC",
+      "start": "2026-08-08T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ CGY",
+      "start": "2026-08-13T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ WPG",
+      "start": "2026-08-14T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "TOR @ EDM",
+      "start": "2026-08-15T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ HAM",
+      "start": "2026-08-15T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ MTL",
+      "start": "2026-08-20T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ EDM",
+      "start": "2026-08-21T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ TOR",
+      "start": "2026-08-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ BC",
+      "start": "2026-08-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00:00Z",
@@ -161,11 +546,39 @@
       "icon": "⛳"
     },
     {
+      "league": "CFL",
+      "title": "MTL @ WPG",
+      "start": "2026-08-28T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ CGY",
+      "start": "2026-08-29T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ TOR",
+      "start": "2026-08-29T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "LIV Golf",
       "title": "LIV Golf Michigan - Stroke Play",
       "start": "2026-08-30T04:00:00Z",
       "tag": "FINAL",
       "icon": "⛳"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ OTT",
+      "start": "2026-08-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "Serie A",
@@ -1258,6 +1671,13 @@
       "start": "2026-09-04T19:05:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ MTL",
+      "start": "2026-09-04T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "MLB",
@@ -3455,6 +3875,13 @@
       "icon": "⚽"
     },
     {
+      "league": "CFL",
+      "title": "WPG @ SSK",
+      "start": "2026-09-06T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "LaLiga",
       "title": "Sevilla @ Espanyol",
       "start": "2026-09-06T19:00:00Z",
@@ -3645,6 +4072,13 @@
       "icon": "🎾"
     },
     {
+      "league": "CFL",
+      "title": "TOR @ HAM",
+      "start": "2026-09-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "Serie A",
       "title": "Lecce @ Cagliari",
       "start": "2026-09-07T16:30:00Z",
@@ -3717,6 +4151,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ CGY",
+      "start": "2026-09-07T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "MLB",
@@ -5045,6 +5486,13 @@
       "icon": "⚽"
     },
     {
+      "league": "CFL",
+      "title": "OTT @ TOR",
+      "start": "2026-09-12T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "Serie A",
       "title": "Frosinone @ Genoa",
       "start": "2026-09-12T13:00:00Z",
@@ -5316,6 +5764,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "SSK @ WPG",
+      "start": "2026-09-12T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "Serie A",
       "title": "Milan @ Lazio",
       "start": "2026-09-12T16:00:00Z",
@@ -5504,6 +5959,13 @@
       "start": "2026-09-12T18:45:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "CFL",
+      "title": "CGY @ EDM",
+      "start": "2026-09-12T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "EPL",
@@ -5998,6 +6460,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ BC",
+      "start": "2026-09-12T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "MLB",
@@ -8240,6 +8709,13 @@
       "icon": "🏀"
     },
     {
+      "league": "CFL",
+      "title": "EDM @ TOR",
+      "start": "2026-09-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "Bundesliga",
       "title": "Union Berlin @ Bayern",
       "start": "2026-09-18T18:30:00Z",
@@ -8266,6 +8742,13 @@
       "start": "2026-09-18T19:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
+    },
+    {
+      "league": "CFL",
+      "title": "MTL @ HAM",
+      "start": "2026-09-18T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -9111,6 +9594,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ CGY",
+      "start": "2026-09-19T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "LaLiga",
@@ -12036,6 +12526,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "TOR @ WPG",
+      "start": "2026-09-25T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Ohio State @ Penn State",
       "start": "2026-09-25T20:00:00Z",
@@ -12154,6 +12651,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ BC",
+      "start": "2026-09-25T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NWSL",
@@ -13149,6 +13653,13 @@
       "icon": "🏒"
     },
     {
+      "league": "CFL",
+      "title": "CGY @ OTT",
+      "start": "2026-09-26T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA FB",
       "title": "Texas @ Tennessee",
       "start": "2026-09-26T16:00:00Z",
@@ -13289,6 +13800,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "HAM @ EDM",
+      "start": "2026-09-26T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NHL",
@@ -14748,6 +15266,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "HAM @ OTT",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "New Hampshire @ Long Island University",
       "start": "2026-10-02T19:00:00Z",
@@ -14791,6 +15316,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "SSK @ CGY",
+      "start": "2026-10-02T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -15649,6 +16181,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "CFL",
+      "title": "BC @ TOR",
+      "start": "2026-10-03T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA FB",
       "title": "Syracuse @ UConn",
       "start": "2026-10-03T16:00:00Z",
@@ -15767,6 +16306,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ MTL",
+      "start": "2026-10-03T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -16417,6 +16963,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "EDM @ HAM",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Robert Morris @ Rensselaer",
       "start": "2026-10-09T19:00:00Z",
@@ -16430,6 +16983,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ BC",
+      "start": "2026-10-09T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -17303,6 +17863,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "CGY @ WPG",
+      "start": "2026-10-10T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Wisconsin @ Ohio State",
       "start": "2026-10-10T19:00:00Z",
@@ -17663,6 +18230,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "CFL",
+      "title": "SSK @ MTL",
+      "start": "2026-10-12T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "MLB",
       "title": "AL Lower Seed @ AL Higher Seed",
       "start": "2026-10-13T07:33:00Z",
@@ -18017,6 +18591,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "TOR @ OTT",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Franklin Pierce @ Clarkson",
       "start": "2026-10-16T19:00:00Z",
@@ -18045,6 +18626,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ EDM",
+      "start": "2026-10-16T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -19000,6 +19588,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "CFL",
+      "title": "MTL @ SSK",
+      "start": "2026-10-17T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA FB",
       "title": "FAU @ Army",
       "start": "2026-10-17T16:00:00Z",
@@ -19088,6 +19683,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "BC @ CGY",
+      "start": "2026-10-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -19735,6 +20337,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "CFL",
+      "title": "MTL @ TOR",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Delaware @ Long Island University",
       "start": "2026-10-23T19:00:00Z",
@@ -19778,6 +20387,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "CFL",
+      "title": "WPG @ BC",
+      "start": "2026-10-23T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -20581,6 +21197,20 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "CFL",
+      "title": "OTT @ HAM",
+      "start": "2026-10-24T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
+      "league": "CFL",
+      "title": "EDM @ SSK",
+      "start": "2026-10-24T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
     },
     {
       "league": "NCAA FB",
@@ -129923,730 +130553,10 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ CGY",
-      "start": "2026-05-18T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ MTL",
-      "start": "2026-05-22T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ HAM",
-      "start": "2026-05-23T16:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ BC",
-      "start": "2026-05-23T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ SSK",
-      "start": "2026-05-23T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ TOR",
-      "start": "2026-05-29T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ OTT",
-      "start": "2026-05-29T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ WPG",
-      "start": "2026-05-29T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ EDM",
-      "start": "2026-05-29T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ HAM",
-      "start": "2026-06-04T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ CGY",
-      "start": "2026-06-05T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ OTT",
-      "start": "2026-06-06T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ WPG",
-      "start": "2026-06-11T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ MTL",
-      "start": "2026-06-12T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ SSK",
-      "start": "2026-06-13T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ HAM",
-      "start": "2026-06-19T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ OTT",
-      "start": "2026-06-20T13:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ EDM",
-      "start": "2026-06-20T16:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ CGY",
-      "start": "2026-06-20T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ WPG",
-      "start": "2026-06-25T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ SSK",
-      "start": "2026-06-26T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ BC",
-      "start": "2026-06-27T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ MTL",
-      "start": "2026-06-28T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ CGY",
-      "start": "2026-07-02T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ OTT",
-      "start": "2026-07-03T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ BC",
-      "start": "2026-07-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ HAM",
-      "start": "2026-07-05T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ EDM",
-      "start": "2026-07-09T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ WPG",
-      "start": "2026-07-10T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ MTL",
-      "start": "2026-07-11T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ SSK",
-      "start": "2026-07-12T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ EDM",
-      "start": "2026-07-17T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ CGY",
-      "start": "2026-07-18T16:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ HAM",
-      "start": "2026-07-18T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ OTT",
-      "start": "2026-07-19T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ SSK",
-      "start": "2026-07-23T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ WPG",
-      "start": "2026-07-24T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ BC",
-      "start": "2026-07-25T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ MTL",
-      "start": "2026-07-26T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ WPG",
-      "start": "2026-07-30T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ OTT",
-      "start": "2026-07-31T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ HAM",
-      "start": "2026-08-01T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ EDM",
-      "start": "2026-08-01T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ TOR",
-      "start": "2026-08-06T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ SSK",
-      "start": "2026-08-07T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ MTL",
-      "start": "2026-08-08T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ BC",
-      "start": "2026-08-08T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ CGY",
-      "start": "2026-08-13T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ WPG",
-      "start": "2026-08-14T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ EDM",
-      "start": "2026-08-15T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ HAM",
-      "start": "2026-08-15T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ MTL",
-      "start": "2026-08-20T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ EDM",
-      "start": "2026-08-21T21:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ TOR",
-      "start": "2026-08-22T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ BC",
-      "start": "2026-08-23T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ WPG",
-      "start": "2026-08-28T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ CGY",
-      "start": "2026-08-29T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ TOR",
-      "start": "2026-08-29T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ OTT",
-      "start": "2026-08-30T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ MTL",
-      "start": "2026-09-04T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ SSK",
-      "start": "2026-09-06T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ HAM",
-      "start": "2026-09-07T14:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ CGY",
-      "start": "2026-09-07T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ TOR",
-      "start": "2026-09-12T13:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ WPG",
-      "start": "2026-09-12T16:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ EDM",
-      "start": "2026-09-12T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ BC",
-      "start": "2026-09-12T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ HAM",
-      "start": "2026-09-18T19:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ TOR",
-      "start": "2026-09-18T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ CGY",
-      "start": "2026-09-19T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ WPG",
-      "start": "2026-09-25T20:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ BC",
-      "start": "2026-09-25T22:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ OTT",
-      "start": "2026-09-26T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ EDM",
-      "start": "2026-09-26T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "HAM @ OTT",
-      "start": "2026-10-02T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ CGY",
-      "start": "2026-10-02T21:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ TOR",
-      "start": "2026-10-03T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ MTL",
-      "start": "2026-10-03T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ HAM",
-      "start": "2026-10-09T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ BC",
-      "start": "2026-10-09T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "CGY @ WPG",
-      "start": "2026-10-10T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "SSK @ MTL",
-      "start": "2026-10-12T13:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "TOR @ OTT",
-      "start": "2026-10-16T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ EDM",
-      "start": "2026-10-16T21:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ SSK",
-      "start": "2026-10-17T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "BC @ CGY",
-      "start": "2026-10-17T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "MTL @ TOR",
-      "start": "2026-10-23T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "WPG @ BC",
-      "start": "2026-10-23T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "OTT @ HAM",
-      "start": "2026-10-24T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
-    },
-    {
-      "league": "CFL",
-      "title": "EDM @ SSK",
-      "start": "2026-10-24T15:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "cfl.ca"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T20:28:02.598598+00:00",
+    "generatedAt": "2026-08-31T20:38:40.556254+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -130694,7 +130604,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             5,
@@ -130705,8 +130615,8 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
-        "observedRecent": 0,
+        "observedUpcoming": 31,
+        "observedRecent": 28,
         "provider": "official"
       },
       {
@@ -131591,7 +131501,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             5,
@@ -131602,8 +131512,8 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
-        "observedRecent": 0,
+        "observedUpcoming": 31,
+        "observedRecent": 28,
         "provider": "espn"
       },
       {
@@ -132268,7 +132178,7 @@
     },
     "CFL": {
       "source": "CFL.ca official schedule",
-      "added": 90
+      "added": 0
     }
   }
 }
