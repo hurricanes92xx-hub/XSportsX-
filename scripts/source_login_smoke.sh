@@ -25,8 +25,6 @@ snapshot(){
     adb exec-out cat /data/local/tmp/xsportsx-window.xml > "$OUT/${name}.xml" 2>/dev/null || true
   fi
   if [ ! -s "$OUT/${name}.xml" ]; then
-    # Android images can transiently expose an empty hierarchy immediately after launch.
-    # Keep the diagnostic instead of silently treating a missing XML as a valid screen.
     cp /tmp/xsportsx-ui-dump.log "$OUT/${name}.ui-dump.log" 2>/dev/null || true
   fi
 }
@@ -78,56 +76,15 @@ click_text(){
   return 1
 }
 
-# Type ASCII through ADB, but do not trust one-shot URL injection. Android's
-# input command has shell/special-character edge cases; URLs are therefore
-# assembled from safe text chunks plus explicit punctuation key events.
-type_value(){
-  local value="$1"
-  python3 - "$value" <<'PY'
-import subprocess,sys
-s=sys.argv[1]
-chunk=[]
-
-def flush():
-    if chunk:
-        text=''.join(chunk).replace(' ','%s')
-        subprocess.run(['adb','shell','input','text',text],check=True)
-        chunk.clear()
-
-for ch in s:
-    if ch.isalnum() or ch in '_-@':
-        chunk.append(ch)
-        continue
-    flush()
-    if ch == '/':
-        subprocess.run(['adb','shell','input','keyevent','KEYCODE_SLASH'],check=True)
-    elif ch == '.':
-        subprocess.run(['adb','shell','input','keyevent','KEYCODE_PERIOD'],check=True)
-    elif ch == ':':
-        # KEYCODE_COLON is available on modern Android; fall back to input text
-        # for images whose keymap does not expose it.
-        p=subprocess.run(['adb','shell','input','keyevent','KEYCODE_COLON'])
-        if p.returncode != 0:
-            subprocess.run(['adb','shell','input','text',':'],check=True)
-    elif ch == ' ':
-        subprocess.run(['adb','shell','input','keyevent','KEYCODE_SPACE'],check=True)
-    else:
-        subprocess.run(['adb','shell','input','text',ch],check=True)
-flush()
-PY
-}
-
 field_value(){
   local file="$1" label="$2"
   python3 - "$file" "$label" <<'PY'
 import sys,xml.etree.ElementTree as ET
 root=ET.parse(sys.argv[1]).getroot(); label=sys.argv[2].casefold()
 for n in root.iter('node'):
-    if n.attrib.get('class') == 'android.widget.EditText':
-        # Compose exposes the semantic label on a child View; inspect the subtree.
-        if any(x.attrib.get('content-desc','').strip().casefold()==label for x in n.iter('node')):
-            print(n.attrib.get('text',''))
-            raise SystemExit
+    if n.attrib.get('class') == 'android.widget.EditText' and any(x.attrib.get('content-desc','').strip().casefold()==label for x in n.iter('node')):
+        print(n.attrib.get('text',''))
+        raise SystemExit
 raise SystemExit(1)
 PY
 }
@@ -142,13 +99,9 @@ for attempt in $(seq 1 20); do
     cp "$OUT/source-nav-${attempt}.png" "$OUT/01-source.png"
     break
   fi
-  # Mobile uses CONNECT NOW. TV uses the top-right SETTINGS button to open
-  # the source chooser, then SIGN IN ON TV to reach the same SourceConnectScreen.
   click_text "CONNECT NOW" || click_text "CONNECT NOW →" || click_text "SETTINGS" || click_text "Sources" || click_text "Source Center" || click_text "SOURCES" || true
   sleep 1
-  if [ "$attempt" -ge 2 ]; then
-    click_text "SIGN IN ON TV" || true
-  fi
+  if [ "$attempt" -ge 2 ]; then click_text "SIGN IN ON TV" || true; fi
 done
 
 [ -n "$SOURCE_XML" ] || { echo "Missing source form"; snapshot "source-form-missing"; exit 1; }
@@ -171,31 +124,34 @@ values=[os.environ.get('QA_SOURCE_BASE','http://127.0.0.1:8765'),'qauser','qapas
 for (x,y),value in zip(fields,values):
     subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
     subprocess.run(['adb','shell','input','keyevent','KEYCODE_MOVE_END'],check=True)
-    type_value=value
-    # Keep the helper logic in this process so punctuation is deterministic.
-    import re
-    chunk=[]
+    chunks=[]
     def flush():
-        if chunk:
-            subprocess.run(['adb','shell','input','text',''.join(chunk).replace(' ','%s')],check=True); chunk.clear()
+        if chunks:
+            subprocess.run(['adb','shell','input','text',''.join(chunks).replace(' ','%s')],check=True)
+            chunks.clear()
     for ch in value:
-        if ch.isalnum() or ch in '_-@': chunk.append(ch)
+        if ch.isalnum() or ch in '_-@':
+            chunks.append(ch)
         else:
             flush()
-            key={'/':'KEYCODE_SLASH','.':'KEYCODE_PERIOD',':':'KEYCODE_COLON',' ':'KEYCODE_SPACE'}.get(ch)
-            if key: subprocess.run(['adb','shell','input','keyevent',key],check=True)
+            if ch == '/': subprocess.run(['adb','shell','input','keyevent','KEYCODE_SLASH'],check=True)
+            elif ch == '.': subprocess.run(['adb','shell','input','keyevent','KEYCODE_PERIOD'],check=True)
+            elif ch == ':': subprocess.run(['adb','shell','input','text',':'],check=True)
+            elif ch == ' ': subprocess.run(['adb','shell','input','keyevent','KEYCODE_SPACE'],check=True)
             else: subprocess.run(['adb','shell','input','text',ch],check=True)
     flush()
 PY
 
 sleep 1
 snapshot "03-filled"
-if [ "$(field_value "$OUT/03-filled.xml" "Server URL" 2>/dev/null || true)" != "$SOURCE_BASE" ]; then
+server="$(field_value "$OUT/03-filled.xml" "Server URL" 2>/dev/null || true)"
+user="$(field_value "$OUT/03-filled.xml" "Username" 2>/dev/null || true)"
+if [ "$server" != "$SOURCE_BASE" ]; then
   echo "Server URL was not injected correctly"
-  echo "Observed server field: $(field_value "$OUT/03-filled.xml" "Server URL" 2>/dev/null || true)"
+  echo "Observed server field: $server"
   exit 1
 fi
-if [ "$(field_value "$OUT/03-filled.xml" "Username" 2>/dev/null || true)" != "qauser" ]; then
+if [ "$user" != "qauser" ]; then
   echo "Username was not injected correctly"
   exit 1
 fi
