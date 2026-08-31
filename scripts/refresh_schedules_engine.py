@@ -18,16 +18,16 @@ def guard_for(url):
 def guarded_get(url):
  guard=guard_for(url); last=None
  for attempt in range(1,5):
-  guard.wait_turn()
-  with semaphore:
-   try:
+  try:
+   guard.wait_turn()
+   with semaphore:
     req=urllib.request.Request(url,headers=refresh.HEADERS)
     with urllib.request.urlopen(req,timeout=12) as response:data=response.read()
-    guard.success();return data
-   except Exception as exc:
-    last=exc;guard.failure()
-    if attempt>=4:raise
-    time.sleep(engine.backoff_seconds(attempt))
+   guard.success();return data
+  except Exception as exc:
+   last=exc;guard.failure()
+   if attempt>=4:raise
+   time.sleep(engine.backoff_seconds(attempt))
  raise last
 def previous_root():
  try:return json.loads((ROOT/'data/schedule_feed.json').read_text(encoding='utf-8'))
@@ -63,7 +63,7 @@ def normalize_feed_timestamps(payload):
  return changed,invalid
 def _embedded_json_documents(html):
  text=html.decode('utf-8','ignore') if isinstance(html,(bytes,bytearray)) else str(html)
- patterns=[r'<script[^>]+type=["\']application/json["\'][^>]*>(.*?)</script>',r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>']
+ patterns=[r'<script[^>]+type=[\"\']application/json[\"\'][^>]*>(.*?)</script>',r'<script[^>]+id=[\"\']__NEXT_DATA__[\"\'][^>]*>(.*?)</script>']
  for pattern in patterns:
   for m in re.findall(pattern,text,re.I|re.S):
    try:yield json.loads(m.strip())
