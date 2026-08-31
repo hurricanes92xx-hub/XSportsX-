@@ -7,11 +7,17 @@ import threading
 import time
 import urllib.parse
 import urllib.request
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
-    spec=importlib.util.spec_from_file_location(name,path); module=importlib.util.module_from_spec(spec); assert spec.loader is not None; spec.loader.exec_module(module); return module
+    spec=importlib.util.spec_from_file_location(name,path)
+    module=importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
 refresh=load('xsportsx_refresh',ROOT/'scripts'/'refresh_schedules.py'); engine=load('xsportsx_schedule_engine_safe',ROOT/'scripts'/'schedule_engine_safe.py'); season=load('xsportsx_season_intelligence',ROOT/'scripts'/'season_intelligence.py')
 MAX_CONCURRENT=8; semaphore=threading.BoundedSemaphore(MAX_CONCURRENT); guards={}; guards_lock=threading.Lock()
 def guard_for(url):
@@ -41,9 +47,6 @@ _original_add_official=refresh.add_official_source; _original_add_espn=refresh.a
 def season_aware_official(events,source):
     name=str(source.get('league') or '').strip(); d=decision_for(name); SEASON_REPORT.append(d|{'provider':'official'})
     if not name or d['active']: return _original_add_official(events,source)
-    # Inactive official sources are probed once per 24h. This preserves the last
-    # good calendar while preventing dozens of offseason pages from being fetched
-    # on every 30-minute workflow tick.
     generated=PREVIOUS_ROOT.get('generatedAt',''); last=None
     try: last=datetime.fromisoformat(str(generated).replace('Z','+00:00'))
     except Exception: pass
