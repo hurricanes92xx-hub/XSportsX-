@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T21:35:06.260470+00:00",
+  "generatedAt": "2026-08-31T22:06:30.926879+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 4,
@@ -21,8 +21,8 @@
     "Ligue 1": 27,
     "MLB": 2883,
     "MLS": 75,
-    "MONSTER JAM": 7,
-    "MXGP": 19,
+    "MONSTER JAM": 10,
+    "MXGP": 23,
     "MotoGP": 40,
     "NASCAR Cup": 51,
     "NASCAR Truck": 21,
@@ -41,6 +41,8 @@
     "NRL": 8,
     "NWSL": 43,
     "PGA": 3,
+    "PLL": 3,
+    "Rugby World Cup": 36,
     "Serie A": 32,
     "Six Nations": 15,
     "TNA": 1,
@@ -57,7 +59,7 @@
     "NFL": 16,
     "NCAA FB": 1488,
     "CFL": 90,
-    "NBA": 0,
+    "NBA": 393,
     "WNBA": 30,
     "NHL": 73,
     "MLB": 2883,
@@ -113,7 +115,7 @@
     "WRC": 0,
     "WEC": 0,
     "IMSA": 0,
-    "FORMULA E": 21,
+    "FORMULA E": 38,
     "MXGP": 19,
     "MONSTER JAM": 7,
     "ESPORTS": 0,
@@ -121,7 +123,7 @@
     "ESPORTS - Apex Legends": 0,
     "ESPORTS - Rainbow Six": 0,
     "ACTION SPORTS": 0,
-    "AAA Wrestling": 2,
+    "AAA Wrestling": 4,
     "NASCAR Xfinity": 0,
     "NASCAR Truck": 0
   },
@@ -6080,6 +6082,13 @@
       "icon": "🤼"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA TripleManía 34 — Night 1 — Las Vegas",
+      "start": "2026-09-11T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "MLB",
       "title": "Mets @ Yankees",
       "start": "2026-09-11T23:05:00Z",
@@ -8487,6 +8496,13 @@
     {
       "league": "AAA Wrestling",
       "title": "AAA Triplemanía 34 — Night 2",
+      "start": "2026-09-13T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA TripleManía 34 — Night 2 — Mexico City",
       "start": "2026-09-13T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🤼"
@@ -17426,6 +17442,13 @@
       "icon": "⚽"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Raptors",
+      "start": "2026-10-03T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Boston College @ Stonehill",
       "start": "2026-10-03T23:00:00Z",
@@ -17583,6 +17606,13 @@
       "icon": "⚽"
     },
     {
+      "league": "NBA",
+      "title": "Jazz @ Nuggets",
+      "start": "2026-10-04T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NWSL",
       "title": "Washington @ Houston",
       "start": "2026-10-04T23:00:00Z",
@@ -17613,11 +17643,46 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "NBA",
+      "title": "Grizzlies @ Hawks",
+      "start": "2026-10-05T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Pistons",
+      "start": "2026-10-05T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ 76ers",
+      "start": "2026-10-05T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Bucks",
+      "start": "2026-10-06T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "AEW",
       "title": "Grand Slam: France",
       "start": "2026-10-06T00:00:00Z",
       "tag": "SPECIAL",
       "icon": "🤼"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Kings",
+      "start": "2026-10-06T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -17651,6 +17716,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nets @ Hornets",
+      "start": "2026-10-06T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Southern Miss @ Troy",
       "start": "2026-10-07T00:00:00Z",
@@ -17664,6 +17736,27 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Thunder",
+      "start": "2026-10-07T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Jazz",
+      "start": "2026-10-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Warriors",
+      "start": "2026-10-07T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -17698,6 +17791,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "NBA",
+      "title": "Timberwolves @ Pacers",
+      "start": "2026-10-07T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "New Mexico St @ FIU",
       "start": "2026-10-07T23:30:00Z",
@@ -17711,6 +17811,34 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Grizzlies",
+      "start": "2026-10-08T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Thunder",
+      "start": "2026-10-08T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Bulls",
+      "start": "2026-10-08T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Trail Blazers",
+      "start": "2026-10-08T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -17789,6 +17917,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Celtics @ Cavaliers",
+      "start": "2026-10-08T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "South Florida @ UTSA",
       "start": "2026-10-08T23:30:00Z",
@@ -17819,11 +17954,46 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Pelicans @ Heat",
+      "start": "2026-10-08T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Nets",
+      "start": "2026-10-08T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Knicks",
+      "start": "2026-10-08T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Spurs",
+      "start": "2026-10-09T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "MotoGP",
       "title": "PERTAMINA GRAND PRIX OF INDONESIA ",
       "start": "2026-10-09T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏍️"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Lakers",
+      "start": "2026-10-09T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -17855,6 +18025,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Mavericks",
+      "start": "2026-10-09T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -18124,6 +18301,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Bulls",
+      "start": "2026-10-10T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MONSTER JAM",
@@ -19048,6 +19232,13 @@
       "icon": "🏆"
     },
     {
+      "league": "NBA",
+      "title": "Clippers @ Raptors",
+      "start": "2026-10-10T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "N Dakota St @ UNLV",
       "start": "2026-10-10T23:00:00Z",
@@ -19061,6 +19252,20 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Pacers",
+      "start": "2026-10-10T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Wizards",
+      "start": "2026-10-10T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -19093,6 +19298,27 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Timberwolves @ Heat",
+      "start": "2026-10-11T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Celtics",
+      "start": "2026-10-11T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Warriors",
+      "start": "2026-10-11T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Boise St @ Fresno St",
       "start": "2026-10-11T02:30:00Z",
@@ -19106,6 +19332,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Suns",
+      "start": "2026-10-11T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -19131,6 +19364,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "NBA",
+      "title": "Mavericks @ Rockets",
+      "start": "2026-10-11T10:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Bemidji State @ Minnesota",
       "start": "2026-10-11T19:00:00Z",
@@ -19153,11 +19393,32 @@
       "icon": "🤼"
     },
     {
+      "league": "NBA",
+      "title": "Magic @ Cavaliers",
+      "start": "2026-10-11T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Hornets",
+      "start": "2026-10-11T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "WWE",
       "title": "Monday Night Raw",
       "start": "2026-10-12T00:00:00Z",
       "tag": "SPECIAL",
       "icon": "🏆"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Nuggets",
+      "start": "2026-10-12T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -19183,6 +19444,41 @@
       "icon": "🏈"
     },
     {
+      "league": "NBA",
+      "title": "Lions @ Trail Blazers",
+      "start": "2026-10-12T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Hawks",
+      "start": "2026-10-12T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Wizards",
+      "start": "2026-10-12T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Knicks",
+      "start": "2026-10-12T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Jazz",
+      "start": "2026-10-13T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "MLB",
       "title": "AL Lower Seed @ AL Higher Seed",
       "start": "2026-10-13T07:33:00Z",
@@ -19204,6 +19500,41 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Magic",
+      "start": "2026-10-13T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Raptors",
+      "start": "2026-10-13T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Thunder",
+      "start": "2026-10-14T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Lakers",
+      "start": "2026-10-14T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Kings",
+      "start": "2026-10-14T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -19229,6 +19560,20 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nets @ Heat",
+      "start": "2026-10-14T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Celtics",
+      "start": "2026-10-14T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Western KY @ Sam Houston",
       "start": "2026-10-15T00:00:00Z",
@@ -19242,6 +19587,34 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Spurs",
+      "start": "2026-10-15T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Mavericks",
+      "start": "2026-10-15T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Bucks",
+      "start": "2026-10-15T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Timberwolves",
+      "start": "2026-10-15T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -19431,6 +19804,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Raptors @ Knicks",
+      "start": "2026-10-15T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Colorado St @ Texas St",
       "start": "2026-10-16T00:00:00Z",
@@ -19444,6 +19824,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Rockets",
+      "start": "2026-10-16T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -19716,6 +20103,34 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Magic",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ 76ers",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Pistons",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Pacers",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Ohio State @ Minnesota",
       "start": "2026-10-16T23:00:00Z",
@@ -19806,6 +20221,41 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Hawks @ Mavericks",
+      "start": "2026-10-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Spurs",
+      "start": "2026-10-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Grizzlies",
+      "start": "2026-10-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Pelicans",
+      "start": "2026-10-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Bulls",
+      "start": "2026-10-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Minnesota St @ Wisconsin",
       "start": "2026-10-17T00:00:00Z",
@@ -19819,6 +20269,27 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Warriors",
+      "start": "2026-10-17T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Suns",
+      "start": "2026-10-17T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Lakers",
+      "start": "2026-10-17T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -20954,6 +21425,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "NBA",
+      "title": "Celtics @ Pistons",
+      "start": "2026-10-20T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "MTSU @ FIU",
       "start": "2026-10-20T23:00:00Z",
@@ -20984,6 +21462,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "76ers @ Knicks",
+      "start": "2026-10-20T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "South Alabama @ Marshall",
       "start": "2026-10-20T23:30:00Z",
@@ -20999,6 +21484,48 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Thunder @ Spurs",
+      "start": "2026-10-21T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Magic",
+      "start": "2026-10-21T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Wizards",
+      "start": "2026-10-21T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Heat",
+      "start": "2026-10-21T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Nets",
+      "start": "2026-10-21T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Raptors",
+      "start": "2026-10-21T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "New Mexico St @ Sam Houston",
       "start": "2026-10-22T00:00:00Z",
@@ -21012,6 +21539,48 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Grizzlies",
+      "start": "2026-10-22T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Pelicans",
+      "start": "2026-10-22T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Rockets",
+      "start": "2026-10-22T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Lakers",
+      "start": "2026-10-22T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Trail Blazers",
+      "start": "2026-10-22T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Clippers",
+      "start": "2026-10-22T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "UEL",
@@ -21177,6 +21746,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Cavaliers @ 76ers",
+      "start": "2026-10-22T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Lindenwood @ Minnesota",
       "start": "2026-10-22T23:00:00Z",
@@ -21205,6 +21781,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Thunder",
+      "start": "2026-10-23T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -21514,6 +22097,41 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Knicks @ Celtics",
+      "start": "2026-10-23T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Hornets",
+      "start": "2026-10-23T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Pacers",
+      "start": "2026-10-23T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Magic",
+      "start": "2026-10-23T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Wizards",
+      "start": "2026-10-23T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Bemidji State @ St. Cloud State",
       "start": "2026-10-23T23:00:00Z",
@@ -21527,6 +22145,20 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Heat",
+      "start": "2026-10-24T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Bucks",
+      "start": "2026-10-24T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -21557,6 +22189,41 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Spurs",
+      "start": "2026-10-24T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Jazz",
+      "start": "2026-10-24T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Warriors",
+      "start": "2026-10-24T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Lakers",
+      "start": "2026-10-24T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Kings",
+      "start": "2026-10-24T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -22376,6 +23043,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Hornets",
+      "start": "2026-10-24T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Saint Michael's @ Merrimack",
       "start": "2026-10-24T22:00:00Z",
@@ -22451,6 +23125,48 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nets @ Cavaliers",
+      "start": "2026-10-24T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ 76ers",
+      "start": "2026-10-24T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Hawks",
+      "start": "2026-10-25T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Bulls",
+      "start": "2026-10-25T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Mavericks",
+      "start": "2026-10-25T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Nuggets",
+      "start": "2026-10-25T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "N Dakota St @ New Mexico",
       "start": "2026-10-25T02:00:00Z",
@@ -22466,11 +23182,67 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Warriors @ Suns",
+      "start": "2026-10-25T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Jazz",
+      "start": "2026-10-25T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Nets",
+      "start": "2026-10-25T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Knicks",
+      "start": "2026-10-25T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Timberwolves",
+      "start": "2026-10-25T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Thunder",
+      "start": "2026-10-25T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ 76ers",
+      "start": "2026-10-25T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "WWE",
       "title": "Monday Night Raw",
       "start": "2026-10-26T00:00:00Z",
       "tag": "SPECIAL",
       "icon": "🏆"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Kings",
+      "start": "2026-10-26T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -22496,6 +23268,69 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "NBA",
+      "title": "Wizards @ Hornets",
+      "start": "2026-10-26T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Cavaliers",
+      "start": "2026-10-26T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Celtics",
+      "start": "2026-10-26T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Heat",
+      "start": "2026-10-26T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Bucks",
+      "start": "2026-10-27T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Thunder",
+      "start": "2026-10-27T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Rockets",
+      "start": "2026-10-27T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Jazz",
+      "start": "2026-10-27T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Nuggets",
+      "start": "2026-10-27T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "MLB",
       "title": "Higher Seed @ Lower Seed",
       "start": "2026-10-27T07:33:00Z",
@@ -22519,6 +23354,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nets @ Celtics",
+      "start": "2026-10-27T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Sam Houston @ Missouri St",
       "start": "2026-10-28T00:00:00Z",
@@ -22532,6 +23374,27 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Knicks",
+      "start": "2026-10-28T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Spurs",
+      "start": "2026-10-28T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Lakers",
+      "start": "2026-10-28T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "MLB",
@@ -22557,6 +23420,41 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Hawks",
+      "start": "2026-10-28T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Cavaliers",
+      "start": "2026-10-28T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Pistons",
+      "start": "2026-10-28T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Pacers",
+      "start": "2026-10-28T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Raptors",
+      "start": "2026-10-28T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Jax State @ New Mexico St",
       "start": "2026-10-29T00:00:00Z",
@@ -22570,6 +23468,62 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Bulls",
+      "start": "2026-10-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Bucks",
+      "start": "2026-10-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Timberwolves",
+      "start": "2026-10-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Pelicans",
+      "start": "2026-10-29T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Jazz",
+      "start": "2026-10-29T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Mavericks",
+      "start": "2026-10-29T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Clippers",
+      "start": "2026-10-29T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Hawks",
+      "start": "2026-10-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -22617,6 +23571,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Kings @ Pelicans",
+      "start": "2026-10-30T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "MotoGP",
       "title": "PETRONAS GRAND PRIX OF MALAYSIA ",
       "start": "2026-10-30T00:00:00Z",
@@ -22644,6 +23605,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Trail Blazers",
+      "start": "2026-10-30T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -22969,6 +23937,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Hornets @ Wizards",
+      "start": "2026-10-30T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Minnesota St @ St. Thomas-Minnesota",
       "start": "2026-10-30T23:00:00Z",
@@ -23012,6 +23987,69 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Celtics",
+      "start": "2026-10-30T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Nets",
+      "start": "2026-10-30T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ 76ers",
+      "start": "2026-10-30T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Raptors",
+      "start": "2026-10-30T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Heat",
+      "start": "2026-10-31T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Mavericks",
+      "start": "2026-10-31T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Timberwolves",
+      "start": "2026-10-31T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Warriors",
+      "start": "2026-10-31T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Suns",
+      "start": "2026-10-31T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -23507,6 +24545,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Trail Blazers @ Jazz",
+      "start": "2026-10-31T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Thomas-Minnesota @ Minnesota St",
       "start": "2026-10-31T19:00:00Z",
@@ -23674,6 +24719,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "76ers @ Hornets",
+      "start": "2026-10-31T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Assumption College @ Mercyhurst",
       "start": "2026-10-31T22:00:00Z",
@@ -23697,6 +24749,41 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Hawks @ Pelicans",
+      "start": "2026-10-31T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Grizzlies",
+      "start": "2026-11-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Bucks",
+      "start": "2026-11-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Spurs",
+      "start": "2026-11-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Rockets",
+      "start": "2026-11-01T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Texas State Bobcats at Boise State Broncos",
       "start": "2026-11-01T02:00:00Z",
@@ -23713,11 +24800,144 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Celtics @ Magic",
+      "start": "2026-11-01T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Pacers",
+      "start": "2026-11-01T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "WWE",
       "title": "Monday Night Raw",
       "start": "2026-11-02T00:00:00Z",
       "tag": "SPECIAL",
       "icon": "🏆"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Warriors",
+      "start": "2026-11-02T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Lakers",
+      "start": "2026-11-02T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Cavaliers",
+      "start": "2026-11-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Hornets",
+      "start": "2026-11-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Pacers",
+      "start": "2026-11-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Knicks",
+      "start": "2026-11-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Magic",
+      "start": "2026-11-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ 76ers",
+      "start": "2026-11-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Mavericks",
+      "start": "2026-11-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Grizzlies",
+      "start": "2026-11-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Timberwolves",
+      "start": "2026-11-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Rockets",
+      "start": "2026-11-03T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Spurs",
+      "start": "2026-11-03T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Nuggets",
+      "start": "2026-11-03T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Warriors",
+      "start": "2026-11-03T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Clippers",
+      "start": "2026-11-03T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Lakers",
+      "start": "2026-11-03T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -23773,6 +24993,104 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Pistons",
+      "start": "2026-11-05T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Wizards",
+      "start": "2026-11-05T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Celtics",
+      "start": "2026-11-05T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Nets",
+      "start": "2026-11-05T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Knicks",
+      "start": "2026-11-05T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Grizzlies",
+      "start": "2026-11-05T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Pelicans",
+      "start": "2026-11-05T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Thunder",
+      "start": "2026-11-05T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Rockets",
+      "start": "2026-11-05T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Nuggets",
+      "start": "2026-11-05T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Suns",
+      "start": "2026-11-05T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Spurs",
+      "start": "2026-11-05T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Kings",
+      "start": "2026-11-05T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Clippers",
+      "start": "2026-11-05T03:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -23930,6 +25248,20 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Suns",
+      "start": "2026-11-06T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Warriors",
+      "start": "2026-11-06T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -24157,6 +25489,20 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Wizards @ Hawks",
+      "start": "2026-11-07T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Hornets",
+      "start": "2026-11-07T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Anselm @ Saint Michael's",
       "start": "2026-11-07T00:00:00Z",
@@ -24225,6 +25571,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "76ers @ Cavaliers",
+      "start": "2026-11-07T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Nebraska Cornhuskers at Illinois Fighting Illini",
       "start": "2026-11-07T01:00:00Z",
@@ -24233,12 +25586,54 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Jazz @ Mavericks",
+      "start": "2026-11-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Grizzlies",
+      "start": "2026-11-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Bucks",
+      "start": "2026-11-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Pelicans",
+      "start": "2026-11-07T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "New Mexico Lobos at Nevada Wolf Pack",
       "start": "2026-11-07T02:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Lakers",
+      "start": "2026-11-07T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Kings",
+      "start": "2026-11-07T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -24841,6 +26236,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nuggets @ Pacers",
+      "start": "2026-11-07T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Boise State Broncos at Colorado State Rams",
       "start": "2026-11-07T23:00:00Z",
@@ -24880,12 +26282,54 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nets @ Hawks",
+      "start": "2026-11-08T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Cavaliers",
+      "start": "2026-11-08T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Thunder",
+      "start": "2026-11-08T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Warriors",
+      "start": "2026-11-08T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Suns",
+      "start": "2026-11-08T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Fresno State Bulldogs at Utah State Aggies",
       "start": "2026-11-08T02:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Trail Blazers",
+      "start": "2026-11-08T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -24902,6 +26346,111 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Bulls",
+      "start": "2026-11-08T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Pistons",
+      "start": "2026-11-08T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Timberwolves",
+      "start": "2026-11-09T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Mavericks",
+      "start": "2026-11-09T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Bucks",
+      "start": "2026-11-09T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Clippers",
+      "start": "2026-11-09T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Kings",
+      "start": "2026-11-09T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Hawks",
+      "start": "2026-11-10T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Hornets",
+      "start": "2026-11-10T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Pistons",
+      "start": "2026-11-10T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Raptors",
+      "start": "2026-11-10T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Mavericks",
+      "start": "2026-11-10T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Rockets",
+      "start": "2026-11-10T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Suns",
+      "start": "2026-11-10T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Warriors",
+      "start": "2026-11-10T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -24943,6 +26492,48 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Bucks @ Knicks",
+      "start": "2026-11-11T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ 76ers",
+      "start": "2026-11-11T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Suns",
+      "start": "2026-11-11T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Jazz",
+      "start": "2026-11-11T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Kings",
+      "start": "2026-11-11T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Trail Blazers",
+      "start": "2026-11-11T04:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Buffalo Bulls at Ball State Cardinals",
       "start": "2026-11-11T05:00:00Z",
@@ -24965,6 +26556,76 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Pacers",
+      "start": "2026-11-12T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Knicks",
+      "start": "2026-11-12T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Raptors",
+      "start": "2026-11-12T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Bulls",
+      "start": "2026-11-12T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Grizzlies",
+      "start": "2026-11-12T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Bucks",
+      "start": "2026-11-12T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Pelicans",
+      "start": "2026-11-12T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Jazz",
+      "start": "2026-11-12T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Rockets",
+      "start": "2026-11-12T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Trail Blazers",
+      "start": "2026-11-12T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -24997,6 +26658,20 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Raptors @ 76ers",
+      "start": "2026-11-13T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Wizards",
+      "start": "2026-11-13T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Memphis Tigers at South Florida Bulls",
       "start": "2026-11-13T01:00:00Z",
@@ -25005,12 +26680,26 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Mavericks @ Timberwolves",
+      "start": "2026-11-13T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Louisiana Ragin' Cajuns at UL Monroe Warhawks",
       "start": "2026-11-13T02:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Suns",
+      "start": "2026-11-13T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -25276,6 +26965,20 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Knicks @ Pacers",
+      "start": "2026-11-14T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Magic",
+      "start": "2026-11-14T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Cloud State @ Minnesota",
       "start": "2026-11-14T00:00:00Z",
@@ -25321,6 +27024,34 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Cavaliers @ Heat",
+      "start": "2026-11-14T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Bulls",
+      "start": "2026-11-14T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Pelicans",
+      "start": "2026-11-14T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Rockets",
+      "start": "2026-11-14T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Illinois Fighting Illini at UCLA Bruins",
       "start": "2026-11-14T02:00:00Z",
@@ -25329,12 +27060,33 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Warriors @ Spurs",
+      "start": "2026-11-14T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Kings",
+      "start": "2026-11-14T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Houston Cougars at Colorado Buffaloes",
       "start": "2026-11-14T03:15:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Clippers",
+      "start": "2026-11-14T03:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -26037,12 +27789,47 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Nuggets @ Pelicans",
+      "start": "2026-11-15T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "UNLV Rebels at New Mexico Lobos",
       "start": "2026-11-15T00:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Cavaliers",
+      "start": "2026-11-15T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Heat",
+      "start": "2026-11-15T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Grizzlies",
+      "start": "2026-11-15T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Timberwolves",
+      "start": "2026-11-15T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -26099,6 +27886,125 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Pacers @ 76ers",
+      "start": "2026-11-15T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Suns",
+      "start": "2026-11-15T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Clippers",
+      "start": "2026-11-15T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Jazz",
+      "start": "2026-11-15T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Celtics",
+      "start": "2026-11-15T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Raptors",
+      "start": "2026-11-15T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Wizards",
+      "start": "2026-11-16T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Bucks",
+      "start": "2026-11-16T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Kings",
+      "start": "2026-11-16T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Celtics",
+      "start": "2026-11-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Cavaliers",
+      "start": "2026-11-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Wizards",
+      "start": "2026-11-17T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Nets",
+      "start": "2026-11-17T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Heat",
+      "start": "2026-11-17T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Timberwolves",
+      "start": "2026-11-17T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Pelicans",
+      "start": "2026-11-17T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Nuggets",
+      "start": "2026-11-17T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Colgate @ Syracuse",
       "start": "2026-11-17T23:00:00Z",
@@ -26138,6 +28044,41 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Knicks @ Raptors",
+      "start": "2026-11-18T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Timberwolves",
+      "start": "2026-11-18T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Spurs",
+      "start": "2026-11-18T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Lakers",
+      "start": "2026-11-18T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Clippers",
+      "start": "2026-11-18T04:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Akron Zips at Massachusetts Minutemen",
       "start": "2026-11-18T05:00:00Z",
@@ -26152,6 +28093,90 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Cavaliers",
+      "start": "2026-11-19T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Pacers",
+      "start": "2026-11-19T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Heat",
+      "start": "2026-11-19T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Magic",
+      "start": "2026-11-19T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Nets",
+      "start": "2026-11-19T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Raptors",
+      "start": "2026-11-19T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Pelicans",
+      "start": "2026-11-19T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Thunder",
+      "start": "2026-11-19T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Nuggets",
+      "start": "2026-11-19T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Mavericks",
+      "start": "2026-11-19T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Lakers",
+      "start": "2026-11-19T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Kings",
+      "start": "2026-11-19T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -26205,6 +28230,34 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Grizzlies",
+      "start": "2026-11-20T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ Bucks",
+      "start": "2026-11-20T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Timberwolves",
+      "start": "2026-11-20T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Spurs",
+      "start": "2026-11-20T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -26432,6 +28485,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Hornets @ Hawks",
+      "start": "2026-11-21T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Ohio State @ St. Cloud State",
       "start": "2026-11-21T00:00:00Z",
@@ -26493,6 +28553,27 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Magic @ Nets",
+      "start": "2026-11-21T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Cavaliers",
+      "start": "2026-11-21T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Pistons",
+      "start": "2026-11-21T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Oregon Ducks at Michigan State Spartans",
       "start": "2026-11-21T01:00:00Z",
@@ -26507,6 +28588,41 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Bulls",
+      "start": "2026-11-21T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Thunder",
+      "start": "2026-11-21T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Jazz",
+      "start": "2026-11-21T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Rockets @ Nuggets",
+      "start": "2026-11-21T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Lakers",
+      "start": "2026-11-21T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -26891,6 +29007,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Bucks @ 76ers",
+      "start": "2026-11-21T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Post University @ St. Anselm",
       "start": "2026-11-21T18:00:00Z",
@@ -27204,6 +29327,34 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Trail Blazers @ Knicks",
+      "start": "2026-11-22T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Mavericks",
+      "start": "2026-11-22T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Timberwolves",
+      "start": "2026-11-22T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Spurs",
+      "start": "2026-11-22T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "New Mexico Lobos at Wyoming Cowboys",
       "start": "2026-11-22T02:00:00Z",
@@ -27218,6 +29369,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Kings",
+      "start": "2026-11-22T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -27273,6 +29431,125 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Pistons @ Hawks",
+      "start": "2026-11-22T20:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Heat",
+      "start": "2026-11-22T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Wizards",
+      "start": "2026-11-23T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Bulls",
+      "start": "2026-11-23T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Jazz",
+      "start": "2026-11-23T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Knicks",
+      "start": "2026-11-23T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Warriors",
+      "start": "2026-11-23T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Hornets",
+      "start": "2026-11-24T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Trail Blazers @ 76ers",
+      "start": "2026-11-24T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Pacers",
+      "start": "2026-11-24T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bucks @ Raptors",
+      "start": "2026-11-24T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Timberwolves",
+      "start": "2026-11-24T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Bulls",
+      "start": "2026-11-24T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Pelicans",
+      "start": "2026-11-24T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Rockets",
+      "start": "2026-11-24T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Lakers",
+      "start": "2026-11-24T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Kings",
+      "start": "2026-11-24T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "Miami (OH) RedHawks at Western Michigan Broncos",
       "start": "2026-11-24T05:00:00Z",
@@ -27317,6 +29594,90 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Pistons @ Magic",
+      "start": "2026-11-25T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Wizards",
+      "start": "2026-11-25T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Nuggets",
+      "start": "2026-11-25T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ 76ers",
+      "start": "2026-11-25T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Bulls @ Hornets",
+      "start": "2026-11-26T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Knicks",
+      "start": "2026-11-26T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Thunder",
+      "start": "2026-11-26T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Grizzlies",
+      "start": "2026-11-26T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Bucks",
+      "start": "2026-11-26T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Rockets",
+      "start": "2026-11-26T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Warriors",
+      "start": "2026-11-26T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Trail Blazers",
+      "start": "2026-11-26T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "UEL",
@@ -27690,6 +30051,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Knicks",
+      "start": "2026-11-28T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Holy Cross @ St. Thomas-Minnesota",
       "start": "2026-11-28T00:00:00Z",
@@ -27736,12 +30104,82 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Bucks @ Pistons",
+      "start": "2026-11-28T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Pacers",
+      "start": "2026-11-28T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Raptors",
+      "start": "2026-11-28T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Celtics",
+      "start": "2026-11-28T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Timberwolves",
+      "start": "2026-11-28T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "West Virginia Mountaineers at Utah Utes",
       "start": "2026-11-28T02:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Mavericks @ Suns",
+      "start": "2026-11-28T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Spurs",
+      "start": "2026-11-28T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Jazz",
+      "start": "2026-11-28T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Clippers",
+      "start": "2026-11-28T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Warriors @ Trail Blazers",
+      "start": "2026-11-28T02:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -28339,11 +30777,46 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Magic @ Wizards",
+      "start": "2026-11-28T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Hornets",
+      "start": "2026-11-28T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "WWE",
       "title": "Survivor Series: WarGames",
       "start": "2026-11-29T00:00:00Z",
       "tag": "PLE",
       "icon": "🏆"
+    },
+    {
+      "league": "NBA",
+      "title": "Pacers @ Bulls",
+      "start": "2026-11-29T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Bucks",
+      "start": "2026-11-29T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "76ers @ Rockets",
+      "start": "2026-11-29T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA FB",
@@ -28392,6 +30865,125 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Lakers @ Grizzlies",
+      "start": "2026-11-29T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Spurs",
+      "start": "2026-11-29T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Suns @ Jazz",
+      "start": "2026-11-29T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Heat @ Cavaliers",
+      "start": "2026-11-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Pistons",
+      "start": "2026-11-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Knicks",
+      "start": "2026-11-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Raptors",
+      "start": "2026-11-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Trail Blazers",
+      "start": "2026-11-29T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Warriors",
+      "start": "2026-11-30T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Kings",
+      "start": "2026-11-30T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Hornets",
+      "start": "2026-12-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ Pistons",
+      "start": "2026-12-01T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Thunder @ Nets",
+      "start": "2026-12-01T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Rockets",
+      "start": "2026-12-01T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Celtics @ Mavericks",
+      "start": "2026-12-01T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Spurs @ Bucks",
+      "start": "2026-12-01T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Pelicans @ Kings",
+      "start": "2026-12-01T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Rensselaer @ Union (NY)",
       "start": "2026-12-01T16:00:00Z",
@@ -28407,6 +30999,62 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Pacers @ Cavaliers",
+      "start": "2026-12-02T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ 76ers",
+      "start": "2026-12-02T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hawks @ Heat",
+      "start": "2026-12-02T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Bulls",
+      "start": "2026-12-02T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Rockets",
+      "start": "2026-12-02T01:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Clippers @ Suns",
+      "start": "2026-12-02T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Trail Blazers",
+      "start": "2026-12-02T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Warriors",
+      "start": "2026-12-02T04:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Anselm @ Long Island University",
       "start": "2026-12-02T18:00:00Z",
@@ -28420,6 +31068,69 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "Grizzlies @ Pistons",
+      "start": "2026-12-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nuggets @ 76ers",
+      "start": "2026-12-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Hornets @ Celtics",
+      "start": "2026-12-03T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Magic @ Mavericks",
+      "start": "2026-12-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Knicks @ Bucks",
+      "start": "2026-12-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Lakers @ Pelicans",
+      "start": "2026-12-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Nets @ Thunder",
+      "start": "2026-12-03T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Kings @ Suns",
+      "start": "2026-12-03T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Timberwolves @ Clippers",
+      "start": "2026-12-03T03:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -28452,12 +31163,54 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "NBA",
+      "title": "Pacers @ Hawks",
+      "start": "2026-12-04T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Wizards @ Heat",
+      "start": "2026-12-04T00:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Cavaliers @ Bulls",
+      "start": "2026-12-04T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Raptors @ Spurs",
+      "start": "2026-12-04T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NBA",
+      "title": "Jazz @ Trail Blazers",
+      "start": "2026-12-04T03:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
       "league": "NCAA FB",
       "title": "TBD at TBD",
       "start": "2026-12-04T05:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "TBD @ TBD",
+      "start": "2026-12-04T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -28782,6 +31535,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NBA",
+      "title": "TBD @ TBD",
+      "start": "2026-12-05T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -29121,6 +31881,20 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — São Paulo",
+      "start": "2026-12-06T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
+      "league": "NBA",
+      "title": "TBD @ TBD",
+      "start": "2026-12-08T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -30782,6 +33556,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Mexico City",
+      "start": "2027-01-10T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -32810,6 +35591,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Miami",
+      "start": "2027-01-31T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "New Hampshire @ Northeastern",
       "start": "2027-02-04T05:00:00Z",
@@ -33933,6 +36721,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah",
+      "start": "2027-02-13T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "Six Nations",
       "title": "Italy @ Ireland",
       "start": "2027-02-13T14:10:00Z",
@@ -34170,6 +36965,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah",
+      "start": "2027-02-14T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "Six Nations",
@@ -34644,6 +37446,13 @@
       "start": "2027-03-13T20:10:00Z",
       "tag": "UPCOMING",
       "icon": "🏉"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Madrid",
+      "start": "2027-03-21T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -38757,6 +41566,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin",
+      "start": "2027-05-02T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Chi Cubs @ Pittsburgh",
       "start": "2027-05-03T07:33:00Z",
@@ -38859,6 +41675,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin",
+      "start": "2027-05-03T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -40305,6 +43128,13 @@
       "icon": "🏎️"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco",
+      "start": "2027-05-16T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Baltimore @ Toronto",
       "start": "2027-05-17T07:33:00Z",
@@ -40383,6 +43213,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco",
+      "start": "2027-05-17T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -44053,6 +46890,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Sanya",
+      "start": "2027-06-20T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Houston @ Cleveland",
       "start": "2027-06-21T07:33:00Z",
@@ -45579,6 +48423,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai",
+      "start": "2027-07-04T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Baltimore @ Detroit",
       "start": "2027-07-05T07:33:00Z",
@@ -45617,6 +48468,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai",
+      "start": "2027-07-05T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -47503,6 +50361,13 @@
       "icon": "🏎️"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo",
+      "start": "2027-07-25T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Chi Cubs @ Washington",
       "start": "2027-07-26T07:33:00Z",
@@ -47597,6 +50462,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo",
+      "start": "2027-07-26T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -49743,6 +52615,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — London",
+      "start": "2027-08-15T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Pittsburgh @ Cincinnati",
       "start": "2027-08-16T07:33:00Z",
@@ -49837,6 +52716,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — London",
+      "start": "2027-08-16T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -131795,3304 +134681,376 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
-      "league": "NBA",
-      "title": "Heat @ Raptors",
-      "start": "2026-10-03T23:00:00Z",
+      "league": "PLL",
+      "title": "Denver Outlaws @ Utah Archers",
+      "start": "2026-09-07T19:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🥍",
+      "source": "premierlacrosseleague.com/schedule"
     },
     {
-      "league": "NBA",
-      "title": "Jazz @ Nuggets",
-      "start": "2026-10-04T23:00:00Z",
+      "league": "PLL",
+      "title": "Boston Cannons @ Philadelphia Waterdogs",
+      "start": "2026-09-07T21:30:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🥍",
+      "source": "premierlacrosseleague.com/schedule"
     },
     {
-      "league": "NBA",
-      "title": "Grizzlies @ Hawks",
-      "start": "2026-10-05T23:00:00Z",
+      "league": "PLL",
+      "title": "PLL U.S. Bank Championship",
+      "start": "2026-09-20T16:30:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🥍",
+      "source": "premierlacrosseleague.com/schedule"
     },
     {
-      "league": "NBA",
-      "title": "Suns @ Pistons",
-      "start": "2026-10-05T23:00:00Z",
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 07 Jun MXGP of Latvia Ke",
+      "start": "2026-05-24T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏍️",
+      "source": "mxgp.com/calendar"
     },
     {
-      "league": "NBA",
-      "title": "Knicks @ 76ers",
-      "start": "2026-10-05T23:00:00Z",
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 07 Jun MXGP of Latvia Kegums 28 Jun MXGP of Portugal Agueda 19 Jul Monst",
+      "start": "2026-05-24T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏍️",
+      "source": "mxgp.com/calendar"
     },
     {
-      "league": "NBA",
-      "title": "Timberwolves @ Bucks",
-      "start": "2026-10-06T00:00:00Z",
+      "league": "MXGP",
+      "title": "of Germany Teutschenthal 07 Jun MXGP of Latvia Kegums 21 Jun MXGP of Italy Montevarchi 28 Jun MXGP o",
+      "start": "2026-05-31T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏍️",
+      "source": "mxgp.com/calendar"
     },
     {
-      "league": "NBA",
-      "title": "Lakers @ Kings",
-      "start": "2026-10-06T02:00:00Z",
+      "league": "MXGP",
+      "title": "of France Lacapelle Marival 31 May Liqui Moly MXGP of Germany Teutschenthal 19 Jul Monster Energy MX",
+      "start": "2026-05-24T12:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏍️",
+      "source": "mxgp.com/calendar"
     },
     {
-      "league": "NBA",
-      "title": "Nets @ Hornets",
-      "start": "2026-10-06T23:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Stockholm — Strawberry Arena",
+      "start": "2027-02-13T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏁",
+      "source": "monsterjam.com official engagement data"
     },
     {
-      "league": "NBA",
-      "title": "Pelicans @ Thunder",
-      "start": "2026-10-07T00:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Antwerp — AFAS Dome",
+      "start": "2027-03-20T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏁",
+      "source": "monsterjam.com official engagement data"
     },
     {
-      "league": "NBA",
-      "title": "Nuggets @ Jazz",
-      "start": "2026-10-07T01:00:00Z",
+      "league": "MONSTER JAM",
+      "title": "Monster Jam — Anaheim — Angel Stadium",
+      "start": "2026-12-19T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏁",
+      "source": "monsterjam.com official engagement data"
     },
     {
-      "league": "NBA",
-      "title": "Lakers @ Warriors",
-      "start": "2026-10-07T02:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ Australia",
+      "start": "2027-10-01T10:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Timberwolves @ Pacers",
-      "start": "2026-10-07T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ Wales",
+      "start": "2027-10-02T02:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Magic @ Grizzlies",
-      "start": "2026-10-08T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Chile @ New Zealand",
+      "start": "2027-10-02T05:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Bucks @ Thunder",
-      "start": "2026-10-08T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "USA @ France",
+      "start": "2027-10-02T07:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Suns @ Bulls",
-      "start": "2026-10-08T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Tonga @ England",
+      "start": "2027-10-02T10:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Warriors @ Trail Blazers",
-      "start": "2026-10-08T02:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Samoa @ Japan",
+      "start": "2027-10-03T01:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Celtics @ Cavaliers",
-      "start": "2026-10-08T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Italy @ South Africa",
+      "start": "2027-10-03T03:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Pelicans @ Heat",
-      "start": "2026-10-08T23:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Uruguay @ Scotland",
+      "start": "2027-10-03T06:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "76ers @ Nets",
-      "start": "2026-10-08T23:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Romania @ Georgia",
+      "start": "2027-10-03T10:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Wizards @ Knicks",
-      "start": "2026-10-08T23:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Spain @ Fiji",
+      "start": "2027-10-04T03:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Hawks @ Spurs",
-      "start": "2026-10-09T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Ireland",
+      "start": "2027-10-04T06:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Kings @ Lakers",
-      "start": "2026-10-09T02:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Canada @ Argentina",
+      "start": "2027-10-04T08:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Rockets @ Mavericks",
-      "start": "2026-10-09T12:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Tonga @ Wales",
+      "start": "2027-10-08T07:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Grizzlies @ Bulls",
-      "start": "2026-10-10T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ England",
+      "start": "2027-10-08T09:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Clippers @ Raptors",
-      "start": "2026-10-10T22:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Samoa @ USA",
+      "start": "2027-10-09T04:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Hawks @ Pacers",
-      "start": "2026-10-10T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Australia @ New Zealand",
+      "start": "2027-10-09T06:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Pistons @ Wizards",
-      "start": "2026-10-10T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Japan @ France",
+      "start": "2027-10-09T08:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Timberwolves @ Heat",
-      "start": "2026-10-11T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ Chile",
+      "start": "2027-10-09T10:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "76ers @ Celtics",
-      "start": "2026-10-11T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Canada @ Fiji",
+      "start": "2027-10-10T01:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Kings @ Warriors",
-      "start": "2026-10-11T00:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Spain @ Argentina",
+      "start": "2027-10-10T04:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Spurs @ Suns",
-      "start": "2026-10-11T02:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Georgia @ South Africa",
+      "start": "2027-10-10T06:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Mavericks @ Rockets",
-      "start": "2026-10-11T10:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Scotland @ Ireland",
+      "start": "2027-10-10T09:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Magic @ Cavaliers",
-      "start": "2026-10-11T22:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Uruguay",
+      "start": "2027-10-11T06:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Bucks @ Hornets",
-      "start": "2026-10-11T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Romania @ Italy",
+      "start": "2027-10-11T08:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Bulls @ Nuggets",
-      "start": "2026-10-12T01:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Hong Kong China @ New Zealand",
+      "start": "2027-10-15T06:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Lions @ Trail Blazers",
-      "start": "2026-10-12T20:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "USA @ Japan",
+      "start": "2027-10-15T09:30:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Thunder @ Hawks",
-      "start": "2026-10-12T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Zimbabwe @ Tonga",
+      "start": "2027-10-15T10:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Nets @ Wizards",
-      "start": "2026-10-12T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Fiji @ Argentina",
+      "start": "2027-10-16T02:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Timberwolves @ Knicks",
-      "start": "2026-10-12T23:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Chile @ Australia",
+      "start": "2027-10-16T05:10:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Spurs @ Jazz",
-      "start": "2026-10-13T01:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Wales @ England",
+      "start": "2027-10-16T08:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Cavaliers @ Magic",
-      "start": "2026-10-13T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Canada @ Spain",
+      "start": "2027-10-16T10:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Knicks @ Raptors",
-      "start": "2026-10-13T23:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Georgia @ Italy",
+      "start": "2027-10-17T01:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Pacers @ Thunder",
-      "start": "2026-10-14T00:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Uruguay @ Ireland",
+      "start": "2027-10-17T03:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Warriors @ Lakers",
-      "start": "2026-10-14T02:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Portugal @ Scotland",
+      "start": "2027-10-17T06:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Trail Blazers @ Kings",
-      "start": "2026-10-14T02:00:00Z",
+      "league": "Rugby World Cup",
+      "title": "Samoa @ France",
+      "start": "2027-10-17T08:45:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     },
     {
-      "league": "NBA",
-      "title": "Nets @ Heat",
-      "start": "2026-10-14T23:30:00Z",
+      "league": "Rugby World Cup",
+      "title": "Romania @ South Africa",
+      "start": "2027-10-17T11:15:00Z",
       "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Celtics",
-      "start": "2026-10-14T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Spurs",
-      "start": "2026-10-15T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Mavericks",
-      "start": "2026-10-15T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Bucks",
-      "start": "2026-10-15T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Timberwolves",
-      "start": "2026-10-15T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Knicks",
-      "start": "2026-10-15T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Rockets",
-      "start": "2026-10-16T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Magic",
-      "start": "2026-10-16T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ 76ers",
-      "start": "2026-10-16T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Pistons",
-      "start": "2026-10-16T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Pacers",
-      "start": "2026-10-16T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Mavericks",
-      "start": "2026-10-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Spurs",
-      "start": "2026-10-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Grizzlies",
-      "start": "2026-10-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Pelicans",
-      "start": "2026-10-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Bulls",
-      "start": "2026-10-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Warriors",
-      "start": "2026-10-17T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Suns",
-      "start": "2026-10-17T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Lakers",
-      "start": "2026-10-17T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Pistons",
-      "start": "2026-10-20T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Knicks",
-      "start": "2026-10-20T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Spurs",
-      "start": "2026-10-21T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Magic",
-      "start": "2026-10-21T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Wizards",
-      "start": "2026-10-21T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Heat",
-      "start": "2026-10-21T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Nets",
-      "start": "2026-10-21T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Raptors",
-      "start": "2026-10-21T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Grizzlies",
-      "start": "2026-10-22T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Pelicans",
-      "start": "2026-10-22T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Rockets",
-      "start": "2026-10-22T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Lakers",
-      "start": "2026-10-22T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Trail Blazers",
-      "start": "2026-10-22T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Clippers",
-      "start": "2026-10-22T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ 76ers",
-      "start": "2026-10-22T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Thunder",
-      "start": "2026-10-23T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Celtics",
-      "start": "2026-10-23T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Hornets",
-      "start": "2026-10-23T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Pacers",
-      "start": "2026-10-23T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Magic",
-      "start": "2026-10-23T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Wizards",
-      "start": "2026-10-23T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Heat",
-      "start": "2026-10-24T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Bucks",
-      "start": "2026-10-24T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Spurs",
-      "start": "2026-10-24T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Jazz",
-      "start": "2026-10-24T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Warriors",
-      "start": "2026-10-24T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Lakers",
-      "start": "2026-10-24T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Kings",
-      "start": "2026-10-24T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Hornets",
-      "start": "2026-10-24T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Cavaliers",
-      "start": "2026-10-24T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ 76ers",
-      "start": "2026-10-24T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Hawks",
-      "start": "2026-10-25T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Bulls",
-      "start": "2026-10-25T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Mavericks",
-      "start": "2026-10-25T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Nuggets",
-      "start": "2026-10-25T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Suns",
-      "start": "2026-10-25T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Jazz",
-      "start": "2026-10-25T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Nets",
-      "start": "2026-10-25T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Knicks",
-      "start": "2026-10-25T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Timberwolves",
-      "start": "2026-10-25T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Thunder",
-      "start": "2026-10-25T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ 76ers",
-      "start": "2026-10-25T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Kings",
-      "start": "2026-10-26T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Hornets",
-      "start": "2026-10-26T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Cavaliers",
-      "start": "2026-10-26T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Celtics",
-      "start": "2026-10-26T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Heat",
-      "start": "2026-10-26T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Bucks",
-      "start": "2026-10-27T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Thunder",
-      "start": "2026-10-27T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Rockets",
-      "start": "2026-10-27T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Jazz",
-      "start": "2026-10-27T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Nuggets",
-      "start": "2026-10-27T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Celtics",
-      "start": "2026-10-27T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Knicks",
-      "start": "2026-10-28T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Spurs",
-      "start": "2026-10-28T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Lakers",
-      "start": "2026-10-28T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Hawks",
-      "start": "2026-10-28T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Cavaliers",
-      "start": "2026-10-28T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Pistons",
-      "start": "2026-10-28T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Pacers",
-      "start": "2026-10-28T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Raptors",
-      "start": "2026-10-28T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Bulls",
-      "start": "2026-10-29T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Bucks",
-      "start": "2026-10-29T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Timberwolves",
-      "start": "2026-10-29T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Pelicans",
-      "start": "2026-10-29T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Jazz",
-      "start": "2026-10-29T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Mavericks",
-      "start": "2026-10-29T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Clippers",
-      "start": "2026-10-29T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Hawks",
-      "start": "2026-10-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Pelicans",
-      "start": "2026-10-30T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Trail Blazers",
-      "start": "2026-10-30T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Wizards",
-      "start": "2026-10-30T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Celtics",
-      "start": "2026-10-30T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Nets",
-      "start": "2026-10-30T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ 76ers",
-      "start": "2026-10-30T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Raptors",
-      "start": "2026-10-30T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Heat",
-      "start": "2026-10-31T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Mavericks",
-      "start": "2026-10-31T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Timberwolves",
-      "start": "2026-10-31T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Warriors",
-      "start": "2026-10-31T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Suns",
-      "start": "2026-10-31T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Jazz",
-      "start": "2026-10-31T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Hornets",
-      "start": "2026-10-31T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Pelicans",
-      "start": "2026-10-31T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Grizzlies",
-      "start": "2026-11-01T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Bucks",
-      "start": "2026-11-01T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Spurs",
-      "start": "2026-11-01T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Rockets",
-      "start": "2026-11-01T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Magic",
-      "start": "2026-11-01T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Pacers",
-      "start": "2026-11-01T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Warriors",
-      "start": "2026-11-02T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Lakers",
-      "start": "2026-11-02T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Cavaliers",
-      "start": "2026-11-03T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Hornets",
-      "start": "2026-11-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Pacers",
-      "start": "2026-11-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Knicks",
-      "start": "2026-11-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Magic",
-      "start": "2026-11-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ 76ers",
-      "start": "2026-11-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Mavericks",
-      "start": "2026-11-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Grizzlies",
-      "start": "2026-11-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Timberwolves",
-      "start": "2026-11-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Rockets",
-      "start": "2026-11-03T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Spurs",
-      "start": "2026-11-03T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Nuggets",
-      "start": "2026-11-03T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Warriors",
-      "start": "2026-11-03T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Clippers",
-      "start": "2026-11-03T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Lakers",
-      "start": "2026-11-03T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Pistons",
-      "start": "2026-11-05T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Wizards",
-      "start": "2026-11-05T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Celtics",
-      "start": "2026-11-05T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Nets",
-      "start": "2026-11-05T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Knicks",
-      "start": "2026-11-05T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Grizzlies",
-      "start": "2026-11-05T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Pelicans",
-      "start": "2026-11-05T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Thunder",
-      "start": "2026-11-05T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Rockets",
-      "start": "2026-11-05T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Nuggets",
-      "start": "2026-11-05T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Suns",
-      "start": "2026-11-05T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Spurs",
-      "start": "2026-11-05T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Kings",
-      "start": "2026-11-05T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Clippers",
-      "start": "2026-11-05T03:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Suns",
-      "start": "2026-11-06T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Warriors",
-      "start": "2026-11-06T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Hawks",
-      "start": "2026-11-07T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Hornets",
-      "start": "2026-11-07T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Cavaliers",
-      "start": "2026-11-07T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Mavericks",
-      "start": "2026-11-07T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Grizzlies",
-      "start": "2026-11-07T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Bucks",
-      "start": "2026-11-07T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Pelicans",
-      "start": "2026-11-07T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Lakers",
-      "start": "2026-11-07T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Kings",
-      "start": "2026-11-07T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Pacers",
-      "start": "2026-11-07T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Hawks",
-      "start": "2026-11-08T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Cavaliers",
-      "start": "2026-11-08T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Thunder",
-      "start": "2026-11-08T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Warriors",
-      "start": "2026-11-08T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Suns",
-      "start": "2026-11-08T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Trail Blazers",
-      "start": "2026-11-08T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Bulls",
-      "start": "2026-11-08T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Pistons",
-      "start": "2026-11-08T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Timberwolves",
-      "start": "2026-11-09T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Mavericks",
-      "start": "2026-11-09T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Bucks",
-      "start": "2026-11-09T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Clippers",
-      "start": "2026-11-09T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Kings",
-      "start": "2026-11-09T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Hawks",
-      "start": "2026-11-10T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Hornets",
-      "start": "2026-11-10T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Pistons",
-      "start": "2026-11-10T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Raptors",
-      "start": "2026-11-10T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Mavericks",
-      "start": "2026-11-10T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Rockets",
-      "start": "2026-11-10T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Suns",
-      "start": "2026-11-10T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Warriors",
-      "start": "2026-11-10T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Knicks",
-      "start": "2026-11-11T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ 76ers",
-      "start": "2026-11-11T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Suns",
-      "start": "2026-11-11T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Jazz",
-      "start": "2026-11-11T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Kings",
-      "start": "2026-11-11T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Trail Blazers",
-      "start": "2026-11-11T04:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Pacers",
-      "start": "2026-11-12T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Knicks",
-      "start": "2026-11-12T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Raptors",
-      "start": "2026-11-12T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Bulls",
-      "start": "2026-11-12T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Grizzlies",
-      "start": "2026-11-12T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Bucks",
-      "start": "2026-11-12T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Pelicans",
-      "start": "2026-11-12T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Jazz",
-      "start": "2026-11-12T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Rockets",
-      "start": "2026-11-12T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Trail Blazers",
-      "start": "2026-11-12T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ 76ers",
-      "start": "2026-11-13T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Wizards",
-      "start": "2026-11-13T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Timberwolves",
-      "start": "2026-11-13T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Suns",
-      "start": "2026-11-13T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Pacers",
-      "start": "2026-11-14T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Magic",
-      "start": "2026-11-14T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Heat",
-      "start": "2026-11-14T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Bulls",
-      "start": "2026-11-14T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Pelicans",
-      "start": "2026-11-14T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Rockets",
-      "start": "2026-11-14T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Spurs",
-      "start": "2026-11-14T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Kings",
-      "start": "2026-11-14T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Clippers",
-      "start": "2026-11-14T03:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Pelicans",
-      "start": "2026-11-15T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Cavaliers",
-      "start": "2026-11-15T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Heat",
-      "start": "2026-11-15T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Grizzlies",
-      "start": "2026-11-15T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Timberwolves",
-      "start": "2026-11-15T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ 76ers",
-      "start": "2026-11-15T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Suns",
-      "start": "2026-11-15T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Clippers",
-      "start": "2026-11-15T21:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Jazz",
-      "start": "2026-11-15T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Celtics",
-      "start": "2026-11-15T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Raptors",
-      "start": "2026-11-15T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Wizards",
-      "start": "2026-11-16T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Bucks",
-      "start": "2026-11-16T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Kings",
-      "start": "2026-11-16T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Celtics",
-      "start": "2026-11-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Cavaliers",
-      "start": "2026-11-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Wizards",
-      "start": "2026-11-17T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Nets",
-      "start": "2026-11-17T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Heat",
-      "start": "2026-11-17T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Timberwolves",
-      "start": "2026-11-17T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Pelicans",
-      "start": "2026-11-17T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Nuggets",
-      "start": "2026-11-17T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Raptors",
-      "start": "2026-11-18T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Timberwolves",
-      "start": "2026-11-18T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Spurs",
-      "start": "2026-11-18T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Lakers",
-      "start": "2026-11-18T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Clippers",
-      "start": "2026-11-18T04:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Cavaliers",
-      "start": "2026-11-19T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Pacers",
-      "start": "2026-11-19T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Heat",
-      "start": "2026-11-19T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Magic",
-      "start": "2026-11-19T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Nets",
-      "start": "2026-11-19T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Raptors",
-      "start": "2026-11-19T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Pelicans",
-      "start": "2026-11-19T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Thunder",
-      "start": "2026-11-19T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Nuggets",
-      "start": "2026-11-19T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Mavericks",
-      "start": "2026-11-19T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Lakers",
-      "start": "2026-11-19T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Kings",
-      "start": "2026-11-19T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Grizzlies",
-      "start": "2026-11-20T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Bucks",
-      "start": "2026-11-20T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Timberwolves",
-      "start": "2026-11-20T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Spurs",
-      "start": "2026-11-20T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Hawks",
-      "start": "2026-11-21T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Nets",
-      "start": "2026-11-21T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Cavaliers",
-      "start": "2026-11-21T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Pistons",
-      "start": "2026-11-21T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Bulls",
-      "start": "2026-11-21T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Thunder",
-      "start": "2026-11-21T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Jazz",
-      "start": "2026-11-21T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Rockets @ Nuggets",
-      "start": "2026-11-21T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Lakers",
-      "start": "2026-11-21T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ 76ers",
-      "start": "2026-11-21T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ Knicks",
-      "start": "2026-11-22T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Mavericks",
-      "start": "2026-11-22T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Timberwolves",
-      "start": "2026-11-22T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Spurs",
-      "start": "2026-11-22T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Kings",
-      "start": "2026-11-22T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Hawks",
-      "start": "2026-11-22T20:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Heat",
-      "start": "2026-11-22T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Wizards",
-      "start": "2026-11-23T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Bulls",
-      "start": "2026-11-23T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Jazz",
-      "start": "2026-11-23T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Knicks",
-      "start": "2026-11-23T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Warriors",
-      "start": "2026-11-23T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Hornets",
-      "start": "2026-11-24T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Trail Blazers @ 76ers",
-      "start": "2026-11-24T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Pacers",
-      "start": "2026-11-24T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Raptors",
-      "start": "2026-11-24T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Timberwolves",
-      "start": "2026-11-24T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Bulls",
-      "start": "2026-11-24T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Pelicans",
-      "start": "2026-11-24T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Rockets",
-      "start": "2026-11-24T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Lakers",
-      "start": "2026-11-24T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Kings",
-      "start": "2026-11-24T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pistons @ Magic",
-      "start": "2026-11-25T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Wizards",
-      "start": "2026-11-25T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Nuggets",
-      "start": "2026-11-25T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ 76ers",
-      "start": "2026-11-25T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bulls @ Hornets",
-      "start": "2026-11-26T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Knicks",
-      "start": "2026-11-26T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Thunder",
-      "start": "2026-11-26T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Grizzlies",
-      "start": "2026-11-26T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Bucks",
-      "start": "2026-11-26T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Rockets",
-      "start": "2026-11-26T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Warriors",
-      "start": "2026-11-26T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Trail Blazers",
-      "start": "2026-11-26T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Knicks",
-      "start": "2026-11-28T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Bucks @ Pistons",
-      "start": "2026-11-28T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Pacers",
-      "start": "2026-11-28T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Raptors",
-      "start": "2026-11-28T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Celtics",
-      "start": "2026-11-28T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Timberwolves",
-      "start": "2026-11-28T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Mavericks @ Suns",
-      "start": "2026-11-28T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Spurs",
-      "start": "2026-11-28T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Jazz",
-      "start": "2026-11-28T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Clippers",
-      "start": "2026-11-28T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Warriors @ Trail Blazers",
-      "start": "2026-11-28T02:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Wizards",
-      "start": "2026-11-28T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Hornets",
-      "start": "2026-11-28T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Bulls",
-      "start": "2026-11-29T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Bucks",
-      "start": "2026-11-29T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "76ers @ Rockets",
-      "start": "2026-11-29T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Grizzlies",
-      "start": "2026-11-29T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Spurs",
-      "start": "2026-11-29T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Suns @ Jazz",
-      "start": "2026-11-29T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Heat @ Cavaliers",
-      "start": "2026-11-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Pistons",
-      "start": "2026-11-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Knicks",
-      "start": "2026-11-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Raptors",
-      "start": "2026-11-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Trail Blazers",
-      "start": "2026-11-29T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Warriors",
-      "start": "2026-11-30T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Kings",
-      "start": "2026-11-30T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Hornets",
-      "start": "2026-12-01T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ Pistons",
-      "start": "2026-12-01T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Thunder @ Nets",
-      "start": "2026-12-01T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Rockets",
-      "start": "2026-12-01T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Celtics @ Mavericks",
-      "start": "2026-12-01T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Spurs @ Bucks",
-      "start": "2026-12-01T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pelicans @ Kings",
-      "start": "2026-12-01T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Cavaliers",
-      "start": "2026-12-02T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ 76ers",
-      "start": "2026-12-02T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hawks @ Heat",
-      "start": "2026-12-02T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Bulls",
-      "start": "2026-12-02T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Rockets",
-      "start": "2026-12-02T01:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Clippers @ Suns",
-      "start": "2026-12-02T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Trail Blazers",
-      "start": "2026-12-02T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Warriors",
-      "start": "2026-12-02T04:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Grizzlies @ Pistons",
-      "start": "2026-12-03T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nuggets @ 76ers",
-      "start": "2026-12-03T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Hornets @ Celtics",
-      "start": "2026-12-03T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Magic @ Mavericks",
-      "start": "2026-12-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Knicks @ Bucks",
-      "start": "2026-12-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Lakers @ Pelicans",
-      "start": "2026-12-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Nets @ Thunder",
-      "start": "2026-12-03T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Kings @ Suns",
-      "start": "2026-12-03T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Timberwolves @ Clippers",
-      "start": "2026-12-03T03:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Pacers @ Hawks",
-      "start": "2026-12-04T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Wizards @ Heat",
-      "start": "2026-12-04T00:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Cavaliers @ Bulls",
-      "start": "2026-12-04T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Raptors @ Spurs",
-      "start": "2026-12-04T01:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "Jazz @ Trail Blazers",
-      "start": "2026-12-04T03:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "TBD @ TBD",
-      "start": "2026-12-04T05:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "TBD @ TBD",
-      "start": "2026-12-05T05:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "NBA",
-      "title": "TBD @ TBD",
-      "start": "2026-12-08T05:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏀",
-      "source": "espn"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — São Paulo",
-      "start": "2026-12-06T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Mexico City",
-      "start": "2027-01-10T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Miami",
-      "start": "2027-01-31T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Jeddah",
-      "start": "2027-02-13T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Jeddah",
-      "start": "2027-02-14T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Madrid",
-      "start": "2027-03-21T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Berlin",
-      "start": "2027-05-02T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Berlin",
-      "start": "2027-05-03T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Monaco",
-      "start": "2027-05-16T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Monaco",
-      "start": "2027-05-17T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Sanya",
-      "start": "2027-06-20T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Shanghai",
-      "start": "2027-07-04T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Shanghai",
-      "start": "2027-07-05T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Tokyo",
-      "start": "2027-07-25T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Tokyo",
-      "start": "2027-07-26T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — London",
-      "start": "2027-08-15T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — London",
-      "start": "2027-08-16T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA TripleManía 34 — Night 1 — Las Vegas",
-      "start": "2026-09-11T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official announcement"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA TripleManía 34 — Night 2 — Mexico City",
-      "start": "2026-09-13T23:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official announcement"
+      "icon": "🏉",
+      "source": "FixtureDownload / World Rugby 2027 fixture"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T21:33:47.943972+00:00",
+    "generatedAt": "2026-08-31T22:05:17.933604+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -135160,7 +135118,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             10,
@@ -135171,7 +135129,7 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
+        "observedUpcoming": 393,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -135946,7 +135904,7 @@
         "probeHours": 1,
         "reason": "observed_activity",
         "configuredSeason": [],
-        "observedUpcoming": 21,
+        "observedUpcoming": 38,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -135988,7 +135946,7 @@
         "probeHours": 1,
         "reason": "observed_activity",
         "configuredSeason": [],
-        "observedUpcoming": 2,
+        "observedUpcoming": 4,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -136057,7 +136015,7 @@
         "active": true,
         "class": "active",
         "probeHours": 1,
-        "reason": "season_window",
+        "reason": "observed_activity",
         "configuredSeason": [
           [
             10,
@@ -136068,7 +136026,7 @@
             30
           ]
         ],
-        "observedUpcoming": 0,
+        "observedUpcoming": 393,
         "observedRecent": 0,
         "provider": "espn"
       },
@@ -136725,7 +136683,7 @@
     },
     "NBA": {
       "source": "ESPN scoreboard",
-      "added": 393,
+      "added": 0,
       "healthy": true
     },
     "PLL": {
@@ -136741,6 +136699,11 @@
     "MotoGP": {
       "source": "MotoGP public API",
       "parsed": 46,
+      "added": 0
+    },
+    "MXGP": {
+      "source": "Honda Racing MXGP calendar",
+      "parsed": 19,
       "added": 0
     },
     "MONSTER JAM": {
@@ -136761,12 +136724,41 @@
     "FORMULA E": {
       "source": "FIA Formula E calendar",
       "parsed": 17,
-      "added": 17
+      "added": 0
     },
     "AAA Wrestling": {
       "source": "WWE/AAA official Triplemanía announcement",
       "announced": 2,
-      "added": 2
+      "added": 0
+    }
+  },
+  "phase1RepairReport": {
+    "PLL": {
+      "source": "PLL official GraphQL with official schedule fallback",
+      "parsed": 1,
+      "added": 3,
+      "errors": 3
+    },
+    "MotoGP": {
+      "source": "MotoGP PulseLive broadcast API",
+      "parsed": 46,
+      "added": 0
+    },
+    "MXGP": {
+      "source": "MXGP official calendar with official-guide fallback",
+      "parsed": 5,
+      "added": 4
+    },
+    "MONSTER JAM": {
+      "source": "Monster Jam official engagement data",
+      "parsed": 45,
+      "added": 3
+    },
+    "Rugby World Cup": {
+      "source": "World Rugby 2027 fixture corroborated by FixtureDownload JSON",
+      "parsed": 52,
+      "concrete": 36,
+      "added": 36
     }
   }
 }
