@@ -14,6 +14,7 @@ on:
       - 'scripts/espn_ncaa_adapter.py'
       - 'scripts/easy_provider_repairs.py'
       - 'scripts/ipl_core_adapter.py'
+      - 'scripts/special_schedule_repairs.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
       - 'scripts/schedule_engine_safe.py'
@@ -42,6 +43,8 @@ jobs:
         run: python scripts/easy_provider_repairs.py
       - name: Repair IPL through ESPN cricket Core API
         run: python scripts/ipl_core_adapter.py
+      - name: Repair active motorsport and lacrosse sources
+        run: python scripts/special_schedule_repairs.py
       - name: Normalize adapter timestamps and validate feed invariants
         run: |
           python - <<'PY'
@@ -68,22 +71,14 @@ jobs:
             elif raw != normalized:
               e['start']=normalized; fixed += 1
           assert not bad, f'invalid event timestamps: {len(bad)}'
-
-          # Multiple adapters can legitimately describe the same game.  The
-          # canonical identity is league + title + normalized start time.
-          # Keep the first record so the final feed has one event per game.
-          unique=[]
-          seen=set()
-          duplicates=0
+          unique=[]; seen=set(); duplicates=0
           for e in events:
             key=(e.get('league'),e.get('title'),e.get('start'))
             if key in seen:
               duplicates += 1
               continue
-            seen.add(key)
-            unique.append(e)
+            seen.add(key); unique.append(e)
           events=unique
-
           p['events']=events
           p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})}
           p['generatedAt']=datetime.now(timezone.utc).isoformat()
@@ -94,7 +89,7 @@ jobs:
           print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues; normalized={fixed}; duplicates_removed={duplicates}')
           print('official source failures:', p.get('officialSourceFailures', []))
           print('provider failures:', p.get('failedSources', []))
-          print('easy provider repairs:', p.get('providerRepairReport', {}))
+          print('provider repairs:', p.get('providerRepairReport', {}))
           print('official API adapters:', p.get('officialApiAdapterReport', {}))
           si=p.get('seasonIntelligence',{})
           print('season intelligence decisions:', len(si.get('providerDecisions',[])))
