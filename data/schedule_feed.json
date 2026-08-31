@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T19:41:06.055271+00:00",
+  "generatedAt": "2026-08-31T19:50:32.147921+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -24,9 +24,10 @@
     "NCAA FCS": 779,
     "NCAA Men's Hockey": 740,
     "NCAA Men's Soccer": 1462,
+    "NCAA Women's Field Hockey": 615,
     "NCAA Women's Hockey": 1486,
     "NCAA Women's Soccer": 2233,
-    "NCAA Women's Volleyball": 3001,
+    "NCAA Women's Volleyball": 2999,
     "NFL": 16,
     "NHL": 73,
     "NRL": 8,
@@ -70989,6 +70990,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Cincinnati at Northern Kentucky",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "IU Indianapolis at Notre Dame",
       "start": "2026-09-06T16:00:00Z",
       "tag": "UPCOMING",
@@ -71223,15 +71233,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Cincinnati at Northern Kentucky",
-      "start": "2026-09-06T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Indiana at Ohio",
       "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
@@ -71278,15 +71279,6 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Vermont at Saint Joseph's",
-      "start": "2026-09-06T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Idaho at South Dakota State",
       "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -71601,6 +71593,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Idaho at South Dakota State",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Northwestern at Tennessee",
       "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
@@ -71620,15 +71621,6 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Le Moyne at UAlbany",
-      "start": "2026-09-06T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Western Kentucky at UIC",
       "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -71718,15 +71710,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Utah at Oregon State",
-      "start": "2026-09-06T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Nevada at San Francisco",
       "start": "2026-09-06T19:00:00Z",
       "tag": "UPCOMING",
@@ -71783,6 +71766,15 @@
       "league": "NCAA Women's Soccer",
       "title": "Columbia at California",
       "start": "2026-09-06T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Utah at Oregon State",
+      "start": "2026-09-06T19:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -71907,6 +71899,15 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Rochester Christian at Oakland",
+      "start": "2026-09-07T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Memphis at Ohio State",
       "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
@@ -71943,8 +71944,8 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "New Mexico State at Utah Valley",
-      "start": "2026-09-06T23:00:00Z",
+      "title": "Western Kentucky at UIC",
+      "start": "2026-09-06T18:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -71962,6 +71963,15 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Marshall at West Virginia",
+      "start": "2026-09-06T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "New Mexico State at Utah Valley",
       "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -72034,15 +72044,6 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Washington State at Hawai'i",
-      "start": "2026-09-07T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Rochester Christian at Oakland",
       "start": "2026-09-07T02:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -116430,15 +116431,6 @@
     },
     {
       "league": "NCAA Women's Volleyball",
-      "title": "Wyoming Cowboys at New Mexico Lobos",
-      "start": "2026-11-18T20:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
       "title": "Eastern Illinois Panthers at Southeast Missouri State Redhawks",
       "start": "2026-11-18T22:00:00Z",
       "tag": "UPCOMING",
@@ -116567,15 +116559,6 @@
       "league": "NCAA Women's Volleyball",
       "title": "Utah Valley Wolverines at Cal State Bakersfield Roadrunners",
       "start": "2026-11-19T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "UNLV Rebels at San José State Spartans",
-      "start": "2026-11-19T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -123330,10 +123313,5545 @@
       "icon": "🏒",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at Stanford Cardinal",
+      "start": "2026-08-31T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Davidson Wildcats",
+      "start": "2026-09-02T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at Rutgers Scarlet Knights",
+      "start": "2026-09-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Brown Bears",
+      "start": "2026-09-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Miami (OH) RedHawks",
+      "start": "2026-09-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Maine Black Bears",
+      "start": "2026-09-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Towson Tigers",
+      "start": "2026-09-04T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Saint Louis Billikens",
+      "start": "2026-09-04T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Duke Blue Devils",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Stanford Cardinal",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Hampshire Wildcats at Indiana Hoosiers",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at UC Davis Aggies",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Syracuse Orange",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Penn State Nittany Lions",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at American University Eagles",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Princeton Tigers",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Wagner Seahawks",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at Saint Joseph's Hawks",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Providence Friars",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Bryant Bulldogs",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Massachusetts MInutewomen",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Iowa Hawkeyes",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Drexel Dragons",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at Harvard Crimson",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Monmouth Hawks",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Queens University Royals",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Colgate Raiders",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Kent State Golden Flashes at Michigan Wolverines",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at William & Mary Tribe",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Bucknell Bison",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Holy Cross Crusaders",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Boston College Eagles",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Lafayette Leopards",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at North Carolina Tar Heels",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Cornell Big Red",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Yale Bulldogs",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Stonehill Skyhawks",
+      "start": "2026-09-05T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at Kent State Golden Flashes",
+      "start": "2026-09-05T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Lehigh Mountain Hawks",
+      "start": "2026-09-05T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Pennsylvania Quakers",
+      "start": "2026-09-06T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Duke Blue Devils",
+      "start": "2026-09-06T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Virginia Cavaliers",
+      "start": "2026-09-06T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Maine Black Bears",
+      "start": "2026-09-06T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Lock Haven Bald Eagles",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Wake Forest Demon Deacons",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Delaware Fightin' Blue Hens",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at New Hampshire Wildcats",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Colgate Raiders",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at James Madison Dukes",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Fairfield Stags",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Villanova Wildcats",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Bryant Bulldogs",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Towson Tigers",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Drexel Dragons",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Holy Cross Crusaders",
+      "start": "2026-09-06T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at North Carolina Tar Heels",
+      "start": "2026-09-06T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Harvard Crimson",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Boston University Terriers",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Wagner Seahawks",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at Longwood Lancers",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at American University Eagles",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at Massachusetts MInutewomen",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Saint Louis Billikens",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at William & Mary Tribe",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Boston College Eagles",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Bucknell Bison",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at Rutgers Scarlet Knights",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at Michigan Wolverines",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Yale Bulldogs",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Iowa Hawkeyes",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Brown Bears",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at UC Davis Aggies",
+      "start": "2026-09-06T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at California Golden Bears",
+      "start": "2026-09-06T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at Indiana Hoosiers",
+      "start": "2026-09-07T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Lafayette Leopards",
+      "start": "2026-09-07T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Francis Red Wolves at Mercyhurst Lakers",
+      "start": "2026-09-08T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at App State Mountaineers",
+      "start": "2026-09-09T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Sacred Heart Pioneers",
+      "start": "2026-09-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Maine Black Bears",
+      "start": "2026-09-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Princeton Tigers",
+      "start": "2026-09-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Cornell Big Red",
+      "start": "2026-09-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Central Michigan Chippewas",
+      "start": "2026-09-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Kent State Golden Flashes",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Northwestern Wildcats",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Brown Bears",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Iowa Hawkeyes",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Bryant Bulldogs",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Columbia Lions",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Quinnipiac Bobcats",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Pennsylvania Quakers",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Vermont Catamounts",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at Villanova Wildcats",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary Tribe at American University Eagles",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Dartmouth Big Green",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Harvard Crimson",
+      "start": "2026-09-11T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Richmond Spiders",
+      "start": "2026-09-11T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Ohio State Buckeyes",
+      "start": "2026-09-11T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Temple Owls",
+      "start": "2026-09-11T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Lehigh Mountain Hawks",
+      "start": "2026-09-11T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Drexel Dragons",
+      "start": "2026-09-11T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Michigan Wolverines",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Duke Blue Devils",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at Liberty Flames",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at North Carolina Tar Heels",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at Lock Haven Bald Eagles",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Davidson Wildcats",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at Wake Forest Demon Deacons",
+      "start": "2026-09-11T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Holy Cross Crusaders",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at Maryland Terrapins",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at Yale Bulldogs",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at UMass Lowell River Hawks",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Lafayette Leopards",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at Mercyhurst Lakers",
+      "start": "2026-09-12T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Ball State BALL STATE CARDINALS",
+      "start": "2026-09-13T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Northwestern Wildcats",
+      "start": "2026-09-13T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bryant Bulldogs at Holy Cross Crusaders",
+      "start": "2026-09-13T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Rutgers Scarlet Knights",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Towson Tigers",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Kent State Golden Flashes",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Iowa Hawkeyes",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Richmond Spiders",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at App State Mountaineers",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at Penn State Nittany Lions",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Ohio State Buckeyes",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at Bucknell Bison",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Lehigh Mountain Hawks",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Yale Bulldogs",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Ohio Bobcats",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Hofstra Pride",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at La Salle Explorers",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Temple Owls",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Maryland Terrapins",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Monmouth Hawks",
+      "start": "2026-09-13T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Harvard Crimson",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at Central Michigan Chippewas",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Hampshire Wildcats at Massachusetts MInutewomen",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Fairfield Stags",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at Boston University Terriers",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Columbia Lions",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Liberty Flames",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Dartmouth Big Green",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at Duke Blue Devils",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at UMass Lowell River Hawks",
+      "start": "2026-09-13T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Virginia Cavaliers",
+      "start": "2026-09-13T17:03:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lafayette Leopards at Drexel Dragons",
+      "start": "2026-09-13T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at William & Mary Tribe",
+      "start": "2026-09-13T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at UAlbany Great Danes",
+      "start": "2026-09-13T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Penn State Nittany Lions",
+      "start": "2026-09-17T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Longwood Lancers",
+      "start": "2026-09-17T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Stanford Cardinal",
+      "start": "2026-09-18T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Massachusetts MInutewomen",
+      "start": "2026-09-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Sacred Heart Pioneers",
+      "start": "2026-09-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at UConn Huskies",
+      "start": "2026-09-18T16:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at La Salle Explorers",
+      "start": "2026-09-18T16:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Temple Owls",
+      "start": "2026-09-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at UAlbany Great Danes",
+      "start": "2026-09-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Ball State BALL STATE CARDINALS",
+      "start": "2026-09-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Long Island University Sharks",
+      "start": "2026-09-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at Kent State Golden Flashes",
+      "start": "2026-09-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Old Dominion Monarchs",
+      "start": "2026-09-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Mercyhurst Lakers",
+      "start": "2026-09-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Hofstra Pride",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at Pennsylvania Quakers",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Drexel Dragons at Fairfield Stags",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Saint Louis Billikens",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Stonehill Skyhawks",
+      "start": "2026-09-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Bryant Bulldogs",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Harvard Crimson at Dartmouth Big Green",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at Monmouth Hawks",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at Delaware Fightin' Blue Hens",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at Cornell Big Red",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at Syracuse Orange",
+      "start": "2026-09-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Bucknell Bison",
+      "start": "2026-09-18T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lafayette Leopards at Colgate Raiders",
+      "start": "2026-09-18T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Richmond Spiders",
+      "start": "2026-09-18T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Francis Red Wolves at Lock Haven Bald Eagles",
+      "start": "2026-09-18T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Iowa Hawkeyes",
+      "start": "2026-09-18T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at App State Mountaineers",
+      "start": "2026-09-18T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Louisville Cardinals",
+      "start": "2026-09-18T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Yale Bulldogs",
+      "start": "2026-09-18T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at Duke Blue Devils",
+      "start": "2026-09-18T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at Lehigh Mountain Hawks",
+      "start": "2026-09-19T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Liberty Flames",
+      "start": "2026-09-19T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at California Golden Bears",
+      "start": "2026-09-19T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Old Dominion Monarchs",
+      "start": "2026-09-20T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Lock Haven Bald Eagles",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Rider Broncs",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Davidson Wildcats",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Ohio State Buckeyes",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at New Hampshire Wildcats",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Ball State BALL STATE CARDINALS",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at Maryland Terrapins",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at UConn Huskies",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Colgate Raiders",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Monmouth Hawks",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Towson Tigers",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at William & Mary Tribe",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at North Carolina Tar Heels",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at Fairfield Stags",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Drexel Dragons at Villanova Wildcats",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Temple Owls",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Queens University Royals",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Louisville Cardinals",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at Lafayette Leopards",
+      "start": "2026-09-20T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at La Salle Explorers",
+      "start": "2026-09-20T16:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Iowa Hawkeyes",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Harvard Crimson",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at UAlbany Great Danes",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Central Michigan Chippewas",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at UMass Lowell River Hawks",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Liberty Flames",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bucknell Bison at Kent State Golden Flashes",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Wagner Seahawks",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Columbia Lions",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Bryant Bulldogs",
+      "start": "2026-09-20T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at UC Davis Aggies",
+      "start": "2026-09-20T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Maine Black Bears",
+      "start": "2026-09-20T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Brown Bears",
+      "start": "2026-09-20T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Vermont Catamounts",
+      "start": "2026-09-22T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Stanford Cardinal",
+      "start": "2026-09-23T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Wagner Seahawks",
+      "start": "2026-09-24T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Villanova Wildcats",
+      "start": "2026-09-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at New Haven Chargers",
+      "start": "2026-09-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Miami (OH) RedHawks",
+      "start": "2026-09-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Central Michigan Chippewas",
+      "start": "2026-09-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Merrimack Warriors",
+      "start": "2026-09-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Georgetown Hoyas",
+      "start": "2026-09-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Kent State Golden Flashes",
+      "start": "2026-09-25T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Ohio Bobcats",
+      "start": "2026-09-25T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary Tribe at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-09-25T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at VCU Rams",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at Brown Bears",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Dartmouth Big Green",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at Saint Joseph's Hawks",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at American University Eagles",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lafayette Leopards at Holy Cross Crusaders",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at Towson Tigers",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Bellarmine Knights",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Hofstra Pride",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Stonehill Skyhawks",
+      "start": "2026-09-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Northwestern Wildcats",
+      "start": "2026-09-25T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Lock Haven Bald Eagles",
+      "start": "2026-09-25T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at Virginia Cavaliers",
+      "start": "2026-09-25T20:03:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at California Golden Bears",
+      "start": "2026-09-25T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Duke Blue Devils at Wake Forest Demon Deacons",
+      "start": "2026-09-25T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Maryland Terrapins",
+      "start": "2026-09-25T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Iowa Hawkeyes",
+      "start": "2026-09-25T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at UConn Huskies",
+      "start": "2026-09-25T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Queens University Royals",
+      "start": "2026-09-25T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Stanford Cardinal",
+      "start": "2026-09-26T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Bucknell Bison",
+      "start": "2026-09-26T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Indiana Hoosiers",
+      "start": "2026-09-26T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at Harvard Crimson",
+      "start": "2026-09-26T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Yale Bulldogs",
+      "start": "2026-09-26T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at Lehigh Mountain Hawks",
+      "start": "2026-09-26T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at Old Dominion Monarchs",
+      "start": "2026-09-27T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Hofstra Pride",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at New Hampshire Wildcats",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at UConn Huskies",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at Wake Forest Demon Deacons",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Bellarmine Knights",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Drexel Dragons",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at Towson Tigers",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Miami (OH) RedHawks",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at Delaware Fightin' Blue Hens",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Kent State Golden Flashes at James Madison Dukes",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Rutgers Scarlet Knights",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Ball State BALL STATE CARDINALS",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Merrimack Warriors",
+      "start": "2026-09-27T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at VCU Rams",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Duke Blue Devils",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Central Michigan Chippewas",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Iowa Hawkeyes",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at UMass Lowell River Hawks",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at Dartmouth Big Green",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Stonehill Skyhawks",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Columbia Lions",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Long Island University Sharks",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at American University Eagles",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Quinnipiac Bobcats",
+      "start": "2026-09-27T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at UC Davis Aggies",
+      "start": "2026-09-27T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at California Golden Bears",
+      "start": "2026-09-27T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Bucknell Bison",
+      "start": "2026-09-28T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at William & Mary Tribe",
+      "start": "2026-09-28T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Villanova Wildcats",
+      "start": "2026-10-02T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at Lock Haven Bald Eagles",
+      "start": "2026-10-02T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-10-02T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Kent State Golden Flashes",
+      "start": "2026-10-02T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Sacred Heart Pioneers",
+      "start": "2026-10-02T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Quinnipiac Bobcats",
+      "start": "2026-10-02T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Harvard Crimson at Pennsylvania Quakers",
+      "start": "2026-10-02T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Massachusetts MInutewomen",
+      "start": "2026-10-02T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Mercyhurst Lakers",
+      "start": "2026-10-02T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at VCU Rams",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Providence Friars",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Ohio State Buckeyes",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Louisville Cardinals",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Rutgers Scarlet Knights",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at New Hampshire Wildcats",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Liberty Flames",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Dartmouth Big Green",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Maine Black Bears",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at App State Mountaineers",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at Ohio Bobcats",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Fairfield Stags",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bryant Bulldogs at UMass Lowell River Hawks",
+      "start": "2026-10-02T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Temple Owls",
+      "start": "2026-10-02T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at Duke Blue Devils",
+      "start": "2026-10-02T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Drexel Dragons",
+      "start": "2026-10-02T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Virginia Cavaliers",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Princeton Tigers",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at William & Mary Tribe",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at Boston College Eagles",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Longwood Lancers",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Iowa Hawkeyes at Michigan Wolverines",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Richmond Spiders",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Davidson Wildcats",
+      "start": "2026-10-02T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Lafayette Leopards",
+      "start": "2026-10-02T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Cornell Big Red",
+      "start": "2026-10-02T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Rider Broncs",
+      "start": "2026-10-02T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bucknell Bison at Holy Cross Crusaders",
+      "start": "2026-10-03T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at Stonehill Skyhawks",
+      "start": "2026-10-03T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Boston University Terriers",
+      "start": "2026-10-03T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Louisville Cardinals",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Monmouth Hawks",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Rutgers Scarlet Knights",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Drexel Dragons",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Maryland Terrapins",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Michigan Wolverines",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Ohio State Buckeyes",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at Harvard Crimson",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Colgate Raiders",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at New Hampshire Wildcats",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Princeton Tigers",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Pennsylvania Quakers",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Bryant Bulldogs",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Sacred Heart Pioneers",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryville (MO) Saints at Saint Louis Billikens",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Davidson Wildcats",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Iowa Hawkeyes at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Fairfield Stags",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at Richmond Spiders",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at La Salle Explorers",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at Providence Friars",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Ohio Bobcats",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at Vermont Catamounts",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Lock Haven Bald Eagles",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Duke Blue Devils",
+      "start": "2026-10-04T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at UConn Huskies",
+      "start": "2026-10-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at VCU Rams",
+      "start": "2026-10-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Columbia Lions",
+      "start": "2026-10-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at William & Mary Tribe",
+      "start": "2026-10-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lafayette Leopards at Penn State Nittany Lions",
+      "start": "2026-10-04T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Boston College Eagles",
+      "start": "2026-10-04T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Virginia Cavaliers",
+      "start": "2026-10-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Hofstra Pride",
+      "start": "2026-10-04T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Louisville Cardinals",
+      "start": "2026-10-06T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Saint Francis Red Wolves",
+      "start": "2026-10-06T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at La Salle Explorers",
+      "start": "2026-10-09T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Liberty Flames",
+      "start": "2026-10-09T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Ohio State Buckeyes",
+      "start": "2026-10-09T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Old Dominion Monarchs",
+      "start": "2026-10-09T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Kent State Golden Flashes",
+      "start": "2026-10-09T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Long Island University Sharks",
+      "start": "2026-10-09T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Syracuse Orange",
+      "start": "2026-10-09T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at James Madison Dukes",
+      "start": "2026-10-09T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Central Michigan Chippewas",
+      "start": "2026-10-09T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bryant Bulldogs at UAlbany Great Danes",
+      "start": "2026-10-09T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Saint Joseph's Hawks",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Hampshire Wildcats at Maine Black Bears",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Miami (OH) RedHawks",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at VCU Rams",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at UConn Huskies",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Brown Bears",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at Vermont Catamounts",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Wagner Seahawks",
+      "start": "2026-10-09T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Michigan Wolverines",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Harvard Crimson",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at Saint Louis Billikens",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Massachusetts MInutewomen",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Drexel Dragons",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Iowa Hawkeyes at Northwestern Wildcats",
+      "start": "2026-10-09T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Princeton Tigers",
+      "start": "2026-10-09T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at Yale Bulldogs",
+      "start": "2026-10-09T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at William & Mary Tribe",
+      "start": "2026-10-09T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Delaware Fightin' Blue Hens",
+      "start": "2026-10-09T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at Boston University Terriers",
+      "start": "2026-10-09T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at Boston College Eagles",
+      "start": "2026-10-09T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lafayette Leopards at Bucknell Bison",
+      "start": "2026-10-09T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at New Haven Chargers",
+      "start": "2026-10-09T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Rider Broncs",
+      "start": "2026-10-09T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Duke Blue Devils at Stanford Cardinal",
+      "start": "2026-10-10T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at California Golden Bears",
+      "start": "2026-10-10T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at American University Eagles",
+      "start": "2026-10-10T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at William & Mary Tribe",
+      "start": "2026-10-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at Bryant Bulldogs",
+      "start": "2026-10-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-10-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Michigan Wolverines",
+      "start": "2026-10-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Princeton Tigers",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Boston College Eagles",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at Providence Friars",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Quinnipiac Bobcats",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at La Salle Explorers",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Indiana Hoosiers",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Kent State Golden Flashes",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Yale Bulldogs",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Vermont Catamounts",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at Georgetown Hoyas",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Rider Broncs",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Villanova Wildcats",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at Old Dominion Monarchs",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Pennsylvania Quakers",
+      "start": "2026-10-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Lafayette Leopards",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Harvard Crimson at Syracuse Orange",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Brown Bears",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Liberty Flames",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Drexel Dragons at Lehigh Mountain Hawks",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at VCU Rams",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at UMass Lowell River Hawks",
+      "start": "2026-10-11T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at Cornell Big Red",
+      "start": "2026-10-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at Saint Louis Billikens",
+      "start": "2026-10-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at New Hampshire Wildcats",
+      "start": "2026-10-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Maine Black Bears",
+      "start": "2026-10-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Duke Blue Devils at California Golden Bears",
+      "start": "2026-10-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at Stanford Cardinal",
+      "start": "2026-10-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Holy Cross Crusaders",
+      "start": "2026-10-14T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Bellarmine Knights",
+      "start": "2026-10-16T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Temple Owls",
+      "start": "2026-10-16T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at New Haven Chargers",
+      "start": "2026-10-16T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Georgetown Hoyas",
+      "start": "2026-10-16T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at American University Eagles",
+      "start": "2026-10-16T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Ball State BALL STATE CARDINALS",
+      "start": "2026-10-16T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Long Island University Sharks",
+      "start": "2026-10-16T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Sacred Heart Pioneers",
+      "start": "2026-10-16T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Ohio Bobcats",
+      "start": "2026-10-16T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Vermont Catamounts at UAlbany Great Danes",
+      "start": "2026-10-16T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at Providence Friars",
+      "start": "2026-10-16T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell River Hawks at New Hampshire Wildcats",
+      "start": "2026-10-16T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at Mercyhurst Lakers",
+      "start": "2026-10-16T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Dartmouth Big Green",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Indiana Hoosiers",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Fairfield Stags",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Rutgers Scarlet Knights",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at La Salle Explorers",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at Pennsylvania Quakers",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at Saint Joseph's Hawks",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at Bryant Bulldogs",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Drexel Dragons at Towson Tigers",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Kent State Golden Flashes at Longwood Lancers",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary Tribe at Monmouth Hawks",
+      "start": "2026-10-16T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at UC Davis Aggies",
+      "start": "2026-10-16T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Maryland Terrapins",
+      "start": "2026-10-16T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Rider Broncs",
+      "start": "2026-10-16T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at Richmond Spiders",
+      "start": "2026-10-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at Cornell Big Red",
+      "start": "2026-10-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Penn State Nittany Lions",
+      "start": "2026-10-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bucknell Bison at Colgate Raiders",
+      "start": "2026-10-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at North Carolina Tar Heels",
+      "start": "2026-10-16T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Virginia Cavaliers at Wake Forest Demon Deacons",
+      "start": "2026-10-16T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at App State Mountaineers",
+      "start": "2026-10-16T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at Lafayette Leopards",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at Davidson Wildcats",
+      "start": "2026-10-16T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Harvard Crimson at Brown Bears",
+      "start": "2026-10-17T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Duke Blue Devils at Louisville Cardinals",
+      "start": "2026-10-17T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Hampshire Wildcats at Temple Owls",
+      "start": "2026-10-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Mercyhurst Lakers",
+      "start": "2026-10-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary Tribe at Lafayette Leopards",
+      "start": "2026-10-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Vermont Catamounts",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at UAlbany Great Danes",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Rutgers Scarlet Knights",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Penn State Nittany Lions",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Maryland Terrapins",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Longwood Lancers",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at Drexel Dragons",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Lehigh Mountain Hawks",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Saint Joseph's Hawks",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at Kent State Golden Flashes",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Wake Forest Demon Deacons",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Bucknell Bison",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Bryant Bulldogs",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart Pioneers at Rider Broncs",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Quinnipiac Bobcats",
+      "start": "2026-10-18T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at American University Eagles",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Delaware Fightin' Blue Hens at VCU Rams",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Harvard Crimson",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Bellarmine Knights",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Columbia Lions at Hofstra Pride",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Ball State BALL STATE CARDINALS",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Wagner Seahawks",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Richmond Spiders",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Central Michigan Chippewas at James Madison Dukes",
+      "start": "2026-10-18T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Cornell Big Red",
+      "start": "2026-10-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse Orange at North Carolina Tar Heels",
+      "start": "2026-10-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at UMass Lowell River Hawks",
+      "start": "2026-10-18T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at UC Davis Aggies",
+      "start": "2026-10-18T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Virginia Cavaliers",
+      "start": "2026-10-19T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Northwestern Wildcats",
+      "start": "2026-10-22T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Sacred Heart Pioneers",
+      "start": "2026-10-23T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Ball State BALL STATE CARDINALS",
+      "start": "2026-10-23T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany Great Danes at New Hampshire Wildcats",
+      "start": "2026-10-23T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac Bobcats at New Haven Chargers",
+      "start": "2026-10-23T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Kent State Golden Flashes at Miami (OH) RedHawks",
+      "start": "2026-10-23T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wagner Seahawks at Merrimack Warriors",
+      "start": "2026-10-23T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Central Michigan Chippewas",
+      "start": "2026-10-23T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Liberty Flames",
+      "start": "2026-10-23T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Providence Friars",
+      "start": "2026-10-23T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "App State Mountaineers at James Madison Dukes",
+      "start": "2026-10-23T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UConn Huskies at Old Dominion Monarchs",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Virginia Cavaliers",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Drexel Dragons",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts MInutewomen at Longwood Lancers",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State MICHIGAN STATE SPARTANS at Ohio State Buckeyes",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Dartmouth Big Green",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Indiana Hoosiers",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond Spiders at Lock Haven Bald Eagles",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maine Black Bears at UMass Lowell River Hawks",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Stonehill Skyhawks",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at VCU Rams",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary Tribe at Hofstra Pride",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bryant Bulldogs at Vermont Catamounts",
+      "start": "2026-10-23T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Boston College Eagles",
+      "start": "2026-10-23T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Harvard Crimson at Columbia Lions",
+      "start": "2026-10-23T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Iowa Hawkeyes",
+      "start": "2026-10-23T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Princeton Tigers",
+      "start": "2026-10-23T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at Monmouth Hawks",
+      "start": "2026-10-23T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Syracuse Orange",
+      "start": "2026-10-23T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Delaware Fightin' Blue Hens",
+      "start": "2026-10-23T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Wake Forest Demon Deacons at North Carolina Tar Heels",
+      "start": "2026-10-23T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Pennsylvania Quakers at Yale Bulldogs",
+      "start": "2026-10-23T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at Boston University Terriers",
+      "start": "2026-10-23T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Davidson Wildcats",
+      "start": "2026-10-23T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bucknell Bison at Lehigh Mountain Hawks",
+      "start": "2026-10-24T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio Bobcats at Queens University Royals",
+      "start": "2026-10-24T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UC Davis Aggies at Towson Tigers",
+      "start": "2026-10-25T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stanford Cardinal at Boston College Eagles",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Syracuse Orange",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Quinnipiac Bobcats",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "American University Eagles at Holy Cross Crusaders",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bellarmine Knights at Michigan State MICHIGAN STATE SPARTANS",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Richmond Spiders",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryland Terrapins at Indiana Hoosiers",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rutgers Scarlet Knights at Northwestern Wildcats",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at New Hampshire Wildcats",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Penn State Nittany Lions at Iowa Hawkeyes",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova Wildcats at Wagner Seahawks",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Brown Bears at Lafayette Leopards",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Wake Forest Demon Deacons",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Maryville (MO) Saints at New Haven Chargers",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Colgate Raiders at Stonehill Skyhawks",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at Providence Friars",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at Old Dominion Monarchs",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Harvard Crimson",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University Royals at Ball State BALL STATE CARDINALS",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Joseph's Hawks at Princeton Tigers",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack Warriors at Lock Haven Bald Eagles",
+      "start": "2026-10-25T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Georgetown Hoyas at Delaware Fightin' Blue Hens",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern NORTHEASTERN HUSKIES at Boston University Terriers",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan Wolverines at Miami (OH) RedHawks",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Duke Blue Devils at Liberty Flames",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at App State Mountaineers",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Kent State Golden Flashes",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Davidson Wildcats at Saint Louis Billikens",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Lehigh Mountain Hawks",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Columbia Lions",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Bryant Bulldogs at Dartmouth Big Green",
+      "start": "2026-10-25T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Drexel Dragons",
+      "start": "2026-10-25T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at Bucknell Bison",
+      "start": "2026-10-27T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Indiana Hoosiers at Rutgers Scarlet Knights",
+      "start": "2026-10-30T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Mercyhurst Lakers at Sacred Heart Pioneers",
+      "start": "2026-10-30T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Liberty Flames at Villanova Wildcats",
+      "start": "2026-10-30T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Old Dominion Monarchs at Georgetown Hoyas",
+      "start": "2026-10-30T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill Skyhawks at Quinnipiac Bobcats",
+      "start": "2026-10-30T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Iowa Hawkeyes at Maryland Terrapins",
+      "start": "2026-10-30T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Providence Friars at Temple Owls",
+      "start": "2026-10-30T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "James Madison Dukes at Massachusetts MInutewomen",
+      "start": "2026-10-30T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (OH) RedHawks at Central Michigan Chippewas",
+      "start": "2026-10-30T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island University Sharks at Merrimack Warriors",
+      "start": "2026-10-30T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle Explorers at Saint Joseph's Hawks",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Kent State Golden Flashes at Ohio Bobcats",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Monmouth Hawks at Northeastern NORTHEASTERN HUSKIES",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra Pride at Towson Tigers",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Fairfield Stags at UConn Huskies",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ball State BALL STATE CARDINALS at Saint Louis Billikens",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "New Haven Chargers at Wagner Seahawks",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern Wildcats at Penn State Nittany Lions",
+      "start": "2026-10-30T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood Lancers at App State Mountaineers",
+      "start": "2026-10-30T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston College Eagles at Syracuse Orange",
+      "start": "2026-10-30T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Drexel Dragons at William & Mary Tribe",
+      "start": "2026-10-30T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "VCU Rams at Richmond Spiders",
+      "start": "2026-10-30T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio State Buckeyes at Michigan Wolverines",
+      "start": "2026-10-30T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville Cardinals at Wake Forest Demon Deacons",
+      "start": "2026-10-30T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Rider Broncs at Delaware Fightin' Blue Hens",
+      "start": "2026-10-30T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Princeton Tigers at Columbia Lions",
+      "start": "2026-10-30T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University Terriers at Lafayette Leopards",
+      "start": "2026-10-30T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "North Carolina Tar Heels at Duke Blue Devils",
+      "start": "2026-10-30T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at Davidson Wildcats",
+      "start": "2026-10-30T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "California Golden Bears at Stanford Cardinal",
+      "start": "2026-10-31T01:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Holy Cross Crusaders at Colgate Raiders",
+      "start": "2026-10-31T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lehigh Mountain Hawks at American University Eagles",
+      "start": "2026-10-31T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Dartmouth Big Green at Brown Bears",
+      "start": "2026-10-31T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Cornell Big Red at Pennsylvania Quakers",
+      "start": "2026-10-31T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Yale Bulldogs at Harvard Crimson",
+      "start": "2026-10-31T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Towson Tigers at Delaware Fightin' Blue Hens",
+      "start": "2026-10-31T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Saint Louis Billikens at Bellarmine Knights",
+      "start": "2026-11-01T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Lock Haven Bald Eagles at Queens University Royals",
+      "start": "2026-11-01T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Temple Owls at Pennsylvania Quakers",
+      "start": "2026-11-01T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T19:40:14.764449+00:00",
+    "generatedAt": "2026-08-31T19:49:14.253025+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -124937,10 +130455,10 @@
       "NCAA Men's Soccer": "espn:1462; raw_events:1462; requests:13; errors:0; season:fall; status:added",
       "NCAA Women's Soccer": "espn:2233; raw_events:2234; requests:13; errors:0; season:fall; status:added",
       "NCAA Men's Volleyball": "espn:0; raw_events:0; requests:13; errors:0; season:winter; status:empty",
-      "NCAA Women's Volleyball": "espn:3001; raw_events:3001; requests:13; errors:0; season:fall; status:added",
+      "NCAA Women's Volleyball": "espn:2999; raw_events:3001; requests:13; errors:0; season:fall; status:added",
       "NCAA Men's Hockey": "espn:740; raw_events:955; requests:13; errors:0; season:winter; status:added",
       "NCAA Women's Hockey": "espn:0; raw_events:743; requests:13; errors:0; season:winter; status:duplicate_only",
-      "NCAA Women's Field Hockey": "espn:0; raw_events:0; requests:13; errors:13; season:fall; status:empty"
+      "NCAA Women's Field Hockey": "espn:615; raw_events:615; requests:13; errors:0; season:fall; status:added"
     }
   }
 }
