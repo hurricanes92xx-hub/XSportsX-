@@ -1,36 +1,17 @@
 #!/usr/bin/env python3
-"""Post-refresh source repair that preserves the canonical engine's full feed.
+"""Post-refresh normalization for known source endpoint drift.
 
-This intentionally runs AFTER refresh_schedules_engine.py rather than replacing
-it. The engine's season-aware preservation remains authoritative; this script
-only repairs sources with known endpoint drift and normalizes timestamps.
+NASCAR is owned by official_api_adapters.py now, so this step deliberately does
+not call the legacy NASCAR endpoint. That prevents the old 401/missing-token
+path from running before the authoritative adapter.
 """
 from __future__ import annotations
 import json
-import urllib.request
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
-HEADERS = {
-    "User-Agent": "XSportsX-Schedule/3.1",
-    "Accept": "application/json, text/plain, */*",
-}
-
-def fetch_json(url: str):
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read().decode("utf-8"))
-
-def walk(value):
-    if isinstance(value, dict):
-        yield value
-        for v in value.values():
-            yield from walk(v)
-    elif isinstance(value, list):
-        for v in value:
-            yield from walk(v)
 
 def normalize(value):
     if value is None:
@@ -53,51 +34,9 @@ def normalize(value):
             pass
     return None
 
-def repair_nascar(events, league, series_id):
-    year = datetime.now(timezone.utc).year
-    url = f"https://feed.nascar.com/api/weekendschedule?series_id={series_id}&race_season={year}&v=1"
-    try:
-        root = fetch_json(url)
-    except Exception as exc:
-        print(f"WARNING NASCAR {league}: {exc}")
-        return 0
-    now = datetime.now(timezone.utc) - timedelta(hours=12)
-    horizon = datetime.now(timezone.utc) + timedelta(days=370)
-    existing = {(e.get("league"), e.get("title"), e.get("start")) for e in events}
-    added = 0
-    for obj in walk(root):
-        if not isinstance(obj, dict) or obj.get("series_id") != series_id:
-            continue
-        dt = normalize(obj.get("start_time_utc") or obj.get("start_time"))
-        if not dt:
-            continue
-        parsed = datetime.fromisoformat(dt.replace("Z", "+00:00"))
-        if parsed < now or parsed > horizon:
-            continue
-        event_name = str(obj.get("event_name") or "NASCAR event").strip()
-        race_name = str(obj.get("race_name") or "").strip()
-        track = str(obj.get("track_name") or "").strip()
-        title = race_name or event_name
-        if event_name.lower() not in title.lower() and event_name:
-            title = f"{title} — {event_name}"
-        if track and track.lower() not in title.lower():
-            title = f"{title} — {track}"
-        key = (league, title, dt)
-        if key in existing:
-            continue
-        existing.add(key)
-        run_type = int(obj.get("run_type") or 0)
-        tag = "LIVE" if run_type == 3 and parsed <= datetime.now(timezone.utc) else "UPCOMING"
-        events.append({"league": league, "title": title, "start": dt, "tag": tag, "icon": "🏎️", "source": "nascar-api"})
-        added += 1
-    print(f"NASCAR repaired {league}: +{added} events")
-    return added
-
 def main():
     payload = json.loads(FEED.read_text(encoding="utf-8"))
     events = payload.get("events") or []
-    added = repair_nascar(events, "NASCAR Xfinity", 2) + repair_nascar(events, "NASCAR Truck", 3)
-
     invalid = 0
     changed = 0
     for event in events:
@@ -110,19 +49,21 @@ def main():
             event["start"] = value
             changed += 1
 
-    # Successful direct repairs mean the corresponding official failure should
-    # no longer be reported as an unresolved source failure.
-    failures = list(payload.get("officialSourceFailures") or [])
-    if added:
-        failures = [x for x in failures if x not in ("NASCAR Xfinity", "NASCAR Truck")]
-        payload["officialSourceFailures"] = failures
     payload["events"] = events
-    payload["eventCounts"] = {k: sum(1 for e in events if e.get("league") == k) for k in sorted({e.get("league") for e in events if e.get("league")})}
+    payload["eventCounts"] = {
+        k: sum(1 for e in events if e.get("league") == k)
+        for k in sorted({e.get("league") for e in events if e.get("league")})
+    }
     payload["generatedAt"] = datetime.now(timezone.utc).isoformat()
     payload.setdefault("repairReport", {})
-    payload["repairReport"].update({"nascarAdded": added, "timestampsNormalized": changed, "invalidTimestamps": invalid})
+    payload["repairReport"].update({
+        "nascarAdded": 0,
+        "timestampsNormalized": changed,
+        "invalidTimestamps": invalid,
+        "legacyNascarRepairDisabled": True,
+    })
     FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"schedule repair complete: nascar_added={added}, timestamps_normalized={changed}, invalid={invalid}, total={len(events)}")
+    print(f"schedule normalization complete: timestamps_normalized={changed}, invalid={invalid}; legacy NASCAR repair skipped")
     if invalid:
         raise SystemExit(f"invalid event timestamps remain: {invalid}")
 
