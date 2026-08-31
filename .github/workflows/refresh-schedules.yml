@@ -10,6 +10,7 @@ on:
       - 'scripts/refresh_schedules_engine.py'
       - 'scripts/repair_schedule_sources.py'
       - 'scripts/official_api_adapters.py'
+      - 'scripts/espn_ncaa_adapter.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
       - 'scripts/schedule_engine_safe.py'
@@ -32,6 +33,8 @@ jobs:
         run: python scripts/repair_schedule_sources.py
       - name: Add authoritative official API schedules
         run: python scripts/official_api_adapters.py
+      - name: Add ESPN NCAA schedules for unavailable NCAA sources
+        run: python scripts/espn_ncaa_adapter.py
       - name: Normalize adapter timestamps and validate feed invariants
         run: |
           python - <<'PY'
