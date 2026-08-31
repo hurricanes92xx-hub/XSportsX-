@@ -4,8 +4,6 @@ APK="${1:?APK required}"
 OUT="${2:-source-login-output}"
 PKG="${QA_PACKAGE:?QA_PACKAGE must be set}"
 SOURCE_BASE="${QA_SOURCE_BASE:-http://127.0.0.1:8765}"
-# Dedicated debug activity. This removes every dependency on the production
-# home/TV navigation stack and tests the actual SourceConnectScreen directly.
 ACTIVITY_CLASS="${QA_ACTIVITY_CLASS:-com.xsportsx.app.QaSourceActivity}"
 ACTIVITY="$PKG/$ACTIVITY_CLASS"
 mkdir -p "$OUT"
@@ -25,18 +23,15 @@ snapshot(){
   local name="$1"
   adb exec-out screencap -p > "$OUT/${name}.png"
   rm -f "$OUT/${name}.xml" /tmp/xsportsx-ui-dump.log
-  local ok=1
   for _ in $(seq 1 10); do
-    if adb shell uiautomator dump --compressed /data/local/tmp/xsportsx-window.xml >/tmp/xsportsx-ui-dump.log 2>&1; then
-      if adb exec-out cat /data/local/tmp/xsportsx-window.xml > "$OUT/${name}.xml" 2>/dev/null && test -s "$OUT/${name}.xml"; then ok=0; break; fi
-    fi
+    if adb shell uiautomator dump --compressed /data/local/tmp/xsportsx-window.xml >/tmp/xsportsx-ui-dump.log 2>&1 && \
+       adb exec-out cat /data/local/tmp/xsportsx-window.xml > "$OUT/${name}.xml" 2>/dev/null && \
+       test -s "$OUT/${name}.xml"; then return 0; fi
     sleep 0.25
   done
-  if [ "$ok" -ne 0 ]; then
-    cp /tmp/xsportsx-ui-dump.log "$OUT/${name}.ui-dump.log" 2>/dev/null || true
-    echo "Unable to capture UI hierarchy for $name"
-    return 1
-  fi
+  cp /tmp/xsportsx-ui-dump.log "$OUT/${name}.ui-dump.log" 2>/dev/null || true
+  echo "Unable to capture UI hierarchy for $name"
+  return 1
 }
 
 bounds_for_id(){
@@ -99,16 +94,12 @@ set_field(){
   snapshot "filled-${id}"
   observed="$(field_text "$OUT/filled-${id}.xml" "$id" 2>/dev/null || true)"
   if [ "$secret" = "true" ]; then
-    # PasswordVisualTransformation intentionally exposes bullets in UIAutomator;
-    # only require a non-empty transformed value, never compare the plaintext.
     [ -n "$observed" ] || { echo "Password field remained empty"; return 1; }
-  else
-    if [ "$observed" != "$value" ]; then
-      echo "Field injection failed for $id"
-      echo "Expected: $value"
-      echo "Observed: $observed"
-      return 1
-    fi
+  elif [ "$observed" != "$value" ]; then
+    echo "Field injection failed for $id"
+    echo "Expected: $value"
+    echo "Observed: $observed"
+    return 1
   fi
 }
 
@@ -121,8 +112,6 @@ set_field "source_server" "$SOURCE_BASE"
 set_field "source_username" "qauser"
 set_field "source_password" "qapass" true
 
-# Hide keyboard without using BACK, because BACK can navigate away from the
-# source form on TV. Tapping the button's bounds works while the IME is open.
 snapshot "ready-to-connect"
 click_id "$OUT/ready-to-connect.xml" "source_connect" || { echo "Unable to click source connect action"; exit 1; }
 
@@ -137,20 +126,16 @@ for attempt in $(seq 1 80); do
     echo "Source connection reached an explicit error state"
     exit 1
   fi
-  if grep -Eqi 'SOURCE CONNECTED|Connected • Xtream account' "$XML"; then
-    success=1
-    break
-  fi
-  # onSaved() finishes the dedicated QA activity after a successful save
-  if ! adb shell pidof "$PKG" >/dev/null 2>&1; then
+  # A successful SourceConnectScreen saves the source and calls onSaved(),
+  # which finishes this dedicated QA activity. Its source_connect node then
+  # disappears. Do not require the transient success text to render first.
+  if ! exists_id "$XML" "source_connect"; then
     success=1
     break
   fi
 done
-[ "$success" -eq 1 ] || { echo "Source connection did not reach a success state"; exit 1; }
+[ "$success" -eq 1 ] || { echo "Source connection did not finish successfully"; exit 1; }
 
-# Verify persistence with the dedicated activity. The source store is the same
-# production store used by the real app, so this confirms save/load too.
 adb shell am force-stop "$PKG" || true
 START_OUTPUT="$(adb shell am start -W -n "$ACTIVITY" 2>&1)"
 printf '%s\n' "$START_OUTPUT" > "$OUT/persisted-activity-start.txt"
