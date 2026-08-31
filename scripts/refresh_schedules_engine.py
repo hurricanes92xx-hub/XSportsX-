@@ -3,12 +3,13 @@
 from __future__ import annotations
 import importlib.util
 import json
+import re
 import threading
 import time
 import urllib.parse
 import urllib.request
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
@@ -43,10 +44,71 @@ PREVIOUS_ROOT=previous_root(); PREVIOUS=PREVIOUS_ROOT.get('events') or []; SEASO
 def preserved(events,league):
     rows=[e for e in PREVIOUS if e.get('league')==league]; events.extend(rows); return len(rows)
 def decision_for(name): return season.analyze(name,PREVIOUS)
+
+def _iso(value):
+    if not value: return None
+    try: return datetime.fromisoformat(str(value).replace('Z','+00:00')).astimezone(timezone.utc)
+    except Exception: return None
+
+def _embedded_json_documents(html):
+    """Yield JSON objects from common modern-site application state blocks.
+
+    Many official sports sites are rendered by Next.js/React and expose the
+    schedule in application/json or __NEXT_DATA__ rather than JSON-LD. Keep
+    this extractor generic so the official source remains authoritative without
+    adding a bespoke scraper for every league.
+    """
+    text=html.decode('utf-8','ignore') if isinstance(html,(bytes,bytearray)) else str(html)
+    patterns=[
+        r'<script[^>]+type=["\']application/json["\'][^>]*>(.*?)</script>',
+        r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>',
+    ]
+    for pattern in patterns:
+        for m in re.findall(pattern,text,re.I|re.S):
+            try: yield json.loads(m.strip())
+            except Exception: continue
+
+def _walk_official_events(value, league, events, seen, now, horizon):
+    """Find Event-like records without assuming a provider-specific schema."""
+    if isinstance(value,dict):
+        name=value.get('name') or value.get('eventName') or value.get('title')
+        date=value.get('startDate') or value.get('start') or value.get('startTime') or value.get('date')
+        typ=value.get('@type')
+        is_event=typ=='Event' or (isinstance(typ,list) and 'Event' in typ)
+        # Require both a human-readable title and an ISO-like date before
+        # accepting a record. This avoids treating arbitrary page metadata as
+        # a schedule event.
+        dt=_iso(date)
+        if name and dt and (is_event or ('schedule' in str(value).lower() and 'date' in str(value).lower())) and now <= dt <= horizon:
+            key=(league,str(name).strip(),dt.isoformat())
+            if key not in seen:
+                seen.add(key); events.append({'league':league,'title':str(name).strip(),'start':dt.isoformat().replace('+00:00','Z'),'tag':'UPCOMING','icon':'🏆','source':'official'})
+        for v in value.values(): _walk_official_events(v,league,events,seen,now,horizon)
+    elif isinstance(value,list):
+        for v in value: _walk_official_events(v,league,events,seen,now,horizon)
+
+def official_embedded_fallback(events, source):
+    name=str(source.get('league') or '').strip(); url=str(source.get('url') or '').strip()
+    if not name or not url: return False,0
+    try: raw=guarded_get(url)
+    except Exception as exc:
+        print(f'ERROR official embedded {name}: {exc}'); return False,0
+    before=len(events); seen={(e.get('league'),e.get('title'),e.get('start')) for e in events}
+    now=datetime.now(timezone.utc)-timedelta(hours=12); horizon=datetime.now(timezone.utc)+timedelta(days=370)
+    for doc in _embedded_json_documents(raw): _walk_official_events(doc,name,events,seen,now,horizon)
+    return True,len(events)-before
+
 _original_add_official=refresh.add_official_source; _original_add_espn=refresh.add_espn; _original_add_ncaa=refresh.add_ncaa
 def season_aware_official(events,source):
     name=str(source.get('league') or '').strip(); d=decision_for(name); SEASON_REPORT.append(d|{'provider':'official'})
-    if not name or d['active']: return _original_add_official(events,source)
+    if not name or d['active']:
+        ok,n=_original_add_official(events,source)
+        # If JSON-LD yielded nothing, inspect the same official page's embedded
+        # application state. This is still an official source, not ESPN.
+        if ok and n==0:
+            eok,en=official_embedded_fallback(events,source)
+            if en: return True,en
+        return ok,n
     generated=PREVIOUS_ROOT.get('generatedAt',''); last=None
     try: last=datetime.fromisoformat(str(generated).replace('Z','+00:00'))
     except Exception: pass
