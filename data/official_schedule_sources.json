@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "strategy": "official_first_with_provider_fallback",
   "refreshHours": 6,
   "officialSources": [
@@ -20,8 +20,8 @@
     {"league":"Ligue 1","url":"https://ligue1.com/en/calendar/ligue1","mode":"jsonld"},
     {"league":"NWSL","url":"https://www.nwslsoccer.com/schedule","mode":"jsonld"},
     {"league":"UFC","url":"https://www.ufc.com/events","mode":"jsonld"},
-    {"league":"BOXING","url":"https://wbcboxing.com/en/eventos/","mode":"jsonld","note":"WBC official event calendar; boxing is multi-body, so provider fallback remains enabled."},
-    {"league":"BOXING","url":"https://wboboxing.com/","mode":"jsonld","note":"WBO official upcoming-fights information; complements WBC coverage."},
+    {"league":"BOXING","url":"https://wbcboxing.com/en/eventos/","mode":"jsonld","note":"WBC official calendar; combine with other sanctioning bodies and provider fallback."},
+    {"league":"BOXING","url":"https://wboboxing.com/","mode":"jsonld","note":"WBO official information; complements WBC coverage."},
     {"league":"F1","url":"https://www.formula1.com/en/racing/2026","mode":"jsonld"},
     {"league":"IndyCar","url":"https://www.indycar.com/Schedule","mode":"jsonld"},
     {"league":"NASCAR Cup","url":"https://www.nascar.com/schedule/","mode":"jsonld"},
@@ -58,6 +58,21 @@
     {"league":"NCAA Beach Volleyball","url":"https://www.ncaa.com/sports/beach-volleyball","mode":"jsonld"},
     {"league":"WWE","url":"https://www.wwe.com/article/wwe-upcoming-events","mode":"jsonld"},
     {"league":"AEW","url":"https://www.allelitewrestling.com/aew-events","mode":"jsonld"},
-    {"league":"TNA","url":"https://tnawrestling.com/events/","mode":"jsonld"}
+    {"league":"TNA","url":"https://tnawrestling.com/events/","mode":"jsonld"},
+    {"league":"MotoGP","url":"https://www.motogp.com/en/Calendar","mode":"jsonld"},
+    {"league":"WRC","url":"https://www.fia.com/championship/world-rally-championship","mode":"jsonld","note":"FIA WRC championship calendar is authoritative."},
+    {"league":"WEC","url":"https://www.fia.com/championship/world-endurance-championship","mode":"jsonld","note":"FIA WEC championship calendar is authoritative."},
+    {"league":"IMSA","url":"https://www.imsa.com/events/","mode":"jsonld"},
+    {"league":"FORMULA E","url":"https://www.fiaformulae.com/en/calendar","mode":"jsonld"},
+    {"league":"MXGP","url":"https://www.mxgp.com/calendar","mode":"jsonld"},
+    {"league":"MONSTER JAM","url":"https://www.monsterjam.com/en-us/events/","mode":"jsonld"},
+    {"league":"ESPORTS","url":"https://esportsworldcup.com/en","mode":"jsonld","note":"Umbrella esports events; individual game publishers should be added as sport-specific sources."},
+    {"league":"ESPORTS - Rocket League","url":"https://www.rocketleague.com/competitive/schedule","mode":"jsonld"},
+    {"league":"ESPORTS - Apex Legends","url":"https://algs.ea.com/en/schedule","mode":"jsonld"},
+    {"league":"ESPORTS - Rainbow Six","url":"https://www.ubisoft.com/en-us/esports/rainbow-six/siege/calendar","mode":"jsonld"},
+    {"league":"ACTION SPORTS","url":"https://www.xgames.com/events","mode":"jsonld","note":"X Games official event calendar; action-sports umbrella."},
+    {"league":"AAA Wrestling","url":"https://www.luchalibreaaa.com/","mode":"jsonld","note":"Official AAA source for wrestling events/crossovers."},
+    {"league":"NASCAR Xfinity","url":"https://www.nascar.com/xfinity-series/schedule/","mode":"jsonld"},
+    {"league":"NASCAR Truck","url":"https://www.nascar.com/craftsman-truck-series/schedule/","mode":"jsonld"}
   ]
 }
