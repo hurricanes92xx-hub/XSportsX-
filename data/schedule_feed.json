@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T16:31:21.152381+00:00",
+  "generatedAt": "2026-08-31T17:09:20.346985+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -60583,7 +60583,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T16:31:16.143111+00:00",
+    "generatedAt": "2026-08-31T17:09:08.590613+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -62893,7 +62893,12 @@
       "NCAA Men's Water Polo": "official_api:0",
       "NCAA Women's Water Polo": "official_api:0",
       "NCAA Women's Field Hockey": "official_api:0",
-      "NCAA Beach Volleyball": "official_api:0"
+      "NCAA Beach Volleyball": "failed: HTTP Error 404: Not Found"
+    },
+    "nascar": {
+      "NASCAR Cup": "failed: HTTP Error 401: Missing token",
+      "NASCAR Xfinity": "failed: HTTP Error 401: Missing token",
+      "NASCAR Truck": "failed: HTTP Error 401: Missing token"
     },
     "MLB": "official_api:0"
   }
