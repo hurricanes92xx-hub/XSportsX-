@@ -53,8 +53,10 @@ for league, minimum in (("NCAA Men's Soccer", 1), ("NCAA Women's Soccer", 1), ("
 if POLICY.exists():
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
     season_windows = policy.get("leagueWindows") or {}
+    next_season_coverage = policy.get("nextSeasonCoverage") or {}
 else:
     season_windows = {}
+    next_season_coverage = {}
 
 phase1 = root.get("phase1RepairReport") or {}
 
@@ -81,14 +83,35 @@ def in_season_window(dt, window):
     end = (int(end_month), int(end_day))
     return start <= md <= end if start <= end else (md >= start or md <= end)
 
+def in_next_season_window(dt, window):
+    """Allow explicitly configured published next-season schedules beyond 370 days."""
+    if not window or len(window) != 2:
+        return False
+    if dt.year != REFERENCE_DATE.year + 1:
+        return False
+    return in_season_window(dt, window)
+
 for league in sorted(phase1):
     starts = parsed_starts.get(league) or []
     if not starts:
         raise SystemExit(f"REFRESH REJECTED: Phase 1 repaired {league} but final feed contains no events")
 
     season_window = season_windows.get(league)
-    valid = [dt for dt in starts if REFERENCE_DATE <= dt <= window_end and in_season_window(dt, season_window)]
-    stale_or_outside = [dt for dt in starts if dt < REFERENCE_DATE or dt > window_end or not in_season_window(dt, season_window)]
+    next_season_allowed = bool(next_season_coverage.get(league))
+    valid = [
+        dt for dt in starts
+        if (
+            REFERENCE_DATE <= dt <= window_end
+            or (next_season_allowed and in_next_season_window(dt, season_window))
+        ) and in_season_window(dt, season_window)
+    ]
+    stale_or_outside = [
+        dt for dt in starts
+        if not (
+            REFERENCE_DATE <= dt <= window_end
+            or (next_season_allowed and in_next_season_window(dt, season_window))
+        ) or not in_season_window(dt, season_window)
+    ]
 
     if not valid:
         minimum = min(starts).isoformat().replace("+00:00", "Z")
@@ -97,7 +120,7 @@ for league in sorted(phase1):
         raise SystemExit(
             f"REFRESH REJECTED: Phase 1 {league} has no current/future coverage; "
             f"reference={REFERENCE_DATE.isoformat().replace('+00:00','Z')} horizon={window_end.isoformat().replace('+00:00','Z')} "
-            f"season={policy_text} final_min={minimum} final_max={maximum} "
+            f"season={policy_text} next_season_allowed={next_season_allowed} final_min={minimum} final_max={maximum} "
             f"stale_or_outside={len(stale_or_outside)}"
         )
 
@@ -105,6 +128,7 @@ for league in sorted(phase1):
         f"Phase 1 date validation passed: {league}; "
         f"reference={REFERENCE_DATE.isoformat().replace('+00:00','Z')}; "
         f"current_future={len(valid)}; stale_or_outside={len(stale_or_outside)}; "
+        f"next_season_allowed={next_season_allowed}; "
         f"final_min={min(starts).isoformat().replace('+00:00','Z')}; "
         f"final_max={max(starts).isoformat().replace('+00:00','Z')}"
     )
