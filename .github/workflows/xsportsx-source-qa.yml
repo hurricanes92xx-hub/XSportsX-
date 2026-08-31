@@ -2,6 +2,7 @@ name: XSportsX Source QA
 
 # Isolated source validation using deterministic local Xtream/M3U fixtures.
 # This workflow must test the committed app as-is: no CI source patching.
+# TV source login QA now refreshes field coordinates around the Android TV keyboard.
 on:
   workflow_dispatch:
   push:
