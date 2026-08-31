@@ -1,6 +1,7 @@
 name: Refresh complete schedules
 on:
   # Manual dispatch is enabled; this workflow also self-triggers on android-app changes.
+  # Source-repair verification trigger: re-run the complete provider repair chain.
   workflow_dispatch:
   schedule:
     - cron: '*/30 * * * *'
