@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-08-31T20:39:34.306724+00:00",
+  "generatedAt": "2026-08-31T20:47:49.852787+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AEW": 4,
@@ -72489,7 +72489,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Washington State at Utah Valley",
-      "start": "2026-09-04T02:30:00Z",
+      "start": "2026-09-03T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -130556,7 +130556,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-08-31T20:38:40.556254+00:00",
+    "generatedAt": "2026-08-31T20:47:14.841416+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -132179,6 +132179,13 @@
     "CFL": {
       "source": "CFL.ca official schedule",
       "added": 0
+    },
+    "IPL": {
+      "source": "ESPN cricket Core API",
+      "added": 0,
+      "resolved": 0,
+      "pages": 1,
+      "request_failures": 1
     }
   }
 }
