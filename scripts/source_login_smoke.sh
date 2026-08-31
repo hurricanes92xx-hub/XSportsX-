@@ -34,13 +34,28 @@ snapshot(){
   return 1
 }
 
+# Compose testTags are the preferred selector. Older/newer Compose/UIAutomator
+# combinations can omit those resource IDs, however, while still exposing the
+# field contentDescription. Use both paths so the test validates the real UI
+# without depending on one accessibility implementation detail.
+label_for(){
+  case "$1" in
+    source_server) echo "Server URL" ;;
+    source_username) echo "Username" ;;
+    source_password) echo "Password" ;;
+    source_connect) echo "TEST & CONNECT" ;;
+    *) return 1 ;;
+  esac
+}
+
 bounds_for_id(){
   local file="$1" id="$2"
-  python3 - "$file" "$id" <<'PY'
+  python3 - "$file" "$id" "$(label_for "$id")" <<'PY'
 import sys,xml.etree.ElementTree as ET
-root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]
+root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]; label=sys.argv[3]
 for n in root.iter('node'):
-    if n.attrib.get('resource-id','') == wanted:
+    rid=n.attrib.get('resource-id',''); desc=n.attrib.get('content-desc',''); text=n.attrib.get('text','')
+    if rid == wanted or rid.endswith(':id/' + wanted) or desc == label or text == label:
         b=n.attrib.get('bounds','')
         try:
             a,c=b.split(']['); x1,y1=map(int,a.strip('[]').split(',')); x2,y2=map(int,c.strip('[]').split(','))
@@ -52,23 +67,23 @@ PY
 
 field_text(){
   local file="$1" id="$2"
-  python3 - "$file" "$id" <<'PY'
+  python3 - "$file" "$id" "$(label_for "$id")" <<'PY'
 import sys,xml.etree.ElementTree as ET
-root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]
+root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]; label=sys.argv[3]
 for n in root.iter('node'):
-    if n.attrib.get('resource-id','') == wanted:
-        print(n.attrib.get('text',''))
-        raise SystemExit(0)
+    rid=n.attrib.get('resource-id',''); desc=n.attrib.get('content-desc',''); text=n.attrib.get('text','')
+    if rid == wanted or rid.endswith(':id/' + wanted) or desc == label:
+        print(text); raise SystemExit(0)
 raise SystemExit(1)
 PY
 }
 
 exists_id(){
   local file="$1" id="$2"
-  python3 - "$file" "$id" <<'PY'
+  python3 - "$file" "$id" "$(label_for "$id")" <<'PY'
 import sys,xml.etree.ElementTree as ET
-root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]
-raise SystemExit(0 if any(n.attrib.get('resource-id','') == wanted for n in root.iter('node')) else 1)
+root=ET.parse(sys.argv[1]).getroot(); wanted=sys.argv[2]; label=sys.argv[3]
+raise SystemExit(0 if any((n.attrib.get('resource-id','') == wanted or n.attrib.get('resource-id','').endswith(':id/' + wanted) or n.attrib.get('content-desc','') == label or n.attrib.get('text','') == label) for n in root.iter('node')) else 1)
 PY
 }
 
@@ -83,7 +98,7 @@ click_id(){
 set_field(){
   local id="$1" value="$2" secret="${3:-false}" bounds x y observed
   bounds="$(bounds_for_id "$OUT/source-form.xml" "$id" 2>/dev/null || true)"
-  [ -n "$bounds" ] || { echo "Missing field resource: $id"; return 1; }
+  [ -n "$bounds" ] || { echo "Missing source field: $id ($(label_for "$id"))"; return 1; }
   read -r x y <<< "$bounds"
   adb shell input tap "$x" "$y"
   sleep 0.4
@@ -105,7 +120,7 @@ set_field(){
 
 snapshot "source-form"
 for id in source_server source_username source_password source_connect; do
-  exists_id "$OUT/source-form.xml" "$id" || { echo "Missing source control: $id"; exit 1; }
+  exists_id "$OUT/source-form.xml" "$id" || { echo "Missing source control: $id ($(label_for "$id"))"; exit 1; }
 done
 
 set_field "source_server" "$SOURCE_BASE"
@@ -126,9 +141,6 @@ for attempt in $(seq 1 80); do
     echo "Source connection reached an explicit error state"
     exit 1
   fi
-  # A successful SourceConnectScreen saves the source and calls onSaved(),
-  # which finishes this dedicated QA activity. Its source_connect node then
-  # disappears. Do not require the transient success text to render first.
   if ! exists_id "$XML" "source_connect"; then
     success=1
     break
