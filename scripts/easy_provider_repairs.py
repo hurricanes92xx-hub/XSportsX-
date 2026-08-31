@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import urllib.request
 import urllib.parse
+from html.parser import HTMLParser
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -72,61 +73,56 @@ def add_scoreboard(events, name, sport, league, icon, days):
     return added
 
 
+class _TextParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+
+    def handle_data(self, data):
+        text = ' '.join(data.split())
+        if text:
+            self.parts.append(text)
+
+    def text(self):
+        return ' '.join(self.parts)
+
+
 def add_official_cfl(events):
-    """Parse the CFL's published 2026 ET schedule PDF."""
-    page_url = 'https://www.cfl.ca/schedule/'
-    page = fetch(page_url, {'User-Agent': HEADERS['User-Agent'], 'Accept': 'text/html,*/*'})
-    html = page.decode('utf-8', 'ignore')
-    pdfs = re.findall(r'https?://[^\"\' ]+\.pdf|(?:href|src)=[\"\']([^\"\']+\.pdf)', html, flags=re.I)
-    candidates = []
-    for item in pdfs:
-        url = item if item.startswith('http') else urllib.parse.urljoin(page_url, item)
-        if 'cfl' in url.lower() and 'schedule' in url.lower():
-            candidates.append(url)
-    candidates += [
-        'https://static.cfl.ca/wp-content/uploads/CFL-2026-Schedule-ET-.pdf',
-        'https://static.cfl.ca/wp-content/uploads/CFL-2026-Schedule-ET--1.pdf',
-    ]
+    """Read the CFL's official 2026 schedule page, with PDF as fallback.
 
-    pdf = None
-    chosen = None
-    for url in candidates:
-        try:
-            data = fetch(url, {'User-Agent': HEADERS['User-Agent'], 'Accept': 'application/pdf,*/*'})
-            if data.startswith(b'%PDF'):
-                pdf, chosen = data, url
-                break
-        except Exception as exc:
-            print(f'WARNING official CFL PDF {url}: {exc}')
-    if not pdf:
-        print('NO REPAIR CFL: official CFL schedule PDF unavailable')
-        return 0
+    The CFL page is authoritative and exposes the schedule as an HTML table. We
+    prefer that machine-readable page so the runner does not depend on the
+    optional system `pdftotext` binary.
+    """
+    page_url = 'https://www.cfl.ca/2026-cfl-broadcast-schedule/'
+    html = ''
+    try:
+        html = fetch(page_url, {'User-Agent': HEADERS['User-Agent'], 'Accept': 'text/html,*/*'}).decode('utf-8', 'ignore')
+    except Exception as exc:
+        print(f'WARNING official CFL HTML unavailable: {exc}')
 
-    with tempfile.TemporaryDirectory() as td:
-        pdf_path = Path(td) / 'cfl.pdf'
-        txt_path = Path(td) / 'cfl.txt'
-        pdf_path.write_bytes(pdf)
-        try:
-            subprocess.run(['pdftotext', '-layout', str(pdf_path), str(txt_path)], check=True, timeout=30)
-            text = txt_path.read_text(encoding='utf-8', errors='ignore')
-        except Exception as exc:
-            print(f'WARNING official CFL PDF parse failed ({chosen}): {exc}')
-            return 0
+    parser = _TextParser()
+    if html:
+        parser.feed(html)
+    text = parser.text()
 
-    months = 'JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC'
-    line_re = re.compile(
-        rf'(?P<dow>MON|TUE|WED|THU|FRI|SAT|SUN)\s+(?P<mon>{months})\s+(?P<day>\d{{1,2}})\s+'
-        rf'(?P<time>\d{{1,2}}:\d{{2}}\s+(?:AM|PM))\s*(?:ET)?\s*'
-        rf'(?P<away>[A-Z]{{2,3}})\s*@\s*(?P<home>[A-Z]{{2,3}})', re.I)
+    # The official broadcast table is ordered Week, Date, Away, Home, Time.
+    # Match only real regular-season games; playoff placeholders are ignored.
+    months = 'January|February|March|April|May|June|July|August|September|October|November|December'
+    row_re = re.compile(
+        rf'(?P<mon>{months})\s+(?P<day>\d{{1,2}})\s+'
+        rf'(?P<away>[A-Z]{{2,3}})\s+(?P<home>[A-Z]{{2,3}})\s+'
+        rf'(?P<time>\d{{1,2}}:\d{{2}}\s+(?:AM|PM))', re.I)
 
     existing = {(e.get('league'), e.get('title'), e.get('start')) for e in events}
     added = 0
-    year = datetime.now(timezone.utc).year
-    for m in line_re.finditer(text):
+    for m in row_re.finditer(text):
+        if m.group('away').upper() in {'TBD', 'SEM'} or m.group('home').upper() in {'TBD', 'SEM'}:
+            continue
         try:
             dt = datetime.strptime(
-                f"{year} {m.group('mon').upper()} {int(m.group('day'))} {m.group('time').upper()}",
-                '%Y %b %d %I:%M %p',
+                f"2026 {m.group('mon').upper()} {int(m.group('day'))} {m.group('time').upper()}",
+                '%Y %B %d %I:%M %p',
             ).replace(tzinfo=timezone.utc)
         except ValueError:
             continue
@@ -138,8 +134,70 @@ def add_official_cfl(events):
         events.append({'league': 'CFL', 'title': title, 'start': start, 'tag': 'UPCOMING', 'icon': '🏈', 'source': 'cfl.ca'})
         existing.add(key)
         added += 1
-    print(f'OFFICIAL CFL schedule: added {added} events from {chosen}')
-    return added
+
+    if added:
+        print(f'OFFICIAL CFL schedule: added {added} events from CFL.ca HTML')
+        return added
+
+    # Keep the PDF fallback for future CFL page changes. This path is only used
+    # when the HTML table cannot be parsed and does not require pdftotext unless
+    # the PDF is actually selected.
+    pdfs = re.findall(r'https?://[^\"\' ]+\.pdf|(?:href|src)=[\"\']([^\"\']+\.pdf)', html, flags=re.I)
+    candidates = []
+    for item in pdfs:
+        url = item if item.startswith('http') else urllib.parse.urljoin(page_url, item)
+        if 'cfl' in url.lower() and 'schedule' in url.lower():
+            candidates.append(url)
+    candidates += ['https://static.cfl.ca/wp-content/uploads/CFL-2026-Schedule-ET-.pdf']
+    for url in candidates:
+        try:
+            data = fetch(url, {'User-Agent': HEADERS['User-Agent'], 'Accept': 'application/pdf,*/*'})
+            if not data.startswith(b'%PDF'):
+                continue
+            with tempfile.TemporaryDirectory() as td:
+                pdf_path = Path(td) / 'cfl.pdf'
+                txt_path = Path(td) / 'cfl.txt'
+                pdf_path.write_bytes(data)
+                subprocess.run(['pdftotext', '-layout', str(pdf_path), str(txt_path)], check=True, timeout=30)
+                pdf_text = txt_path.read_text(encoding='utf-8', errors='ignore')
+            legacy_re = re.compile(
+                r'(?P<dow>MON|TUE|WED|THU|FRI|SAT|SUN)\s+(?P<mon>[A-Z]{3})\s+(?P<day>\d{1,2})\s+'
+                r'(?P<time>\d{1,2}:\d{2}\s+(?:AM|PM))\s*(?:ET)?\s*'
+                r'(?P<away>[A-Z]{2,3})\s*@\s*(?P<home>[A-Z]{2,3})', re.I)
+            for m in legacy_re.finditer(pdf_text):
+                try:
+                    dt = datetime.strptime(f"2026 {m.group('mon').upper()} {int(m.group('day'))} {m.group('time').upper()}", '%Y %b %d %I:%M %p').replace(tzinfo=timezone.utc)
+                except ValueError:
+                    continue
+                title = f"{m.group('away').upper()} @ {m.group('home').upper()}"
+                start = dt.isoformat().replace('+00:00', 'Z')
+                key = ('CFL', title, start)
+                if key not in existing:
+                    events.append({'league': 'CFL', 'title': title, 'start': start, 'tag': 'UPCOMING', 'icon': '🏈', 'source': 'cfl.ca'})
+                    existing.add(key)
+                    added += 1
+            if added:
+                print(f'OFFICIAL CFL schedule: added {added} events from PDF fallback')
+                return added
+        except Exception as exc:
+            print(f'WARNING official CFL PDF fallback failed: {exc}')
+    print('NO REPAIR CFL: official schedule produced no events')
+    return 0
+
+
+def dedupe_events(events):
+    """Remove exact duplicate schedule rows introduced by fallback adapters."""
+    seen = set()
+    unique = []
+    removed = 0
+    for event in events:
+        key = (event.get('league'), event.get('title'), event.get('start'))
+        if key in seen:
+            removed += 1
+            continue
+        seen.add(key)
+        unique.append(event)
+    return unique, removed
 
 
 def main():
@@ -160,12 +218,17 @@ def main():
             print(f'NO REPAIR {name}: ESPN returned no usable events')
 
     cfl_added = add_official_cfl(events)
-    report['CFL'] = {'source': 'CFL.ca official schedule PDF', 'added': cfl_added}
+    report['CFL'] = {'source': 'CFL.ca official schedule', 'added': cfl_added}
     if cfl_added:
         official_failures = [x for x in official_failures if x != 'CFL']
         provider_failures = [x for x in provider_failures if x != 'CFL']
     else:
         print('NO REPAIR CFL: official schedule produced no events')
+
+    events, removed = dedupe_events(events)
+    if removed:
+        report['dedupe'] = {'removed': removed}
+        print(f'DEDUPED provider repairs: removed {removed} exact duplicate events')
 
     payload['events'] = events
     payload['officialSourceFailures'] = official_failures
