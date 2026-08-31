@@ -8,6 +8,7 @@ on:
     paths:
       - 'scripts/refresh_schedules.py'
       - 'scripts/refresh_schedules_engine.py'
+      - 'scripts/refresh_schedules_resilient.py'
       - 'scripts/official_api_adapters.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
@@ -25,8 +26,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Refresh canonical schedule feed through guarded season-aware engine
-        run: python scripts/refresh_schedules_engine.py
+      - name: Refresh canonical schedule feed through resilient season-aware engine
+        run: python scripts/refresh_schedules_resilient.py
       - name: Add authoritative official API schedules
         run: python scripts/official_api_adapters.py
       - name: Validate feed invariants
