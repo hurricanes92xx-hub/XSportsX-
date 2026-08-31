@@ -7,6 +7,9 @@ on:
     branches: [android-app]
     paths:
       - 'scripts/refresh_schedules.py'
+      - 'scripts/refresh_schedules_engine.py'
+      - 'scripts/schedule_engine.py'
+      - 'scripts/schedule_engine_safe.py'
       - 'data/official_schedule_sources.json'
       - '.github/workflows/refresh-schedules.yml'
 jobs:
@@ -19,19 +22,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Refresh canonical schedule feed
-        run: python scripts/refresh_schedules.py
+      - name: Refresh canonical schedule feed through guarded engine
+        run: python scripts/refresh_schedules_engine.py
       - name: Validate feed invariants
         run: |
           python - <<'PY'
           import json
-          from datetime import datetime, timezone, timedelta
+          from datetime import datetime, timezone
           p=json.load(open('data/schedule_feed.json'))
           events=p.get('events') or []
           assert events, 'schedule feed is empty'
           assert p.get('schema',0) >= 5, 'unexpected schedule schema'
           assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events'
-          cutoff=datetime.now(timezone.utc)-timedelta(hours=6)
           bad=[]
           for e in events:
             try: datetime.fromisoformat(e['start'].replace('Z','+00:00'))
