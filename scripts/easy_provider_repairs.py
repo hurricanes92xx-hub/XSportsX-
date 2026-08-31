@@ -11,6 +11,7 @@ import re
 import subprocess
 import tempfile
 import urllib.request
+import urllib.parse
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -72,12 +73,7 @@ def add_scoreboard(events, name, sport, league, icon, days):
 
 
 def add_official_cfl(events):
-    """Parse the CFL's published 2026 ET schedule PDF.
-
-    CFL.ca is the authoritative schedule and ESPN's CFL scoreboard can return no
-    usable events even while the league is active. The PDF is linked from the
-    official schedule page and is deliberately preferred for CFL.
-    """
+    """Parse the CFL's published 2026 ET schedule PDF."""
     page_url = 'https://www.cfl.ca/schedule/'
     page = fetch(page_url, {'User-Agent': HEADERS['User-Agent'], 'Accept': 'text/html,*/*'})
     html = page.decode('utf-8', 'ignore')
@@ -117,9 +113,6 @@ def add_official_cfl(events):
             print(f'WARNING official CFL PDF parse failed ({chosen}): {exc}')
             return 0
 
-    # ET schedule lines look like: THU JUN 4 | 7:30 PM ET | MTL @ HAM.
-    # The PDF repeats week headings, so collect date/time/team triplets without
-    # relying on fixed page positions.
     months = 'JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC'
     line_re = re.compile(
         rf'(?P<dow>MON|TUE|WED|THU|FRI|SAT|SUN)\s+(?P<mon>{months})\s+(?P<day>\d{{1,2}})\s+'
