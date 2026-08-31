@@ -26,6 +26,7 @@ def guard_for(url):
     with guards_lock: return guards.setdefault(host,engine.SourceGuard())
 def guarded_get(url):
     guard=guard_for(url)
+    last=None
     for attempt in range(1,5):
         guard.wait_turn()
         with semaphore:
@@ -33,53 +34,46 @@ def guarded_get(url):
                 req=urllib.request.Request(url,headers=refresh.HEADERS)
                 with urllib.request.urlopen(req,timeout=12) as response: data=response.read()
                 guard.success(); return data
-            except Exception:
-                guard.failure()
+            except Exception as exc:
+                last=exc; guard.failure()
                 if attempt>=4: raise
                 time.sleep(engine.backoff_seconds(attempt))
+    raise last
+
 def previous_root():
     try: return json.loads((ROOT/'data/schedule_feed.json').read_text(encoding='utf-8'))
     except Exception: return {}
 PREVIOUS_ROOT=previous_root(); PREVIOUS=PREVIOUS_ROOT.get('events') or []; SEASON_REPORT=[]
 def preserved(events,league):
-    rows=[e for e in PREVIOUS if e.get('league')==league]; events.extend(rows); return len(rows)
+    rows=[e for e in PREVIOUS if e.get('league')==league]
+    events.extend(rows)
+    return len(rows)
 def decision_for(name): return season.analyze(name,PREVIOUS)
 def _iso(value):
     if not value: return None
     try: return datetime.fromisoformat(str(value).replace('Z','+00:00')).astimezone(timezone.utc)
     except Exception: return None
 def _normalize_timestamp(value):
-    """Normalize all supported provider timestamp variants to UTC ISO-8601."""
     if value is None: return None
     text=str(value).strip()
     if not text: return None
     candidates=(text, text.replace('Z','+00:00'), text.replace('z','+00:00'))
     for candidate in candidates:
-        try:
-            return datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
-        except ValueError:
-            pass
-    # Some preserved/provider rows use US date notation with an ISO-style time.
+        try: return datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+        except ValueError: pass
     for fmt in ('%m/%d/%YT%H:%M:%SZ','%m/%d/%YT%H:%M:%S%z','%m/%d/%YT%H:%M:%S','%m/%d/%Y %H:%M:%S','%m/%d/%Y'):
         try:
             dt=datetime.strptime(text,fmt)
             if dt.tzinfo is None: dt=dt.replace(tzinfo=timezone.utc)
             return dt.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
-        except ValueError:
-            pass
+        except ValueError: pass
     return None
 def normalize_feed_timestamps(payload):
-    events=payload.get('events') or []
     invalid=[]; changed=0
-    for event in events:
-        raw=event.get('start')
-        normalized=_normalize_timestamp(raw)
-        if normalized is None:
-            invalid.append(event)
-            continue
-        if raw != normalized:
-            event['start']=normalized
-            changed += 1
+    for event in payload.get('events') or []:
+        raw=event.get('start'); normalized=_normalize_timestamp(raw)
+        if normalized is None: invalid.append(event); continue
+        if raw != normalized: event['start']=normalized; changed += 1
     return changed, invalid
 def _embedded_json_documents(html):
     text=html.decode('utf-8','ignore') if isinstance(html,(bytes,bytearray)) else str(html)
@@ -90,7 +84,9 @@ def _embedded_json_documents(html):
             except Exception: continue
 def _walk_official_events(value,league,events,seen,now,horizon):
     if isinstance(value,dict):
-        name=value.get('name') or value.get('eventName') or value.get('title'); date=value.get('startDate') or value.get('start') or value.get('startTime') or value.get('date'); typ=value.get('@type'); is_event=typ=='Event' or (isinstance(typ,list) and 'Event' in typ); dt=_iso(date)
+        name=value.get('name') or value.get('eventName') or value.get('title')
+        date=value.get('startDate') or value.get('start') or value.get('startTime') or value.get('date')
+        typ=value.get('@type'); is_event=typ=='Event' or (isinstance(typ,list) and 'Event' in typ); dt=_iso(date)
         if name and dt and (is_event or ('schedule' in str(value).lower() and 'date' in str(value).lower())) and now <= dt <= horizon:
             key=(league,str(name).strip(),dt.isoformat())
             if key not in seen:
@@ -99,28 +95,39 @@ def _walk_official_events(value,league,events,seen,now,horizon):
     elif isinstance(value,list):
         for v in value: _walk_official_events(v,league,events,seen,now,horizon)
 def official_embedded_fallback(events,source):
-    name=str(source.get('league') or '').strip(); url=str(source.get('url') or '').strip()
-    if not name or not url: return False,0
-    try: raw=guarded_get(url)
-    except Exception as exc: print(f'ERROR official embedded {name}: {exc}'); return False,0
+    name=str(source.get('league') or '').strip(); urls=source.get('urls') or [source.get('url')]
+    urls=[str(u).strip() for u in urls if str(u or '').strip()]
+    if not name or not urls: return False,0
     before=len(events); seen={(e.get('league'),e.get('title'),e.get('start')) for e in events}; now=datetime.now(timezone.utc)-timedelta(hours=12); horizon=datetime.now(timezone.utc)+timedelta(days=370)
-    for doc in _embedded_json_documents(raw): _walk_official_events(doc,name,events,seen,now,horizon)
-    return True,len(events)-before
+    successful=False
+    for url in urls:
+        try: raw=guarded_get(url); successful=True
+        except Exception as exc:
+            print(f'ERROR official embedded {name} {url}: {exc}'); continue
+        for doc in _embedded_json_documents(raw): _walk_official_events(doc,name,events,seen,now,horizon)
+        if len(events)>before: break
+    return successful,len(events)-before
 _original_add_official=refresh.add_official_source; _original_add_espn=refresh.add_espn; _original_add_ncaa=refresh.add_ncaa
 def season_aware_official(events,source):
     name=str(source.get('league') or '').strip(); d=decision_for(name); SEASON_REPORT.append(d|{'provider':'official'})
-    if not name or d['active']:
-        ok,n=_original_add_official(events,source)
-        if ok and n==0:
-            eok,en=official_embedded_fallback(events,source)
-            if en: return True,en
-        return ok,n
-    generated=PREVIOUS_ROOT.get('generatedAt',''); last=None
-    try: last=datetime.fromisoformat(str(generated).replace('Z','+00:00'))
-    except Exception: pass
-    age=(datetime.now(timezone.utc)-last).total_seconds()/3600 if last else 999
-    if age >= d['probeHours']: return _original_add_official(events,source)
-    return True,preserved(events,name)
+    if name and not d['active']:
+        generated=PREVIOUS_ROOT.get('generatedAt',''); last=None
+        try: last=datetime.fromisoformat(str(generated).replace('Z','+00:00'))
+        except Exception: pass
+        age=(datetime.now(timezone.utc)-last).total_seconds()/3600 if last else 999
+        if age < d['probeHours']: return True,preserved(events,name)
+    ok,n=_original_add_official(events,source)
+    if ok and n: return True,n
+    # A page can be reachable but expose no JSON-LD, or the primary page can
+    # block automated clients. Try embedded application JSON/Next data next.
+    eok,en=official_embedded_fallback(events,source)
+    if en: return True,en
+    # Never let a transient official-source outage erase a league from the
+    # canonical schedule. Preserve the last known events; provider fallbacks
+    # continue to run later in the pipeline for active leagues.
+    preserved_count=preserved(events,name) if name else 0
+    print(f'WARNING official source unavailable for {name}; preserved {preserved_count} prior events')
+    return False if not preserved_count else True,preserved_count
 def season_aware_espn(events,name,sport,league,icon,days):
     d=decision_for(name); SEASON_REPORT.append(d|{'provider':'espn'})
     if not d['active']: return True,preserved(events,name)
@@ -128,7 +135,13 @@ def season_aware_espn(events,name,sport,league,icon,days):
 def season_aware_ncaa(events,name,sport,division,icon,days=30):
     d=decision_for(name); SEASON_REPORT.append(d|{'provider':'ncaa'})
     if not d['active']: return True,preserved(events,name)
-    return _original_add_ncaa(events,name,sport,division,icon,days)
+    ok,n=_original_add_ncaa(events,name,sport,division,icon,days)
+    if ok and n: return ok,n
+    preserved_count=preserved(events,name)
+    if preserved_count:
+        print(f'WARNING NCAA source unavailable for {name}; preserved {preserved_count} prior events')
+        return True,preserved_count
+    return ok,n
 refresh.get=guarded_get; refresh.add_official_source=season_aware_official; refresh.add_espn=season_aware_espn; refresh.add_ncaa=season_aware_ncaa
 refresh.main()
 feed=ROOT/'data/schedule_feed.json'
@@ -136,8 +149,7 @@ try:
     payload=json.loads(feed.read_text(encoding='utf-8'))
     changed,invalid=normalize_feed_timestamps(payload)
     print(f'normalized {changed} schedule timestamps')
-    if invalid:
-        print(f'WARNING could not normalize {len(invalid)} schedule timestamps')
+    if invalid: print(f'WARNING could not normalize {len(invalid)} schedule timestamps')
     payload['seasonIntelligence']={'generatedAt':datetime.now(timezone.utc).isoformat(),'mode':'calendar_plus_observed_activity','providerDecisions':SEASON_REPORT}
     tmp=feed.with_suffix('.tmp'); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); tmp.replace(feed)
 except Exception as exc: print(f'WARNING season intelligence metadata: {exc}')
