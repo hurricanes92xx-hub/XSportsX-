@@ -4,7 +4,14 @@ APK="${1:?APK required}"
 OUT="${2:-source-login-output}"
 PKG="${QA_PACKAGE:-com.xsportsx.app}"
 SOURCE_BASE="${QA_SOURCE_BASE:-http://127.0.0.1:8765}"
-ACTIVITY="$PKG/.MainActivityFuture"
+# The mobile/tv flavors change applicationId to com.xsportsx.app.mobile/.tv,
+# but MainActivityFuture remains in the com.xsportsx.app Kotlin namespace.
+# Android component syntax allows the installed package and fully-qualified
+# activity class to differ; using "$PKG/.MainActivityFuture" incorrectly
+# resolves the class inside the flavor package and produces Activity class does
+# not exist on the flavored APKs.
+ACTIVITY_CLASS="${QA_ACTIVITY_CLASS:-com.xsportsx.app.MainActivityFuture}"
+ACTIVITY="$PKG/$ACTIVITY_CLASS"
 mkdir -p "$OUT"
 
 adb wait-for-device
