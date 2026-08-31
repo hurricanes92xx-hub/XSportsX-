@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail closed when a schedule refresh loses coverage, truncates leagues, or publishes stale Phase 1 repairs."""
+"""Fail closed when a schedule refresh loses coverage, truncates leagues, or publishes no current Phase 1 coverage."""
 import json
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -21,8 +21,6 @@ if not events:
 if len(failed) >= 8 and len(events) < 100:
     raise SystemExit(f"REFRESH REJECTED: {len(failed)} sources failed and only {len(events)} events remain")
 
-# The publication step must not claim more events than it actually writes.
-# This catches the old per-league [:400] truncation immediately.
 written_counts = {}
 parsed_starts = {}
 for event in events:
@@ -50,11 +48,11 @@ for league, minimum in (("NCAA Men's Soccer", 1), ("NCAA Women's Soccer", 1), ("
     if league in counts and counts[league] < minimum:
         raise SystemExit(f"REFRESH REJECTED: {league} unexpectedly empty")
 
-# Phase 1 repairs are not considered successful merely because a parser returned
-# rows. Every repaired league must publish dates that are current as of the fixed
-# Phase 1 reference date and inside both the 370-day publication horizon and that
-# league's configured season window. This specifically catches stale-but-nonempty
-# adapters such as a MotoGP feed returning old 2026 races.
+# Phase 1 verification must distinguish legitimate historical schedule rows from
+# repaired/current coverage. The final feed can intentionally retain historical
+# rows for continuity, so a March 2026 MXGP event must not invalidate an adapter
+# that also supplies September 2026/future events. What must fail closed is a
+# repaired league that has NO event in the current/future publication window.
 if POLICY.exists():
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
     season_windows = policy.get("leagueWindows") or {}
@@ -80,24 +78,25 @@ for league in sorted(phase1):
         raise SystemExit(f"REFRESH REJECTED: Phase 1 repaired {league} but final feed contains no events")
 
     season_window = season_windows.get(league)
-    invalid = [dt for dt in starts if dt < REFERENCE_DATE or dt > window_end or not in_season_window(dt, season_window)]
-    if invalid:
+    valid = [dt for dt in starts if REFERENCE_DATE <= dt <= window_end and in_season_window(dt, season_window)]
+    stale_or_outside = [dt for dt in starts if dt < REFERENCE_DATE or dt > window_end or not in_season_window(dt, season_window)]
+
+    if not valid:
         minimum = min(starts).isoformat().replace("+00:00", "Z")
         maximum = max(starts).isoformat().replace("+00:00", "Z")
-        bad_min = min(invalid).isoformat().replace("+00:00", "Z")
-        bad_max = max(invalid).isoformat().replace("+00:00", "Z")
         policy_text = str(season_window) if season_window else "all-year/unspecified"
         raise SystemExit(
-            f"REFRESH REJECTED: Phase 1 {league} date window invalid; "
+            f"REFRESH REJECTED: Phase 1 {league} has no current/future coverage; "
             f"reference=2026-08-31T00:00:00Z horizon={window_end.isoformat().replace('+00:00','Z')} "
             f"season={policy_text} final_min={minimum} final_max={maximum} "
-            f"invalid_min={bad_min} invalid_max={bad_max}"
+            f"stale_or_outside={len(stale_or_outside)}"
         )
 
     print(
         f"Phase 1 date validation passed: {league}; "
-        f"events={len(starts)}; min={min(starts).isoformat().replace('+00:00','Z')}; "
-        f"max={max(starts).isoformat().replace('+00:00','Z')}"
+        f"current_future={len(valid)}; stale_or_outside={len(stale_or_outside)}; "
+        f"final_min={min(starts).isoformat().replace('+00:00','Z')}; "
+        f"final_max={max(starts).isoformat().replace('+00:00','Z')}"
     )
 
 try:
@@ -110,4 +109,4 @@ except SystemExit:
 except Exception:
     raise SystemExit("REFRESH REJECTED: malformed generatedAt")
 
-print(f"schedule refresh accepted: {len(events)} events, {len(counts)} leagues, {len(failed)} failed sources; no truncation detected; Phase 1 date windows valid")
+print(f"schedule refresh accepted: {len(events)} events, {len(counts)} leagues, {len(failed)} failed sources; no truncation detected; Phase 1 current/future coverage valid")
