@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "strategy": "tiered_priority_ingestion",
+  "maxConcurrentSources": 6,
+  "maxQueue": 2000,
+  "perSourceRatePerSecond": 2,
+  "perSourceBurst": 4,
+  "circuitBreaker": {"failureThreshold": 4, "cooldownSeconds": 300},
+  "backoff": {"baseSeconds": 30, "maxSeconds": 1800},
+  "tiers": {
+    "live": {"ttlSeconds": 15, "priority": 0},
+    "today": {"ttlSeconds": 60, "priority": 1},
+    "next_3_days": {"ttlSeconds": 300, "priority": 2},
+    "next_30_days": {"ttlSeconds": 21600, "priority": 3},
+    "long_range": {"ttlSeconds": 43200, "priority": 4},
+    "metadata": {"ttlSeconds": 86400, "priority": 5}
+  },
+  "rules": [
+    "Never fan out every source at the same interval.",
+    "Prefer official sources; use provider fallback only when official coverage is missing or unhealthy.",
+    "Respect Retry-After and rate-limit headers when upstreams provide them.",
+    "Retain last-good league data when a source fails or returns an implausibly empty result.",
+    "Keep live/today refreshes isolated from long-range calendar work.",
+    "Expose per-source health, last success, event count, and stale age in diagnostics."
+  ]
+}
