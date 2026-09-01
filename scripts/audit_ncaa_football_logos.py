@@ -44,8 +44,8 @@ def main():
    rows.append(row)
   ma=sum(1 for r in rows if not r['awayLogoPresent'] and r['homeLogoPresent']);mh=sum(1 for r in rows if r['awayLogoPresent'] and not r['homeLogoPresent']);both=sum(1 for r in rows if not r['awayLogoPresent'] and not r['homeLogoPresent'])
   reports[league]={'games_total':total,'placeholder_events':placeholders,'placeholder_logo_slots':placeholder_slots,'complete_resolved_games':complete,'actionable_incomplete_games':len(rows),'missing_away_only':ma,'missing_home_only':mh,'both_missing':both,'missing_logo_slots':sum(variants.values()),'unresolved_variants':[{'exact':k,'count':v,'normalized':norm(k)} for k,v in variants.most_common()],'games':rows}
-status='PASS' if all(v['actionable_incomplete_games']==0 for v in reports.values()) else 'ACTIONABLE_GAPS'
-out={'schema_version':2,'status':status,'leagues':reports,'decision':'Unresolved FBS/FCS postseason, bowl, conference-title, CFP and FCS-playoff participants use NCAA league art. Known participants are still audited for real logo coverage.'}
-OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(out,indent=2,ensure_ascii=False))
-if status!='PASS':raise SystemExit(2)
+ status='PASS' if all(v['actionable_incomplete_games']==0 for v in reports.values()) else 'ACTIONABLE_GAPS'
+ out={'schema_version':2,'status':status,'leagues':reports,'decision':'Unresolved FBS/FCS postseason, bowl, conference-title, CFP and FCS-playoff participants use NCAA league art. Known participants are still audited for real logo coverage.'}
+ OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(out,indent=2,ensure_ascii=False))
+ if status!='PASS':raise SystemExit(2)
 if __name__=='__main__':main()
