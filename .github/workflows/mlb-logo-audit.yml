@@ -1,0 +1,29 @@
+name: MLB incomplete logo audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'data/schedule_feed.json'
+      - 'data/team_logo_map.json'
+      - 'scripts/phase3_visual_enrichment.py'
+      - 'scripts/audit_mlb_incomplete_games.py'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Audit the 57 unresolved MLB games
+        run: python scripts/audit_mlb_incomplete_games.py
+      - name: Upload exact MLB audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlb-logo-audit
+          path: data/mlb_logo_audit.json
