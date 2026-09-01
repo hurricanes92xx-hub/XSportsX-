@@ -3,32 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '*/30 * * * *'
-  push:
-    branches: [android-app]
-    paths:
-      - 'scripts/refresh_schedules.py'
-      - 'scripts/refresh_schedules_engine.py'
-      - 'scripts/repair_schedule_sources.py'
-      - 'scripts/official_api_adapters.py'
-      - 'scripts/repair_nascar_cup.py'
-      - 'scripts/espn_ncaa_adapter.py'
-      - 'scripts/easy_provider_repairs.py'
-      - 'scripts/ipl_core_adapter.py'
-      - 'scripts/special_schedule_repairs.py'
-      - 'scripts/wrestling_schedule_repairs.py'
-      - 'scripts/phase1_schedule_repairs.py'
-      - 'scripts/phase2_schedule_repairs.py'
-      - 'scripts/phase2_aaa_guard.py'
-      - 'scripts/phase3_visual_enrichment.py'
-      - 'data/team_logo_map.json'
-      - 'scripts/league_schedule_audit.py'
-      - 'scripts/validate_schedule_refresh.py'
-      - 'scripts/season_intelligence.py'
-      - 'scripts/schedule_engine.py'
-      - 'scripts/schedule_engine_safe.py'
-      - 'data/official_schedule_sources.json'
-      - 'data/schedule_season_policy.json'
-      - '.github/workflows/refresh-schedules.yml'
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
