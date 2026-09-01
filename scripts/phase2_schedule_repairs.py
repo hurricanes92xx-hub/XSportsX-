@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Phase 2 schedule repairs with Phase 1-style source and date safeguards."""
 from __future__ import annotations
-import json, re, urllib.request
+import json, re, urllib.request, subprocess, sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; FEED=ROOT/'data/schedule_feed.json'; POLICY=ROOT/'data/schedule_season_policy.json'
@@ -75,4 +75,7 @@ def main():
  except Exception:reference=datetime.now(timezone.utc)
  report=p.setdefault('phase2RepairReport',{}); repair_nba(events,report,failures,policy,reference); probe_nll(events,report,failures,policy,reference)
  p['events']=events;p['officialSourceFailures']=failures;p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})};p['generatedAt']=datetime.now(timezone.utc).isoformat();FEED.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print('PHASE2 failures remaining:',failures);print(f'PHASE2 complete: {len(events)} events across {len(p["eventCounts"])} leagues')
+ # Phase 3 runs after all Phase 2 feed mutations and before the AAA guard/audit.
+ # It only adds presentation metadata and never alters dates or event membership.
+ subprocess.run([sys.executable, str(ROOT/'scripts'/'phase3_visual_enrichment.py')], check=True)
 if __name__=='__main__':main()
