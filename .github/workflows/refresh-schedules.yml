@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '*/30 * * * *'
-  # Canonical guarded refresh: schedule-repair commits self-trigger verification.
   push:
     branches: [android-app]
     paths:
@@ -20,6 +19,8 @@ on:
       - 'scripts/phase1_schedule_repairs.py'
       - 'scripts/phase2_schedule_repairs.py'
       - 'scripts/phase2_aaa_guard.py'
+      - 'scripts/phase3_visual_enrichment.py'
+      - 'data/team_logo_map.json'
       - 'scripts/league_schedule_audit.py'
       - 'scripts/validate_schedule_refresh.py'
       - 'scripts/season_intelligence.py'
@@ -111,8 +112,21 @@ jobs:
         run: python scripts/validate_schedule_refresh.py
       - name: Publish schedule feed
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/schedule_feed.json data/league_schedule_audit.json
           git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
-          git push
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            if git rebase origin/android-app; then
+              if git push origin HEAD:android-app; then
+                exit 0
+              fi
+            else
+              git rebase --abort || true
+            fi
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish after three race-safe retries' >&2
+          exit 1
