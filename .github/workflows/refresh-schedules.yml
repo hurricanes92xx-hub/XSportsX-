@@ -5,6 +5,7 @@ on:
     branches: [android-app]
     paths:
       - 'scripts/phase3_visual_enrichment.py'
+      - 'scripts/audit_mlb_incomplete_games.py'
   schedule:
     - cron: '*/30 * * * *'
 
@@ -48,6 +49,14 @@ jobs:
         run: python scripts/phase2_aaa_guard.py
       - name: Phase 3 visual enrichment and deterministic artwork
         run: python scripts/phase3_visual_enrichment.py
+      - name: Audit incomplete MLB logo mappings
+        run: python scripts/audit_mlb_incomplete_games.py
+      - name: Upload MLB logo audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlb-logo-audit
+          path: data/mlb_logo_audit.json
+          if-no-files-found: error
       - name: Generate compact league schedule audit
         run: python scripts/league_schedule_audit.py
       - name: Normalize, dedupe, and persist canonical feed
