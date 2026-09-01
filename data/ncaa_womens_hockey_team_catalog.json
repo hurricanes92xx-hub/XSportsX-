@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-09-01T19:41:14.953168+00:00",
+  "generatedAt": "2026-09-01T19:57:07.685550+00:00",
   "league": "NCAA Women's Hockey",
+  "scheduleSource": "ESPN scoreboard",
   "slug": "womens-college-hockey",
   "source": "https://site.api.espn.com/apis/site/v2/sports/hockey/womens-college-hockey/teams?limit=1000",
   "sport": "hockey",
-  "teamCount": 47,
+  "teamCount": 49,
   "teams": [
     {
       "aliases": [
@@ -12,13 +13,15 @@
         "Assumption",
         "Greyhounds",
         "ASP",
-        "assumption-greyhounds"
+        "assumption-greyhounds",
+        "Assumption College Greyhounds",
+        "Assumption College"
       ],
       "displayName": "Assumption Greyhounds",
       "id": "127962",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/127962.png",
       "slug": "assumption-greyhounds",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -32,7 +35,7 @@
       "id": "132",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/132.png",
       "slug": "bemidji-state-beavers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -46,7 +49,7 @@
       "id": "103",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/103.png",
       "slug": "boston-college-eagles",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -60,7 +63,7 @@
       "id": "104",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/104.png",
       "slug": "boston-university-terriers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -74,7 +77,7 @@
       "id": "225",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/225.png",
       "slug": "brown-bears",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -88,7 +91,7 @@
       "id": "2137",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2137.png",
       "slug": "clarkson-golden-knights",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -102,7 +105,7 @@
       "id": "2142",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2142.png",
       "slug": "colgate-raiders",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -116,7 +119,7 @@
       "id": "172",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/172.png",
       "slug": "cornell-big-red",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -130,7 +133,7 @@
       "id": "159",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/159.png",
       "slug": "dartmouth-big-green",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -138,13 +141,14 @@
         "Franklin Pierce",
         "Ravens",
         "FP",
-        "franklin-pierce-ravens"
+        "franklin-pierce-ravens",
+        "FRANK"
       ],
       "displayName": "Franklin Pierce Ravens",
       "id": "121934",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/121934.png",
       "slug": "franklin-pierce-ravens",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -158,7 +162,7 @@
       "id": "108",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/108.png",
       "slug": "harvard-crimson",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -172,7 +176,7 @@
       "id": "107",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/107.png",
       "slug": "holy-cross-crusaders",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -186,7 +190,7 @@
       "id": "2815",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2815.png",
       "slug": "lindenwood-lions",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -194,13 +198,14 @@
         "Long Island University",
         "Sharks",
         "LIU",
-        "long-island-university-sharks"
+        "long-island-university-sharks",
+        "Long Island University Long Island University"
       ],
       "displayName": "Long Island University Sharks",
       "id": "2341",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2341.png",
       "slug": "long-island-university-sharks",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -214,7 +219,7 @@
       "id": "311",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/311.png",
       "slug": "maine-black-bears",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -228,7 +233,7 @@
       "id": "2385",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2385.png",
       "slug": "mercyhurst-lakers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -242,7 +247,7 @@
       "id": "2771",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2771.png",
       "slug": "merrimack-warriors",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -256,7 +261,7 @@
       "id": "134",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/134.png",
       "slug": "minnesota-duluth-bulldogs",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -270,7 +275,7 @@
       "id": "135",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/135.png",
       "slug": "minnesota-golden-gophers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -298,7 +303,7 @@
       "id": "160",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/160.png",
       "slug": "new-hampshire-wildcats",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -340,7 +345,7 @@
       "id": "111",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/111.png",
       "slug": "northeastern-huskies",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -354,7 +359,7 @@
       "id": "194",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
       "slug": "ohio-state-buckeyes",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -368,7 +373,7 @@
       "id": "213",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/213.png",
       "slug": "penn-state-nittany-lions",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -376,13 +381,16 @@
         "Post",
         "Eagles",
         "POST",
-        "post-eagles"
+        "post-eagles",
+        "Post University Eagles",
+        "Post University",
+        "PU"
       ],
       "displayName": "Post Eagles",
       "id": "430",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/430.png",
       "slug": "post-eagles",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -396,7 +404,7 @@
       "id": "163",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/163.png",
       "slug": "princeton-tigers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -410,7 +418,7 @@
       "id": "2507",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2507.png",
       "slug": "providence-friars",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -424,7 +432,7 @@
       "id": "2514",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2514.png",
       "slug": "quinnipiac-bobcats",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -437,7 +445,7 @@
       "id": "178",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/178.png",
       "slug": "rit-tigers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -451,7 +459,7 @@
       "id": "2528",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2528.png",
       "slug": "rensselaer-engineers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -465,7 +473,7 @@
       "id": "2523",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2523.png",
       "slug": "robert-morris-colonials",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -479,7 +487,7 @@
       "id": "2529",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2529.png",
       "slug": "sacred-heart-pioneers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -487,13 +495,16 @@
         "Saint Anselm",
         "Hawks",
         "SANS",
-        "saint-anselm-hawks"
+        "saint-anselm-hawks",
+        "St. Anselm Hawks",
+        "St. Anselm",
+        "STA"
       ],
       "displayName": "Saint Anselm Hawks",
       "id": "2830",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2830.png",
       "slug": "saint-anselm-hawks",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -501,13 +512,14 @@
         "Saint Michael's",
         "Purple Knights",
         "STM",
-        "saint-michaels-purple-knights"
+        "saint-michaels-purple-knights",
+        "STMIK"
       ],
       "displayName": "Saint Michael's Purple Knights",
       "id": "260",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/260.png",
       "slug": "saint-michaels-purple-knights",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -521,7 +533,7 @@
       "id": "2594",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2594.png",
       "slug": "st-cloud-state-huskies",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -535,7 +547,7 @@
       "id": "2779",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2779.png",
       "slug": "st-lawrence-saints",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -563,7 +575,7 @@
       "id": "2900",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2900.png",
       "slug": "st-thomas-minnesota-tommies",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -577,7 +589,7 @@
       "id": "284",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/284.png",
       "slug": "stonehill-skyhawks",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -591,7 +603,7 @@
       "id": "183",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/183.png",
       "slug": "syracuse-orange",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -605,7 +617,7 @@
       "id": "41",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/41.png",
       "slug": "uconn-huskies",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -613,13 +625,15 @@
         "Union",
         "Garnet Chargers",
         "UNNY",
-        "union-garnet-chargers"
+        "union-garnet-chargers",
+        "Union (NY) Garnet Chargers",
+        "Union (NY)"
       ],
       "displayName": "Union Garnet Chargers",
       "id": "2785",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2785.png",
       "slug": "union-garnet-chargers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -633,7 +647,7 @@
       "id": "261",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/261.png",
       "slug": "vermont-catamounts",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -647,7 +661,7 @@
       "id": "275",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/275.png",
       "slug": "wisconsin-badgers",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
     },
     {
       "aliases": [
@@ -661,8 +675,34 @@
       "id": "43",
       "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/43.png",
       "slug": "yale-bulldogs",
-      "source": "ESPN"
+      "source": "ESPN scoreboard"
+    },
+    {
+      "aliases": [
+        "Minnesota State Mavericks",
+        "Minnesota St",
+        "Mavericks",
+        "MNST"
+      ],
+      "displayName": "Minnesota State Mavericks",
+      "id": "24059",
+      "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/24059.png",
+      "slug": "",
+      "source": "ESPN scoreboard"
+    },
+    {
+      "aliases": [
+        "Delaware Blue Hens",
+        "Delaware",
+        "Blue Hens",
+        "DEL"
+      ],
+      "displayName": "Delaware Blue Hens",
+      "id": "48",
+      "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/48.png",
+      "slug": "",
+      "source": "ESPN scoreboard"
     }
   ],
-  "version": 1
+  "version": 2
 }

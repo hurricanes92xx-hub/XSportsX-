@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T19:41:50.915844+00:00",
+  "generatedAt": "2026-09-01T19:57:51.562238+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -144007,7 +144007,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "LSU at Miami (OH)",
-      "start": "2026-09-06T22:00:00Z",
+      "start": "2026-09-06T23:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -237921,7 +237921,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T19:40:24.597226+00:00",
+    "generatedAt": "2026-09-01T19:56:19.347113+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -238061,7 +238061,7 @@
           ]
         ],
         "observedUpcoming": 2875,
-        "observedRecent": 38,
+        "observedRecent": 40,
         "provider": "official"
       },
       {
@@ -238978,7 +238978,7 @@
           ]
         ],
         "observedUpcoming": 2875,
-        "observedRecent": 38,
+        "observedRecent": 40,
         "provider": "espn"
       },
       {
@@ -239544,7 +239544,7 @@
       "NCAA FCS": "espn:780; raw_events:780; requests:13; errors:0; season:always; status:added",
       "NCAA BB": "espn:0; raw_events:0; requests:13; errors:13; season:winter; status:empty",
       "NCAA WBB": "espn:0; raw_events:0; requests:13; errors:13; season:winter; status:empty",
-      "NCAA Baseball": "espn:0; raw_events:0; requests:13; errors:0; season:spring; status:empty",
+      "NCAA Baseball": "espn:0; raw_events:0; requests:13; errors:1; season:spring; status:empty",
       "NCAA Softball": "espn:0; raw_events:0; requests:13; errors:13; season:spring; status:empty",
       "NCAA Men's Soccer": "espn:1436; raw_events:1436; requests:13; errors:0; season:fall; status:added",
       "NCAA Women's Soccer": "espn:2213; raw_events:2214; requests:13; errors:0; season:fall; status:added",
@@ -239664,7 +239664,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T19:41:32.271220Z",
+      "reference": "2026-09-01T19:57:30.926152Z",
       "errors": []
     },
     "NLL": {
