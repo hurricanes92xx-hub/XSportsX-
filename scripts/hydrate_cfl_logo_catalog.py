@@ -101,3 +101,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# Refresh trigger: the dedicated CFL workflow runs on this file.
