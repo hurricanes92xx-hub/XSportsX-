@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T01:07:25.349997+00:00",
+  "generatedAt": "2026-09-01T01:15:24.922492+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 2,
@@ -60306,15 +60306,6 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Kentucky Christian Knights at Chicago State Cougars",
-      "start": "2026-09-12T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard FCS group"
-    },
-    {
-      "league": "NCAA FCS",
       "title": "UT Martin Skyhawks at West Virginia Mountaineers",
       "start": "2026-09-12T17:00:00Z",
       "tag": "UPCOMING",
@@ -60334,6 +60325,15 @@
     {
       "league": "NCAA FCS",
       "title": "Holy Cross Crusaders at Miami (OH) RedHawks",
+      "start": "2026-09-12T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard FCS group"
+    },
+    {
+      "league": "NCAA FCS",
+      "title": "Kentucky Christian Knights at Chicago State Cougars",
       "start": "2026-09-12T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60477,7 +60477,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Mercyhurst Lakers at New Mexico Lobos",
+      "title": "Northern Colorado Bears at Wyoming Cowboys",
       "start": "2026-09-12T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60486,7 +60486,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Northern Colorado Bears at Wyoming Cowboys",
+      "title": "Mercyhurst Lakers at New Mexico Lobos",
       "start": "2026-09-12T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60567,15 +60567,6 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "UAlbany Great Danes at Long Island University Sharks",
-      "start": "2026-09-12T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard FCS group"
-    },
-    {
-      "league": "NCAA FCS",
       "title": "Bryant Bulldogs at Hampton Pirates",
       "start": "2026-09-12T22:00:00Z",
       "tag": "UPCOMING",
@@ -60586,6 +60577,15 @@
     {
       "league": "NCAA FCS",
       "title": "Stonehill Skyhawks at New Hampshire Wildcats",
+      "start": "2026-09-12T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard FCS group"
+    },
+    {
+      "league": "NCAA FCS",
+      "title": "UAlbany Great Danes at Long Island University Sharks",
       "start": "2026-09-12T22:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60864,7 +60864,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Tennessee State Tigers at Alabama A&M Bulldogs",
+      "title": "Fordham Rams at Coastal Carolina Chanticleers",
       "start": "2026-09-12T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60873,7 +60873,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Fordham Rams at Coastal Carolina Chanticleers",
+      "title": "Tennessee State Tigers at Alabama A&M Bulldogs",
       "start": "2026-09-12T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -138144,7 +138144,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T01:05:52.220290+00:00",
+    "generatedAt": "2026-09-01T01:14:02.877126+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -139864,8 +139864,8 @@
       "source_url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
       "parsed": 1273,
       "added": 0,
-      "current_future_added": 0,
-      "reference": "2026-09-01T01:07:13.571777Z",
+      "current_future_existing_or_added": 1226,
+      "reference": "2026-09-01T01:15:13.082947Z",
       "errors": []
     },
     "NLL": {
