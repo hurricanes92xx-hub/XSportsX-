@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T21:05:08.668512+00:00",
+  "generatedAt": "2026-09-01T21:25:25.579116+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -148916,23 +148916,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Tennessee Tech at Vanderbilt",
-      "start": "2026-09-04T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
-      "away": "Tennessee Tech",
-      "home": "Vanderbilt",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20637.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20370.png",
-      "awayTeamId": "20637",
-      "homeTeamId": "20370",
-      "leagueArt": "",
-      "eventType": "team_game"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Tennessee at Virginia",
       "start": "2026-09-03T23:00:00Z",
       "tag": "UPCOMING",
@@ -149523,6 +149506,23 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20638.png",
       "awayTeamId": "20423",
       "homeTeamId": "20638",
+      "leagueArt": "",
+      "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Tennessee Tech at Vanderbilt",
+      "start": "2026-09-04T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard",
+      "away": "Tennessee Tech",
+      "home": "Vanderbilt",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20637.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20370.png",
+      "awayTeamId": "20637",
+      "homeTeamId": "20370",
       "leagueArt": "",
       "eventType": "team_game"
     },
@@ -185179,7 +185179,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Rutgers Scarlet Knights at Arkansas Razorbacks",
       "start": "2026-09-01T21:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -258277,7 +258277,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T21:03:45.222570+00:00",
+    "generatedAt": "2026-09-01T21:23:57.418431+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -260021,7 +260021,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T21:04:49.833303Z",
+      "reference": "2026-09-01T21:25:05.090953Z",
       "errors": []
     },
     "NLL": {
