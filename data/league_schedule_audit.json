@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-01T03:28:43.679593Z",
-  "feed_generated_at": "2026-09-01T03:28:43.280879+00:00",
+  "generated_at": "2026-09-01T10:15:59.448559Z",
+  "feed_generated_at": "2026-09-01T10:15:59.073617+00:00",
   "leagues": [
     {
       "league": "NBA",
-      "event_count": 1274,
+      "event_count": 1270,
       "min_date": "2026-10-03T23:00:00Z",
       "max_date": "2027-04-12T00:30:00Z",
-      "current_future_count": 1226,
-      "stale_or_outside_count": 48,
+      "current_future_count": 1223,
+      "stale_or_outside_count": 47,
       "season_window": [
         [
           10,
@@ -20,16 +20,16 @@
           30
         ]
       ],
-      "reference": "2026-09-01T03:28:43.280879Z",
-      "horizon": "2027-09-06T03:28:43.280879Z",
+      "reference": "2026-09-01T10:15:59.073617Z",
+      "horizon": "2027-09-06T10:15:59.073617Z",
       "source": "NBA official CDN scheduleLeagueV2",
       "repair_result": {
         "source": "NBA official CDN scheduleLeagueV2",
         "source_url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
         "parsed": 1273,
-        "added": 0,
-        "current_future_existing_or_added": 1226,
-        "reference": "2026-09-01T03:28:33.714561Z",
+        "added": 1270,
+        "current_future_existing_or_added": 1223,
+        "reference": "2026-09-01T10:15:48.737810Z",
         "errors": []
       },
       "official_source_failure": false,
@@ -52,8 +52,8 @@
           31
         ]
       ],
-      "reference": "2026-09-01T03:28:43.280879Z",
-      "horizon": "2027-09-06T03:28:43.280879Z",
+      "reference": "2026-09-01T10:15:59.073617Z",
+      "horizon": "2027-09-06T10:15:59.073617Z",
       "source": "NLL official full schedule page",
       "repair_result": {
         "source": "NLL official full schedule page",
