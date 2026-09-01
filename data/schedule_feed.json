@@ -1,10 +1,10 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T03:10:40.997651+00:00",
+  "generatedAt": "2026-09-01T03:28:43.845066+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
-    "AEW": 14,
+    "AEW": 16,
     "AFL": 4,
     "ATP": 5,
     "BOXING": 8,
@@ -138325,10 +138325,26 @@
       "icon": "🏑",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Dynamite",
+      "start": "2027-02-07T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Dynamite",
+      "start": "2027-02-10T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T03:09:37.087267+00:00",
+    "generatedAt": "2026-09-01T03:27:19.396544+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -139981,15 +139997,13 @@
       "fallback_used": false
     },
     "AEW": {
-      "source": "https://www.sync2cal.com/sports/fighting/aew",
-      "official_source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
-      "parsed_official_events": 10,
-      "added": 0,
-      "current_future_existing_or_added": 14,
-      "weekly_show_events": 8,
+      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
+      "parsed_official_events": 4,
+      "added": 2,
+      "current_future_existing_or_added": 16,
+      "weekly_show_events": 10,
       "validated": true,
-      "fallback_used": true,
-      "official_error": "HTTP Error 429: Too Many Requests"
+      "fallback_used": false
     }
   },
   "phase1RepairReport": {
@@ -140028,7 +140042,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1226,
-      "reference": "2026-09-01T03:10:31.434352Z",
+      "reference": "2026-09-01T03:28:33.714561Z",
       "errors": []
     },
     "NLL": {
