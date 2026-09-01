@@ -10,6 +10,7 @@ on:
       - 'scripts/audit_mlb_incomplete_games.py'
       - 'scripts/audit_team_logo_coverage.py'
       - 'scripts/audit_ncaa_hockey_field_hockey_catalogs.py'
+      - 'scripts/hydrate_hockey_field_hockey_logos.py'
       - 'scripts/finalize_mlb_postseason_placeholders.py'
       - 'scripts/finalize_ncaa_football_postseason_placeholders.py'
       - 'scripts/hydrate_ncaa_logo_catalog.py'
@@ -45,6 +46,8 @@ jobs:
         run: python scripts/hydrate_ncaa_logo_catalog.py
       - name: Build and audit dedicated NCAA field hockey and hockey catalogs
         run: python scripts/audit_ncaa_hockey_field_hockey_catalogs.py
+      - name: Merge dedicated NCAA hockey and field hockey logos into persistent cache
+        run: python scripts/hydrate_hockey_field_hockey_logos.py
       - name: Build canonical NCAA non-football school identity catalog
         run: python scripts/build_ncaa_nonfootball_identity_catalog.py
       - name: Repair easy provider endpoints
