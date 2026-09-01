@@ -31,7 +31,7 @@ HEADERS = {
 }
 
 LEAGUES = {
-    "NFL": ("football", "nfl"), "NBA": ("basketball", "nba"), "WNBA": ("basketball", "wnba"),
+    "NFL": ("football", "nfl"), "CFL": ("football", "cfl"), "NBA": ("basketball", "nba"), "WNBA": ("basketball", "wnba"),
     "MLB": ("baseball", "mlb"), "NHL": ("hockey", "nhl"), "MLS": ("soccer", "usa.1"),
     "EPL": ("soccer", "eng.1"), "LaLiga": ("soccer", "esp.1"), "Serie A": ("soccer", "ita.1"),
     "Bundesliga": ("soccer", "ger.1"), "Ligue 1": ("soccer", "fra.1"),
@@ -56,6 +56,18 @@ MLB_ALIASES = {
     "SD": ["SAN DIEGO", "SD PADRES", "PADRES"], "SF": ["SAN FRANCISCO", "SF GIANTS", "GIANTS"], "SEA": ["SEATTLE", "MARINERS"],
     "STL": ["ST LOUIS", "ST. LOUIS", "CARDINALS"], "TB": ["TAMPA BAY", "TB RAYS", "RAYS"], "TEX": ["TEXAS", "RANGERS"],
     "TOR": ["TORONTO", "BLUE JAYS"], "WSH": ["WASHINGTON", "NATIONALS"], "ATH": ["ATHLETICS", "ATHS"],
+}
+
+CFL_ALIASES = {
+    "BC": ["BC LIONS", "BRITISH COLUMBIA", "LIONS"],
+    "CGY": ["CALGARY STAMPEDERS", "CALGARY", "STAMPEDERS"],
+    "EDM": ["EDMONTON ELKS", "EDMONTON", "ELKS"],
+    "HAM": ["HAMILTON TIGER CATS", "HAMILTON TIGER-CATS", "HAMILTON", "TIGER CATS", "TIGER-CATS"],
+    "MTL": ["MONTREAL ALOUETTES", "MONTREAL", "ALOUETTES"],
+    "OTT": ["OTTAWA REDBLACKS", "OTTAWA", "REDBLACKS", "RED BLACKS"],
+    "SSK": ["SASKATCHEWAN ROUGHRIDERS", "SASKATCHEWAN", "ROUGHRIDERS", "ROUGH RIDERS"],
+    "TOR": ["TORONTO ARGONAUTS", "TORONTO", "ARGONAUTS"],
+    "WPG": ["WINNIPEG BLUE BOMBERS", "WINNIPEG", "BLUE BOMBERS"],
 }
 
 
@@ -135,6 +147,13 @@ def main():
                     code = norm(team.get("abbreviation") or "")
                     for alias in MLB_ALIASES.get(code, []):
                         key = f"MLB|{norm(alias)}"
+                        if cache["teams"].get(key) != logo:
+                            cache["teams"][key] = logo
+                            added += 1
+                if league == "CFL":
+                    code = norm(team.get("abbreviation") or "")
+                    for alias in CFL_ALIASES.get(code, []):
+                        key = f"CFL|{norm(alias)}"
                         if cache["teams"].get(key) != logo:
                             cache["teams"][key] = logo
                             added += 1
