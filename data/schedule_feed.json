@@ -1,9 +1,9 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T01:15:24.922492+00:00",
+  "generatedAt": "2026-09-01T01:50:30.501950+00:00",
   "refreshHours": 6,
   "eventCounts": {
-    "AAA Wrestling": 2,
+    "AAA Wrestling": 12,
     "AEW": 4,
     "AFL": 4,
     "ATP": 5,
@@ -54,7 +54,9 @@
     "WWE": 13
   },
   "failedSources": [],
-  "officialSourceFailures": [],
+  "officialSourceFailures": [
+    "NLL"
+  ],
   "officialSourceCounts": {
     "NFL": 16,
     "NCAA FB": 1537,
@@ -31110,6 +31112,13 @@
       "icon": "🏀"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah",
+      "start": "2026-12-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "NCAA FB",
       "title": "TBD at TBD",
       "start": "2026-12-18T16:00:00Z",
@@ -31223,6 +31232,13 @@
       "start": "2026-12-19T01:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏀"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Jeddah",
+      "start": "2026-12-19T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "NCAA FB",
@@ -34498,6 +34514,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Mexico City",
+      "start": "2027-01-16T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "NBA",
       "title": "Timberwolves @ 76ers",
       "start": "2027-01-16T17:30:00Z",
@@ -37547,6 +37570,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Austin",
+      "start": "2027-02-06T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "Six Nations",
       "title": "Scotland @ Italy",
       "start": "2027-02-06T14:10:00Z",
@@ -39489,6 +39519,13 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Miami",
+      "start": "2027-02-20T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "Six Nations",
       "title": "Wales @ Ireland",
       "start": "2027-02-20T16:40:00Z",
@@ -40482,6 +40519,13 @@
       "start": "2027-03-13T03:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏀"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — São Paulo",
+      "start": "2027-03-13T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "Six Nations",
@@ -44647,6 +44691,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Sanya",
+      "start": "2027-04-17T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Cleveland @ Boston",
       "start": "2027-04-18T07:33:00Z",
@@ -46127,6 +46178,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco",
+      "start": "2027-05-01T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Washington @ Pittsburgh",
       "start": "2027-05-02T07:33:00Z",
@@ -46245,6 +46303,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Monaco",
+      "start": "2027-05-02T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -46911,6 +46976,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin",
+      "start": "2027-05-08T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Boston @ Cleveland",
       "start": "2027-05-09T07:33:00Z",
@@ -47029,6 +47101,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Berlin",
+      "start": "2027-05-09T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -49135,6 +49214,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — London",
+      "start": "2027-05-29T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Colorado @ Baltimore",
       "start": "2027-05-30T07:33:00Z",
@@ -49253,6 +49339,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — London",
+      "start": "2027-05-30T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -51247,6 +51340,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Zandvoort",
+      "start": "2027-06-18T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Washington @ NY Mets",
       "start": "2027-06-19T07:33:00Z",
@@ -51365,6 +51465,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Zandvoort",
+      "start": "2027-06-19T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -52111,6 +52218,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Madrid",
+      "start": "2027-06-26T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Colorado @ Boston",
       "start": "2027-06-27T07:33:00Z",
@@ -52229,6 +52343,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Madrid",
+      "start": "2027-06-27T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -53631,6 +53752,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai",
+      "start": "2027-07-10T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Chi Cubs @ Detroit",
       "start": "2027-07-11T07:33:00Z",
@@ -53749,6 +53877,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Shanghai",
+      "start": "2027-07-11T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -54775,6 +54910,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo",
+      "start": "2027-07-24T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "MLB",
       "title": "Boston @ Baltimore",
       "start": "2027-07-25T07:33:00Z",
@@ -54893,6 +55035,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "FORMULA E",
+      "title": "Formula E — Tokyo",
+      "start": "2027-07-25T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
     },
     {
       "league": "MLB",
@@ -60306,6 +60455,15 @@
     },
     {
       "league": "NCAA FCS",
+      "title": "Kentucky Christian Knights at Chicago State Cougars",
+      "start": "2026-09-12T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard FCS group"
+    },
+    {
+      "league": "NCAA FCS",
       "title": "UT Martin Skyhawks at West Virginia Mountaineers",
       "start": "2026-09-12T17:00:00Z",
       "tag": "UPCOMING",
@@ -60325,15 +60483,6 @@
     {
       "league": "NCAA FCS",
       "title": "Holy Cross Crusaders at Miami (OH) RedHawks",
-      "start": "2026-09-12T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard FCS group"
-    },
-    {
-      "league": "NCAA FCS",
-      "title": "Kentucky Christian Knights at Chicago State Cougars",
       "start": "2026-09-12T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60477,7 +60626,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Northern Colorado Bears at Wyoming Cowboys",
+      "title": "Mercyhurst Lakers at New Mexico Lobos",
       "start": "2026-09-12T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60486,7 +60635,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Mercyhurst Lakers at New Mexico Lobos",
+      "title": "Northern Colorado Bears at Wyoming Cowboys",
       "start": "2026-09-12T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60567,6 +60716,15 @@
     },
     {
       "league": "NCAA FCS",
+      "title": "UAlbany Great Danes at Long Island University Sharks",
+      "start": "2026-09-12T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard FCS group"
+    },
+    {
+      "league": "NCAA FCS",
       "title": "Bryant Bulldogs at Hampton Pirates",
       "start": "2026-09-12T22:00:00Z",
       "tag": "UPCOMING",
@@ -60577,15 +60735,6 @@
     {
       "league": "NCAA FCS",
       "title": "Stonehill Skyhawks at New Hampshire Wildcats",
-      "start": "2026-09-12T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard FCS group"
-    },
-    {
-      "league": "NCAA FCS",
-      "title": "UAlbany Great Danes at Long Island University Sharks",
       "start": "2026-09-12T22:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60864,7 +61013,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Fordham Rams at Coastal Carolina Chanticleers",
+      "title": "Tennessee State Tigers at Alabama A&M Bulldogs",
       "start": "2026-09-12T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -60873,7 +61022,7 @@
     },
     {
       "league": "NCAA FCS",
-      "title": "Tennessee State Tigers at Alabama A&M Bulldogs",
+      "title": "Fordham Rams at Coastal Carolina Chanticleers",
       "start": "2026-09-12T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🏈",
@@ -137975,176 +138124,88 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Jeddah",
-      "start": "2026-12-18T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-05",
+      "start": "2026-09-05T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Jeddah",
-      "start": "2026-12-19T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-12",
+      "start": "2026-09-12T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Mexico City",
-      "start": "2027-01-16T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-19",
+      "start": "2026-09-19T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Austin",
-      "start": "2027-02-06T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-26",
+      "start": "2026-09-26T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Miami",
-      "start": "2027-02-20T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-03",
+      "start": "2026-10-03T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — São Paulo",
-      "start": "2027-03-13T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-10",
+      "start": "2026-10-10T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Sanya",
-      "start": "2027-04-17T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-17",
+      "start": "2026-10-17T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Monaco",
-      "start": "2027-05-01T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-24",
+      "start": "2026-10-24T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Monaco",
-      "start": "2027-05-02T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-31",
+      "start": "2026-10-31T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     },
     {
-      "league": "FORMULA E",
-      "title": "Formula E — Berlin",
-      "start": "2027-05-08T12:00:00Z",
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-11-07",
+      "start": "2026-11-07T22:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Berlin",
-      "start": "2027-05-09T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — London",
-      "start": "2027-05-29T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — London",
-      "start": "2027-05-30T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Zandvoort",
-      "start": "2027-06-18T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Zandvoort",
-      "start": "2027-06-19T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Madrid",
-      "start": "2027-06-26T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Madrid",
-      "start": "2027-06-27T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Shanghai",
-      "start": "2027-07-10T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Shanghai",
-      "start": "2027-07-11T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Tokyo",
-      "start": "2027-07-24T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
-    },
-    {
-      "league": "FORMULA E",
-      "title": "Formula E — Tokyo",
-      "start": "2027-07-25T12:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "FIA Formula E official 2026/27 calendar"
+      "icon": "🤼",
+      "source": "WWE/AAA official weekly broadcast cadence"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T01:14:02.877126+00:00",
+    "generatedAt": "2026-09-01T01:49:23.977480+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -138284,7 +138345,7 @@
           ]
         ],
         "observedUpcoming": 2887,
-        "observedRecent": 36,
+        "observedRecent": 40,
         "provider": "official"
       },
       {
@@ -139201,7 +139262,7 @@
           ]
         ],
         "observedUpcoming": 2887,
-        "observedRecent": 36,
+        "observedRecent": 40,
         "provider": "espn"
       },
       {
@@ -139775,58 +139836,17 @@
       "parsed": 74,
       "request_failures": 0
     },
-    "NBA": {
-      "source": "ESPN scoreboard",
-      "added": 0,
-      "healthy": true
-    },
-    "PLL": {
-      "source": "ESPN scoreboard",
-      "added": 0,
-      "healthy": true
-    },
-    "NLL": {
-      "source": "ESPN scoreboard",
-      "added": 0,
-      "healthy": true
-    },
-    "MotoGP": {
-      "source": "MotoGP public API",
-      "parsed": 46,
-      "added": 0
-    },
-    "MXGP": {
-      "source": "Honda Racing MXGP calendar",
-      "parsed": 19,
-      "added": 0
-    },
-    "MONSTER JAM": {
-      "source": "MonsterJam official tickets API payload",
-      "parsed": 15,
-      "added": 0
-    },
-    "Rugby World Cup": {
-      "source": "Rugby World Cup 2027 official match schedule",
-      "healthy": true,
-      "parsed": 46
-    },
-    "Six Nations": {
-      "source": "official 2027 federation schedules",
-      "parsed": 15,
-      "added": 0
-    },
-    "FORMULA E": {
-      "source": "FIA Formula E official 2026/27 Season 13 calendar",
-      "parsed": 21,
-      "current_future": 21,
-      "added": 21
-    },
     "AAA Wrestling": {
       "source": "WWE/AAA official TripleManía announcement",
+      "scheduled_weeklies": 10,
+      "existing_valid_future": 0,
+      "added": 10,
+      "validated": true,
+      "note": "Weekly broadcast events are represented without inventing individual match cards.",
       "announced": 2,
       "future_announced": 2,
-      "added": 0,
-      "validated": false
+      "existing_or_added_valid_future": 2,
+      "validation_mode": "existing_or_added"
     }
   },
   "phase1RepairReport": {
@@ -139865,7 +139885,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1226,
-      "reference": "2026-09-01T01:15:13.082947Z",
+      "reference": "2026-09-01T01:50:18.245209Z",
       "errors": []
     },
     "NLL": {
@@ -139883,6 +139903,18 @@
       "2026_27_published": false,
       "current_future_existing": 0,
       "status": "awaiting_2026_27_publication"
+    },
+    "AAA Wrestling": {
+      "source": "WWE/AAA official TripleManía announcement",
+      "scheduled_weeklies": 10,
+      "existing_valid_future": 0,
+      "added": 10,
+      "validated": true,
+      "note": "Weekly broadcast events are represented without inventing individual match cards.",
+      "announced": 2,
+      "future_announced": 2,
+      "existing_or_added_valid_future": 2,
+      "validation_mode": "existing_or_added"
     }
   }
 }
