@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T13:31:41.571061+00:00",
+  "generatedAt": "2026-09-01T13:46:13.027573+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -128835,7 +128835,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Eastern Illinois at Ball State",
-      "start": "2026-09-06T18:00:00Z",
+      "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -131134,7 +131134,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "San Diego State at Utah Valley",
-      "start": "2026-09-12T18:00:00Z",
+      "start": "2026-09-13T01:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -198233,7 +198233,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T13:30:35.956024+00:00",
+    "generatedAt": "2026-09-01T13:44:28.840831+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -199953,7 +199953,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T13:31:28.403345Z",
+      "reference": "2026-09-01T13:46:01.912744Z",
       "errors": []
     },
     "NLL": {
@@ -199989,7 +199989,7 @@
     }
   },
   "phase3VisualReport": {
-    "version": 5,
+    "version": 6,
     "events": 16814,
     "team_games": 6410,
     "team_games_complete": 5319,
@@ -200152,7 +200152,7 @@
         "logo_fields": 60
       }
     },
-    "rule": "refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB alias fallback only; named-event cards use league art"
+    "rule": "refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB canonical aliases and safe fallback only; named-event cards use league art"
   },
   "phase3Visuals": true
 }
