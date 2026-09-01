@@ -16,6 +16,7 @@ on:
       - 'scripts/special_schedule_repairs.py'
       - 'scripts/phase1_schedule_repairs.py'
       - 'scripts/phase2_schedule_repairs.py'
+      - 'scripts/league_schedule_audit.py'
       - 'scripts/validate_schedule_refresh.py'
       - 'scripts/season_intelligence.py'
       - 'scripts/schedule_engine.py'
@@ -51,6 +52,8 @@ jobs:
         run: python scripts/phase1_schedule_repairs.py
       - name: Phase 2 guarded NBA and NLL repairs
         run: python scripts/phase2_schedule_repairs.py
+      - name: Generate compact league schedule audit
+        run: python scripts/league_schedule_audit.py
       - name: Normalize adapter timestamps and validate feed invariants
         run: |
           python - <<'PY'
@@ -108,6 +111,6 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json
+          git add data/schedule_feed.json data/league_schedule_audit.json
           git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
           git push
