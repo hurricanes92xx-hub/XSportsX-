@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit unresolved MLB team-logo slots without changing schedule data."""
+"""Audit actionable MLB logo gaps; postseason placeholders use league art."""
 from __future__ import annotations
 import json
 from collections import Counter
@@ -29,10 +29,8 @@ def exact_cached(cache: dict, name: str) -> str:
 
 
 def alias_info(name: str) -> tuple[str, str]:
-    exact = str(name or "").strip()
-    normalized = mod.norm(exact)
-    canonical = mod.ALIASES.get(normalized, "")
-    return normalized, canonical
+    normalized = mod.norm(name)
+    return normalized, mod.ALIASES.get(normalized, "")
 
 
 def classify_resolution(name: str, cache: dict) -> dict:
@@ -60,7 +58,8 @@ def main() -> None:
     payload = load_json(FEED)
     cache = load_json(CACHE) if CACHE.exists() else {"teams": {}}
     events = payload.get("events") or []
-    incomplete = []
+    actionable = []
+    placeholders = []
     missing_away = []
     missing_home = []
     both_missing = []
@@ -69,6 +68,16 @@ def main() -> None:
 
     for event in events:
         if str(event.get("league") or "").strip() != "MLB":
+            continue
+        if event.get("mlbPlaceholder") is True or event.get("eventType") == "named_event":
+            if event.get("mlbPlaceholder") is True:
+                placeholders.append({
+                    "title": str(event.get("title") or ""),
+                    "start": event.get("start"),
+                    "away": str(event.get("away") or ""),
+                    "home": str(event.get("home") or ""),
+                    "leagueArt": str(event.get("image") or mod.LEAGUE_ART.get("MLB", "")),
+                })
             continue
         away = str(event.get("away") or "").strip()
         home = str(event.get("home") or "").strip()
@@ -86,7 +95,7 @@ def main() -> None:
             "awayAnalysis": classify_resolution(away, cache),
             "homeAnalysis": classify_resolution(home, cache),
         }
-        incomplete.append(row)
+        actionable.append(row)
         if not away_logo:
             away_variants[away] += 1
         if not home_logo:
@@ -98,36 +107,37 @@ def main() -> None:
         else:
             both_missing.append(row)
 
-    def unresolved_variant_rows(counter: Counter):
+    def variants(counter):
         return [{"exact": exact, "count": count, **classify_resolution(exact, cache)} for exact, count in counter.most_common()]
 
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "league": "MLB",
         "games_total": sum(1 for e in events if str(e.get("league") or "").strip() == "MLB"),
-        "incomplete_games": len(incomplete),
+        "placeholder_events": len(placeholders),
+        "placeholder_events_use_league_art": True,
+        "incomplete_games": len(actionable),
+        "actionable_incomplete_games": len(actionable),
         "missing_away_only": len(missing_away),
         "missing_home_only": len(missing_home),
         "both_missing": len(both_missing),
         "missing_logo_slots": sum(away_variants.values()) + sum(home_variants.values()),
-        "away_variants": unresolved_variant_rows(away_variants),
-        "home_variants": unresolved_variant_rows(home_variants),
+        "away_variants": variants(away_variants),
+        "home_variants": variants(home_variants),
         "missing_away_only_games": missing_away,
         "missing_home_only_games": missing_home,
         "both_missing_games": both_missing,
-        "decision_rule": {
-            "persistent_catalog": "exact normalized team key already has an MLB logo in team_logo_map.json",
-            "alias_table": "exact normalized provider string is explicitly present in the MLB ALIASES table and maps to a canonical team",
-            "normalization": "the normalized form is what makes an existing alias/canonical identity match; only choose this after exact-string comparison fails",
-            "event_name_parser": "only when the away/home strings themselves are absent or incorrectly extracted from the event title",
-        },
+        "placeholder_games": placeholders,
         "parser_evidence": {
-            "events_with_missing_away_string": sum(1 for r in incomplete if not r["away"]),
-            "events_with_missing_home_string": sum(1 for r in incomplete if not r["home"]),
+            "events_with_missing_away_string": sum(1 for r in actionable if not r["away"]),
+            "events_with_missing_home_string": sum(1 for r in actionable if not r["home"]),
         },
+        "decision": "MLB is complete when actionable_incomplete_games == 0; postseason/seed/TBD placeholders are named events using MLB league card art and are not team-logo failures.",
     }
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, ensure_ascii=False))
+    if actionable:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
