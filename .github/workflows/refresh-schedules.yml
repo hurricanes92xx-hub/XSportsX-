@@ -1,6 +1,10 @@
 name: Refresh complete schedules
 on:
   workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/phase3_visual_enrichment.py'
   schedule:
     - cron: '*/30 * * * *'
 
