@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T13:02:32.513929+00:00",
+  "generatedAt": "2026-09-01T13:31:41.571061+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -198233,7 +198233,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T13:01:00.609979+00:00",
+    "generatedAt": "2026-09-01T13:30:35.956024+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -199924,6 +199924,12 @@
       "parsed": 45,
       "added": 0
     },
+    "Rugby World Cup": {
+      "source": "World Rugby 2027 fixture corroborated by FixtureDownload JSON",
+      "parsed": 52,
+      "concrete": 36,
+      "added": 0
+    },
     "Six Nations": {
       "source": "Six Nations Rugby official 2027 fixtures",
       "published_season": "2027",
@@ -199947,7 +199953,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T13:02:16.794076Z",
+      "reference": "2026-09-01T13:31:28.403345Z",
       "errors": []
     },
     "NLL": {
@@ -199992,7 +199998,7 @@
     "league_art_fields_populated": 7137,
     "named_events": 10404,
     "titles_cleaned": 0,
-    "cache_entries": 4506,
+    "cache_entries": 4540,
     "external_logo_discovery": false,
     "team_logo_coverage_by_league": {
       "AFL": {
