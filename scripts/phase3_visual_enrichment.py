@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Phase 3: attach presentation metadata to canonical schedule events.
 
-Rules:
-- Team-v-team events get best-effort ESPN team logos when the league has an
-  ESPN team directory. Never invent a logo: missing teams remain blank so the
-  Android renderer can use a safe text fallback.
-- Non-team events get league card art and a cleaned event title.
-- League card art is stable and lightweight; this runs only during refresh.
-- This step never changes event dates or removes events.
+Presentation-only rules:
+- Never change event dates or membership.
+- Named events use league artwork.
+- Team logos come from a persistent verified cache; no per-refresh ESPN team
+  directory calls are made, avoiding the 403 failure seen in the first pass.
+- A missing logo is left blank rather than guessed.
 """
 import json
 import re
@@ -15,7 +14,9 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-FEED = Path("data/schedule_feed.json")
+ROOT = Path(__file__).resolve().parents[1]
+FEED = ROOT / "data/schedule_feed.json"
+CACHE = ROOT / "data/team_logo_map.json"
 
 LEAGUE_ART = {
     "NFL": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
@@ -53,16 +54,12 @@ LEAGUE_ART = {
     "NLL": "https://commons.wikimedia.org/wiki/Special:FilePath/National_Lacrosse_League_logo.svg?width=256",
 }
 
-ESPN_LEAGUES = {
-    "NFL": ("football", "nfl"), "NBA": ("basketball", "nba"), "WNBA": ("basketball", "wnba"),
-    "MLB": ("baseball", "mlb"), "NHL": ("hockey", "nhl"), "MLS": ("soccer", "usa.1"),
-    "EPL": ("soccer", "eng.1"), "LaLiga": ("soccer", "esp.1"), "Serie A": ("soccer", "ita.1"),
-    "Bundesliga": ("soccer", "ger.1"), "Ligue 1": ("soccer", "fra.1"),
-}
+# Only leagues for which team-level logos are meaningful in this phase.
+TEAM_LEAGUES = {"NFL", "NBA", "WNBA", "MLB", "NHL", "MLS", "EPL", "LaLiga", "Serie A", "Bundesliga", "Ligue 1", "NWSL"}
 
 
 def fetch_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX/Phase3"})
+    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX/Phase3; schedule enrichment"})
     with urllib.request.urlopen(req, timeout=8) as r:
         return json.load(r)
 
@@ -74,39 +71,60 @@ def norm(s):
 
 
 def split_matchup(title):
-    m = re.match(r"^(.+?)\s+@\s+(.+)$", title.strip())
-    if m:
-        return m.group(1).strip(), m.group(2).strip()
-    m = re.match(r"^(.+?)\s+(?:VS\.?|VERSUS)\s+(.+)$", title.strip(), re.I)
-    if m:
-        return m.group(1).strip(), m.group(2).strip()
+    for pattern in (r"^(.+?)\s+@\s+(.+)$", r"^(.+?)\s+(?:VS\.?|VERSUS)\s+(.+)$"):
+        m = re.match(pattern, title.strip(), re.I)
+        if m:
+            return m.group(1).strip(), m.group(2).strip()
     return "", ""
 
 
-def team_index(league):
-    cfg = ESPN_LEAGUES.get(league)
-    if not cfg:
-        return {}
-    sport, slug = cfg
+def load_cache():
     try:
-        data = fetch_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/teams?limit=1000")
-        rows = (data.get("sports") or [{}])[0].get("leagues") or []
-        teams = rows[0].get("teams") if rows else []
-        out = {}
-        for row in teams or []:
-            t = row.get("team") or row
-            name = t.get("displayName") or t.get("name") or ""
-            logo = t.get("logos", [{}])[0].get("href", "") if t.get("logos") else ""
-            if name and logo:
-                out[norm(name)] = logo
-                if t.get("shortDisplayName"):
-                    out[norm(t["shortDisplayName"])] = logo
-                if t.get("abbreviation"):
-                    out[norm(t["abbreviation"])] = logo
-        return out
+        raw = json.loads(CACHE.read_text(encoding="utf-8"))
+        return raw if isinstance(raw, dict) else {"version": 1, "teams": {}}
+    except Exception:
+        return {"version": 1, "teams": {}}
+
+
+def save_cache(cache):
+    CACHE.write_text(json.dumps(cache, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def cached_logo(cache, league, team):
+    teams = cache.setdefault("teams", {})
+    value = teams.get(f"{league}|{norm(team)}")
+    return value if isinstance(value, str) else ""
+
+
+def discover_logo(cache, league, team):
+    """Discover one exact team logo and persist it.
+
+    TheSportsDB is used only for cache misses. We require an exact normalized
+    team-name match in the response before accepting the badge URL. This keeps
+    the refresh safe from fuzzy/wrong-team logos and avoids ESPN 403s.
+    """
+    key = f"{league}|{norm(team)}"
+    if key in cache.setdefault("teams", {}):
+        return cache["teams"][key] or ""
+    if league not in TEAM_LEAGUES or not team:
+        cache["teams"][key] = ""
+        return ""
+    try:
+        q = urllib.parse.quote(team)
+        root = fetch_json(f"https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t={q}")
+        rows = root.get("teams") or []
+        target = norm(team)
+        for row in rows:
+            names = {norm(row.get("strTeam")), norm(row.get("strTeamAlternate"))}
+            if target in names:
+                logo = str(row.get("strTeamBadge") or row.get("strTeamLogo") or "").strip()
+                if logo.startswith("http"):
+                    cache["teams"][key] = logo
+                    return logo
+        cache["teams"][key] = ""
     except Exception as exc:
-        print(f"PHASE3 logo lookup unavailable for {league}: {exc}")
-        return {}
+        print(f"PHASE3 logo discovery unavailable for {league}/{team}: {exc}")
+    return ""
 
 
 def clean_event_title(event):
@@ -123,11 +141,14 @@ def clean_event_title(event):
 def main():
     payload = json.loads(FEED.read_text(encoding="utf-8"))
     events = payload.get("events") or []
-    indexes = {league: team_index(league) for league in ESPN_LEAGUES}
-    team_logos = 0
+    cache = load_cache()
+    team_logo_fields = 0
+    team_games = 0
+    team_games_complete = 0
+    team_games_missing = 0
     league_art = 0
     cleaned = 0
-    non_team = 0
+    named_events = 0
 
     for event in events:
         league = str(event.get("league") or "").strip()
@@ -139,37 +160,50 @@ def main():
         event["leagueArt"] = LEAGUE_ART.get(league, "")
         if event["leagueArt"]:
             league_art += 1
-        event["eventType"] = "team_game"
 
         away, home = split_matchup(title)
         if not away and not home:
             away = str(event.get("away") or "").strip()
             home = str(event.get("home") or "").strip()
+
         if away and home:
+            event["eventType"] = "team_game"
             event["away"] = away
             event["home"] = home
-            idx = indexes.get(league, {})
-            event["awayLogo"] = event.get("awayLogo") or idx.get(norm(away), "")
-            event["homeLogo"] = event.get("homeLogo") or idx.get(norm(home), "")
-            if event["awayLogo"] or event["homeLogo"]:
-                team_logos += int(bool(event["awayLogo"])) + int(bool(event["homeLogo"]))
+            away_logo = event.get("awayLogo") or cached_logo(cache, league, away)
+            home_logo = event.get("homeLogo") or cached_logo(cache, league, home)
+            if not away_logo:
+                away_logo = discover_logo(cache, league, away)
+            if not home_logo:
+                home_logo = discover_logo(cache, league, home)
+            event["awayLogo"] = away_logo
+            event["homeLogo"] = home_logo
+            team_games += 1
+            team_logo_fields += int(bool(away_logo)) + int(bool(home_logo))
+            if away_logo and home_logo:
+                team_games_complete += 1
+            else:
+                team_games_missing += 1
         else:
             event["eventType"] = "named_event"
-            non_team += 1
-            # Non-team cards deliberately use the league art instead of a fake
-            # competitor logo. Keep any genuine event image if already supplied.
+            named_events += 1
             if not event.get("image") and event["leagueArt"]:
                 event["image"] = event["leagueArt"]
 
+    save_cache(cache)
     report = payload.setdefault("phase3VisualReport", {})
     report.update({
-        "version": 1,
+        "version": 2,
         "events": len(events),
-        "team_logo_fields_populated": team_logos,
+        "team_games": team_games,
+        "team_games_complete": team_games_complete,
+        "team_games_missing": team_games_missing,
+        "team_logo_fields_populated": team_logo_fields,
         "league_art_fields_populated": league_art,
-        "named_events": non_team,
+        "named_events": named_events,
         "titles_cleaned": cleaned,
-        "rule": "no invented team logos; named-event cards use league art",
+        "cache_entries": len(cache.get("teams", {})),
+        "rule": "no invented team logos; exact-name cached logos only; named-event cards use league art",
     })
     payload["phase3Visuals"] = True
     FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
