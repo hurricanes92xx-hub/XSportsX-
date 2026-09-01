@@ -41,6 +41,8 @@ def classify_resolution(name: str, cache: dict) -> dict:
         disposition = "persistent_catalog"
     elif canonical:
         disposition = "alias_table" if normalized in mod.ALIASES else "normalization"
+    elif mod.is_mlb_placeholder(name):
+        disposition = "league_art_placeholder"
     else:
         disposition = "unresolved"
     return {
@@ -69,18 +71,18 @@ def main() -> None:
     for event in events:
         if str(event.get("league") or "").strip() != "MLB":
             continue
-        if event.get("mlbPlaceholder") is True or event.get("eventType") == "named_event":
-            if event.get("mlbPlaceholder") is True:
-                placeholders.append({
-                    "title": str(event.get("title") or ""),
-                    "start": event.get("start"),
-                    "away": str(event.get("away") or ""),
-                    "home": str(event.get("home") or ""),
-                    "leagueArt": str(event.get("image") or mod.LEAGUE_ART.get("MLB", "")),
-                })
-            continue
         away = str(event.get("away") or "").strip()
         home = str(event.get("home") or "").strip()
+        is_placeholder = bool(event.get("mlbPlaceholder") is True or event.get("eventType") == "named_event" or (away and home and mod.is_mlb_placeholder(away) and mod.is_mlb_placeholder(home)))
+        if is_placeholder:
+            placeholders.append({
+                "title": str(event.get("title") or ""),
+                "start": event.get("start"),
+                "away": away,
+                "home": home,
+                "leagueArt": str(event.get("image") or mod.LEAGUE_ART.get("MLB", "")),
+            })
+            continue
         away_logo = str(event.get("awayLogo") or "").strip()
         home_logo = str(event.get("homeLogo") or "").strip()
         if away_logo and home_logo:
@@ -111,7 +113,7 @@ def main() -> None:
         return [{"exact": exact, "count": count, **classify_resolution(exact, cache)} for exact, count in counter.most_common()]
 
     report = {
-        "schema_version": 2,
+        "schema_version": 3,
         "league": "MLB",
         "games_total": sum(1 for e in events if str(e.get("league") or "").strip() == "MLB"),
         "placeholder_events": len(placeholders),
