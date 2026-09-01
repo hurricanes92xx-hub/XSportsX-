@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Phase 3 presentation metadata; team logos come only from the persistent cache."""
-# v5: deterministic MLB alias fallback; no external logo discovery.
+# v6: deterministic MLB canonical-name aliases; no external logo discovery.
 import json
 import re
 from pathlib import Path
@@ -11,6 +11,43 @@ CACHE = ROOT / "data/team_logo_map.json"
 
 LEAGUE_ART = {
     "NFL":"https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png","NBA":"https://a.espncdn.com/i/teamlogos/leagues/500/nba.png","WNBA":"https://a.espncdn.com/i/teamlogos/leagues/500/wnba.png","NCAA FB":"https://a.espncdn.com/i/teamlogos/leagues/500/ncaaf.png","NCAA FCS":"https://a.espncdn.com/i/teamlogos/leagues/500/ncaaf.png","NCAA BB":"https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png","NCAA WBB":"https://a.espncdn.com/i/teamlogos/leagues/500/ncaaw.png","MLB":"https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png","NHL":"https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png","MLS":"https://a.espncdn.com/i/teamlogos/leagues/500/mls.png","EPL":"https://a.espncdn.com/i/teamlogos/soccer/500/23.png","LaLiga":"https://a.espncdn.com/i/teamlogos/soccer/500/15.png","Serie A":"https://a.espncdn.com/i/teamlogos/soccer/500/12.png","Bundesliga":"https://a.espncdn.com/i/teamlogos/soccer/500/10.png","Ligue 1":"https://a.espncdn.com/i/teamlogos/soccer/500/9.png","UCL":"https://a.espncdn.com/i/teamlogos/soccer/500/2.png","UEL":"https://a.espncdn.com/i/teamlogos/soccer/500/1.png","NWSL":"https://a.espncdn.com/i/teamlogos/leagues/500/nwsl.png"}
+
+# Provider feeds use many legitimate short forms (LAA, NYY, CWS, "LA Angels",
+# "SF Giants", etc.). Resolve those names to the canonical ESPN team name before
+# consulting the persistent cache. This is deliberately explicit: no fuzzy matching
+# and no external requests during refresh.
+MLB_CANONICAL_ALIASES = {
+    "ARIZONA": "ARIZONA DIAMONDBACKS", "ARIZONA DIAMONDBACKS": "ARIZONA DIAMONDBACKS", "DIAMONDBACKS": "ARIZONA DIAMONDBACKS", "D BACKS": "ARIZONA DIAMONDBACKS", "DBACKS": "ARIZONA DIAMONDBACKS", "AZ": "ARIZONA DIAMONDBACKS",
+    "ATHLETICS": "ATHLETICS", "OAKLAND ATHLETICS": "ATHLETICS", "OAKLAND A": "ATHLETICS", "OAKLAND AS": "ATHLETICS", "A S": "ATHLETICS", "AS": "ATHLETICS", "ATH": "ATHLETICS",
+    "ATLANTA": "ATLANTA BRAVES", "ATLANTA BRAVES": "ATLANTA BRAVES", "BRAVES": "ATLANTA BRAVES", "ATL": "ATLANTA BRAVES",
+    "BALTIMORE": "BALTIMORE ORIOLES", "BALTIMORE ORIOLES": "BALTIMORE ORIOLES", "ORIOLES": "BALTIMORE ORIOLES", "BAL": "BALTIMORE ORIOLES",
+    "BOSTON": "BOSTON RED SOX", "BOSTON RED SOX": "BOSTON RED SOX", "RED SOX": "BOSTON RED SOX", "BOS": "BOSTON RED SOX",
+    "CHICAGO CUBS": "CHICAGO CUBS", "CUBS": "CHICAGO CUBS", "CHC": "CHICAGO CUBS",
+    "CHICAGO WHITE SOX": "CHICAGO WHITE SOX", "WHITE SOX": "CHICAGO WHITE SOX", "CWS": "CHICAGO WHITE SOX", "CHW": "CHICAGO WHITE SOX",
+    "CINCINNATI": "CINCINNATI REDS", "CINCINNATI REDS": "CINCINNATI REDS", "REDS": "CINCINNATI REDS", "CIN": "CINCINNATI REDS",
+    "CLEVELAND": "CLEVELAND GUARDIANS", "CLEVELAND GUARDIANS": "CLEVELAND GUARDIANS", "GUARDIANS": "CLEVELAND GUARDIANS", "CLE": "CLEVELAND GUARDIANS",
+    "COLORADO": "COLORADO ROCKIES", "COLORADO ROCKIES": "COLORADO ROCKIES", "ROCKIES": "COLORADO ROCKIES", "COL": "COLORADO ROCKIES",
+    "DETROIT": "DETROIT TIGERS", "DETROIT TIGERS": "DETROIT TIGERS", "TIGERS": "DETROIT TIGERS", "DET": "DETROIT TIGERS",
+    "HOUSTON": "HOUSTON ASTROS", "HOUSTON ASTROS": "HOUSTON ASTROS", "ASTROS": "HOUSTON ASTROS", "HOU": "HOUSTON ASTROS",
+    "KANSAS CITY": "KANSAS CITY ROYALS", "KANSAS CITY ROYALS": "KANSAS CITY ROYALS", "ROYALS": "KANSAS CITY ROYALS", "KC": "KANSAS CITY ROYALS",
+    "LA ANGELS": "LOS ANGELES ANGELS", "LOS ANGELES ANGELS": "LOS ANGELES ANGELS", "LOS ANGELES ANGELS OF ANAHEIM": "LOS ANGELES ANGELS", "ANAHEIM ANGELS": "LOS ANGELES ANGELS", "ANGELS": "LOS ANGELES ANGELS", "LAA": "LOS ANGELES ANGELS",
+    "LA DODGERS": "LOS ANGELES DODGERS", "LOS ANGELES DODGERS": "LOS ANGELES DODGERS", "DODGERS": "LOS ANGELES DODGERS", "LAD": "LOS ANGELES DODGERS",
+    "MIAMI": "MIAMI MARLINS", "MIAMI MARLINS": "MIAMI MARLINS", "MARLINS": "MIAMI MARLINS", "MIA": "MIAMI MARLINS",
+    "MILWAUKEE": "MILWAUKEE BREWERS", "MILWAUKEE BREWERS": "MILWAUKEE BREWERS", "BREWERS": "MILWAUKEE BREWERS", "MIL": "MILWAUKEE BREWERS",
+    "MINNESOTA": "MINNESOTA TWINS", "MINNESOTA TWINS": "MINNESOTA TWINS", "TWINS": "MINNESOTA TWINS", "MIN": "MINNESOTA TWINS",
+    "NY METS": "NEW YORK METS", "NEW YORK METS": "NEW YORK METS", "METS": "NEW YORK METS", "NYM": "NEW YORK METS",
+    "NY YANKEES": "NEW YORK YANKEES", "NEW YORK YANKEES": "NEW YORK YANKEES", "YANKEES": "NEW YORK YANKEES", "NYY": "NEW YORK YANKEES",
+    "PHILADELPHIA": "PHILADELPHIA PHILLIES", "PHILADELPHIA PHILLIES": "PHILADELPHIA PHILLIES", "PHILLIES": "PHILADELPHIA PHILLIES", "PHI": "PHILADELPHIA PHILLIES",
+    "PITTSBURGH": "PITTSBURGH PIRATES", "PITTSBURGH PIRATES": "PITTSBURGH PIRATES", "PIRATES": "PITTSBURGH PIRATES", "PIT": "PITTSBURGH PIRATES",
+    "SAN DIEGO": "SAN DIEGO PADRES", "SAN DIEGO PADRES": "SAN DIEGO PADRES", "PADRES": "SAN DIEGO PADRES", "SD": "SAN DIEGO PADRES", "SDP": "SAN DIEGO PADRES",
+    "SAN FRANCISCO": "SAN FRANCISCO GIANTS", "SAN FRANCISCO GIANTS": "SAN FRANCISCO GIANTS", "SF GIANTS": "SAN FRANCISCO GIANTS", "GIANTS": "SAN FRANCISCO GIANTS", "SF": "SAN FRANCISCO GIANTS", "SFG": "SAN FRANCISCO GIANTS",
+    "SEATTLE": "SEATTLE MARINERS", "SEATTLE MARINERS": "SEATTLE MARINERS", "MARINERS": "SEATTLE MARINERS", "SEA": "SEATTLE MARINERS",
+    "ST LOUIS": "ST LOUIS CARDINALS", "ST LOUIS CARDINALS": "ST LOUIS CARDINALS", "CARDINALS": "ST LOUIS CARDINALS", "STL": "ST LOUIS CARDINALS",
+    "TAMPA BAY": "TAMPA BAY RAYS", "TAMPA BAY RAYS": "TAMPA BAY RAYS", "RAYS": "TAMPA BAY RAYS", "TB": "TAMPA BAY RAYS", "TBR": "TAMPA BAY RAYS",
+    "TEXAS": "TEXAS RANGERS", "TEXAS RANGERS": "TEXAS RANGERS", "RANGERS": "TEXAS RANGERS", "TEX": "TEXAS RANGERS",
+    "TORONTO": "TORONTO BLUE JAYS", "TORONTO BLUE JAYS": "TORONTO BLUE JAYS", "BLUE JAYS": "TORONTO BLUE JAYS", "TOR": "TORONTO BLUE JAYS",
+    "WASHINGTON": "WASHINGTON NATIONALS", "WASHINGTON NATIONALS": "WASHINGTON NATIONALS", "NATIONALS": "WASHINGTON NATIONALS", "WSH": "WASHINGTON NATIONALS", "WAS": "WASHINGTON NATIONALS",
+}
 
 def norm(s):
     s = re.sub(r"[^A-Z0-9]+", " ", str(s or "").upper())
@@ -31,12 +68,19 @@ def load_cache():
 
 def cached_logo(cache, league, team):
     teams = cache.setdefault("teams", {})
-    key = f"{league}|{norm(team)}"
+    normalized = norm(team)
+    key = f"{league}|{normalized}"
     value = teams.get(key)
     if isinstance(value, str) and value:
         return value
     if league == "MLB":
-        target = set(norm(team).split())
+        canonical = MLB_CANONICAL_ALIASES.get(normalized)
+        if canonical:
+            canonical_key = f"MLB|{canonical}"
+            value = teams.get(canonical_key)
+            if isinstance(value, str) and value:
+                return value
+        target = set(normalized.split())
         if not target: return ""
         matches = []
         for k, logo in teams.items():
@@ -67,6 +111,6 @@ def main():
         else:
             event["eventType"]="named_event"; named_events+=1
             if not event.get("image") and event["leagueArt"]: event["image"]=event["leagueArt"]
-    report={"version":5,"events":len(events),"team_games":team_games,"team_games_complete":team_games_complete,"team_games_missing":team_games_missing,"team_logo_fields_populated":team_logo_fields,"league_art_fields_populated":league_art,"named_events":named_events,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"team_logo_coverage_by_league":dict(sorted(coverage.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB alias fallback only; named-event cards use league art"}
+    report={"version":6,"events":len(events),"team_games":team_games,"team_games_complete":team_games_complete,"team_games_missing":team_games_missing,"team_logo_fields_populated":team_logo_fields,"league_art_fields_populated":league_art,"named_events":named_events,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"team_logo_coverage_by_league":dict(sorted(coverage.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB canonical aliases and safe fallback only; named-event cards use league art"}
     payload["phase3VisualReport"]=report; payload["phase3Visuals"]=True; FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8"); print(json.dumps(report,sort_keys=True))
 if __name__ == "__main__": main()
