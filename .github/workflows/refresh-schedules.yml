@@ -37,7 +37,7 @@ jobs:
         run: python scripts/repair_nascar_cup.py
       - name: Add ESPN NCAA schedules for unavailable NCAA sources
         run: python scripts/espn_ncaa_adapter.py
-      - name: Hydrate complete NCAA FBS/FCS persistent logo catalog
+      - name: Hydrate complete NCAA college-sports persistent logo catalog
         run: python scripts/hydrate_ncaa_logo_catalog.py
       - name: Repair easy provider endpoints
         run: python scripts/easy_provider_repairs.py
