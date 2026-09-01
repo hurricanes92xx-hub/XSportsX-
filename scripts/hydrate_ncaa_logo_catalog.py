@@ -11,10 +11,10 @@ SOURCES={
  'NCAA FCS':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA BB':'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?limit=1000',
  'NCAA WBB':'https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams?limit=1000',
- 'NCAA Women's Volleyball':'https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/teams?limit=1000',
- 'NCAA Men's Hockey':'https://site.api.espn.com/apis/site/v2/sports/hockey/mens-college-hockey/teams?limit=1000',
- 'NCAA Women's Hockey':'https://site.api.espn.com/apis/site/v2/sports/hockey/womens-college-hockey/teams?limit=1000',
- 'NCAA Women's Field Hockey':'https://site.api.espn.com/apis/site/v2/sports/field-hockey/womens-college-field-hockey/teams?limit=1000',
+ "NCAA Women's Volleyball":'https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/teams?limit=1000',
+ "NCAA Men's Hockey":'https://site.api.espn.com/apis/site/v2/sports/hockey/mens-college-hockey/teams?limit=1000',
+ "NCAA Women's Hockey":'https://site.api.espn.com/apis/site/v2/sports/hockey/womens-college-hockey/teams?limit=1000',
+ "NCAA Women's Field Hockey":'https://site.api.espn.com/apis/site/v2/sports/field-hockey/womens-college-field-hockey/teams?limit=1000',
 }
 UTRGV_LOGO='https://a.espncdn.com/i/teamlogos/ncaa/500/292.png'
 UTRGV_ALIASES={'UT Rio Grande':'UT Rio Grande','UT Rio Grande Valley Vaqueros':'UT Rio Grande Valley Vaqueros','UTRGV':'UTRGV','UT Rio Grande Valley':'UT Rio Grande Valley'}
