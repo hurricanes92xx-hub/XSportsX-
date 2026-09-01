@@ -4,16 +4,15 @@
 This job is intentionally separate from refresh_schedules_engine.py. It may make
 slow external catalog requests, but the normal schedule refresh never does.
 
-ESPN's public team catalog exposes current team names, abbreviations and logo
-URLs. We turn those catalogs into the exact normalized lookup keys consumed by
+ESPN's public team catalog exposes current team names, abbreviations and logo URLs.
+We turn those catalogs into the normalized lookup keys consumed by
 phase3_visual_enrichment.py. The resulting JSON contains only small text URLs;
 we do not download image binaries.
 
-Important: ESPN's team endpoints are paginated. The old implementation only
-read the first page (typically 50 teams), which is insufficient for NCAA FB/FCS.
-This implementation walks every page so the persistent catalog contains the
-full college-football universe, including FBS, FCS, conference and postseason
-participants when ESPN exposes them.
+IMPORTANT: ESPN's site teams endpoint silently caps the response around 50 rows
+when a large limit is requested through the old page-based implementation. The
+correct approach is a single large `limit` request (up to the catalog size), not
+`page=1,2,...`. The old implementation therefore left NCAA catalogs at 50 teams.
 """
 from __future__ import annotations
 
@@ -97,28 +96,17 @@ def extract_teams(root):
 
 
 def fetch_all_teams(base_url: str):
-    """Read every ESPN catalog page, tolerating either limit/page or offset pagination."""
-    all_rows = []
-    seen = set()
-    # ESPN accepts a larger limit on the site API. Keep page fallback below for
-    # deployments that cap the requested limit.
-    for page in range(1, 101):
-        url = f"{base_url}?limit=1000&page={page}"
-        root = fetch_json(url)
-        rows = extract_teams(root)
-        before = len(seen)
-        for team, logo, names in rows:
-            ident = str(team.get("id") or team.get("slug") or "|".join(names))
-            if ident not in seen:
-                seen.add(ident)
-                all_rows.append((team, logo, names))
-        added = len(seen) - before
-        # A full-size first page followed by an empty/duplicate page is done.
-        if not rows or added == 0:
-            break
-        # If the endpoint ignored pagination and returned the complete catalog,
-        # the next page will be duplicate and terminate safely.
-    return all_rows
+    """Fetch the complete catalog in one request.
+
+    The ESPN site API supports a large `limit` for this endpoint. Its `page`
+    parameter is not reliable for these catalog responses and was the reason
+    the previous implementation repeatedly received the same first 50 teams.
+    """
+    root = fetch_json(f"{base_url}?limit=1000")
+    rows = extract_teams(root)
+    if not rows:
+        raise RuntimeError(f"ESPN returned no teams for {base_url}")
+    return rows
 
 
 def main():
@@ -150,7 +138,7 @@ def main():
                         if cache["teams"].get(key) != logo:
                             cache["teams"][key] = logo
                             added += 1
-            cache["sources"][league] = {"provider": "ESPN team catalog", "url": base_url, "teams": len(rows), "paginated": True}
+            cache["sources"][league] = {"provider": "ESPN team catalog", "url": base_url, "teams": len(rows), "completeCatalog": True}
             report[league] = {"status": "ok", "teams": len(rows), "keys_added_or_updated": added}
         except Exception as exc:
             report[league] = {"status": "error", "error": str(exc)}
@@ -163,5 +151,4 @@ def main():
     print(json.dumps({"version": 3, "leagues_ok": ok, "leagues_total": len(LEAGUES), "cache_entries": len(cache["teams"]), "report": report}, indent=2, sort_keys=True))
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":main()
