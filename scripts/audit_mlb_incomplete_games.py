@@ -39,15 +39,9 @@ def classify_resolution(name: str, cache: dict) -> dict:
     normalized, canonical = alias_info(name)
     cached = exact_cached(cache, name)
     canonical_logo = mod.MLB_CANONICAL_LOGOS.get(canonical, "") if canonical else ""
-    # Do not call cached_logo here: this audit deliberately separates the exact
-    # persistent-cache match from alias/canonical fallback capability.
     if cached:
         disposition = "persistent_catalog"
     elif canonical:
-        # If the exact string is not in the persistent catalog but the alias
-        # table maps it to one of the canonical MLB teams, the defect is not
-        # inherently an event parser defect. We report the alias/canonical path
-        # explicitly so the next fix can be chosen from evidence.
         disposition = "alias_table" if normalized in mod.ALIASES else "normalization"
     else:
         disposition = "unresolved"
@@ -66,7 +60,6 @@ def main() -> None:
     payload = load_json(FEED)
     cache = load_json(CACHE) if CACHE.exists() else {"teams": {}}
     events = payload.get("events") or []
-
     incomplete = []
     missing_away = []
     missing_home = []
@@ -81,8 +74,6 @@ def main() -> None:
         home = str(event.get("home") or "").strip()
         away_logo = str(event.get("awayLogo") or "").strip()
         home_logo = str(event.get("homeLogo") or "").strip()
-        # The Phase 3 feed is the source of truth for what the UI currently
-        # considers unresolved. Do not infer a new logo here.
         if away_logo and home_logo:
             continue
         row = {
@@ -107,12 +98,8 @@ def main() -> None:
         else:
             both_missing.append(row)
 
-    def unresolved_variant_rows(counter: Counter, side: str):
-        rows = []
-        for exact, count in counter.most_common():
-            analysis = classify_resolution(exact, cache)
-            rows.append({"exact": exact, "count": count, **analysis})
-        return rows
+    def unresolved_variant_rows(counter: Counter):
+        return [{"exact": exact, "count": count, **classify_resolution(exact, cache)} for exact, count in counter.most_common()]
 
     report = {
         "schema_version": 1,
@@ -122,9 +109,9 @@ def main() -> None:
         "missing_away_only": len(missing_away),
         "missing_home_only": len(missing_home),
         "both_missing": len(both_missing),
-        "missing_slots": len(away_variants) and sum(away_variants.values()) + sum(home_variants.values()),
-        "away_variants": unresolved_variant_rows(away_variants, "away"),
-        "home_variants": unresolved_variant_rows(home_variants, "home"),
+        "missing_logo_slots": sum(away_variants.values()) + sum(home_variants.values()),
+        "away_variants": unresolved_variant_rows(away_variants),
+        "home_variants": unresolved_variant_rows(home_variants),
         "missing_away_only_games": missing_away,
         "missing_home_only_games": missing_home,
         "both_missing_games": both_missing,
@@ -139,7 +126,6 @@ def main() -> None:
             "events_with_missing_home_string": sum(1 for r in incomplete if not r["home"]),
         },
     }
-
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
