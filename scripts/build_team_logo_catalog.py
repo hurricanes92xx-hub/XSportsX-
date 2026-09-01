@@ -8,6 +8,12 @@ ESPN's public team catalog exposes current team names, abbreviations and logo
 URLs. We turn those catalogs into the exact normalized lookup keys consumed by
 phase3_visual_enrichment.py. The resulting JSON contains only small text URLs;
 we do not download image binaries.
+
+Important: ESPN's team endpoints are paginated. The old implementation only
+read the first page (typically 50 teams), which is insufficient for NCAA FB/FCS.
+This implementation walks every page so the persistent catalog contains the
+full college-football universe, including FBS, FCS, conference and postseason
+participants when ESPN exposes them.
 """
 from __future__ import annotations
 
@@ -25,71 +31,32 @@ HEADERS = {
     "Accept": "application/json,text/plain,*/*",
 }
 
-# League key -> ESPN sport/league slug. These are catalog endpoints only.
 LEAGUES = {
-    "NFL": ("football", "nfl"),
-    "NBA": ("basketball", "nba"),
-    "WNBA": ("basketball", "wnba"),
-    "MLB": ("baseball", "mlb"),
-    "NHL": ("hockey", "nhl"),
-    "MLS": ("soccer", "usa.1"),
-    "EPL": ("soccer", "eng.1"),
-    "LaLiga": ("soccer", "esp.1"),
-    "Serie A": ("soccer", "ita.1"),
-    "Bundesliga": ("soccer", "ger.1"),
-    "Ligue 1": ("soccer", "fra.1"),
-    "UCL": ("soccer", "uefa.champions"),
-    "UEL": ("soccer", "uefa.europa"),
-    "NWSL": ("soccer", "usa.nwsl"),
-    "NCAA FB": ("football", "college-football"),
-    "NCAA FCS": ("football", "college-football"),
-    "NCAA BB": ("basketball", "mens-college-basketball"),
-    "NCAA WBB": ("basketball", "womens-college-basketball"),
-    "NCAA Baseball": ("baseball", "college-baseball"),
-    "NCAA Softball": ("softball", "college-softball"),
-    "NCAA Men's Hockey": ("hockey", "mens-college-hockey"),
-    "NCAA Women's Hockey": ("hockey", "womens-college-hockey"),
-    "NCAA Men's Soccer": ("soccer", "usa.ncaa.m.1"),
-    "NCAA Women's Soccer": ("soccer", "usa.ncaa.w.1"),
-    "NCAA Men's Volleyball": ("volleyball", "mens-college-volleyball"),
-    "NCAA Women's Volleyball": ("volleyball", "womens-college-volleyball"),
+    "NFL": ("football", "nfl"), "NBA": ("basketball", "nba"), "WNBA": ("basketball", "wnba"),
+    "MLB": ("baseball", "mlb"), "NHL": ("hockey", "nhl"), "MLS": ("soccer", "usa.1"),
+    "EPL": ("soccer", "eng.1"), "LaLiga": ("soccer", "esp.1"), "Serie A": ("soccer", "ita.1"),
+    "Bundesliga": ("soccer", "ger.1"), "Ligue 1": ("soccer", "fra.1"),
+    "UCL": ("soccer", "uefa.champions"), "UEL": ("soccer", "uefa.europa"), "NWSL": ("soccer", "usa.nwsl"),
+    "NCAA FB": ("football", "college-football"), "NCAA FCS": ("football", "college-football"),
+    "NCAA BB": ("basketball", "mens-college-basketball"), "NCAA WBB": ("basketball", "womens-college-basketball"),
+    "NCAA Baseball": ("baseball", "college-baseball"), "NCAA Softball": ("softball", "college-softball"),
+    "NCAA Men's Hockey": ("hockey", "mens-college-hockey"), "NCAA Women's Hockey": ("hockey", "womens-college-hockey"),
+    "NCAA Men's Soccer": ("soccer", "usa.ncaa.m.1"), "NCAA Women's Soccer": ("soccer", "usa.ncaa.w.1"),
+    "NCAA Men's Volleyball": ("volleyball", "mens-college-volleyball"), "NCAA Women's Volleyball": ("volleyball", "womens-college-volleyball"),
     "NCAA Women's Field Hockey": ("field-hockey", "ncaa.womens.field.hockey"),
 }
 
-# MLB schedule feeds do not all use ESPN's displayName. Keep these aliases
-# deterministic and local so a feed naming variant can never cause a missing
-# cached logo or a network lookup during schedule refresh.
 MLB_ALIASES = {
-    "LAA": ["LA ANGELS", "ANGELS"],
-    "LAD": ["LA DODGERS", "DODGERS"],
-    "ARI": ["AZ", "ARIZONA", "DIAMONDBACKS", "D BACKS"],
-    "ATL": ["ATLANTA", "BRAVES"],
-    "BAL": ["BALTIMORE", "ORIOLES"],
-    "BOS": ["BOSTON", "RED SOX"],
-    "CHC": ["CHICAGO CUBS", "CUBS"],
-    "CHW": ["CWS", "CHICAGO WHITE SOX", "WHITE SOX"],
-    "CIN": ["CINCINNATI", "REDS"],
-    "CLE": ["CLEVELAND", "GUARDIANS"],
-    "COL": ["COLORADO", "ROCKIES"],
-    "DET": ["DETROIT", "TIGERS"],
-    "HOU": ["HOUSTON", "ASTROS"],
-    "KC": ["KANSAS CITY", "KANSAS CITY ROYALS", "ROYALS"],
-    "MIA": ["MIAMI", "MARLINS"],
-    "MIL": ["MILWAUKEE", "BREWERS"],
-    "MIN": ["MINNESOTA", "TWINS"],
-    "NYM": ["NY METS", "NEW YORK METS", "METS"],
-    "NYY": ["NY YANKEES", "NEW YORK YANKEES", "YANKEES"],
-    "PHI": ["PHILADELPHIA", "PHILLIES"],
-    "PIT": ["PITTSBURGH", "PIRATES"],
-    "SD": ["SAN DIEGO", "SD PADRES", "PADRES"],
-    "SF": ["SAN FRANCISCO", "SF GIANTS", "GIANTS"],
-    "SEA": ["SEATTLE", "MARINERS"],
-    "STL": ["ST LOUIS", "ST. LOUIS", "CARDINALS"],
-    "TB": ["TAMPA BAY", "TB RAYS", "RAYS"],
-    "TEX": ["TEXAS", "RANGERS"],
-    "TOR": ["TORONTO", "BLUE JAYS"],
-    "WSH": ["WASHINGTON", "NATIONALS"],
-    "ATH": ["ATHLETICS", "ATHS"],
+    "LAA": ["LA ANGELS", "ANGELS"], "LAD": ["LA DODGERS", "DODGERS"], "ARI": ["AZ", "ARIZONA", "DIAMONDBACKS", "D BACKS"],
+    "ATL": ["ATLANTA", "BRAVES"], "BAL": ["BALTIMORE", "ORIOLES"], "BOS": ["BOSTON", "RED SOX"],
+    "CHC": ["CHICAGO CUBS", "CUBS"], "CHW": ["CWS", "CHICAGO WHITE SOX", "WHITE SOX"], "CIN": ["CINCINNATI", "REDS"],
+    "CLE": ["CLEVELAND", "GUARDIANS"], "COL": ["COLORADO", "ROCKIES"], "DET": ["DETROIT", "TIGERS"],
+    "HOU": ["HOUSTON", "ASTROS"], "KC": ["KANSAS CITY", "KANSAS CITY ROYALS", "ROYALS"], "MIA": ["MIAMI", "MARLINS"],
+    "MIL": ["MILWAUKEE", "BREWERS"], "MIN": ["MINNESOTA", "TWINS"], "NYM": ["NY METS", "NEW YORK METS", "METS"],
+    "NYY": ["NY YANKEES", "NEW YORK YANKEES", "YANKEES"], "PHI": ["PHILADELPHIA", "PHILLIES"], "PIT": ["PITTSBURGH", "PIRATES"],
+    "SD": ["SAN DIEGO", "SD PADRES", "PADRES"], "SF": ["SAN FRANCISCO", "SF GIANTS", "GIANTS"], "SEA": ["SEATTLE", "MARINERS"],
+    "STL": ["ST LOUIS", "ST. LOUIS", "CARDINALS"], "TB": ["TAMPA BAY", "TB RAYS", "RAYS"], "TEX": ["TEXAS", "RANGERS"],
+    "TOR": ["TORONTO", "BLUE JAYS"], "WSH": ["WASHINGTON", "NATIONALS"], "ATH": ["ATHLETICS", "ATHS"],
 }
 
 
@@ -106,8 +73,6 @@ def fetch_json(url: str):
 
 
 def extract_teams(root):
-    # ESPN site API normally returns sports -> leagues -> teams, but tolerate
-    # the alternate wrapper shapes used by a few endpoints.
     out = []
     sports = root.get("sports") if isinstance(root, dict) else None
     if isinstance(sports, list):
@@ -122,21 +87,38 @@ def extract_teams(root):
         if not isinstance(team, dict):
             continue
         logos = team.get("logos") or []
-        logo = ""
-        if logos and isinstance(logos[0], dict):
-            logo = str(logos[0].get("href") or "").strip()
+        logo = str(logos[0].get("href") or "").strip() if logos and isinstance(logos[0], dict) else ""
         if not logo:
             continue
-        names = {
-            team.get("displayName"),
-            team.get("shortDisplayName"),
-            team.get("name"),
-            team.get("abbreviation"),
-            team.get("slug"),
-        }
+        names = {team.get("displayName"), team.get("shortDisplayName"), team.get("name"), team.get("abbreviation"), team.get("slug")}
         names = [norm(x) for x in names if x]
         normalized.append((team, logo, sorted(set(x for x in names if x))))
     return normalized
+
+
+def fetch_all_teams(base_url: str):
+    """Read every ESPN catalog page, tolerating either limit/page or offset pagination."""
+    all_rows = []
+    seen = set()
+    # ESPN accepts a larger limit on the site API. Keep page fallback below for
+    # deployments that cap the requested limit.
+    for page in range(1, 101):
+        url = f"{base_url}?limit=1000&page={page}"
+        root = fetch_json(url)
+        rows = extract_teams(root)
+        before = len(seen)
+        for team, logo, names in rows:
+            ident = str(team.get("id") or team.get("slug") or "|".join(names))
+            if ident not in seen:
+                seen.add(ident)
+                all_rows.append((team, logo, names))
+        added = len(seen) - before
+        # A full-size first page followed by an empty/duplicate page is done.
+        if not rows or added == 0:
+            break
+        # If the endpoint ignored pagination and returned the complete catalog,
+        # the next page will be duplicate and terminate safely.
+    return all_rows
 
 
 def main():
@@ -151,10 +133,9 @@ def main():
 
     report = {}
     for league, (sport, slug) in LEAGUES.items():
-        url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/teams"
+        base_url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/teams"
         try:
-            root = fetch_json(url)
-            rows = extract_teams(root)
+            rows = fetch_all_teams(base_url)
             added = 0
             for team, logo, names in rows:
                 for name in names:
@@ -162,10 +143,6 @@ def main():
                     if cache["teams"].get(key) != logo:
                         cache["teams"][key] = logo
                         added += 1
-
-                # MLB receives an explicit compatibility alias layer because
-                # schedule providers commonly use city/team shorthand that
-                # differs from ESPN's catalog display names.
                 if league == "MLB":
                     code = norm(team.get("abbreviation") or "")
                     for alias in MLB_ALIASES.get(code, []):
@@ -173,8 +150,7 @@ def main():
                         if cache["teams"].get(key) != logo:
                             cache["teams"][key] = logo
                             added += 1
-
-            cache["sources"][league] = {"provider": "ESPN team catalog", "url": url, "teams": len(rows)}
+            cache["sources"][league] = {"provider": "ESPN team catalog", "url": base_url, "teams": len(rows), "paginated": True}
             report[league] = {"status": "ok", "teams": len(rows), "keys_added_or_updated": added}
         except Exception as exc:
             report[league] = {"status": "error", "error": str(exc)}
