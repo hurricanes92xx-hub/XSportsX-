@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T01:50:30.501950+00:00",
+  "generatedAt": "2026-09-01T01:59:48.195824+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -51,7 +51,7 @@
     "UFC": 9,
     "WNBA": 30,
     "WTA": 17,
-    "WWE": 13
+    "WWE": 18
   },
   "failedSources": [],
   "officialSourceFailures": [
@@ -125,7 +125,7 @@
     "ESPORTS - Apex Legends": 0,
     "ESPORTS - Rainbow Six": 0,
     "ACTION SPORTS": 0,
-    "AAA Wrestling": 2,
+    "AAA Wrestling": 12,
     "NASCAR Xfinity": 0,
     "NASCAR Truck": 0
   },
@@ -3594,6 +3594,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-05",
+      "start": "2026-09-05T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "MLB",
@@ -7280,6 +7287,13 @@
       "icon": "🏈"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-12",
+      "start": "2026-09-12T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "MLB",
       "title": "Astros @ Rays",
       "start": "2026-09-12T22:10:00Z",
@@ -10782,6 +10796,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-19",
+      "start": "2026-09-19T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "MLB",
@@ -14778,6 +14799,13 @@
       "icon": "🏒"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-09-26",
+      "start": "2026-09-26T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "NCAA FB",
       "title": "C Michigan @ Miami",
       "start": "2026-09-26T22:30:00Z",
@@ -16925,6 +16953,13 @@
       "icon": "🏒"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-03",
+      "start": "2026-10-03T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "NWSL",
       "title": "Bay @ Kansas City",
       "start": "2026-10-03T22:30:00Z",
@@ -18455,6 +18490,13 @@
       "start": "2026-10-10T22:00:00Z",
       "tag": "PLE",
       "icon": "🏆"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-10",
+      "start": "2026-10-10T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "NBA",
@@ -20207,6 +20249,13 @@
       "icon": "🏒"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-17",
+      "start": "2026-10-17T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "NCAA FB",
       "title": "Nevada @ N Dakota St",
       "start": "2026-10-17T23:00:00Z",
@@ -21702,6 +21751,13 @@
       "start": "2026-10-24T22:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏒"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-24",
+      "start": "2026-10-24T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "NCAA FB",
@@ -23320,6 +23376,13 @@
       "icon": "🏒"
     },
     {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-10-31",
+      "start": "2026-10-31T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "NCAA FB",
       "title": "Washington St @ San Diego St",
       "start": "2026-10-31T23:00:00Z",
@@ -24841,6 +24904,13 @@
       "start": "2026-11-07T22:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏀"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Weekly — 2026-11-07",
+      "start": "2026-11-07T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "NCAA FB",
@@ -138124,88 +138194,48 @@
       "sourceDetail": "ESPN NCAA scoreboard"
     },
     {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-09-05",
-      "start": "2026-09-05T22:00:00Z",
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-02T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
+      "source": "https://www.wwe.com/article/wwe-upcoming-events"
     },
     {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-09-12",
-      "start": "2026-09-12T22:00:00Z",
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-03T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
+      "source": "https://www.wwe.com/article/wwe-upcoming-events"
     },
     {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-09-19",
-      "start": "2026-09-19T22:00:00Z",
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
+      "source": "https://www.wwe.com/article/wwe-upcoming-events"
     },
     {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-09-26",
-      "start": "2026-09-26T22:00:00Z",
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-05T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
+      "source": "https://www.wwe.com/article/wwe-upcoming-events"
     },
     {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-10-03",
-      "start": "2026-10-03T22:00:00Z",
+      "league": "WWE",
+      "title": "WWE",
+      "start": "2026-11-28T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-10-10",
-      "start": "2026-10-10T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-10-17",
-      "start": "2026-10-17T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-10-24",
-      "start": "2026-10-24T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-10-31",
-      "start": "2026-10-31T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
-    },
-    {
-      "league": "AAA Wrestling",
-      "title": "AAA Weekly — 2026-11-07",
-      "start": "2026-11-07T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤼",
-      "source": "WWE/AAA official weekly broadcast cadence"
+      "source": "https://www.wwe.com/article/wwe-upcoming-events"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T01:49:23.977480+00:00",
+    "generatedAt": "2026-09-01T01:58:34.262294+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -139101,7 +139131,7 @@
         "probeHours": 1,
         "reason": "observed_activity",
         "configuredSeason": [],
-        "observedUpcoming": 2,
+        "observedUpcoming": 12,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -139839,14 +139869,27 @@
     "AAA Wrestling": {
       "source": "WWE/AAA official TripleManía announcement",
       "scheduled_weeklies": 10,
-      "existing_valid_future": 0,
-      "added": 10,
+      "existing_valid_future": 10,
+      "added": 0,
       "validated": true,
       "note": "Weekly broadcast events are represented without inventing individual match cards.",
       "announced": 2,
       "future_announced": 2,
       "existing_or_added_valid_future": 2,
       "validation_mode": "existing_or_added"
+    },
+    "WWE": {
+      "source": "https://www.wwe.com/article/wwe-upcoming-events",
+      "parsed_official_events": 5,
+      "added": 5,
+      "current_future_existing_or_added": 18,
+      "weekly_show_events": 14,
+      "validated": true
+    },
+    "AEW": {
+      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
+      "validated": false,
+      "error": "HTTP Error 429: Too Many Requests"
     }
   },
   "phase1RepairReport": {
@@ -139885,7 +139928,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1226,
-      "reference": "2026-09-01T01:50:18.245209Z",
+      "reference": "2026-09-01T01:59:37.116619Z",
       "errors": []
     },
     "NLL": {
@@ -139907,8 +139950,8 @@
     "AAA Wrestling": {
       "source": "WWE/AAA official TripleManía announcement",
       "scheduled_weeklies": 10,
-      "existing_valid_future": 0,
-      "added": 10,
+      "existing_valid_future": 10,
+      "added": 0,
       "validated": true,
       "note": "Weekly broadcast events are represented without inventing individual match cards.",
       "announced": 2,
