@@ -16,6 +16,17 @@ def split_matchup(title):
         m=re.match(p,title.strip(),re.I)
         if m:return m.group(1).strip(),m.group(2).strip()
     return "",""
+def is_mlb_placeholder(team):
+    n=norm(team)
+    if not n:return True
+    return bool(
+        n == "TBD" or
+        re.fullmatch(r"(?:AL|NL)?\s*(?:WILD CARD)\s*[123]", n) or
+        re.fullmatch(r"(?:AL|NL)?\s*\d\s*SEED", n) or
+        re.fullmatch(r"(?:AL|NL)?\s*(?:HIGHER|LOWER) SEED", n) or
+        re.fullmatch(r"(?:AL|NL)?\s*\d\s*\d\s*WINNER", n) or
+        n in {"HIGHER SEED","LOWER SEED","AL ALL STARS","NL ALL STARS","ALL STARS"}
+    )
 def load_cache():
     try:
         x=json.loads(CACHE.read_text(encoding="utf-8"));return x if isinstance(x,dict) else {"version":3,"teams":{}}
@@ -26,12 +37,11 @@ def cached_logo(cache,league,team):
     if league!="MLB":return ""
     canonical=ALIASES.get(n)
     if not canonical:return ""
-    # First honor any persisted alias. Then use the deterministic canonical MLB catalog.
     for k,target in ALIASES.items():
         if target==canonical:
             v=teams.get(f"MLB|{norm(k)}")
             if isinstance(v,str) and v:return v
-    return MLB_CANONICAL_LOGOS.get(canonical,"")
+    return MLB_CANONICAL_LOGOS.get(canonical,"
 def main():
     payload=json.loads(FEED.read_text(encoding="utf-8"));events=payload.get("events") or [];cache=load_cache();counts={};fields=games=complete=missing=league_art=named=cleaned=0
     for e in events:
@@ -40,13 +50,17 @@ def main():
             a0=str(e.get("away") or "").strip();h0=str(e.get("home") or "").strip();title=f"{a0} @ {h0}" if a0 and h0 else league
         e["title"]=title;cleaned+=title!=old;e["leagueArt"]=LEAGUE_ART.get(league,"");league_art+=bool(e["leagueArt"]);away,home=split_matchup(title)
         if not away or not home:away=str(e.get("away") or "").strip();home=str(e.get("home") or "").strip()
-        if away and home:
+        if league=="MLB" and is_mlb_placeholder(away) and is_mlb_placeholder(home):
+            e["eventType"]="named_event";e["mlbPlaceholder"]=True;e["away"]=away;e["home"]=home
+            if e.get("leagueArt"):e["image"]=e["leagueArt"]
+            e.pop("awayLogo",None);e.pop("homeLogo",None);named+=1
+        elif away and home:
             e["eventType"]="team_game";e["away"]=away;e["home"]=home;al=e.get("awayLogo") or cached_logo(cache,league,away);hl=e.get("homeLogo") or cached_logo(cache,league,home);e["awayLogo"]=al;e["homeLogo"]=hl;games+=1;got=int(bool(al))+int(bool(hl));fields+=got;b=counts.setdefault(league,{"team_games":0,"complete":0,"missing":0,"logo_fields":0});b["team_games"]+=1;b["logo_fields"]+=got
             if al and hl:complete+=1;b["complete"]+=1
             else:missing+=1;b["missing"]+=1
         else:
             e["eventType"]="named_event";named+=1
             if not e.get("image") and e["leagueArt"]:e["image"]=e["leagueArt"]
-    report={"version":8,"events":len(events),"team_games":games,"team_games_complete":complete,"team_games_missing":missing,"team_logo_fields_populated":fields,"league_art_fields_populated":league_art,"named_events":named,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"mlb_deterministic_canonical_fallback":True,"mlb_canonical_teams":len(MLB_CANONICAL_LOGOS),"team_logo_coverage_by_league":dict(sorted(counts.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB canonical fallback; matchup parser accepts @, at, and vs; named-event cards use league art"}
+    report={"version":9,"events":len(events),"team_games":games,"team_games_complete":complete,"team_games_missing":missing,"team_logo_fields_populated":fields,"league_art_fields_populated":league_art,"named_events":named,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"mlb_deterministic_canonical_fallback":True,"mlb_canonical_teams":len(MLB_CANONICAL_LOGOS),"team_logo_coverage_by_league":dict(sorted(counts.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB canonical fallback; matchup parser accepts @, at, and vs; MLB postseason/seed/TBD placeholders are named events using league art"}
     payload["phase3VisualReport"]=report;payload["phase3Visuals"]=True;FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8");print(json.dumps(report,sort_keys=True))
 if __name__=="__main__":main()
