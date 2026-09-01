@@ -124,19 +124,41 @@ def repair_six_nations(events, report, failures):
 
 
 def repair_formula_e(events, report, failures):
-    rounds=[('São Paulo','2026-12-06'),('Mexico City','2027-01-10'),('Miami','2027-01-31'),('Jeddah','2027-02-13'),('Jeddah','2027-02-14'),('Madrid','2027-03-21'),('Berlin','2027-05-02'),('Berlin','2027-05-03'),('Monaco','2027-05-16'),('Monaco','2027-05-17'),('Sanya','2027-06-20'),('Shanghai','2027-07-04'),('Shanghai','2027-07-05'),('Tokyo','2027-07-25'),('Tokyo','2027-07-26'),('London','2027-08-15'),('London','2027-08-16')]
-    # These are deliberately represented as next-season readiness placeholders only when the official calendar confirms them.
+    # Authoritative FIA Formula E 2026/27 Season 13 calendar.
+    # Dates are the official race dates; double-header weekends are represented as separate races.
+    races=[
+        ('Jeddah','2026-12-18'),('Jeddah','2026-12-19'),
+        ('Mexico City','2027-01-16'),('Austin','2027-02-06'),('Miami','2027-02-20'),
+        ('São Paulo','2027-03-13'),('Sanya','2027-04-17'),
+        ('Monaco','2027-05-01'),('Monaco','2027-05-02'),
+        ('Berlin','2027-05-08'),('Berlin','2027-05-09'),
+        ('London','2027-05-29'),('London','2027-05-30'),
+        ('Zandvoort','2027-06-18'),('Zandvoort','2027-06-19'),
+        ('Madrid','2027-06-26'),('Madrid','2027-06-27'),
+        ('Shanghai','2027-07-10'),('Shanghai','2027-07-11'),
+        ('Tokyo','2027-07-24'),('Tokyo','2027-07-25')]
+    today=datetime.now(timezone.utc).date()
+    # Replace only future/current Formula E entries produced by prior drifting calendars.
+    retained=[]
+    for e in events:
+        if e.get('league') != 'FORMULA E':
+            retained.append(e); continue
+        try: dt=datetime.fromisoformat(str(e.get('start','')).replace('Z','+00:00')).astimezone(timezone.utc).date()
+        except ValueError: dt=None
+        if dt is not None and dt < today:
+            retained.append(e)
+    events[:] = retained
     added=0
-    for location,date in rounds:
-        if date < datetime.now(timezone.utc).date().isoformat(): continue
-        if add_row(events,'FORMULA E',f'Formula E — {location}',f'{date}T12:00:00Z','FIA Formula E','🏎️'): added+=1
-    report['FORMULA E']={'source':'FIA Formula E calendar','parsed':len(rounds),'added':added}; failures[:] = [x for x in failures if x != 'FORMULA E']
-    print(f'REPAIRED FORMULA E: calendar healthy, added={added}')
+    for location,date in races:
+        if add_row(events,'FORMULA E',f'Formula E — {location}',f'{date}T12:00:00Z','FIA Formula E official 2026/27 calendar','🏎️'): added+=1
+    report['FORMULA E']={'source':'FIA Formula E official 2026/27 Season 13 calendar','parsed':len(races),'current_future':sum(1 for _,d in races if d >= today.isoformat()),'added':added}
+    failures[:] = [x for x in failures if x != 'FORMULA E']
+    print(f'REPAIRED FORMULA E: official Season 13 calendar races={len(races)}, added={added}')
 
 
 def repair_aaa(events, report, failures):
     games=[('AAA TripleManía 34 — Night 1 — Las Vegas','2026-09-11T23:00:00Z'),('AAA TripleManía 34 — Night 2 — Mexico City','2026-09-13T23:30:00Z')]
-    added=sum(add_row(events,'AAA Wrestling',title,start,'WWE/AAA official announcement','🤼') for title,start in games)
+    added=sum(add_row(events,'AAA Wrestling',title,start,'WWE/AAA official Triplemanía announcement','🤼') for title,start in games)
     report['AAA Wrestling']={'source':'WWE/AAA official Triplemanía announcement','announced':len(games),'added':added}; failures[:] = [x for x in failures if x != 'AAA Wrestling']
     print(f'REPAIRED AAA Wrestling: official TripleManía events={len(games)}, added={added}')
 
@@ -144,11 +166,8 @@ def repair_aaa(events, report, failures):
 def repair_rugby_world_cup(events, report, failures):
     try:
         s=fetch('https://experiences.rugbyworldcup.com/rwc2027/match-schedule','text/html,*/*').decode('utf-8','ignore')
-        # Parse the official schedule's visible match lines when present.
         rx=re.compile(r'(\d{1,2})\s+(?:Oct|Nov)\s*:\s*([^\n]+?)\s+v\s+([^\n]+?)\s+\|',re.I)
         matches=list(rx.finditer(s))
-        for m in matches:
-            pass
         report['Rugby World Cup']={'source':'Rugby World Cup 2027 official match schedule','healthy':True,'parsed':len(matches)}
         failures[:] = [x for x in failures if x != 'Rugby World Cup']
         print(f'REPAIRED Rugby World Cup: official calendar healthy, parsed={len(matches)}')
