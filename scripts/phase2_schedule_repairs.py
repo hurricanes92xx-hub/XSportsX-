@@ -75,7 +75,14 @@ def main():
  except Exception:reference=datetime.now(timezone.utc)
  report=p.setdefault('phase2RepairReport',{}); repair_nba(events,report,failures,policy,reference); probe_nll(events,report,failures,policy,reference)
  p['events']=events;p['officialSourceFailures']=failures;p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})};p['generatedAt']=datetime.now(timezone.utc).isoformat();FEED.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print('PHASE2 failures remaining:',failures);print(f'PHASE2 complete: {len(events)} events across {len(p["eventCounts"])} leagues')
+ # Repair the MLB fallback typo introduced in Phase 3 before executing it.
+ phase3=ROOT/'scripts'/'phase3_visual_enrichment.py'
+ text=phase3.read_text(encoding='utf-8')
+ broken='return MLB_CANONICAL_LOGOS.get(canonical,"'
+ fixed='return MLB_CANONICAL_LOGOS.get(canonical,"")'
+ if broken in text:
+  phase3.write_text(text.replace(broken,fixed,1),encoding='utf-8')
  # Phase 3 runs after all Phase 2 feed mutations and before the AAA guard/audit.
  # It only adds presentation metadata and never alters dates or event membership.
- subprocess.run([sys.executable, str(ROOT/'scripts'/'phase3_visual_enrichment.py')], check=True)
+ subprocess.run([sys.executable, str(phase3)], check=True)
 if __name__=='__main__':main()
