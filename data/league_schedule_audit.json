@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-01T15:28:03.453332Z",
-  "feed_generated_at": "2026-09-01T15:28:00.692598+00:00",
+  "generated_at": "2026-09-01T18:19:56.059908Z",
+  "feed_generated_at": "2026-09-01T18:19:52.175837+00:00",
   "leagues": [
     {
       "league": "NBA",
@@ -20,16 +20,16 @@
           30
         ]
       ],
-      "reference": "2026-09-01T15:28:00.692598Z",
-      "horizon": "2027-09-06T15:28:00.692598Z",
+      "reference": "2026-09-01T18:19:52.175837Z",
+      "horizon": "2027-09-06T18:19:52.175837Z",
       "source": "NBA official CDN scheduleLeagueV2",
       "repair_result": {
         "source": "NBA official CDN scheduleLeagueV2",
         "source_url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
         "parsed": 1273,
-        "added": 0,
+        "added": 1270,
         "current_future_existing_or_added": 1223,
-        "reference": "2026-09-01T15:27:49.782152Z",
+        "reference": "2026-09-01T18:19:41.639821Z",
         "errors": []
       },
       "official_source_failure": false,
@@ -52,8 +52,8 @@
           31
         ]
       ],
-      "reference": "2026-09-01T15:28:00.692598Z",
-      "horizon": "2027-09-06T15:28:00.692598Z",
+      "reference": "2026-09-01T18:19:52.175837Z",
+      "horizon": "2027-09-06T18:19:52.175837Z",
       "source": "NLL official full schedule page",
       "repair_result": {
         "source": "NLL official full schedule page",
