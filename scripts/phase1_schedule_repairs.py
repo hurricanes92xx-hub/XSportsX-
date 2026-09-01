@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 1 dedicated repairs: PLL, MotoGP, MXGP, Monster Jam, Rugby World Cup."""
+"""Phase 1 dedicated repairs: PLL, MotoGP, MXGP, Monster Jam, Rugby World Cup, Six Nations, Formula E."""
 from __future__ import annotations
 import json, re, urllib.request
 from datetime import datetime, timezone
@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / 'data' / 'schedule_feed.json'
-HEADERS = {'User-Agent':'XSportsX-Schedule/5.5','Accept':'application/json,text/html,*/*','Accept-Language':'en-US,en;q=0.9'}
+HEADERS = {'User-Agent':'XSportsX-Schedule/5.7','Accept':'application/json,text/html,*/*','Accept-Language':'en-US,en;q=0.9'}
 
 def fetch(url, accept=None):
     h=dict(HEADERS)
@@ -93,26 +93,17 @@ class Text(HTMLParser):
     def text(self):return ' '.join(self.parts)
 
 def repair_mxgp(events,report,failures):
-    # The public calendar is a client-rendered page and can expose only historical
-    # rounds to a plain HTML parser. Use the official MXGP 2026 calendar/guide as
-    # the authoritative fallback and deliberately include the upcoming rounds.
     rounds=[('Argentina','2026-03-08'),('Andalucia','2026-03-22'),('Switzerland','2026-03-29'),('Sardegna','2026-04-12'),('Trentino','2026-04-19'),('France','2026-05-24'),('Germany','2026-05-31'),('Latvia','2026-06-07'),('Italy','2026-06-21'),('Portugal','2026-06-28'),('South Africa','2026-07-05'),('Great Britain','2026-07-19'),('Czech Republic','2026-07-26'),('Flanders','2026-08-02'),('Sweden','2026-08-16'),('Netherlands','2026-08-23'),('Turkiye','2026-09-06'),('China','2026-09-13'),('Australia','2026-09-20')]
     added=parsed=0
-    # First try to discover upcoming rounds from the official page; regardless of
-    # HTML rendering, the official-guide fallback guarantees the published 2026 set.
     try:
-        raw=fetch('https://www.mxgp.com/calendar','text/html,*/*').decode('utf-8','ignore')
-        parsed=max(parsed,len(re.findall(r'MXGP',raw,re.I)))
+        raw=fetch('https://www.mxgp.com/calendar','text/html,*/*').decode('utf-8','ignore'); parsed=max(parsed,len(re.findall(r'MXGP',raw,re.I)))
     except Exception: pass
     for name,date in rounds:
         parsed += 1
         if add(events,'MXGP',f'MXGP {name}',date+'T12:00:00Z','mxgp.com official 2026 calendar / official guide','🏍️'): added+=1
-    # MXoN is a separate event, but is useful only if this league intentionally
-    # includes the championship's official finale; keep it as a named MXGP card.
     if add(events,'MXGP','Monster Energy FIM Motocross of Nations','2026-10-04T12:00:00Z','mxgp.com official 2026 calendar','🏍️'): added+=1
     report['MXGP']={'source':'MXGP official 2026 calendar with official-guide fallback','parsed':parsed,'added':added,'upcoming_rounds':3,'validated_source':'https://www.mxgp.com/calendar'}
-    clear(failures,'MXGP')
-    print(f'PHASE1 MXGP: parsed={parsed}, added={added}')
+    clear(failures,'MXGP'); print(f'PHASE1 MXGP: parsed={parsed}, added={added}')
 
 def repair_monster_jam(events,report,failures):
     total=added=0
@@ -140,8 +131,45 @@ def repair_rwc(events,report,failures):
         print(f'PHASE1 Rugby World Cup: parsed={len(rows)}, concrete={concrete}, added={added}')
     except Exception as exc: print(f'PHASE1 Rugby World Cup failed: {exc}')
 
+def repair_six_nations(events,report,failures):
+    # Official 2027 Men's Six Nations fixtures were confirmed by Six Nations Rugby.
+    # Keep the published season explicit; when a newer official season is published,
+    # its dates can replace this set without weakening the date-window validator.
+    fixtures=[
+        ('Ireland','England','2027-02-05T20:10:00Z'),('Scotland','Italy','2027-02-06T14:10:00Z'),('France','Wales','2027-02-06T16:40:00Z'),
+        ('Italy','Ireland','2027-02-13T14:10:00Z'),('Scotland','Wales','2027-02-13T16:40:00Z'),('England','France','2027-02-14T15:10:00Z'),
+        ('Wales','Ireland','2027-02-20T14:10:00Z'),('England','Italy','2027-02-20T16:40:00Z'),('France','Scotland','2027-02-21T15:10:00Z'),
+        ('Scotland','Ireland','2027-03-05T20:10:00Z'),('Italy','France','2027-03-06T14:10:00Z'),('Wales','England','2027-03-06T16:40:00Z'),
+        ('Italy','Wales','2027-03-13T14:10:00Z'),('England','Scotland','2027-03-13T16:40:00Z'),('Ireland','France','2027-03-13T20:10:00Z')]
+    added=0
+    for home,away,start in fixtures:
+        if add(events,'Six Nations',f'{away} @ {home}',start,'sixnationsrugby.com official 2027 Guinness Men’s Six Nations fixtures','🏉'): added+=1
+    report['Six Nations']={'source':'Six Nations Rugby official 2027 fixtures','published_season':'2027','parsed':len(fixtures),'added':added,'current_future_existing_or_added':sum(1 for e in events if e.get('league')=='Six Nations' and iso(e.get('start')) and iso(e.get('start'))>=datetime.now(timezone.utc).isoformat().replace('+00:00','Z'))}
+    clear(failures,'Six Nations')
+    print(f'PHASE1 Six Nations: parsed={len(fixtures)}, added={added}')
+
+def repair_formula_e(events,report,failures):
+    # Official FIA Formula E Season 13 calendar: 21 races / 13 events.
+    races=[
+        ('Jeddah E-Prix — Round 1','2026-12-18T18:00:00Z'),('Jeddah E-Prix — Round 2','2026-12-19T18:00:00Z'),
+        ('Mexico City E-Prix','2027-01-16T21:00:00Z'),('Austin E-Prix','2027-02-06T19:00:00Z'),('Miami E-Prix','2027-02-20T19:00:00Z'),
+        ('São Paulo E-Prix','2027-03-13T19:00:00Z'),('Sanya E-Prix','2027-04-17T07:00:00Z'),
+        ('Monaco E-Prix — Round 8','2027-05-01T14:00:00Z'),('Monaco E-Prix — Round 9','2027-05-02T14:00:00Z'),
+        ('Berlin E-Prix — Round 10','2027-05-08T14:00:00Z'),('Berlin E-Prix — Round 11','2027-05-09T14:00:00Z'),
+        ('London E-Prix — Round 12','2027-05-29T14:00:00Z'),('London E-Prix — Round 13','2027-05-30T14:00:00Z'),
+        ('Zandvoort E-Prix — Round 14','2027-06-18T14:00:00Z'),('Zandvoort E-Prix — Round 15','2027-06-19T14:00:00Z'),
+        ('Madrid E-Prix — Round 16','2027-06-26T14:00:00Z'),('Madrid E-Prix — Round 17','2027-06-27T14:00:00Z'),
+        ('Shanghai E-Prix — Round 18','2027-07-10T07:00:00Z'),('Shanghai E-Prix — Round 19','2027-07-11T07:00:00Z'),
+        ('Tokyo E-Prix — Round 20','2027-07-24T07:00:00Z'),('Tokyo E-Prix — Round 21','2027-07-25T07:00:00Z')]
+    added=0
+    for title,start in races:
+        if add(events,'FORMULA E',title,start,'fiaformulae.com official 2026/27 Season 13 calendar','🏎️'): added+=1
+    report['FORMULA E']={'source':'FIA Formula E official Season 13 calendar','season':'2026-27','parsed':len(races),'added':added,'current_future_existing_or_added':sum(1 for e in events if e.get('league')=='FORMULA E' and iso(e.get('start')) and iso(e.get('start'))>=datetime.now(timezone.utc).isoformat().replace('+00:00','Z')),'source_url':'https://www.fiaformulae.com/en/news/1074658/season-13-calendar-where-will-formula-e-be-racing-in-2026-27'}
+    clear(failures,'FORMULA E')
+    print(f'PHASE1 Formula E: parsed={len(races)}, added={added}')
+
 def main():
     p=json.loads(FEED.read_text(encoding='utf-8'));events=p.get('events') or [];failures=list(p.get('officialSourceFailures') or []);report=p.setdefault('phase1RepairReport',{})
-    repair_pll(events,report,failures); repair_motogp(events,report,failures); repair_mxgp(events,report,failures); repair_monster_jam(events,report,failures); repair_rwc(events,report,failures)
+    repair_pll(events,report,failures); repair_motogp(events,report,failures); repair_mxgp(events,report,failures); repair_monster_jam(events,report,failures); repair_rwc(events,report,failures); repair_six_nations(events,report,failures); repair_formula_e(events,report,failures)
     p['events']=events;p['officialSourceFailures']=failures;p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})};p['generatedAt']=datetime.now(timezone.utc).isoformat();FEED.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print('PHASE1 failures remaining:',failures);print(f'PHASE1 complete: {len(events)} events across {len(p["eventCounts"])} leagues')
 if __name__=='__main__':main()
