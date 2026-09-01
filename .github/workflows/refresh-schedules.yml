@@ -186,7 +186,7 @@ jobs:
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot].noreply.github.com'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json data/ncaa_nonfootball_identity_catalog.json data/ncaa_hockey_field_hockey_catalog_audit.json data/ncaa_field_hockey_team_catalog.json data/ncaa_mens_hockey_team_catalog.json data/ncaa_womens_hockey_team_catalog.json
           git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
           git stash push --include-untracked -m 'xsportsx-refresh-runner-local' || true
