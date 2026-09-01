@@ -1,8 +1,6 @@
 name: Validate XSportsX 7.5
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
