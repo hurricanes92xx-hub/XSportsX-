@@ -4,14 +4,16 @@
 Presentation-only rules:
 - Never change event dates or membership.
 - Named events use league artwork.
-- Team logos come from a persistent verified cache; no per-refresh ESPN team
-  directory calls are made, avoiding the 403 failure seen in the first pass.
-- A missing logo is left blank rather than guessed.
+- Team logos are read ONLY from the persistent verified cache.
+- No external logo discovery/network calls occur during a refresh.
+- Missing logos remain blank rather than guessed.
+
+Team-logo discovery is intentionally separated from the schedule refresh. A
+rate-limited public image API must never be allowed to stall or destabilize the
+schedule pipeline.
 """
 import json
 import re
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,14 +56,7 @@ LEAGUE_ART = {
     "NLL": "https://commons.wikimedia.org/wiki/Special:FilePath/National_Lacrosse_League_logo.svg?width=256",
 }
 
-# Only leagues for which team-level logos are meaningful in this phase.
 TEAM_LEAGUES = {"NFL", "NBA", "WNBA", "MLB", "NHL", "MLS", "EPL", "LaLiga", "Serie A", "Bundesliga", "Ligue 1", "NWSL"}
-
-
-def fetch_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX/Phase3; schedule enrichment"})
-    with urllib.request.urlopen(req, timeout=8) as r:
-        return json.load(r)
 
 
 def norm(s):
@@ -81,9 +76,9 @@ def split_matchup(title):
 def load_cache():
     try:
         raw = json.loads(CACHE.read_text(encoding="utf-8"))
-        return raw if isinstance(raw, dict) else {"version": 1, "teams": {}}
+        return raw if isinstance(raw, dict) else {"version": 2, "teams": {}}
     except Exception:
-        return {"version": 1, "teams": {}}
+        return {"version": 2, "teams": {}}
 
 
 def save_cache(cache):
@@ -94,37 +89,6 @@ def cached_logo(cache, league, team):
     teams = cache.setdefault("teams", {})
     value = teams.get(f"{league}|{norm(team)}")
     return value if isinstance(value, str) else ""
-
-
-def discover_logo(cache, league, team):
-    """Discover one exact team logo and persist it.
-
-    TheSportsDB is used only for cache misses. We require an exact normalized
-    team-name match in the response before accepting the badge URL. This keeps
-    the refresh safe from fuzzy/wrong-team logos and avoids ESPN 403s.
-    """
-    key = f"{league}|{norm(team)}"
-    if key in cache.setdefault("teams", {}):
-        return cache["teams"][key] or ""
-    if league not in TEAM_LEAGUES or not team:
-        cache["teams"][key] = ""
-        return ""
-    try:
-        q = urllib.parse.quote(team)
-        root = fetch_json(f"https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t={q}")
-        rows = root.get("teams") or []
-        target = norm(team)
-        for row in rows:
-            names = {norm(row.get("strTeam")), norm(row.get("strTeamAlternate"))}
-            if target in names:
-                logo = str(row.get("strTeamBadge") or row.get("strTeamLogo") or "").strip()
-                if logo.startswith("http"):
-                    cache["teams"][key] = logo
-                    return logo
-        cache["teams"][key] = ""
-    except Exception as exc:
-        print(f"PHASE3 logo discovery unavailable for {league}/{team}: {exc}")
-    return ""
 
 
 def clean_event_title(event):
@@ -172,10 +136,6 @@ def main():
             event["home"] = home
             away_logo = event.get("awayLogo") or cached_logo(cache, league, away)
             home_logo = event.get("homeLogo") or cached_logo(cache, league, home)
-            if not away_logo:
-                away_logo = discover_logo(cache, league, away)
-            if not home_logo:
-                home_logo = discover_logo(cache, league, home)
             event["awayLogo"] = away_logo
             event["homeLogo"] = home_logo
             team_games += 1
@@ -193,7 +153,7 @@ def main():
     save_cache(cache)
     report = payload.setdefault("phase3VisualReport", {})
     report.update({
-        "version": 2,
+        "version": 3,
         "events": len(events),
         "team_games": team_games,
         "team_games_complete": team_games_complete,
@@ -203,7 +163,8 @@ def main():
         "named_events": named_events,
         "titles_cleaned": cleaned,
         "cache_entries": len(cache.get("teams", {})),
-        "rule": "no invented team logos; exact-name cached logos only; named-event cards use league art",
+        "external_logo_discovery": False,
+        "rule": "refresh never performs external team-logo discovery; exact cached logos only; named-event cards use league art",
     })
     payload["phase3Visuals"] = True
     FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
