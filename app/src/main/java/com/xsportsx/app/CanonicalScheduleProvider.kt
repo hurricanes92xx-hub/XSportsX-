@@ -54,9 +54,12 @@ object CanonicalScheduleProvider {
                     id = e.optString("id").ifBlank { "feed-${canonicalLeague}-${start}-${title}" },
                     sport = sportFor(canonicalLeague), league = canonicalLeague,
                     title = title.ifBlank { "Sports event" }, startUtc = start.toString(),
-                    status = status, state = state, home = teams.second, away = teams.first,
-                    homeLogo = "", awayLogo = "", broadcast = e.optString("broadcast").trim(),
-                    artUrl = e.optString("image").trim(), sourceUrl = e.optString("sourceUrl").trim(), youtubeVideoId = ""
+                    status = status, state = state, home = e.optString("home").ifBlank { teams.second },
+                    away = e.optString("away").ifBlank { teams.first },
+                    homeLogo = e.optString("homeLogo").trim(), awayLogo = e.optString("awayLogo").trim(),
+                    broadcast = e.optString("broadcast").trim(),
+                    artUrl = e.optString("image").ifBlank { e.optString("leagueArt") }.trim(),
+                    sourceUrl = e.optString("sourceUrl").trim(), youtubeVideoId = e.optString("youtubeVideoId").trim()
                 )
             }
             out.distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" } }
