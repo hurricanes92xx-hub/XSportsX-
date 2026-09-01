@@ -1,10 +1,10 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T01:59:48.195824+00:00",
+  "generatedAt": "2026-09-01T02:56:14.494070+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
-    "AEW": 4,
+    "AEW": 14,
     "AFL": 4,
     "ATP": 5,
     "BOXING": 8,
@@ -51,7 +51,7 @@
     "UFC": 9,
     "WNBA": 30,
     "WTA": 17,
-    "WWE": 18
+    "WWE": 22
   },
   "failedSources": [],
   "officialSourceFailures": [
@@ -110,7 +110,7 @@
     "NCAA Women's Water Polo": 0,
     "NCAA Women's Field Hockey": 0,
     "NCAA Beach Volleyball": 0,
-    "WWE": 13,
+    "WWE": 18,
     "AEW": 4,
     "TNA": 1,
     "MotoGP": 40,
@@ -1708,6 +1708,13 @@
       "sourceDetail": "MLB Stats API"
     },
     {
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-02T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
+    },
+    {
       "league": "MLB",
       "title": "Athletics @ Rangers",
       "start": "2026-09-02T00:05:00Z",
@@ -1976,6 +1983,13 @@
       "tag": "UPCOMING",
       "icon": "⚾",
       "sourceDetail": "MLB Stats API"
+    },
+    {
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "MLB",
@@ -2274,6 +2288,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-04T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "MONSTER JAM",
@@ -2665,6 +2686,13 @@
       "tag": "UPCOMING",
       "icon": "🏈",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "WWE",
+      "title": "WWE SmackDown",
+      "start": "2026-09-05T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "MLB",
@@ -28756,6 +28784,13 @@
       "tag": "UPCOMING",
       "icon": "🏒",
       "sourceDetail": "ESPN NCAA scoreboard"
+    },
+    {
+      "league": "WWE",
+      "title": "WWE",
+      "start": "2026-11-28T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼"
     },
     {
       "league": "NCAA FB",
@@ -138195,7 +138230,7 @@
     },
     {
       "league": "WWE",
-      "title": "WWE SmackDown",
+      "title": "WWE",
       "start": "2026-09-02T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
@@ -138203,7 +138238,7 @@
     },
     {
       "league": "WWE",
-      "title": "WWE SmackDown",
+      "title": "WWE",
       "start": "2026-09-03T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
@@ -138211,7 +138246,7 @@
     },
     {
       "league": "WWE",
-      "title": "WWE SmackDown",
+      "title": "WWE",
       "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
@@ -138219,23 +138254,95 @@
     },
     {
       "league": "WWE",
-      "title": "WWE SmackDown",
+      "title": "WWE",
       "start": "2026-09-05T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
       "source": "https://www.wwe.com/article/wwe-upcoming-events"
     },
     {
-      "league": "WWE",
-      "title": "WWE",
-      "start": "2026-11-28T00:00:00Z",
+      "league": "AEW",
+      "title": "AEW Dynamite/Collision: Allen",
+      "start": "2026-09-02T23:30:00Z",
       "tag": "UPCOMING",
       "icon": "🤼",
-      "source": "https://www.wwe.com/article/wwe-upcoming-events"
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW: Rebel Heart Dynamite",
+      "start": "2026-09-09T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Collision: Springfield",
+      "start": "2026-09-12T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Dynamite: Norfolk",
+      "start": "2026-09-16T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Collision: Charleston",
+      "start": "2026-09-19T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Dynamite/Collision: Indianapolis",
+      "start": "2026-09-23T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW: All Out",
+      "start": "2026-09-26T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Dynamite: Pittsburgh",
+      "start": "2026-09-30T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Collision: Highland Heights",
+      "start": "2026-10-03T23:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
+    },
+    {
+      "league": "AEW",
+      "title": "AEW Grand Slam: France",
+      "start": "2026-10-06T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🤼",
+      "source": "https://www.sync2cal.com/sports/fighting/aew"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T01:58:34.262294+00:00",
+    "generatedAt": "2026-09-01T02:55:04.935618+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -138375,7 +138482,7 @@
           ]
         ],
         "observedUpcoming": 2887,
-        "observedRecent": 40,
+        "observedRecent": 42,
         "provider": "official"
       },
       {
@@ -138958,8 +139065,8 @@
             31
           ]
         ],
-        "observedUpcoming": 13,
-        "observedRecent": 0,
+        "observedUpcoming": 18,
+        "observedRecent": 1,
         "provider": "official"
       },
       {
@@ -139292,7 +139399,7 @@
           ]
         ],
         "observedUpcoming": 2887,
-        "observedRecent": 40,
+        "observedRecent": 42,
         "provider": "espn"
       },
       {
@@ -139881,15 +139988,22 @@
     "WWE": {
       "source": "https://www.wwe.com/article/wwe-upcoming-events",
       "parsed_official_events": 5,
-      "added": 5,
-      "current_future_existing_or_added": 18,
-      "weekly_show_events": 14,
-      "validated": true
+      "added": 4,
+      "current_future_existing_or_added": 22,
+      "weekly_show_events": 0,
+      "validated": true,
+      "fallback_used": false
     },
     "AEW": {
-      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
-      "validated": false,
-      "error": "HTTP Error 429: Too Many Requests"
+      "source": "https://www.sync2cal.com/sports/fighting/aew",
+      "official_source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
+      "parsed_official_events": 10,
+      "added": 10,
+      "current_future_existing_or_added": 14,
+      "weekly_show_events": 8,
+      "validated": true,
+      "fallback_used": true,
+      "official_error": "HTTP Error 429: Too Many Requests"
     }
   },
   "phase1RepairReport": {
@@ -139928,7 +140042,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1226,
-      "reference": "2026-09-01T01:59:37.116619Z",
+      "reference": "2026-09-01T02:56:02.018882Z",
       "errors": []
     },
     "NLL": {
