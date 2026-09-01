@@ -5,11 +5,12 @@ import json,re,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'data'/'team_logo_map.json'
-HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.4','Accept':'application/json'}
+HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.5','Accept':'application/json'}
 
 # Keep one persistent catalog for every college team sport represented by the
-# schedule feed.  ESPN is the authoritative source; failed endpoints are
-# recorded so one unavailable sport cannot block the entire refresh.
+# schedule feed. ESPN is the authoritative source where an NCAA team catalog
+# exists. Non-team sports without an ESPN team endpoint are resolved separately
+# by build_ncaa_nonfootball_identity_catalog.py.
 SOURCES={
  'NCAA FB':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA FCS':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
@@ -26,10 +27,6 @@ SOURCES={
  "NCAA Women's Lacrosse":'https://site.api.espn.com/apis/site/v2/sports/lacrosse/womens-college-lacrosse/teams?limit=1000',
  "NCAA Baseball":'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=1000',
  "NCAA Softball":'https://site.api.espn.com/apis/site/v2/sports/softball/college-softball/teams?limit=1000',
- "NCAA Men's Tennis":'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/teams?limit=1000',
- "NCAA Women's Tennis":'https://site.api.espn.com/apis/site/v2/sports/tennis/wta/teams?limit=1000',
- "NCAA Men's Golf":'https://site.api.espn.com/apis/site/v2/sports/golf/pga/teams?limit=1000',
- "NCAA Women's Golf":'https://site.api.espn.com/apis/site/v2/sports/golf/lpga/teams?limit=1000',
  'NCAA Wrestling':'https://site.api.espn.com/apis/site/v2/sports/wrestling/college-wrestling/teams?limit=1000',
  'NCAA Gymnastics':'https://site.api.espn.com/apis/site/v2/sports/gymnastics/college-gymnastics/teams?limit=1000',
  'NCAA Swimming & Diving':'https://site.api.espn.com/apis/site/v2/sports/swimming/college-swimming/teams?limit=1000',
@@ -83,6 +80,12 @@ def main():
    elif league=='NCAA FCS' and name in UTRGV_ALIASES: logo=UTRGV_LOGO
    p['teams'][f'{league}|{norm(name)}']=logo
   p['sources'].setdefault(league,{})['fixedSmallSchoolEntries']=len(entries)
+ # Never retain the old pro tennis/golf catalogs under NCAA namespaces.
+ for key in list(p['teams']):
+  if key.startswith(('NCAA Men's Tennis|','NCAA Women's Tennis|','NCAA Men's Golf|','NCAA Women's Golf|')):
+   del p['teams'][key]
+ for key in ('NCAA Men\'s Tennis','NCAA Women\'s Tennis','NCAA Men\'s Golf','NCAA Women\'s Golf'):
+  p['sources'].pop(key,None)
  p['generatedAt']=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
  CACHE.write_text(json.dumps(p,indent=2,ensure_ascii=False,sort_keys=True)+'\n',encoding='utf-8')
  print('NCAA logo catalog hydrated:',json.dumps({'catalogs':report,'failures':failures,'fixed_small_school_entries':sum(len(v) for v in FIXED.values())},sort_keys=True))
