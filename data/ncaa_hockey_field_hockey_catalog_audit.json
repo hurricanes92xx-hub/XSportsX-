@@ -1,0 +1,183 @@
+{
+  "generatedAt": "2026-09-01T19:41:14.953168+00:00",
+  "leagues": {
+    "NCAA Men's Hockey": {
+      "catalogFile": "data/ncaa_mens_hockey_team_catalog.json",
+      "catalogTeams": 116,
+      "duplicateNormalizedAliases": {
+        "BADGERS": [
+          "Fairfield Badgers",
+          "Wisconsin Badgers"
+        ],
+        "BOBCATS": [
+          "Ohio Bobcats",
+          "Quinnipiac Bobcats"
+        ],
+        "BULLDOGS": [
+          "Adrian Bulldogs",
+          "Ferris State Bulldogs",
+          "Minnesota Duluth Bulldogs",
+          "Yale Bulldogs"
+        ],
+        "EAGLES": [
+          "Boston College Eagles",
+          "Post Eagles"
+        ],
+        "FALCONS": [
+          "Air Force Falcons",
+          "Bentley Falcons",
+          "Bethel College Minnesota Falcons",
+          "Bowling Green Falcons",
+          "Findlay Falcons",
+          "Rob Morris Ill Falcons",
+          "Scranton Falcons",
+          "Wayne St. Falcons"
+        ],
+        "GOLDEN EAGLES": [
+          "Brockport Golden Eagles",
+          "Minnesota-Crookston Golden Eagles"
+        ],
+        "HUSKIES": [
+          "Michigan Tech Huskies",
+          "Northeastern Huskies",
+          "Southern Maine Huskies",
+          "St. Cloud State Huskies",
+          "UConn Huskies"
+        ],
+        "LAKERS": [
+          "Lake Superior State Lakers",
+          "Mercyhurst Lakers"
+        ],
+        "MAVERICKS": [
+          "Minnesota State Mavericks",
+          "Omaha Mavericks"
+        ],
+        "PIONEERS": [
+          "Denver Pioneers",
+          "Sacred Heart Pioneers",
+          "Utica Pioneers"
+        ],
+        "PURPLE KNIGHTS": [
+          "Saint Michael's Purple Knights",
+          "St. Michael'S College Purple Knights"
+        ],
+        "RAIDERS": [
+          "Colgate Raiders",
+          "Rivier Raiders"
+        ],
+        "TIGERS": [
+          "Colorado College Tigers",
+          "Princeton Tigers",
+          "RIT Tigers"
+        ],
+        "VIKINGS": [
+          "Augustana (SD) Vikings",
+          "Salem State Vikings"
+        ],
+        "WILDCATS": [
+          "Arizona Wildcats",
+          "New Hampshire Wildcats",
+          "Northern Michigan Wildcats"
+        ]
+      },
+      "endpoint": "https://site.api.espn.com/apis/site/v2/sports/hockey/mens-college-hockey/teams?limit=1000",
+      "error": null,
+      "matchedScheduleTeams": 0,
+      "missingLogoCatalogTeams": [
+        "Adrian Bulldogs",
+        "Alabama Huntsville Chargers",
+        "Alberta Golden Bears & Pandas",
+        "Anna Maria Amcats",
+        "Framingham State Rams",
+        "Laurentian Voyageur",
+        "Manhattanville Valiants",
+        "Minnesota-Crookston Golden Eagles",
+        "New England College Pilgrims",
+        "Nichols Bison",
+        "Rivier Raiders",
+        "Rob Morris Ill Falcons",
+        "SOUTHERN NEW HAMPSHIRE",
+        "SUNY Canton SUNY CANT",
+        "SUNY Cortland Red Dragons",
+        "SUNY Cortland Red Dragons",
+        "SUNY Geneseo SUNY-GENESEO",
+        "SUNY Morrisville Mustangs",
+        "Salem State Vikings",
+        "Scranton Falcons",
+        "Seneca Sting",
+        "Southern Maine Huskies",
+        "Toronto Metropolitan",
+        "Utica Pioneers",
+        "WINDSOR",
+        "Waterloo King Warrior",
+        "Westfield State Owls",
+        "Worcester State Lancers"
+      ],
+      "scheduleTeams": 0,
+      "unmatchedScheduleTeams": []
+    },
+    "NCAA Women's Field Hockey": {
+      "catalogFile": "data/ncaa_field_hockey_team_catalog.json",
+      "catalogTeams": 0,
+      "duplicateNormalizedAliases": {},
+      "endpoint": "https://site.api.espn.com/apis/site/v2/sports/field-hockey/womens-college-field-hockey/teams?limit=1000",
+      "error": null,
+      "matchedScheduleTeams": 0,
+      "missingLogoCatalogTeams": [],
+      "scheduleTeams": 0,
+      "unmatchedScheduleTeams": []
+    },
+    "NCAA Women's Hockey": {
+      "catalogFile": "data/ncaa_womens_hockey_team_catalog.json",
+      "catalogTeams": 47,
+      "duplicateNormalizedAliases": {
+        "BULLDOGS": [
+          "Minnesota Duluth Bulldogs",
+          "Yale Bulldogs"
+        ],
+        "EAGLES": [
+          "Boston College Eagles",
+          "Post Eagles"
+        ],
+        "HUSKIES": [
+          "Northeastern Huskies",
+          "St. Cloud State Huskies",
+          "UConn Huskies"
+        ],
+        "PURPLE KNIGHTS": [
+          "Saint Michael's Purple Knights",
+          "St. Michael'S College Purple Knights"
+        ],
+        "TIGERS": [
+          "Princeton Tigers",
+          "RIT Tigers"
+        ]
+      },
+      "endpoint": "https://site.api.espn.com/apis/site/v2/sports/hockey/womens-college-hockey/teams?limit=1000",
+      "error": null,
+      "matchedScheduleTeams": 78,
+      "missingLogoCatalogTeams": [],
+      "scheduleTeams": 90,
+      "unmatchedScheduleTeams": [
+        "Assumption College",
+        "Assumption College Greyhounds",
+        "Delaware",
+        "Delaware Blue Hens",
+        "Long Island University Long Island University",
+        "Minnesota St",
+        "Post University",
+        "Post University Eagles",
+        "St. Anselm",
+        "St. Anselm Hawks",
+        "Union (NY)",
+        "Union (NY) Garnet Chargers"
+      ]
+    }
+  },
+  "overall": {
+    "catalogTeamsMissingLogos": 28,
+    "leagues": 3,
+    "scheduleTeamNames": 90,
+    "unmatchedScheduleTeamNames": 12
+  }
+}
