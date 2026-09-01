@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Hydrate CFL logo catalog from ESPN Core API
+      - name: Hydrate CFL logo catalog from ESPN scoreboard/CDN
         run: python scripts/hydrate_cfl_logo_catalog.py
       - name: Enrich canonical schedule feed with team logos
         run: python scripts/phase3_visual_enrichment.py
@@ -33,10 +33,10 @@ jobs:
           import json
           from pathlib import Path
           audit=json.loads(Path('data/team_logo_coverage_audit.json').read_text())
-          rows=audit.get('byLeague') or audit.get('leagues') or {}
+          rows=audit.get('all_leagues') or audit.get('leagues') or audit.get('byLeague') or {}
           cfl=rows.get('CFL') or {}
           print('CFL audit:', json.dumps(cfl, sort_keys=True))
-          missing=cfl.get('missingLogoSlots', cfl.get('missing', 0))
+          missing=cfl.get('missing_logo_slots', cfl.get('missingLogoSlots', cfl.get('missing', 0)))
           assert int(missing or 0) == 0, f'CFL still has {missing} missing logo slots'
           PY
       - name: Publish CFL logo fix
