@@ -12,10 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.ZoneId
@@ -38,15 +40,11 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var now by remember(canonicalLeague) { mutableStateOf(Instant.now()) }
 
     LaunchedEffect(canonicalLeague) {
-        while (true) {
-            now = Instant.now()
-            delay(30_000L)
-        }
+        while (true) { now = Instant.now(); delay(30_000L) }
     }
 
     LaunchedEffect(canonicalLeague, reloadToken) {
-        loading = true
-        error = null
+        loading = true; error = null
         runCatching { ScheduleSnapshotRepository.upcoming(canonicalLeague, reloadToken > 0) }
             .onSuccess { loaded -> allEvents = loaded }
             .onFailure { error = it.message ?: "Schedule temporarily unavailable" }
@@ -54,8 +52,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }
 
     if (streamFilter != null) {
-        LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null })
-        return
+        LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null }); return
     }
 
     val zone = ZoneId.systemDefault()
@@ -64,9 +61,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val transitionGrace = now.minus(10, ChronoUnit.MINUTES)
     val visible = allEvents.filter { event ->
         val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
-        if (tab == "LIVE") {
-            event.isLive
-        } else {
+        if (tab == "LIVE") event.isLive else {
             val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
             val localDate = start.atZone(zone).toLocalDate()
             val dateOnlyInWindow = dateOnly && !localDate.isBefore(today) && localDate.isBefore(today.plusDays(3))
@@ -93,9 +88,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null && visible.isEmpty() -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) { Text(error!!, color = Color.White) }
-            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} games in the next 3 days", color = Color(0xFF858B98))
-            }
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} games in the next 3 days", color = Color(0xFF858B98)) }
             else -> LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, events) ->
                     item { Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp)) }
@@ -110,16 +103,39 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
 
 @Composable
 private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
-    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF080B11)), contentAlignment = Alignment.Center) {
+            if (event.artUrl.isNotBlank()) AsyncImage(model = event.artUrl, contentDescription = event.league, modifier = Modifier.fillMaxSize().padding(9.dp), contentScale = ContentScale.Fit)
+            else XSportsLeagueLogo(event.league, size = 42.dp)
+        }
+        Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(event.away.ifBlank { "TBD" }, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text("@ ${event.home.ifBlank { "TBD" }}", color = Color(0xFFB6BDCA), fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (event.away.isNotBlank() && event.home.isNotBlank()) {
+                TeamLine(event.away, event.awayLogo, "AWAY")
+                Spacer(Modifier.height(3.dp))
+                TeamLine(event.home, event.homeLogo, "HOME")
+            } else {
+                Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
             Spacer(Modifier.height(5.dp))
             Text(if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF536C) else Color(0xFF7F8795), fontSize = 10.sp)
             if (event.broadcast.isNotBlank()) Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         if (event.isLive) Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744))) { Text("WATCH") }
         else Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 9.sp, fontWeight = FontWeight.Black)
+    }
+}
+
+@Composable
+private fun TeamLine(name: String, logo: String, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Box(Modifier.size(30.dp), contentAlignment = Alignment.Center) {
+            if (logo.isNotBlank()) AsyncImage(model = logo, contentDescription = name, modifier = Modifier.size(28.dp), contentScale = ContentScale.Fit)
+            else XSportsLeagueLogo(name, size = 26.dp)
+        }
+        Spacer(Modifier.width(7.dp))
+        Text(name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+        Text(label, color = Color(0xFF667080), fontSize = 8.sp, fontWeight = FontWeight.Black)
     }
 }
 
