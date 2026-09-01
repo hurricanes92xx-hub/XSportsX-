@@ -1,0 +1,58 @@
+name: Refresh CFL team logos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/hydrate_cfl_logo_catalog.py'
+
+concurrency:
+  group: xsportsx-cfl-logo-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Hydrate CFL logo catalog from ESPN Core API
+        run: python scripts/hydrate_cfl_logo_catalog.py
+      - name: Enrich canonical schedule feed with team logos
+        run: python scripts/phase3_visual_enrichment.py
+      - name: Audit CFL team-logo coverage
+        run: python scripts/audit_team_logo_coverage.py
+      - name: Verify every CFL team-game has both logos
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          audit=json.loads(Path('data/team_logo_coverage_audit.json').read_text())
+          rows=audit.get('byLeague') or audit.get('leagues') or {}
+          cfl=rows.get('CFL') or {}
+          print('CFL audit:', json.dumps(cfl, sort_keys=True))
+          missing=cfl.get('missingLogoSlots', cfl.get('missing', 0))
+          assert int(missing or 0) == 0, f'CFL still has {missing} missing logo slots'
+          PY
+      - name: Publish CFL logo fix
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/team_logo_map.json data/schedule_feed.json data/team_logo_coverage_audit.json
+          git diff --cached --quiet || git commit -m 'fix: populate CFL team logos'
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            if git rebase origin/android-app; then
+              if git push origin HEAD:android-app; then exit 0; fi
+            else
+              git rebase --abort || true
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
