@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-01T00:12:00.609371Z",
+  "feed_generated_at": "2026-09-01T00:12:00.420875+00:00",
+  "leagues": [
+    {
+      "league": "NBA",
+      "event_count": 1274,
+      "min_date": "2026-10-03T23:00:00Z",
+      "max_date": "2027-04-12T00:30:00Z",
+      "current_future_count": 1226,
+      "stale_or_outside_count": 48,
+      "season_window": [
+        [
+          10,
+          15
+        ],
+        [
+          6,
+          30
+        ]
+      ],
+      "reference": "2026-09-01T00:12:00.420875Z",
+      "horizon": "2027-09-06T00:12:00.420875Z",
+      "source": "NBA official CDN scheduleLeagueV2",
+      "repair_result": {
+        "source": "NBA official CDN scheduleLeagueV2",
+        "source_url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
+        "parsed": 1273,
+        "added": 0,
+        "current_future_added": 0,
+        "reference": "2026-09-01T00:11:48.354646Z",
+        "errors": []
+      },
+      "official_source_failure": false,
+      "provider_failure": false
+    },
+    {
+      "league": "NLL",
+      "event_count": 0,
+      "min_date": null,
+      "max_date": null,
+      "current_future_count": 0,
+      "stale_or_outside_count": 0,
+      "season_window": [
+        [
+          11,
+          1
+        ],
+        [
+          7,
+          31
+        ]
+      ],
+      "reference": "2026-09-01T00:12:00.420875Z",
+      "horizon": "2027-09-06T00:12:00.420875Z",
+      "source": "NLL official full schedule page",
+      "repair_result": {
+        "source": "NLL official full schedule page",
+        "published_seasons": [
+          "2020-09",
+          "2022-23",
+          "2023-24",
+          "2024-10",
+          "2024-25",
+          "2025-26",
+          "2026-04",
+          "2026-05"
+        ],
+        "2026_27_published": false,
+        "current_future_existing": 0,
+        "status": "awaiting_2026_27_publication"
+      },
+      "official_source_failure": false,
+      "provider_failure": false
+    }
+  ]
+}
