@@ -46,7 +46,7 @@ jobs:
         run: python scripts/phase3_visual_enrichment.py
       - name: Generate compact league schedule audit
         run: python scripts/league_schedule_audit.py
-      - name: Normalize adapter timestamps and validate feed invariants
+      - name: Normalize, dedupe, and persist canonical feed
         run: |
           python - <<'PY'
           import json
@@ -72,13 +72,15 @@ jobs:
             key=(e.get('league'),e.get('title'),e.get('start'))
             if key in seen: duplicates += 1; continue
             seen.add(key); unique.append(e)
-          events=unique; p['events']=events
+          events=unique
+          p['events']=events
           p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})}
           p['generatedAt']=datetime.now(timezone.utc).isoformat()
           p.setdefault('repairReport',{})['adapterTimestampsNormalized']=fixed
           p['repairReport']['finalDuplicateEventsRemoved']=duplicates
+          pth.write_text(json.dumps(p, indent=2, ensure_ascii=False) + '\n')
           assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events remain after canonical dedupe'
-          print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues; normalized={fixed}; duplicates_removed={duplicates}')
+          print(f'validated and persisted {len(events)} events across {len(p.get("eventCounts",{}))} leagues; normalized={fixed}; duplicates_removed={duplicates}')
           print('official source failures:', p.get('officialSourceFailures', []))
           print('provider failures:', p.get('failedSources', []))
           print('provider repairs:', p.get('providerRepairReport', {}))
