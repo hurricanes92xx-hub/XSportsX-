@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-01T21:48:45.006248+00:00",
+  "generatedAt": "2026-09-01T23:31:14.433963+00:00",
   "sources": {
     "Bundesliga": {
       "provider": "ESPN team catalog",
@@ -9,7 +9,7 @@
     "CFL": {
       "completeCatalog": true,
       "provider": "ESPN CFL scoreboard + deterministic ESPN CDN fallback",
-      "resolvedAt": "2026-09-01T21:48:45.006237+00:00",
+      "resolvedAt": "2026-09-01T23:30:57.461390+00:00",
       "season": 2026,
       "teams": 9,
       "url": "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard"
@@ -18,6 +18,16 @@
       "provider": "ESPN team catalog",
       "teams": 20,
       "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams"
+    },
+    "IPL": {
+      "aliases_written": 35,
+      "api_errors": [
+        "https://site.api.espn.com/apis/site/v2/sports/cricket/ipl/teams?limit=100: HTTP Error 404: Not Found",
+        "https://sports.core.api.espn.com/v2/sports/cricket/leagues/ipl/teams?limit=100: HTTP Error 400: Bad Request"
+      ],
+      "deterministic_fallbacks": 10,
+      "source": "ESPN cricket IPL teams endpoint + deterministic ESPN CDN fallback",
+      "teams": 10
     },
     "LaLiga": {
       "provider": "ESPN team catalog",
@@ -328,6 +338,41 @@
     "EPL|SUNDERLAND": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
     "EPL|TOT": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
     "EPL|TOTTENHAM HOTSPUR": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
+    "IPL|BENGALURU": "https://a.espncdn.com/i/teamlogos/cricket/500/335970.png",
+    "IPL|CHENNAI": "https://a.espncdn.com/i/teamlogos/cricket/500/335974.png",
+    "IPL|CHENNAI SUPER KINGS": "https://a.espncdn.com/i/teamlogos/cricket/500/335974.png",
+    "IPL|CSK": "https://a.espncdn.com/i/teamlogos/cricket/500/335974.png",
+    "IPL|DC": "https://a.espncdn.com/i/teamlogos/cricket/500/335975.png",
+    "IPL|DELHI": "https://a.espncdn.com/i/teamlogos/cricket/500/335975.png",
+    "IPL|DELHI CAPITALS": "https://a.espncdn.com/i/teamlogos/cricket/500/335975.png",
+    "IPL|DELHI DAREDEVILS": "https://a.espncdn.com/i/teamlogos/cricket/500/335975.png",
+    "IPL|GT": "https://a.espncdn.com/i/teamlogos/cricket/500/1298769.png",
+    "IPL|GUJARAT": "https://a.espncdn.com/i/teamlogos/cricket/500/1298769.png",
+    "IPL|GUJARAT TITANS": "https://a.espncdn.com/i/teamlogos/cricket/500/1298769.png",
+    "IPL|HYDERABAD": "https://a.espncdn.com/i/teamlogos/cricket/500/628333.png",
+    "IPL|KINGS XI PUNJAB": "https://a.espncdn.com/i/teamlogos/cricket/500/335973.png",
+    "IPL|KKR": "https://a.espncdn.com/i/teamlogos/cricket/500/335971.png",
+    "IPL|KOLKATA": "https://a.espncdn.com/i/teamlogos/cricket/500/335971.png",
+    "IPL|KOLKATA KNIGHT RIDERS": "https://a.espncdn.com/i/teamlogos/cricket/500/335971.png",
+    "IPL|LSG": "https://a.espncdn.com/i/teamlogos/cricket/500/1298768.png",
+    "IPL|LUCKNOW": "https://a.espncdn.com/i/teamlogos/cricket/500/1298768.png",
+    "IPL|LUCKNOW SUPER GIANTS": "https://a.espncdn.com/i/teamlogos/cricket/500/1298768.png",
+    "IPL|MI": "https://a.espncdn.com/i/teamlogos/cricket/500/335978.png",
+    "IPL|MUMBAI": "https://a.espncdn.com/i/teamlogos/cricket/500/335978.png",
+    "IPL|MUMBAI INDIANS": "https://a.espncdn.com/i/teamlogos/cricket/500/335978.png",
+    "IPL|PBK": "https://a.espncdn.com/i/teamlogos/cricket/500/335973.png",
+    "IPL|PBKS": "https://a.espncdn.com/i/teamlogos/cricket/500/335973.png",
+    "IPL|PUNJAB": "https://a.espncdn.com/i/teamlogos/cricket/500/335973.png",
+    "IPL|PUNJAB KINGS": "https://a.espncdn.com/i/teamlogos/cricket/500/335973.png",
+    "IPL|RAJASTHAN": "https://a.espncdn.com/i/teamlogos/cricket/500/335977.png",
+    "IPL|RAJASTHAN ROYALS": "https://a.espncdn.com/i/teamlogos/cricket/500/335977.png",
+    "IPL|RCB": "https://a.espncdn.com/i/teamlogos/cricket/500/335970.png",
+    "IPL|ROYAL CHALLENGERS BANGALORE": "https://a.espncdn.com/i/teamlogos/cricket/500/335970.png",
+    "IPL|ROYAL CHALLENGERS BENGALURU": "https://a.espncdn.com/i/teamlogos/cricket/500/335970.png",
+    "IPL|RR": "https://a.espncdn.com/i/teamlogos/cricket/500/335977.png",
+    "IPL|SRH": "https://a.espncdn.com/i/teamlogos/cricket/500/628333.png",
+    "IPL|SUNRISERS": "https://a.espncdn.com/i/teamlogos/cricket/500/628333.png",
+    "IPL|SUNRISERS HYDERABAD": "https://a.espncdn.com/i/teamlogos/cricket/500/628333.png",
     "LaLiga|ALA": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
     "LaLiga|ALAV S": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
     "LaLiga|ATH": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
