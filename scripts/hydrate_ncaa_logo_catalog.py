@@ -25,8 +25,8 @@ SOURCES={
  "NCAA Women's Soccer":'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.women/teams?limit=1000',
  "NCAA Men's Lacrosse":'https://site.api.espn.com/apis/site/v2/sports/lacrosse/mens-college-lacrosse/teams?limit=1000',
  "NCAA Women's Lacrosse":'https://site.api.espn.com/apis/site/v2/sports/lacrosse/womens-college-lacrosse/teams?limit=1000',
- "NCAA Baseball":'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=1000',
- "NCAA Softball":'https://site.api.espn.com/apis/site/v2/sports/softball/college-softball/teams?limit=1000',
+ 'NCAA Baseball':'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=1000',
+ 'NCAA Softball':'https://site.api.espn.com/apis/site/v2/sports/softball/college-softball/teams?limit=1000',
  'NCAA Wrestling':'https://site.api.espn.com/apis/site/v2/sports/wrestling/college-wrestling/teams?limit=1000',
  'NCAA Gymnastics':'https://site.api.espn.com/apis/site/v2/sports/gymnastics/college-gymnastics/teams?limit=1000',
  'NCAA Swimming & Diving':'https://site.api.espn.com/apis/site/v2/sports/swimming/college-swimming/teams?limit=1000',
@@ -82,9 +82,9 @@ def main():
   p['sources'].setdefault(league,{})['fixedSmallSchoolEntries']=len(entries)
  # Never retain the old pro tennis/golf catalogs under NCAA namespaces.
  for key in list(p['teams']):
-  if key.startswith(('NCAA Men's Tennis|','NCAA Women's Tennis|','NCAA Men's Golf|','NCAA Women's Golf|')):
+  if key.startswith(("NCAA Men's Tennis|","NCAA Women's Tennis|","NCAA Men's Golf|","NCAA Women's Golf|")):
    del p['teams'][key]
- for key in ('NCAA Men\'s Tennis','NCAA Women\'s Tennis','NCAA Men\'s Golf','NCAA Women\'s Golf'):
+ for key in ("NCAA Men's Tennis","NCAA Women's Tennis","NCAA Men's Golf","NCAA Women's Golf"):
   p['sources'].pop(key,None)
  p['generatedAt']=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
  CACHE.write_text(json.dumps(p,indent=2,ensure_ascii=False,sort_keys=True)+'\n',encoding='utf-8')
