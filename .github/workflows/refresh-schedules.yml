@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/phase3_visual_enrichment.py'
       - 'scripts/classify_non_team_events.py'
+      - 'scripts/audit_all_team_logo_gaps.py'
       - 'scripts/repair_mlb_logo_gaps.py'
       - 'scripts/audit_mlb_incomplete_games.py'
       - 'scripts/finalize_mlb_postseason_placeholders.py'
@@ -57,6 +58,14 @@ jobs:
         run: python scripts/phase3_visual_enrichment.py
       - name: Represent fight racing and individual sports as named events
         run: python scripts/classify_non_team_events.py
+      - name: Audit all actionable team-logo gaps
+        run: python scripts/audit_all_team_logo_gaps.py
+      - name: Upload all-team logo audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-team-logo-audit
+          path: data/all_team_logo_audit.json
+          if-no-files-found: error
       - name: Classify MLB postseason placeholders as league-art events
         run: python scripts/finalize_mlb_postseason_placeholders.py
       - name: Classify NCAA FB/FCS postseason placeholders as league-art events
