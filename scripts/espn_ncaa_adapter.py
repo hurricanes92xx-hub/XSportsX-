@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ESPN-backed NCAA schedule adapter with scoreboard logo hydration."""
+# Refresh trigger: keep schedule regeneration wired to the persistent CFL logo catalog.
 from __future__ import annotations
 import json,re,urllib.request
 from datetime import datetime,timezone,timedelta
@@ -35,7 +36,6 @@ def logo(c):
 def tid(c):return str(team_obj(c).get('id') or '').strip()
 def deterministic_logo(sport,team_id):
  if not team_id:return ''
- # ESPN's stable team-logo CDN paths for college team identities.
  return f'https://a.espncdn.com/i/teamlogos/{sport}/500/{team_id}.png'
 def resolved_logo(c,sport):return logo(c) or deterministic_logo(sport,tid(c))
 def in_season(kind,dt):return {'always':True,'fall':dt.month in (8,9,10,11),'winter':dt.month in (11,12,1,2,3,4,5),'spring':dt.month in (2,3,4,5,6)}[kind]
