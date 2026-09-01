@@ -42,6 +42,8 @@ jobs:
         run: python scripts/phase2_schedule_repairs.py
       - name: Phase 2 AAA existing-event guard
         run: python scripts/phase2_aaa_guard.py
+      - name: Phase 3 visual enrichment and deterministic artwork
+        run: python scripts/phase3_visual_enrichment.py
       - name: Generate compact league schedule audit
         run: python scripts/league_schedule_audit.py
       - name: Normalize adapter timestamps and validate feed invariants
@@ -76,7 +78,6 @@ jobs:
           p.setdefault('repairReport',{})['adapterTimestampsNormalized']=fixed
           p['repairReport']['finalDuplicateEventsRemoved']=duplicates
           assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events}), 'duplicate events remain after canonical dedupe'
-          pth.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n')
           print(f'validated {len(events)} events across {len(p.get("eventCounts",{}))} leagues; normalized={fixed}; duplicates_removed={duplicates}')
           print('official source failures:', p.get('officialSourceFailures', []))
           print('provider failures:', p.get('failedSources', []))
@@ -84,6 +85,7 @@ jobs:
           print('official API adapters:', p.get('officialApiAdapterReport', {}))
           print('phase 1 repairs:', p.get('phase1RepairReport', {}))
           print('phase 2 repairs:', p.get('phase2RepairReport', {}))
+          print('phase 3 visuals:', p.get('phase3VisualReport', {}))
           si=p.get('seasonIntelligence',{})
           print('season intelligence decisions:', len(si.get('providerDecisions',[])))
           PY
@@ -96,8 +98,6 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/schedule_feed.json data/league_schedule_audit.json
           git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
-          # Repair scripts can leave runner-local generated files modified.
-          # Stash them so they cannot block the race-safe rebase/push.
           git stash push --include-untracked -m 'xsportsx-refresh-runner-local' || true
           for attempt in 1 2 3; do
             git fetch origin android-app
