@@ -8,6 +8,7 @@ on:
       - 'scripts/classify_non_team_events.py'
       - 'scripts/repair_mlb_logo_gaps.py'
       - 'scripts/audit_mlb_incomplete_games.py'
+      - 'scripts/audit_team_logo_coverage.py'
       - 'scripts/finalize_mlb_postseason_placeholders.py'
       - 'scripts/finalize_ncaa_football_postseason_placeholders.py'
       - 'scripts/hydrate_ncaa_logo_catalog.py'
@@ -82,6 +83,14 @@ jobs:
         with:
           name: ncaa-football-logo-audit
           path: data/ncaa_football_logo_audit.json
+          if-no-files-found: error
+      - name: Generate corrected team-only logo audit
+        run: python scripts/audit_team_logo_coverage.py
+      - name: Upload corrected team-only logo audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: team-logo-coverage-audit
+          path: data/team_logo_coverage_audit.json
           if-no-files-found: error
       - name: Generate compact league schedule audit
         run: python scripts/league_schedule_audit.py
