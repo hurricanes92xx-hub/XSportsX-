@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
-"""Hydrate persistent NCAA team-logo catalogs from ESPN plus deterministic aliases."""
+"""Hydrate persistent NCAA/CFL team-logo catalogs from ESPN plus deterministic aliases."""
 from __future__ import annotations
 import json,re,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'data'/'team_logo_map.json'
-HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.5','Accept':'application/json'}
+HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.6','Accept':'application/json'}
 
-# Keep one persistent catalog for every college team sport represented by the
-# schedule feed. ESPN is the authoritative source where an NCAA team catalog
-# exists. Non-team sports without an ESPN team endpoint are resolved separately
-# by build_ncaa_nonfootball_identity_catalog.py.
 SOURCES={
+ 'CFL':'https://site.api.espn.com/apis/site/v2/sports/football/cfl/teams?limit=1000',
  'NCAA FB':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA FCS':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA BB':'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?limit=1000',
@@ -32,6 +29,19 @@ SOURCES={
  'NCAA Swimming & Diving':'https://site.api.espn.com/apis/site/v2/sports/swimming/college-swimming/teams?limit=1000',
  'NCAA Track & Field':'https://site.api.espn.com/apis/site/v2/sports/track-and-field/college-track-and-field/teams?limit=1000',
 }
+
+CFL_ALIASES={
+ 'BC':['BC LIONS','BRITISH COLUMBIA','LIONS'],
+ 'CGY':['CALGARY STAMPEDERS','CALGARY','STAMPEDERS'],
+ 'EDM':['EDMONTON ELKS','EDMONTON','ELKS'],
+ 'HAM':['HAMILTON TIGER CATS','HAMILTON TIGER-CATS','HAMILTON','TIGER CATS','TIGER-CATS'],
+ 'MTL':['MONTREAL ALOUETTES','MONTREAL','ALOUETTES'],
+ 'OTT':['OTTAWA REDBLACKS','OTTAWA','REDBLACKS','RED BLACKS'],
+ 'SSK':['SASKATCHEWAN ROUGHRIDERS','SASKATCHEWAN','ROUGHRIDERS','ROUGH RIDERS'],
+ 'TOR':['TORONTO ARGONAUTS','TORONTO','ARGONAUTS'],
+ 'WPG':['WINNIPEG BLUE BOMBERS','WINNIPEG','BLUE BOMBERS'],
+}
+
 UTRGV_LOGO='https://a.espncdn.com/i/teamlogos/ncaa/500/292.png'
 UTRGV_ALIASES={'UT Rio Grande':'UT Rio Grande','UT Rio Grande Valley Vaqueros':'UT Rio Grande Valley Vaqueros','UTRGV':'UTRGV','UT Rio Grande Valley':'UT Rio Grande Valley'}
 FIXED={
@@ -45,6 +55,7 @@ FIXED={
   **UTRGV_ALIASES,
  }
 }
+
 def norm(s): return re.sub(r'\s+',' ',re.sub(r'[^A-Z0-9]+',' ',str(s or '').upper())).strip()
 def get(url):
  req=urllib.request.Request(url,headers=HEADERS)
@@ -64,6 +75,7 @@ def extract(root):
   for name in names:
    if name and logo: rows.append((str(name).strip(),logo))
  return rows
+
 def main():
  p=json.loads(CACHE.read_text(encoding='utf-8')) if CACHE.exists() else {'version':4,'teams':{},'sources':{}}
  p.setdefault('teams',{});p.setdefault('sources',{});report={};failures={}
@@ -74,13 +86,18 @@ def main():
   for name,logo in rows:p['teams'][f'{league}|{norm(name)}']=logo
   p['sources'][league]={'provider':'ESPN official team catalog','teams':len(rows),'url':url,'completeCatalog':True}
   report[league]=len(rows)
+  if league=='CFL':
+   # Add explicit schedule spellings without replacing ESPN's canonical names.
+   for code,aliases in CFL_ALIASES.items():
+    logo=next((logo for name,logo in rows if norm(name) in {norm(code),*(norm(a) for a in aliases)}),None)
+    if logo:
+     for alias in aliases:p['teams'][f'CFL|{norm(alias)}']=logo
  for league,entries in FIXED.items():
   for name,logo in entries.items():
    if league=='NCAA FB': logo=UTRGV_LOGO
    elif league=='NCAA FCS' and name in UTRGV_ALIASES: logo=UTRGV_LOGO
    p['teams'][f'{league}|{norm(name)}']=logo
   p['sources'].setdefault(league,{})['fixedSmallSchoolEntries']=len(entries)
- # Never retain the old pro tennis/golf catalogs under NCAA namespaces.
  for key in list(p['teams']):
   if key.startswith(("NCAA Men's Tennis|","NCAA Women's Tennis|","NCAA Men's Golf|","NCAA Women's Golf|")):
    del p['teams'][key]
@@ -88,5 +105,5 @@ def main():
   p['sources'].pop(key,None)
  p['generatedAt']=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
  CACHE.write_text(json.dumps(p,indent=2,ensure_ascii=False,sort_keys=True)+'\n',encoding='utf-8')
- print('NCAA logo catalog hydrated:',json.dumps({'catalogs':report,'failures':failures,'fixed_small_school_entries':sum(len(v) for v in FIXED.values())},sort_keys=True))
+ print('NCAA/CFL logo catalog hydrated:',json.dumps({'catalogs':report,'failures':failures,'fixed_small_school_entries':sum(len(v) for v in FIXED.values())},sort_keys=True))
 if __name__=='__main__':main()
