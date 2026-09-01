@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T18:53:05.092225+00:00",
+  "generatedAt": "2026-09-01T19:14:28.226250+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -118673,7 +118673,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Temple at Saint Peter's",
       "start": "2026-09-01T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -237921,7 +237921,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T18:52:07.438029+00:00",
+    "generatedAt": "2026-09-01T19:13:08.709622+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -237981,7 +237981,7 @@
           ]
         ],
         "observedUpcoming": 31,
-        "observedRecent": 26,
+        "observedRecent": 25,
         "provider": "official"
       },
       {
@@ -238878,7 +238878,7 @@
           ]
         ],
         "observedUpcoming": 31,
-        "observedRecent": 26,
+        "observedRecent": 25,
         "provider": "espn"
       },
       {
@@ -238978,7 +238978,7 @@
           ]
         ],
         "observedUpcoming": 2875,
-        "observedRecent": 36,
+        "observedRecent": 38,
         "provider": "espn"
       },
       {
@@ -239600,13 +239600,15 @@
       "fallback_used": false
     },
     "AEW": {
-      "source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
-      "parsed_official_events": 4,
+      "source": "https://www.sync2cal.com/sports/fighting/aew",
+      "official_source": "https://www.allelitewrestling.com/aew-events/full-gear-2025",
+      "parsed_official_events": 10,
       "added": 0,
       "current_future_existing_or_added": 16,
       "weekly_show_events": 10,
       "validated": true,
-      "fallback_used": false
+      "fallback_used": true,
+      "official_error": "HTTP Error 429: Too Many Requests"
     }
   },
   "phase1RepairReport": {
@@ -239662,7 +239664,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T18:52:47.899669Z",
+      "reference": "2026-09-01T19:14:09.310578Z",
       "errors": []
     },
     "NLL": {
