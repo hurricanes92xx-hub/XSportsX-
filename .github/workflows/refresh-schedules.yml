@@ -14,6 +14,7 @@ on:
       - 'scripts/finalize_mlb_postseason_placeholders.py'
       - 'scripts/finalize_ncaa_football_postseason_placeholders.py'
       - 'scripts/hydrate_ncaa_logo_catalog.py'
+      - 'scripts/espn_ncaa_adapter.py'
       - 'scripts/build_ncaa_nonfootball_identity_catalog.py'
       - 'scripts/audit_ncaa_football_logos.py'
       - 'data/ncaa_nonfootball_school_catalog.json'
