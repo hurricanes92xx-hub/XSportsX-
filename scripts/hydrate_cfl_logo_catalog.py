@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""Hydrate the 2026 CFL team-logo catalog from ESPN Core API.
+"""Hydrate the 2026 CFL team-logo catalog from live ESPN scoreboard competitors.
 
-The ESPN Site API CFL /teams endpoint currently returns an empty catalog in
-refresh jobs. ESPN's documented Core API still exposes the CFL team collection,
-so use that endpoint as the authoritative fallback and resolve each team ref to
-its full team object/logo. The catalog is only nine current CFL clubs.
+The ESPN CFL Site API /teams catalog currently returns no teams in refresh jobs.
+The CFL scoreboard still exposes each competitor's full team object and logo, so
+collect the nine current clubs from the 2026 season schedule and persist those
+logos for the normal enrichment pass.
 """
 from __future__ import annotations
 
 import json
 import re
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "data" / "team_logo_map.json"
-HEADERS = {"User-Agent": "XSportsX-CFL-LogoCatalog/1.0", "Accept": "application/json"}
-BASE = "https://sports.core.api.espn.com/v2/sports/football/leagues/cfl"
+BASE = "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard"
+HEADERS = {"User-Agent": "XSportsX-CFL-LogoCatalog/1.1", "Accept": "application/json"}
 
 ALIASES = {
     "BC": ["BC LIONS", "BRITISH COLUMBIA", "LIONS"],
@@ -30,12 +31,11 @@ ALIASES = {
     "TOR": ["TORONTO ARGONAUTS", "TORONTO", "ARGONAUTS"],
     "WPG": ["WINNIPEG BLUE BOMBERS", "WINNIPEG", "BLUE BOMBERS"],
 }
+CODE_BY_NORM = {re.sub(r"[^A-Z0-9]+", " ", name.upper()).strip(): code for code, names in ALIASES.items() for name in [code, *names]}
 
 
 def norm(value: str) -> str:
-    value = str(value or "").upper()
-    value = re.sub(r"[^A-Z0-9]+", " ", value)
-    return re.sub(r"\s+", " ", value).strip()
+    return re.sub(r"\s+", " ", re.sub(r"[^A-Z0-9]+", " ", str(value or "").upper())).strip()
 
 
 def get_json(url: str):
@@ -44,54 +44,58 @@ def get_json(url: str):
         return json.loads(response.read().decode("utf-8", "ignore"))
 
 
-def resolve_ref(ref: str):
-    return get_json(ref.replace("http://", "https://"))
-
-
 def main() -> None:
     cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {"version": 4, "teams": {}, "sources": {}}
     cache.setdefault("teams", {})
     cache.setdefault("sources", {})
 
-    root = get_json(f"{BASE}/teams?limit=100")
-    items = root.get("items") or []
-    if not items:
-        raise RuntimeError("ESPN Core CFL team collection returned no items")
+    # Pull the full 2026 season in month-sized date windows. Scoreboard responses
+    # contain competitor.team.logos even though the /teams catalog is empty.
+    windows = [
+        ("20260501", "20260531"),
+        ("20260601", "20260630"),
+        ("20260701", "20260731"),
+        ("20260801", "20260831"),
+        ("20260901", "20260930"),
+        ("20261001", "20261031"),
+        ("20261101", "20261130"),
+    ]
+    found = {}
+    for start, end in windows:
+        url = BASE + "?" + urllib.parse.urlencode({"dates": f"{start}-{end}"})
+        root = get_json(url)
+        for event in root.get("events") or []:
+            for comp in (event.get("competitions") or [{}])[0].get("competitors") or []:
+                team = comp.get("team") or {}
+                logo = ""
+                logos = team.get("logos") or []
+                if logos and isinstance(logos[0], dict):
+                    logo = str(logos[0].get("href") or "").strip()
+                if not logo:
+                    continue
+                code = str(team.get("abbreviation") or "").strip().upper()
+                display = str(team.get("displayName") or team.get("name") or "").strip()
+                canonical = code if code in ALIASES else CODE_BY_NORM.get(norm(display))
+                if canonical in ALIASES:
+                    found[canonical] = (display, logo)
 
-    resolved = []
-    for item in items:
-        ref = item.get("$ref") if isinstance(item, dict) else None
-        if not ref:
-            continue
-        team = resolve_ref(ref)
-        logos = team.get("logos") or []
-        logo = ""
-        if logos and isinstance(logos[0], dict):
-            logo = str(logos[0].get("href") or "").strip()
-        if not logo:
-            continue
-        code = str(team.get("abbreviation") or "").strip().upper()
-        display = str(team.get("displayName") or team.get("name") or "").strip()
-        if code in ALIASES:
-            resolved.append((code, display, logo))
-
-    if len({code for code, _, _ in resolved}) != 9:
-        raise RuntimeError(f"ESPN Core CFL catalog resolved only {len({code for code, _, _ in resolved})}/9 clubs")
+    if len(found) != 9:
+        raise RuntimeError(f"ESPN CFL scoreboard resolved only {len(found)}/9 clubs: {sorted(found)}")
 
     changed = 0
-    for code, display, logo in resolved:
-        names = set(ALIASES[code]) | {display, code}
-        for name in names:
+    for code, (display, logo) in found.items():
+        for name in set(ALIASES[code]) | {display, code}:
             key = f"CFL|{norm(name)}"
             if cache["teams"].get(key) != logo:
                 cache["teams"][key] = logo
                 changed += 1
 
     cache["sources"]["CFL"] = {
-        "provider": "ESPN Core API team catalog",
-        "url": f"{BASE}/teams?limit=100",
+        "provider": "ESPN CFL scoreboard competitor catalog",
+        "url": BASE,
         "teams": 9,
         "completeCatalog": True,
+        "season": 2026,
         "resolvedAt": datetime.now(timezone.utc).isoformat(),
     }
     cache["generatedAt"] = datetime.now(timezone.utc).isoformat()
