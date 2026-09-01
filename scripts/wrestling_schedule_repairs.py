@@ -7,6 +7,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 FEED=Path('data/schedule_feed.json'); LOOKAHEAD=370
 HEADERS={'User-Agent':'XSportsX-Schedule/5.6 (+schedule refresh)','Accept':'text/html,application/xhtml+xml,application/json,*/*','Accept-Language':'en-US,en;q=0.9','Cache-Control':'no-cache'}
+WWE_WEEKLY=('raw','nxt','evolve','main event','smackdown','monday night raw','friday night smackdown','saturday night main event')
+AEW_WEEKLY=('dynamite','collision')
 class T(HTMLParser):
  def __init__(self): super().__init__(); self.parts=[]
  def handle_data(self,d):
@@ -58,8 +60,7 @@ def objs(xs):
 def parse_official(h,league,ref):
  rows=[]
  for o in objs(jsonld(h)):
-  d=dt(o.get('startDate'))
-  name=o.get('name') or o.get('headline') or league
+  d=dt(o.get('startDate')); name=o.get('name') or o.get('headline') or league
   if d and ref<=d<=ref+timedelta(days=LOOKAHEAD):rows.append((name,d))
  if rows:return rows
  p=T();p.feed(h);s=p.text()
@@ -69,7 +70,7 @@ def parse_official(h,league,ref):
   except ValueError:continue
   if ref<=d<=ref+timedelta(days=LOOKAHEAD):
    low=s[max(0,s.find(x)-180):s.find(x)+180].lower(); title=league
-   for k,n in [('dynamite/​collision','Dynamite/Collision'),('dynamite/collision','Dynamite/Collision'),('dynamite','Dynamite'),('collision','Collision')]:
+   for k,n in [('raw','Raw'),('smackdown','SmackDown'),('nxt','NXT'),('evolve','Evolve'),('main event','Main Event'),('dynamite/\u200bcollision','Dynamite/Collision'),('dynamite/collision','Dynamite/Collision'),('dynamite','Dynamite'),('collision','Collision')]:
     if k in low:title=f'{league} {n}';break
    rows.append((title,d))
  return rows
@@ -80,9 +81,7 @@ def parse_fallback(h,league,ref):
   if d and ref<=d<=ref+timedelta(days=LOOKAHEAD) and any(k in name.lower() for k in ('aew','dynamite','collision','wrestledream','all out','full gear','grand slam','revolution','double or nothing','forbidden door','all in')):
    rows.append((name,d))
  if rows:return rows
- p=T();p.feed(h);s=p.text()
- # Third-party fallback is only accepted for clearly AEW-labelled dated entries; never synthesize a cadence.
- rx=r'([A-Z][a-z]+\s+\d{1,2},\s+202\d)'
+ p=T();p.feed(h);s=p.text(); rx=r'([A-Z][a-z]+\s+\d{1,2},\s+202\d)'
  for x in re.findall(rx,s):
   try:d=datetime.strptime(x,'%B %d, %Y').replace(tzinfo=timezone.utc)
   except ValueError:continue
@@ -94,6 +93,9 @@ def parse_fallback(h,league,ref):
    if k in low:title=f'AEW {n}';break
   rows.append((title,d))
  return rows
+def weekly_count(league,valid):
+ keys=WWE_WEEKLY if league=='WWE' else AEW_WEEKLY
+ return sum(1 for e in valid if any(k in (e.get('title') or '').lower() for k in keys))
 def repair(league,url,events,report,failures,ref,fallback_url=None):
  try:
   h=fetch(url); rows=parse_official(h,league,ref); source=url
@@ -102,23 +104,20 @@ def repair(league,url,events,report,failures,ref,fallback_url=None):
   if not rows:raise RuntimeError('no valid future official events')
   added=sum(add(events,league,n,d,source) for n,d in rows)
   valid=[e for e in events if e.get('league')==league and (x:=dt(e.get('start'))) and ref<=x<=ref+timedelta(days=LOOKAHEAD)]
-  weekly=sum(1 for e in valid if any(k in (e.get('title') or '').lower() for k in ('dynamite','collision')))
+  weekly=weekly_count(league,valid)
   report[league]={'source':source,'parsed_official_events':len(rows),'added':added,'current_future_existing_or_added':len(valid),'weekly_show_events':weekly,'validated':bool(valid),'fallback_used':source!=url}
   if valid:failures[:]=[x for x in failures if x!=league];print(f'REPAIRED {league}: source={source} official_dated={len(rows)} added={added} current_future={len(valid)} weekly={weekly}')
   else:print(f'NO REPAIR {league}: no valid future events')
  except Exception as e:
   if fallback_url and url!=fallback_url:
    try:
-    h=fetch(fallback_url); rows=parse_fallback(h,league,ref)
-    added=sum(add(events,league,n,d,fallback_url) for n,d in rows)
-    valid=[e for e in events if e.get('league')==league and (x:=dt(e.get('start'))) and ref<=x<=ref+timedelta(days=LOOKAHEAD)]
-    weekly=sum(1 for e in valid if any(k in (e.get('title') or '').lower() for k in ('dynamite','collision')))
+    h=fetch(fallback_url); rows=parse_fallback(h,league,ref); added=sum(add(events,league,n,d,fallback_url) for n,d in rows)
+    valid=[e for e in events if e.get('league')==league and (x:=dt(e.get('start'))) and ref<=x<=ref+timedelta(days=LOOKAHEAD)]; weekly=weekly_count(league,valid)
     report[league]={'source':fallback_url,'official_source':url,'parsed_official_events':len(rows),'added':added,'current_future_existing_or_added':len(valid),'weekly_show_events':weekly,'validated':bool(valid),'fallback_used':True,'official_error':str(e)}
     if valid:failures[:]=[x for x in failures if x!=league];print(f'REPAIRED {league}: fallback source={fallback_url} parsed={len(rows)} added={added} current_future={len(valid)} weekly={weekly}')
     else:print(f'NO REPAIR {league}: fallback returned no valid future events')
     return
-   except Exception as fe:
-    e=f'{e}; fallback={fe}'
+   except Exception as fe:e=f'{e}; fallback={fe}'
   report[league]={'source':url,'validated':False,'error':str(e)};print(f'NO REPAIR {league}: {e}')
 def main():
  p=json.loads(FEED.read_text());events=p.get('events') or [];failures=list(p.get('officialSourceFailures') or []);report=p.setdefault('providerRepairReport',{})
