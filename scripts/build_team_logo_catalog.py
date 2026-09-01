@@ -56,6 +56,42 @@ LEAGUES = {
     "NCAA Women's Field Hockey": ("field-hockey", "ncaa.womens.field.hockey"),
 }
 
+# MLB schedule feeds do not all use ESPN's displayName. Keep these aliases
+# deterministic and local so a feed naming variant can never cause a missing
+# cached logo or a network lookup during schedule refresh.
+MLB_ALIASES = {
+    "LAA": ["LA ANGELS", "ANGELS"],
+    "LAD": ["LA DODGERS", "DODGERS"],
+    "ARI": ["AZ", "ARIZONA", "DIAMONDBACKS", "D BACKS"],
+    "ATL": ["ATLANTA", "BRAVES"],
+    "BAL": ["BALTIMORE", "ORIOLES"],
+    "BOS": ["BOSTON", "RED SOX"],
+    "CHC": ["CHICAGO CUBS", "CUBS"],
+    "CHW": ["CWS", "CHICAGO WHITE SOX", "WHITE SOX"],
+    "CIN": ["CINCINNATI", "REDS"],
+    "CLE": ["CLEVELAND", "GUARDIANS"],
+    "COL": ["COLORADO", "ROCKIES"],
+    "DET": ["DETROIT", "TIGERS"],
+    "HOU": ["HOUSTON", "ASTROS"],
+    "KC": ["KANSAS CITY", "KANSAS CITY ROYALS", "ROYALS"],
+    "MIA": ["MIAMI", "MARLINS"],
+    "MIL": ["MILWAUKEE", "BREWERS"],
+    "MIN": ["MINNESOTA", "TWINS"],
+    "NYM": ["NY METS", "NEW YORK METS", "METS"],
+    "NYY": ["NY YANKEES", "NEW YORK YANKEES", "YANKEES"],
+    "PHI": ["PHILADELPHIA", "PHILLIES"],
+    "PIT": ["PITTSBURGH", "PIRATES"],
+    "SD": ["SAN DIEGO", "SD PADRES", "PADRES"],
+    "SF": ["SAN FRANCISCO", "SF GIANTS", "GIANTS"],
+    "SEA": ["SEATTLE", "MARINERS"],
+    "STL": ["ST LOUIS", "ST. LOUIS", "CARDINALS"],
+    "TB": ["TAMPA BAY", "TB RAYS", "RAYS"],
+    "TEX": ["TEXAS", "RANGERS"],
+    "TOR": ["TORONTO", "BLUE JAYS"],
+    "WSH": ["WASHINGTON", "NATIONALS"],
+    "ATH": ["ATHLETICS", "ATHS"],
+}
+
 
 def norm(value: str) -> str:
     value = str(value or "").upper()
@@ -126,6 +162,18 @@ def main():
                     if cache["teams"].get(key) != logo:
                         cache["teams"][key] = logo
                         added += 1
+
+                # MLB receives an explicit compatibility alias layer because
+                # schedule providers commonly use city/team shorthand that
+                # differs from ESPN's catalog display names.
+                if league == "MLB":
+                    code = norm(team.get("abbreviation") or "")
+                    for alias in MLB_ALIASES.get(code, []):
+                        key = f"MLB|{norm(alias)}"
+                        if cache["teams"].get(key) != logo:
+                            cache["teams"][key] = logo
+                            added += 1
+
             cache["sources"][league] = {"provider": "ESPN team catalog", "url": url, "teams": len(rows)}
             report[league] = {"status": "ok", "teams": len(rows), "keys_added_or_updated": added}
         except Exception as exc:
