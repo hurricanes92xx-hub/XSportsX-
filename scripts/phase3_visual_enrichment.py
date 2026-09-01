@@ -30,8 +30,32 @@ def load_cache():
         return {"version": 3, "teams": {}}
 
 def cached_logo(cache, league, team):
-    value = cache.setdefault("teams", {}).get(f"{league}|{norm(team)}")
-    return value if isinstance(value, str) else ""
+    teams = cache.setdefault("teams", {})
+    key = f"{league}|{norm(team)}"
+    value = teams.get(key)
+    if isinstance(value, str) and value:
+        return value
+    # Deterministic MLB fallback: resolve only a unique alias whose normalized
+    # tokens are contained in the supplied team name (or vice versa). This
+    # handles provider naming drift without external discovery or guessing.
+    if league == "MLB":
+        target = set(norm(team).split())
+        if not target:
+            return ""
+        matches = []
+        for k, logo in teams.items():
+            if not k.startswith("MLB|") or not isinstance(logo, str) or not logo:
+                continue
+            alias = k.split("|", 1)[1]
+            tokens = set(alias.split())
+            if not tokens:
+                continue
+            if tokens.issubset(target) or target.issubset(tokens):
+                matches.append((len(tokens), logo))
+        logos = {logo for _, logo in matches}
+        if len(logos) == 1:
+            return next(iter(logos))
+    return ""
 
 def clean_event_title(event):
     title = str(event.get("title") or "").strip()
@@ -57,7 +81,7 @@ def main():
         else:
             event["eventType"] = "named_event"; named_events += 1
             if not event.get("image") and event["leagueArt"]: event["image"] = event["leagueArt"]
-    report = payload.setdefault("phase3VisualReport", {}); report.update({"version":4,"events":len(events),"team_games":team_games,"team_games_complete":team_games_complete,"team_games_missing":team_games_missing,"team_logo_fields_populated":team_logo_fields,"league_art_fields_populated":league_art,"named_events":named_events,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"team_logo_coverage_by_league":dict(sorted(coverage.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos only; named-event cards use league art"}); payload["phase3Visuals"] = True
+    report = payload.setdefault("phase3VisualReport", {}); report.update({"version":5,"events":len(events),"team_games":team_games,"team_games_complete":team_games_complete,"team_games_missing":team_games_missing,"team_logo_fields_populated":team_logo_fields,"league_art_fields_populated":league_art,"named_events":named_events,"titles_cleaned":cleaned,"cache_entries":len(cache.get("teams",{})),"external_logo_discovery":False,"team_logo_coverage_by_league":dict(sorted(coverage.items())),"rule":"refresh never performs external team-logo discovery; exact cached logos plus deterministic MLB alias fallback only; named-event cards use league art"}); payload["phase3Visuals"] = True
     FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"); print(json.dumps(report, sort_keys=True))
 
 if __name__ == "__main__": main()
