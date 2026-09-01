@@ -33,9 +33,14 @@ def logo(c):
   if isinstance(x,dict) and x.get('href'):return str(x['href']).strip()
  return ''
 def tid(c):return str(team_obj(c).get('id') or '').strip()
+def deterministic_logo(sport,team_id):
+ if not team_id:return ''
+ # ESPN's stable team-logo CDN paths for college team identities.
+ return f'https://a.espncdn.com/i/teamlogos/{sport}/500/{team_id}.png'
+def resolved_logo(c,sport):return logo(c) or deterministic_logo(sport,tid(c))
 def in_season(kind,dt):return {'always':True,'fall':dt.month in (8,9,10,11),'winter':dt.month in (11,12,1,2,3,4,5),'spring':dt.month in (2,3,4,5,6)}[kind]
-def cache_team(cache,league,c):
- l=logo(c)
+def cache_team(cache,league,c,sport):
+ l=resolved_logo(c,sport)
  if not l:return 0
  t=team_obj(c); names={t.get('displayName'),t.get('shortDisplayName'),t.get('name'),t.get('abbreviation'),t.get('slug'),t.get('id')}; changed=0
  for n in names:
@@ -44,7 +49,7 @@ def cache_team(cache,league,c):
    if cache.get(k)!=l:cache[k]=l;changed+=1
  return changed
 def add_events(events,report,cache):
- existing={(e.get('league'),e.get('title'),e.get('start')):e for e in events}; start=NOW.date();cache_changed=updated=0
+ existing={(e.get('league'),e.get('title'),e.get('start')):e for e in events}; start=NOW.date();cache_changed=updated=0;id_fallbacks=0
  for league,sport,slug,icon,season,group in SPORTS:
   added=raw=errors=0; cursor=start
   while cursor<=HORIZON.date():
@@ -59,7 +64,10 @@ def add_events(events,report,cache):
     if not NOW-timedelta(hours=12)<=o<=HORIZON or not in_season(season,o):continue
     comp=(g.get('competitions') or [{}])[0];teams=comp.get('competitors') or []
     hc=next((x for x in teams if x.get('homeAway')=='home'),{});ac=next((x for x in teams if x.get('homeAway')=='away'),{})
-    home=name(hc);away=name(ac);hl=logo(hc);al=logo(ac);cache_changed+=cache_team(cache,league,hc)+cache_team(cache,league,ac)
+    home=name(hc);away=name(ac);hl=resolved_logo(hc,sport);al=resolved_logo(ac,sport)
+    if tid(hc) and not logo(hc):id_fallbacks+=1
+    if tid(ac) and not logo(ac):id_fallbacks+=1
+    cache_changed+=cache_team(cache,league,hc,sport)+cache_team(cache,league,ac,sport)
     title=g.get('name') or (f'{away} @ {home}' if away and home else league);key=(league,title,dt);old=existing.get(key)
     if old is not None:
      changed=False
@@ -81,7 +89,7 @@ def add_events(events,report,cache):
    cursor=end+timedelta(days=1)
   status='added' if added else ('duplicate_only' if raw and errors==0 else 'empty');report[league]=f'espn:{added}; raw_events:{raw}; requests:{((HORIZON.date()-start).days//30)+1}; errors:{errors}; season:{season}; status:{status}'
   if added==0 and season not in ('spring','winter') and not(raw and errors==0):print(f'WARNING ESPN NCAA adapter zero for in-season {league}; raw_events={raw}; errors={errors}')
- report['_logo_hydration']=f'cache_entries_changed:{cache_changed}; existing_events_updated:{updated}'
+ report['_logo_hydration']=f'cache_entries_changed:{cache_changed}; existing_events_updated:{updated}; deterministic_id_fallbacks:{id_fallbacks}'
 def main():
  p=json.loads(FEED.read_text(encoding='utf-8'));events=p.get('events') or [];c=json.loads(CACHE.read_text(encoding='utf-8')) if CACHE.exists() else {'version':4,'teams':{},'sources':{}};cache=c.setdefault('teams',{});report={};add_events(events,report,cache)
  unique={}
