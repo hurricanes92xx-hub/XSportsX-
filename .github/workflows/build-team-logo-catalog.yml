@@ -1,0 +1,50 @@
+name: Build team logo catalog
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-team-logo-catalog
+  cancel-in-progress: true
+
+jobs:
+  build-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout android-app production branch
+        uses: actions/checkout@v4
+        with:
+          ref: android-app
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build verified team logo catalog
+        run: python scripts/build_team_logo_catalog.py
+
+      - name: Publish catalog to android-app
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/team_logo_map.json
+          if git diff --cached --quiet; then
+            echo 'Team logo catalog unchanged.'
+            exit 0
+          fi
+          git commit -m 'chore: refresh verified team logo catalog'
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            if git rebase origin/android-app && git push origin HEAD:android-app; then
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish team logo catalog after three retries.' >&2
+          exit 1
