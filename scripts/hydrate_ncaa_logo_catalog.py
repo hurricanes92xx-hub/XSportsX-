@@ -5,16 +5,35 @@ import json,re,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'data'/'team_logo_map.json'
-HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.3','Accept':'application/json'}
+HEADERS={'User-Agent':'XSportsX-LogoCatalog/1.4','Accept':'application/json'}
+
+# Keep one persistent catalog for every college team sport represented by the
+# schedule feed.  ESPN is the authoritative source; failed endpoints are
+# recorded so one unavailable sport cannot block the entire refresh.
 SOURCES={
  'NCAA FB':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA FCS':'https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams?limit=1000',
  'NCAA BB':'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?limit=1000',
  'NCAA WBB':'https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams?limit=1000',
  "NCAA Women's Volleyball":'https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/teams?limit=1000',
+ "NCAA Men's Volleyball":'https://site.api.espn.com/apis/site/v2/sports/volleyball/mens-college-volleyball/teams?limit=1000',
  "NCAA Men's Hockey":'https://site.api.espn.com/apis/site/v2/sports/hockey/mens-college-hockey/teams?limit=1000',
  "NCAA Women's Hockey":'https://site.api.espn.com/apis/site/v2/sports/hockey/womens-college-hockey/teams?limit=1000',
  "NCAA Women's Field Hockey":'https://site.api.espn.com/apis/site/v2/sports/field-hockey/womens-college-field-hockey/teams?limit=1000',
+ "NCAA Men's Soccer":'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.men/teams?limit=1000',
+ "NCAA Women's Soccer":'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.women/teams?limit=1000',
+ "NCAA Men's Lacrosse":'https://site.api.espn.com/apis/site/v2/sports/lacrosse/mens-college-lacrosse/teams?limit=1000',
+ "NCAA Women's Lacrosse":'https://site.api.espn.com/apis/site/v2/sports/lacrosse/womens-college-lacrosse/teams?limit=1000',
+ "NCAA Baseball":'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=1000',
+ "NCAA Softball":'https://site.api.espn.com/apis/site/v2/sports/softball/college-softball/teams?limit=1000',
+ "NCAA Men's Tennis":'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/teams?limit=1000',
+ "NCAA Women's Tennis":'https://site.api.espn.com/apis/site/v2/sports/tennis/wta/teams?limit=1000',
+ "NCAA Men's Golf":'https://site.api.espn.com/apis/site/v2/sports/golf/pga/teams?limit=1000',
+ "NCAA Women's Golf":'https://site.api.espn.com/apis/site/v2/sports/golf/lpga/teams?limit=1000',
+ 'NCAA Wrestling':'https://site.api.espn.com/apis/site/v2/sports/wrestling/college-wrestling/teams?limit=1000',
+ 'NCAA Gymnastics':'https://site.api.espn.com/apis/site/v2/sports/gymnastics/college-gymnastics/teams?limit=1000',
+ 'NCAA Swimming & Diving':'https://site.api.espn.com/apis/site/v2/sports/swimming/college-swimming/teams?limit=1000',
+ 'NCAA Track & Field':'https://site.api.espn.com/apis/site/v2/sports/track-and-field/college-track-and-field/teams?limit=1000',
 }
 UTRGV_LOGO='https://a.espncdn.com/i/teamlogos/ncaa/500/292.png'
 UTRGV_ALIASES={'UT Rio Grande':'UT Rio Grande','UT Rio Grande Valley Vaqueros':'UT Rio Grande Valley Vaqueros','UTRGV':'UTRGV','UT Rio Grande Valley':'UT Rio Grande Valley'}
@@ -49,7 +68,7 @@ def extract(root):
    if name and logo: rows.append((str(name).strip(),logo))
  return rows
 def main():
- p=json.loads(CACHE.read_text(encoding='utf-8')) if CACHE.exists() else {'version':3,'teams':{},'sources':{}}
+ p=json.loads(CACHE.read_text(encoding='utf-8')) if CACHE.exists() else {'version':4,'teams':{},'sources':{}}
  p.setdefault('teams',{});p.setdefault('sources',{});report={};failures={}
  for league,url in SOURCES.items():
   try: rows=extract(get(url))
