@@ -1,0 +1,54 @@
+name: Build team logo catalog
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: xsportsx-team-logo-catalog
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build persistent team logo catalog
+        run: python scripts/build_team_logo_catalog.py
+      - name: Verify catalog file
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/team_logo_map.json')
+          x=json.loads(p.read_text())
+          assert x.get('version') == 3
+          assert isinstance(x.get('teams'), dict)
+          assert x['teams'], 'team logo catalog is empty'
+          print(f"verified {len(x['teams'])} team logo keys")
+          PY
+      - name: Publish catalog safely
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/team_logo_map.json
+          git diff --cached --quiet && echo 'No catalog changes.' && exit 0
+          git commit -m 'chore: refresh team logo catalog'
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            if git rebase origin/android-app; then
+              if git push origin HEAD:android-app; then exit 0; fi
+            else
+              git rebase --abort || true
+            fi
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish team logo catalog after three retries' >&2
+          exit 1
