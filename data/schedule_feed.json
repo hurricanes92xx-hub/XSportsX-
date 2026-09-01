@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T20:48:35.533373+00:00",
+  "generatedAt": "2026-09-01T21:05:08.668512+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -123146,7 +123146,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Delaware at American University",
       "start": "2026-09-01T20:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -123163,7 +123163,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Detroit Mercy at Mercyhurst",
       "start": "2026-09-01T20:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -123180,7 +123180,7 @@
       "league": "NCAA Men's Soccer",
       "title": "Fordham at Villanova",
       "start": "2026-09-01T20:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -148917,7 +148917,7 @@
     {
       "league": "NCAA Women's Soccer",
       "title": "Tennessee Tech at Vanderbilt",
-      "start": "2026-09-03T23:00:00Z",
+      "start": "2026-09-04T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽",
       "source": "official_api",
@@ -151840,23 +151840,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "LSU at Miami (OH)",
-      "start": "2026-09-06T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
-      "away": "LSU",
-      "home": "Miami (OH)",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20536.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20510.png",
-      "awayTeamId": "20536",
-      "homeTeamId": "20510",
-      "leagueArt": "",
-      "eventType": "team_game"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Auburn at Samford",
       "start": "2026-09-06T22:00:00Z",
       "tag": "UPCOMING",
@@ -151920,6 +151903,23 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20594.png",
       "awayTeamId": "20637",
       "homeTeamId": "20594",
+      "leagueArt": "",
+      "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "LSU at Miami (OH)",
+      "start": "2026-09-06T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard",
+      "away": "LSU",
+      "home": "Miami (OH)",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20536.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20510.png",
+      "awayTeamId": "20536",
+      "homeTeamId": "20510",
       "leagueArt": "",
       "eventType": "team_game"
     },
@@ -185162,7 +185162,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "LSU Tigers at Michigan State Spartans",
       "start": "2026-09-01T20:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -258277,7 +258277,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T20:47:16.135425+00:00",
+    "generatedAt": "2026-09-01T21:03:45.222570+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -260021,7 +260021,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-01T20:48:13.767805Z",
+      "reference": "2026-09-01T21:04:49.833303Z",
       "errors": []
     },
     "NLL": {
