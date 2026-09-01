@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '*/30 * * * *'
+  # Keep schedule-repair commits self-triggering so every adapter fix is verified immediately.
   push:
     branches: [android-app]
     paths:
@@ -74,30 +75,22 @@ jobs:
           events=p.get('events') or []
           assert events, 'schedule feed is empty'
           assert p.get('schema',0) >= 5, 'unexpected schedule schema'
-          fixed=0
-          bad=[]
+          fixed=0; bad=[]
           for e in events:
-            raw=e.get('start')
-            text=str(raw or '').strip()
-            normalized=None
+            raw=e.get('start'); text=str(raw or '').strip(); normalized=None
             for candidate in (text,text.replace('Z','+00:00'),text.replace('z','+00:00')):
               try:
-                normalized=datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
-                break
+                normalized=datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z'); break
               except ValueError: pass
             if normalized is None: bad.append(e)
-            elif raw != normalized:
-              e['start']=normalized; fixed += 1
+            elif raw != normalized: e['start']=normalized; fixed += 1
           assert not bad, f'invalid event timestamps: {len(bad)}'
           unique=[]; seen=set(); duplicates=0
           for e in events:
             key=(e.get('league'),e.get('title'),e.get('start'))
-            if key in seen:
-              duplicates += 1
-              continue
+            if key in seen: duplicates += 1; continue
             seen.add(key); unique.append(e)
-          events=unique
-          p['events']=events
+          events=unique; p['events']=events
           p['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})}
           p['generatedAt']=datetime.now(timezone.utc).isoformat()
           p.setdefault('repairReport',{})['adapterTimestampsNormalized']=fixed
