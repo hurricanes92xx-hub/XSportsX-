@@ -73,7 +73,14 @@ def main() -> None:
             continue
         away = str(event.get("away") or "").strip()
         home = str(event.get("home") or "").strip()
-        is_placeholder = bool(event.get("mlbPlaceholder") is True or event.get("eventType") == "named_event" or (away and home and mod.is_mlb_placeholder(away) and mod.is_mlb_placeholder(home)))
+        is_placeholder = bool(
+            event.get("mlbPlaceholder") is True
+            or event.get("eventType") == "named_event"
+            or not away
+            or not home
+            or mod.is_mlb_placeholder(away)
+            or mod.is_mlb_placeholder(home)
+        )
         if is_placeholder:
             placeholders.append({
                 "title": str(event.get("title") or ""),
