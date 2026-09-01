@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '*/30 * * * *'
-  # Keep schedule-repair commits self-triggering so every adapter fix is verified immediately.
+  # Canonical guarded refresh: schedule-repair commits self-trigger verification.
   push:
     branches: [android-app]
     paths:
