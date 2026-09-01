@@ -13,14 +13,24 @@ SOURCES={
  'NCAA WBB':'https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams?limit=1000',
 }
 # Deterministic catalog entries for football schools that are outside ESPN's current
-# college-football team endpoint but still appear in the FCS schedule.
+# college-football team endpoint or use schedule names that differ from catalog names.
+# UTRGV is explicitly aliased because schedules use several historical/short names.
+UTRGV_LOGO='https://a.espncdn.com/i/teamlogos/ncaa/500/292.png'
+UTRGV_ALIASES={
+ 'UT Rio Grande':'UT Rio Grande',
+ 'UT Rio Grande Valley Vaqueros':'UT Rio Grande Valley Vaqueros',
+ 'UTRGV':'UTRGV',
+ 'UT Rio Grande Valley':'UT Rio Grande Valley',
+}
 FIXED={
+ 'NCAA FB':UTRGV_ALIASES,
  'NCAA FCS':{
   'Webber International Warriors':'https://a.espncdn.com/i/teamlogos/ncaa/500/2691.png',
   'Thomas More College Saints':'https://a.espncdn.com/i/teamlogos/ncaa/500/2646.png',
   'Point University Skyhawks':'https://a.espncdn.com/i/teamlogos/ncaa/500/3179.png',
   'Rio Grande Red Storm':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rio_grande_redstorm_wmark.png',
   'UFTL Eagles':'https://uftlathletics.com/images/logos/site/site.png',
+  **UTRGV_ALIASES,
  }
 }
 def norm(s): return re.sub(r'\s+',' ',re.sub(r'[^A-Z0-9]+',' ',str(s or '').upper())).strip()
@@ -53,7 +63,10 @@ def main():
   p['sources'][league]={'provider':'ESPN official team catalog','teams':len(rows),'url':url,'completeCatalog':True}
   report[league]=len(rows)
  for league,entries in FIXED.items():
-  for name,logo in entries.items(): p['teams'][f'{league}|{norm(name)}']=logo
+  for name,logo in entries.items():
+   if league=='NCAA FB': logo=UTRGV_LOGO
+   elif league=='NCAA FCS' and name in UTRGV_ALIASES: logo=UTRGV_LOGO
+   p['teams'][f'{league}|{norm(name)}']=logo
   p['sources'].setdefault(league,{})['fixedSmallSchoolEntries']=len(entries)
  p['generatedAt']=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
  CACHE.write_text(json.dumps(p,indent=2,ensure_ascii=False,sort_keys=True)+'\n',encoding='utf-8')
