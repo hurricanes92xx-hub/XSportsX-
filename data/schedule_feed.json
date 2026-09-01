@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-01T00:21:12.413472+00:00",
+  "generatedAt": "2026-09-01T00:31:52.264838+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 2,
@@ -24,6 +24,7 @@
     "MONSTER JAM": 10,
     "MXGP": 23,
     "MotoGP": 40,
+    "NASCAR Cup": 10,
     "NASCAR Truck": 7,
     "NASCAR Xfinity": 9,
     "NBA": 1274,
@@ -59431,6 +59432,96 @@
       "icon": "🏁",
       "source": "official_api",
       "sourceDetail": "NASCAR official CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Cook Out Southern 500 — Darlington Raceway",
+      "start": "2026-09-06T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Enjoy Illinois 300 — World Wide Technology Raceway",
+      "start": "2026-09-13T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Bass Pro Shops Night Race — Bristol Motor Speedway",
+      "start": "2026-09-19T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Hollywood Casino 400 — Kansas Speedway",
+      "start": "2026-09-27T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "South Point 400 — Las Vegas Motor Speedway",
+      "start": "2026-10-04T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Bank of America 400 — Charlotte Motor Speedway",
+      "start": "2026-10-11T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Freeway Insurance 500 — Phoenix Raceway",
+      "start": "2026-10-18T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "YellaWood 500 — Talladega Superspeedway",
+      "start": "2026-10-25T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "Xfinity 500 — Martinsville Speedway",
+      "start": "2026-11-01T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
+    },
+    {
+      "league": "NASCAR Cup",
+      "title": "NASCAR Championship Race — Homestead-Miami Speedway",
+      "start": "2026-11-08T15:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏁",
+      "source": "official_api",
+      "sourceDetail": "NASCAR official shared CF race_list_basic"
     },
     {
       "league": "NCAA FCS",
@@ -138004,7 +138095,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-01T00:20:37.454964+00:00",
+    "generatedAt": "2026-09-01T00:29:53.257332+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -139594,7 +139685,7 @@
       "NCAA Beach Volleyball": "official_api:0; requests:4; errors:3; raw_events:0"
     },
     "nascar": {
-      "NASCAR Cup": "official_api:0; parsed_in_horizon:0; added:0; current_future:0",
+      "NASCAR Cup": "official_shared_cache:40; current_future:10; added:10",
       "NASCAR Xfinity": "official_api:33; parsed_in_horizon:9; added:9; current_future:9",
       "NASCAR Truck": "official_api:25; parsed_in_horizon:7; added:7; current_future:7"
     },
@@ -139653,11 +139744,6 @@
     "MotoGP": {
       "source": "MotoGP public API",
       "parsed": 46,
-      "added": 0
-    },
-    "MXGP": {
-      "source": "Honda Racing MXGP calendar",
-      "parsed": 19,
       "added": 0
     },
     "MONSTER JAM": {
@@ -139722,7 +139808,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_added": 0,
-      "reference": "2026-09-01T00:21:05.826454Z",
+      "reference": "2026-09-01T00:31:40.229420Z",
       "errors": []
     },
     "NLL": {
