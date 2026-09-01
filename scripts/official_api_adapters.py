@@ -98,51 +98,37 @@ def add_ncaa(events,report):
   if added==0:print(f'WARNING NCAA adapter returned zero in-horizon events for {league}; raw_events={raw_count}')
 
 def nascar_series_rows(root, series_id):
-    """Read NASCAR's official race_list_basic cache.
-
-    The cache is keyed as Series_1/Series_2/Series_3 rather than putting
-    series_id on every child race. The previous generic tree walker therefore
-    discarded otherwise valid 2026 schedules because it could not inherit the
-    series number from the key. Keep this parser deliberately schema-specific.
-    """
-    if not isinstance(root, dict):
-        return []
-    candidates = []
+    if not isinstance(root, dict): return []
+    candidates=[]
     for key in (f'Series_{series_id}', f'series_{series_id}', str(series_id)):
-        value = root.get(key)
-        if isinstance(value, list):
-            candidates = value
-            break
-        if isinstance(value, dict):
-            candidates = value.get('races') or value.get('schedule') or []
-            if candidates:
-                break
-    if not candidates:
-        # Some cache revisions wrap the series under a data object.
-        data = root.get('data')
-        if isinstance(data, dict):
-            for key in (f'Series_{series_id}', f'series_{series_id}', str(series_id)):
-                value=data.get(key)
-                if isinstance(value,list): candidates=value; break
+        value=root.get(key)
+        if isinstance(value,list): candidates=value; break
+        if isinstance(value,dict):
+            candidates=value.get('races') or value.get('schedule') or []
+            if candidates: break
+    if not candidates and isinstance(root.get('data'),dict):
+        data=root['data']
+        for key in (f'Series_{series_id}', f'series_{series_id}', str(series_id)):
+            value=data.get(key)
+            if isinstance(value,list): candidates=value; break
     return [r for r in candidates if isinstance(r,dict)]
 
-def add_nascar(events,report):
+def add_nascar(events,report,failures):
+    """Repair NASCAR Cup/Xfinity/Truck from NASCAR's official season cache.
+
+    The cache is keyed by Series_1/Series_2/Series_3. We require at least one
+    in-horizon race before clearing that league's official-source failure.
+    """
     year=NOW.year
-    urls={
-        1:f'https://cf.nascar.com/cacher/{year}/1/race_list_basic.json',
-        2:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json',
-        3:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json'
-    }
+    urls={1:f'https://cf.nascar.com/cacher/{year}/1/race_list_basic.json',2:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json',3:f'https://cf.nascar.com/cacher/{year}/race_list_basic.json'}
     loaded={}; errors={}
     for sid,url in urls.items():
-        try:
-            loaded[sid]=get_json(url)
-        except Exception as exc:
-            errors[sid]=str(exc)
+        try: loaded[sid]=get_json(url)
+        except Exception as exc: errors[sid]=str(exc)
     existing={(e.get('league'),e.get('title'),e.get('start')) for e in events}
     for league,sid,icon in NASCAR:
         rows=nascar_series_rows(loaded.get(sid),sid) if loaded.get(sid) else []
-        parsed=0; added=0; current_future=0
+        parsed=added=current_future=0
         for r in rows:
             dt=iso(r.get('date_scheduled') or r.get('tunein_date') or r.get('race_date'))
             if not dt: continue
@@ -150,22 +136,19 @@ def add_nascar(events,report):
             except ValueError: continue
             if not NOW-timedelta(hours=12)<=o<=HORIZON: continue
             parsed += 1
-            race=str(r.get('race_name') or r.get('event_name') or league).strip()
-            track=str(r.get('track_name') or '').strip()
-            title=' — '.join(x for x in (race,track) if x) or league
-            key=(league,title,dt)
-            if key in existing:
-                current_future += 1
-                continue
+            race=str(r.get('race_name') or r.get('event_name') or league).strip(); track=str(r.get('track_name') or '').strip()
+            title=' — '.join(x for x in (race,track) if x) or league; key=(league,title,dt)
+            if key in existing: current_future += 1; continue
             events.append({'league':league,'title':title,'start':dt,'tag':'LIVE' if o<=NOW else 'UPCOMING','icon':icon,'source':'official_api','sourceDetail':'NASCAR official CF race_list_basic'});existing.add(key);added+=1;current_future+=1
         if sid in errors:
-            status=f'failed: {errors[sid]}'
-        else:
-            status='official_api:%d; parsed_in_horizon:%d; added:%d; current_future:%d' % (len(rows),parsed,added,current_future)
-        report.setdefault('nascar',{})[league]=status
-        if current_future:
+            report.setdefault('nascar',{})[league]=f'failed: {errors[sid]}'
+            print(f'NO REPAIR {league}: NASCAR official cache request failed: {errors[sid]}')
+        elif current_future:
+            report.setdefault('nascar',{})[league]=f'official_api:{len(rows)}; parsed_in_horizon:{parsed}; added:{added}; current_future:{current_future}'
+            failures[:] = [x for x in failures if x != league]
             print(f'REPAIRED {league}: NASCAR official cache rows={len(rows)}, in_horizon={parsed}, added={added}, current_future={current_future}')
         else:
+            report.setdefault('nascar',{})[league]=f'official_api:{len(rows)}; parsed_in_horizon:0; added:0; current_future:0'
             print(f'NO REPAIR {league}: NASCAR official cache returned no in-horizon races; rows={len(rows)}')
 
 def add_mlb(events,report):
@@ -183,12 +166,12 @@ def add_mlb(events,report):
  report['MLB']=f'official_api:{added}'
 
 def main():
- payload=json.loads(FEED.read_text(encoding='utf-8'));events=payload.get('events') or [];report={};add_ncaa(events,report);add_nascar(events,report);add_mlb(events,report)
+ payload=json.loads(FEED.read_text(encoding='utf-8'));events=payload.get('events') or [];report={};failures=list(payload.get('officialSourceFailures') or []);add_ncaa(events,report);add_nascar(events,report,failures);add_mlb(events,report)
  unique={}
  for e in events:
   k=(e.get('league'),e.get('title'),e.get('start'))
   if k not in unique or str(e.get('source','')).startswith('official'):unique[k]=e
  payload['events']=list(unique.values());counts={}
  for e in payload['events']:counts[e.get('league','')]=counts.get(e.get('league',''),0)+1
- payload['eventCounts']=counts;payload['officialApiAdapterReport']=report;FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print('official API adapter report:',json.dumps(report,sort_keys=True));print(f'official API adapter total events: {len(payload["events"])}')
+ payload['eventCounts']=counts;payload['officialApiAdapterReport']=report;payload['officialSourceFailures']=failures;FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print('official API adapter report:',json.dumps(report,sort_keys=True));print('official source failures remaining:',failures);print(f'official API adapter total events: {len(payload["events"])}')
 if __name__=='__main__':main()
