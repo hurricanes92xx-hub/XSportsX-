@@ -2,13 +2,15 @@ name: Build team logo catalog
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 5 1 * *'
 
 permissions:
   contents: write
 
 concurrency:
   group: xsportsx-team-logo-catalog
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-catalog:
@@ -18,15 +20,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: android-app
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Build verified team logo catalog
         run: python scripts/build_team_logo_catalog.py
-
+      - name: Verify catalog
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/team_logo_map.json')
+          x=json.loads(p.read_text())
+          assert x.get('version') == 3
+          assert isinstance(x.get('teams'), dict)
+          assert x['teams'], 'Team logo catalog is empty'
+          print(f"verified {len(x['teams'])} team-logo keys")
+          PY
       - name: Publish catalog to android-app
         run: |
           set -euo pipefail
