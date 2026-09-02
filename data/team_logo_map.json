@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T12:33:48.924730+00:00",
+  "generatedAt": "2026-09-02T17:17:29.781450+00:00",
   "sources": {
     "Bundesliga": {
       "provider": "ESPN team catalog",
@@ -9,7 +9,7 @@
     "CFL": {
       "completeCatalog": true,
       "provider": "ESPN CFL scoreboard + deterministic ESPN CDN fallback",
-      "resolvedAt": "2026-09-02T12:33:38.306321+00:00",
+      "resolvedAt": "2026-09-02T17:17:19.269339+00:00",
       "season": 2026,
       "teams": 9,
       "url": "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard"
@@ -136,7 +136,7 @@
       "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/teams"
     },
     "Rugby World Cup": {
-      "aliases_written": 0,
+      "aliases_written": 54,
       "source": "ESPN country rugby logo CDN; 2027 teams corroborated by World Rugby",
       "teams": 24
     },

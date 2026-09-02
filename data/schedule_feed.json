@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-02T12:34:19.342320+00:00",
+  "generatedAt": "2026-09-02T17:18:06.097730+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -90,7 +90,7 @@
     "Rugby World Cup": 36,
     "Six Nations": 15,
     "NRL": 8,
-    "AFL": 4,
+    "AFL": 5,
     "ICC T20": 0,
     "IPL": 74,
     "NCAA BB": 0,
@@ -122197,7 +122197,7 @@
       "league": "NCAA Men's Soccer",
       "title": "SUNY Maritime at Manhattan",
       "start": "2026-09-02T17:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
       "sourceDetail": "ESPN NCAA scoreboard",
@@ -184110,7 +184110,7 @@
     {
       "league": "NCAA Women's Volleyball",
       "title": "Chicago State Cougars at Louisiana Tech Bulldogs",
-      "start": "2026-09-03T23:30:00Z",
+      "start": "2026-09-03T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏐",
       "source": "official_api",
@@ -254693,7 +254693,7 @@
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-02T12:33:09.153395+00:00",
+    "generatedAt": "2026-09-02T17:16:30.704554+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -254833,7 +254833,7 @@
           ]
         ],
         "observedUpcoming": 2854,
-        "observedRecent": 30,
+        "observedRecent": 34,
         "provider": "official"
       },
       {
@@ -255336,7 +255336,7 @@
             31
           ]
         ],
-        "observedUpcoming": 4,
+        "observedUpcoming": 5,
         "observedRecent": 1,
         "provider": "official"
       },
@@ -255750,7 +255750,7 @@
           ]
         ],
         "observedUpcoming": 2854,
-        "observedRecent": 30,
+        "observedRecent": 34,
         "provider": "espn"
       },
       {
@@ -256209,7 +256209,7 @@
             31
           ]
         ],
-        "observedUpcoming": 4,
+        "observedUpcoming": 5,
         "observedRecent": 1,
         "provider": "espn"
       },
@@ -256325,7 +256325,7 @@
       "NCAA Men's Hockey": "espn:740; raw_events:955; requests:13; errors:0; season:winter; status:added",
       "NCAA Women's Hockey": "espn:0; raw_events:743; requests:13; errors:0; season:winter; status:duplicate_only",
       "NCAA Women's Field Hockey": "espn:613; raw_events:613; requests:13; errors:0; season:fall; status:added",
-      "_logo_hydration": "cache_entries_changed:8465; existing_events_updated:51; deterministic_id_fallbacks:19966"
+      "_logo_hydration": "cache_entries_changed:9246; existing_events_updated:51; deterministic_id_fallbacks:19966"
     }
   },
   "providerRepairReport": {
@@ -256437,7 +256437,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-02T12:33:57.514885Z",
+      "reference": "2026-09-02T17:17:40.566344Z",
       "errors": []
     },
     "NLL": {
