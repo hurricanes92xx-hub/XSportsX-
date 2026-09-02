@@ -1,0 +1,63 @@
+name: Repair remaining team logos
+
+on:
+  workflow_run:
+    workflows: ["Refresh complete schedules"]
+    types: [completed]
+
+concurrency:
+  group: xsportsx-remaining-logo-repair
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: android-app
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Hydrate and apply remaining team logos
+        run: python scripts/hydrate_remaining_team_logo_catalogs.py
+      - name: Audit team logo coverage
+        run: python scripts/audit_team_logo_coverage.py
+      - name: Strictly verify remaining team leagues
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('data/team_logo_coverage_audit.json').read_text())
+          leagues=['AFL','NBA','NRL','PLL','UEL']
+          failures=[]
+          for league in leagues:
+              item=(report.get('all_leagues') or {}).get(league,{})
+              games=int(item.get('team_games',0) or 0)
+              complete=int(item.get('complete',0) or 0)
+              missing=int(item.get('missing_logo_slots',0) or 0)
+              print(f'{league}: games={games}; complete={complete}; missing_logo_slots={missing}')
+              if games == 0 or missing != 0 or complete != games:
+                  failures.append((league,games,complete,missing))
+          if failures:
+              raise SystemExit(f'Remaining logo gaps: {failures}')
+          PY
+      - name: Persist repaired feed and logo cache
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/schedule_feed.json data/team_logo_map.json data/team_logo_coverage_audit.json
+          git diff --cached --quiet || git commit -m 'chore: repair remaining team logos'
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            if git rebase origin/android-app; then
+              if git push origin HEAD:android-app; then exit 0; fi
+            else git rebase --abort || true; fi
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish repaired logos after three race-safe retries' >&2
+          exit 1
