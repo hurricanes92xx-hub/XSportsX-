@@ -24,13 +24,55 @@ LEAGUES = {
     'UEL': ('soccer', 'uefa.europa'),
 }
 
+# Provider-facing names -> canonical catalog names. These are deliberately
+# explicit because several feeds use short club names while ESPN uses the
+# location-qualified identity.
 ALIASES = {
+    'AFL': {
+        'Hawthorn': 'Hawthorn Hawks',
+        'Fremantle': 'Fremantle Dockers',
+        'Carlton': 'Carlton Blues',
+        'Geelong Cats': 'Geelong Cats',
+        'Brisbane Lions': 'Brisbane Lions',
+        'Sydney Swans': 'Sydney Swans',
+    },
     'NBA': {
         'Los Angeles Clippers': 'LA Clippers',
         'LA Lakers': 'Los Angeles Lakers',
         'Golden State': 'Golden State Warriors',
         'New Orleans': 'New Orleans Pelicans',
         'Oklahoma City': 'Oklahoma City Thunder',
+        # 2026 NBA preseason opponent is the London Lions; the source shortens
+        # the display name to "Lions".
+        'Lions': 'London Lions',
+    },
+    'NRL': {
+        'Broncos': 'Brisbane Broncos',
+        'Bulldogs': 'Canterbury Bulldogs',
+        'Dolphins': 'Dolphins',
+        'Titans': 'Gold Coast Titans',
+        'Roosters': 'Sydney Roosters',
+        'Rabbitohs': 'South Sydney Rabbitohs',
+        'Sea Eagles': 'Manly Sea Eagles',
+        'Warriors': 'New Zealand Warriors',
+        'Raiders': 'Canberra Raiders',
+        'Cowboys': 'North Queensland Cowboys',
+        'Storm': 'Melbourne Storm',
+        'Sharks': 'Cronulla Sharks',
+        'Eels': 'Parramatta Eels',
+        'Dragons': 'St George Illawarra Dragons',
+        'Wests Tigers': 'Wests Tigers',
+        'Panthers': 'Penrith Panthers',
+    },
+    'PLL': {
+        'Outlaws': 'Denver Outlaws',
+        'Archers': 'Utah Archers',
+        'Cannons': 'Boston Cannons',
+        'Waterdogs': 'Philadelphia Waterdogs',
+        'Denver Outlaws': 'Denver Outlaws',
+        'Utah Archers': 'Utah Archers',
+        'Boston Cannons': 'Boston Cannons',
+        'Philadelphia Waterdogs': 'Philadelphia Waterdogs',
     },
     'UEL': {
         'N.E.C.': 'N.E.C.', 'NEC': 'N.E.C.', 'NEC Nijmegen': 'N.E.C.',
@@ -43,6 +85,17 @@ ALIASES = {
         'Jagiellonia Bialystok': 'Jagiellonia', 'Lillestrom': 'Lillestrøm',
         'Omonia Nicosia': 'Omonia', 'GNK Dinamo Zagreb': 'GNK Dinamo',
         'Dinamo Zagreb': 'GNK Dinamo', 'OFI': 'OFI Crete',
+        'Ararat': 'Ararat-Armenia',
+        'Torreense': 'Torreense',
+    },
+}
+
+# ESPN can lag newly qualified UEFA clubs. Torreense is confirmed in the
+# 2026/27 Europa League field, so keep a deterministic CDN identity instead of
+# leaving the club blank when ESPN does not return it in its team catalog.
+STATIC_LOGOS = {
+    'UEL': {
+        'Torreense': 'https://img.uefa.com/imgml/TP/teams/logos/100x100/2603107.png',
     },
 }
 
@@ -118,6 +171,29 @@ def catalog_for_league(league, sport, slug):
     return list(dedup.values())
 
 
+def resolve_logo(teams, league, name):
+    key = f'{league}|{norm(name)}'
+    if teams.get(key):
+        return teams[key]
+    target = ALIASES.get(league, {}).get(name)
+    if target:
+        target_key = f'{league}|{norm(target)}'
+        if teams.get(target_key):
+            return teams[target_key]
+    static = STATIC_LOGOS.get(league, {}).get(name)
+    if static:
+        return static
+    # Last-resort deterministic token match for provider short names such as
+    # NRL "Broncos" or PLL "Outlaws". Only accept a unique catalog match.
+    needle = norm(name)
+    if needle:
+        matches = [logo for k, logo in teams.items() if k.startswith(f'{league}|') and needle in k.split('|', 1)[1].split()]
+        unique = list(dict.fromkeys(matches))
+        if len(unique) == 1:
+            return unique[0]
+    return None
+
+
 def hydrate_and_apply():
     data = json.loads(CACHE.read_text(encoding='utf-8')) if CACHE.exists() else {'version': 3, 'teams': {}}
     teams = data.setdefault('teams', {})
@@ -128,14 +204,13 @@ def hydrate_and_apply():
         records = catalog_for_league(league, sport, slug)
         for team in records:
             add_team(teams, league, team)
-        # Schedule-facing aliases.
+        for name, logo in STATIC_LOGOS.get(league, {}).items():
+            teams[f'{league}|{norm(name)}'] = logo
         names = {str(e.get(k)) for e in events if e.get('league') == league for k in ('away', 'home') if e.get(k)}
         for name in names:
-            key = f'{league}|{norm(name)}'
-            if key not in teams:
-                target = ALIASES.get(league, {}).get(name)
-                if target and teams.get(f'{league}|{norm(target)}'):
-                    teams[key] = teams[f'{league}|{norm(target)}']
+            logo = resolve_logo(teams, league, name)
+            if logo:
+                teams[f'{league}|{norm(name)}'] = logo
         changed = 0
         unresolved = []
         for event in events:
@@ -143,7 +218,7 @@ def hydrate_and_apply():
                 continue
             for side, field in (('away', 'awayLogo'), ('home', 'homeLogo')):
                 name = str(event.get(side) or '')
-                logo = teams.get(f'{league}|{norm(name)}')
+                logo = resolve_logo(teams, league, name)
                 if not logo:
                     unresolved.append(name)
                     continue
@@ -159,7 +234,6 @@ def hydrate_and_apply():
         time.sleep(0.1)
     CACHE.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     feed['events'] = events
-    feed['generatedAt'] = feed.get('generatedAt')
     SCHEDULE.write_text(json.dumps(feed, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     failures = {k: v['unresolved_names'] for k, v in summary.items() if v['unresolved_names']}
