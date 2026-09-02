@@ -19,19 +19,9 @@ data class SportsEvent(
     val youtubeVideoId: String = ""
 ) {
     val isLive: Boolean
-        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true) || isLiveCandidate
+        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
 
     private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
-
-    /** Keep scheduled rows LIVE from three minutes before kickoff through a 30-minute backend-status safety window. */
-    private val isLiveCandidate: Boolean
-        get() {
-            if (status.contains("final", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true)) return false
-            val start = startMillis()
-            if (start <= 0L) return false
-            val now = System.currentTimeMillis()
-            return start in (now - 30L * 60L * 1000L)..(now + 3L * 60L * 1000L)
-        }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
         val start = startMillis()
