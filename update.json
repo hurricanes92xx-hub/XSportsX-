@@ -1,8 +1,8 @@
 {
-  "versionCode": 27,
-  "versionName": "1.8.1",
+  "versionCode": 30,
+  "versionName": "1.8.4",
   "mobileApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
   "tvApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-TV.apk",
   "apkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
-  "notes": "XSportsX 1.8.1: fixes live kickoff detection through the post-kickoff safety window, refreshes live games every 10 seconds, bypasses stale schedule CDN cache, and deduplicates live matchups."
+  "notes": "XSportsX 1.8.4: hardened centralized five-minute ESPN live reconciliation with tolerant matchup/time matching, provider failure reporting, 10-second Android live polling, stale-feed protection, and live matchup deduplication."
 }
