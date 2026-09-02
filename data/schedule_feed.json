@@ -29,6 +29,7 @@
     "NBA": 1270,
     "NCAA FB": 1549,
     "NCAA FCS": 724,
+    "NCAA Men Soccer": 1,
     "NCAA Men's Hockey": 740,
     "NCAA Men's Soccer": 1413,
     "NCAA Women's Field Hockey": 613,
@@ -2344,27 +2345,29 @@
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🎾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
       "eventType": "named_event",
       "image": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
       "nonTeamSport": true,
       "eventName": "US Open",
-      "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png"
+      "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "WTA",
       "title": "US Open",
       "start": "2026-08-24T04:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🎾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/wta.png",
       "eventType": "named_event",
       "image": "https://a.espncdn.com/i/teamlogos/leagues/500/wta.png",
       "nonTeamSport": true,
       "eventName": "US Open",
-      "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/wta.png"
+      "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/wta.png",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MotoGP",
@@ -2435,14 +2438,15 @@
       "league": "MLB",
       "title": "Padres @ Reds",
       "start": "2026-09-02T16:40:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
       "away": "Padres",
       "home": "Reds",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/cin.png"
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/cin.png",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -2462,14 +2466,15 @@
       "league": "MLB",
       "title": "Braves @ Nationals",
       "start": "2026-09-02T17:05:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
       "away": "Braves",
       "home": "Nationals",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/wsh.png"
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/wsh.png",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -254690,6 +254695,15 @@
       "homeTeamId": "219",
       "leagueArt": "",
       "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Men Soccer",
+      "title": "SUNY Maritime @ Manhattan",
+      "start": "2026-09-02T17:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
     }
   ],
   "seasonIntelligence": {
@@ -256284,7 +256298,9 @@
     },
     "ncaaLogoAliasesApplied": 0,
     "adapterTimestampsNormalized": 155,
-    "finalDuplicateEventsRemoved": 178
+    "finalDuplicateEventsRemoved": 178,
+    "liveStatusReconciled": 4,
+    "liveEventsAdded": 1
   },
   "officialApiAdapterReport": {
     "ncaa": {
