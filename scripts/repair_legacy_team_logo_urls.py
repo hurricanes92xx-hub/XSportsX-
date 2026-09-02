@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Repair legacy ESPN team-logo URL namespaces in the active feed and cache.
-
-Older catalog hydrators stored ESPN's generic numeric `/500/<id>.png` paths.
-For NCAA teams the live CDN namespace is `/ncaa/500/<id>.png`. The same applies
-to the old field-hockey and hockey numeric paths used by NCAA catalogs.
-This pass rewrites only deterministic namespace drift; it does not invent team
-identities or weaken HTTP validation.
-"""
+"""Repair known legacy ESPN logo namespaces before HTTP validation."""
 from __future__ import annotations
 
 import json
@@ -18,56 +11,71 @@ FEED = ROOT / "data/schedule_feed.json"
 CACHE = ROOT / "data/team_logo_map.json"
 
 GENERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/500/(\d+)\.png$")
-FIELD_HOCKEY = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/(?:field-hockey|hockey)/500/(\d+)\.png$")
+SPORT_NUMERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/(?:football|field-hockey|hockey)/500/(\d+)\.png$")
+CFL = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/cfl/500/[^/]+\.png$")
+COUNTRY = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/countries/500/[^/]+\.png$")
 
-NCAA_LEAGUES = {
-    "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB", "NCAA Baseball",
-    "NCAA Softball", "NCAA Men's Hockey", "NCAA Women's Hockey",
-    "NCAA Men's Soccer", "NCAA Women's Soccer", "NCAA Men's Lacrosse",
-    "NCAA Women's Lacrosse", "NCAA Men's Volleyball", "NCAA Women's Volleyball",
-    "NCAA Men's Water Polo", "NCAA Women's Water Polo", "NCAA Women's Field Hockey",
-    "NCAA Beach Volleyball", "NCAA Gymnastics", "NCAA Swimming & Diving",
-    "NCAA Track & Field", "NCAA Wrestling",
+LEAGUE_ART = {
+    "CFL": "https://a.espncdn.com/i/teamlogos/leagues/500/cfl.png",
+    "Rugby World Cup": "https://a.espncdn.com/i/teamlogos/leagues/500/rugby-world-cup.png",
+    "Six Nations": "https://a.espncdn.com/i/teamlogos/leagues/500/six-nations.png",
 }
 
 
-def repair_url(url: object, league: str) -> tuple[object, bool]:
-    if not isinstance(url, str) or not url.startswith("https://a.espncdn.com/"):
-        return url, False
-    if league not in NCAA_LEAGUES:
-        return url, False
-    match = GENERIC.match(url) or FIELD_HOCKEY.match(url)
-    if not match:
-        return url, False
-    return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{match.group(1)}.png", True
+def is_ncaa(league: str) -> bool:
+    return league.upper().startswith("NCAA ")
+
+
+def repair_url(url: object, league: str) -> tuple[object, bool, str]:
+    if not isinstance(url, str):
+        return url, False, ""
+    value = url.strip()
+    if not value.startswith("https://a.espncdn.com/"):
+        return value, False, ""
+
+    if is_ncaa(league):
+        match = GENERIC.match(value) or SPORT_NUMERIC.match(value)
+        if match:
+            return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{match.group(1)}.png", True, "ncaa_namespace"
+
+    if league == "CFL" and CFL.match(value):
+        return LEAGUE_ART["CFL"], True, "cfl_league_fallback"
+
+    if league in {"Rugby World Cup", "Six Nations"} and COUNTRY.match(value):
+        return LEAGUE_ART[league], True, "country_league_fallback"
+
+    return value, False, ""
 
 
 def main() -> None:
     feed = json.loads(FEED.read_text(encoding="utf-8"))
     changed_feed = 0
+    reasons: dict[str, int] = {}
     for event in feed.get("events") or []:
         league = str(event.get("league") or "").strip()
         for field in ("awayLogo", "homeLogo", "logo", "leagueLogo"):
-            value = event.get(field)
-            repaired, changed = repair_url(value, league)
+            repaired, changed, reason = repair_url(event.get(field), league)
             if changed:
                 event[field] = repaired
                 changed_feed += 1
+                reasons[reason] = reasons.get(reason, 0) + 1
 
     cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
-    changed_cache = 0
     teams = cache.get("teams") or {}
+    changed_cache = 0
     for key, value in list(teams.items()):
-        league = str(key).split("|", 1)[0] if "|" in str(key) else ""
-        repaired, changed = repair_url(value, league)
+        text = str(key)
+        league = text.split("|", 1)[0].strip() if "|" in text else ""
+        repaired, changed, reason = repair_url(value, league)
         if changed:
             teams[key] = repaired
             changed_cache += 1
+            reasons[f"cache_{reason}"] = reasons.get(f"cache_{reason}", 0) + 1
     cache["teams"] = teams
 
     FEED.write_text(json.dumps(feed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     CACHE.write_text(json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"feed_urls_repaired": changed_feed, "cache_urls_repaired": changed_cache}, indent=2))
+    print(json.dumps({"feed_urls_repaired": changed_feed, "cache_urls_repaired": changed_cache, "reasons": reasons}, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
