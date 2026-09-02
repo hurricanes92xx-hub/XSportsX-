@@ -23,6 +23,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -43,6 +44,7 @@ fun PhonePairScanner(onConnected: (String) -> Unit, onCancel: () -> Unit = {}) {
         put("username", source.username)
         put("password", source.password)
         put("m3uUrl", source.m3uUrl)
+        put("favoriteChannels", JSONArray(ChannelFavorites.export(context).toList()))
     }
 
     fun localNetworkGranted(): Boolean = Build.VERSION.SDK_INT < 37 ||
