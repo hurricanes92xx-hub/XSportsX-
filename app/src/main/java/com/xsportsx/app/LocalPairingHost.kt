@@ -106,7 +106,17 @@ class LocalPairingHost(
                     return
                 }
                 SourceStore(context).save(source)
-                respond(socket, 200, "{\"ok\":true}")
+
+                val incomingFavorites = mutableListOf<String>()
+                val favoriteArray = json.optJSONArray("favoriteChannels")
+                if (favoriteArray != null) {
+                    for (i in 0 until favoriteArray.length()) {
+                        favoriteArray.optString(i).takeIf { it.isNotBlank() && it.length <= 512 }?.let(incomingFavorites::add)
+                    }
+                }
+                ChannelFavorites.merge(context, incomingFavorites)
+
+                respond(socket, 200, "{\"ok\":true,\"favoriteCount\":${ChannelFavorites.load(context).size}}")
                 active = false
                 runCatching { server?.close() }
                 Handler(Looper.getMainLooper()).post(onConnected)
