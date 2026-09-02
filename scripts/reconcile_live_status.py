@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,10 +11,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 HEADERS = {
-    "User-Agent": "XSportsX-LiveStatus/1.0",
+    "User-Agent": "XSportsX-LiveStatus/1.1",
     "Accept": "application/json",
 }
 
+# ESPN-backed leagues. Keep this list broad so Live Center is not accidentally
+# limited to the handful of major U.S. leagues.
 ESPN_LEAGUES = [
     ("NFL", "football", "nfl"),
     ("NCAA FB", "football", "college-football"),
@@ -23,6 +26,8 @@ ESPN_LEAGUES = [
     ("NHL", "hockey", "nhl"),
     ("MLB", "baseball", "mlb"),
     ("MLS", "soccer", "usa.1"),
+    ("NCAA Men Soccer", "soccer", "usa.ncaa.m.1"),
+    ("NCAA Women Soccer", "soccer", "usa.ncaa.w.1"),
     ("EPL", "soccer", "eng.1"),
     ("UCL", "soccer", "uefa.champions"),
     ("LaLiga", "soccer", "esp.1"),
@@ -62,6 +67,17 @@ def iso(value):
         return None
 
 
+def norm(value: str) -> str:
+    value = str(value or "").lower().replace("&", " and ")
+    value = re.sub(r"\b(at|vs\.?|versus)\b", " ", value)
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return " ".join(value.split())
+
+
+def title_parts(value: str) -> set[str]:
+    return set(norm(value).split())
+
+
 def espn_title(event: dict, league: str) -> str:
     comp = (event.get("competitions") or [{}])[0]
     teams = comp.get("competitors") or []
@@ -73,6 +89,8 @@ def espn_title(event: dict, league: str) -> str:
 def state_tag(event: dict) -> str:
     comp = (event.get("competitions") or [{}])[0]
     status = ((comp.get("status") or {}).get("type") or {})
+    if not status:
+        status = ((event.get("status") or {}).get("type") or {})
     state = str(status.get("state") or "pre").lower()
     if state == "in":
         return "LIVE"
@@ -82,15 +100,23 @@ def state_tag(event: dict) -> str:
 
 
 def same_event(candidate: dict, league: str, title: str, start: str) -> bool:
-    if candidate.get("league") != league or candidate.get("start") != start:
+    if candidate.get("league") != league:
         return False
-    old = " ".join(str(candidate.get("title") or "").lower().replace("@", " ").replace(" at ", " ").split())
-    new = " ".join(str(title or "").lower().replace("@", " ").replace(" at ", " ").split())
+    candidate_start = iso(candidate.get("start"))
+    if candidate_start != start:
+        return False
+
+    old = title_parts(candidate.get("title") or "")
+    new = title_parts(title)
     if old == new:
         return True
-    # If a league has a single event at this exact start, its official/provider
-    # title can legitimately use different team naming (e.g. Orioles/Rockies).
-    return False
+
+    # Team-name feeds frequently differ on suffixes such as FC, University,
+    # State, or city abbreviations. Matching the substantial shared tokens is
+    # safer than requiring the exact display title.
+    shared = old & new
+    significant = {token for token in shared if len(token) >= 4}
+    return len(significant) >= 2
 
 
 def main():
@@ -121,9 +147,7 @@ def main():
                     event["sourceDetail"] = "ESPN live-status reconciliation"
                     changed += 1
                 continue
-            # Do not discard a real ESPN live event merely because the official
-            # source used a different team-name convention. Adding the authoritative
-            # live row guarantees Live Center visibility until the next full refresh.
+
             if tag == "LIVE":
                 events.append({
                     "league": league,
