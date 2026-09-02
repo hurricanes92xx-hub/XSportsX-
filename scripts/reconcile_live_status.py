@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/'data'/'schedule_feed.json'
 HEADERS={'User-Agent':'XSportsX-LiveStatus/1.3','Accept':'application/json'}
-ESPN_LEAGUES=[('NFL','football','nfl'),('NCAA FB','football','college-football'),('CFL','football','cfl'),('NBA','basketball','nba'),('WNBA','basketball','wnba'),('NHL','hockey','nhl'),('MLB','baseball','mlb'),('MLS','soccer','usa.1'),('NCAA Men Soccer','soccer','usa.ncaa.m.1'),('NCAA Women Soccer','soccer','usa.ncaa.w.1'),('EPL','soccer','eng.1'),('UCL','soccer','uefa.champions'),('LaLiga','soccer','esp.1'),('Serie A','soccer','ita.1'),('Bundesliga','soccer','ger.1'),('Ligue 1','soccer','fra.1'),('UFC','mma','ufc'),('F1','racing','f1'),('IndyCar','racing','irl'),('NASCAR Cup','racing','nascar-premier'),('PGA','golf','pga'),('LPGA','golf','lpga'),('LIV Golf','golf','liv'),('ATP','tennis','atp'),('WTA','tennis','wta'),('PLL','lacrosse','pll'),('NLL','lacrosse','nll'),('FIVB Men','volleyball','fivb.m'),('FIVB Women','volleyball','fivb.w'),('NRL','rugby-league','3'),('AFL','australian-football','afl'),('ICC T20','cricket','icc.t20'),('IPL','cricket','ipl')]
+ESPN_LEAGUES=[('NFL','football','nfl'),('NCAA FB','football','college-football'),('CFL','football','cfl'),('NBA','basketball','nba'),('WNBA','basketball','wnba'),('NHL','hockey','nhl'),('MLB','baseball','mlb'),('MLS','soccer','usa.1'),('NCAA Men Soccer','soccer','usa.ncaa.m.1'),('NCAA Women Soccer','soccer','usa.ncaa.w.1'),('EPL','soccer','eng.1'),('UCL','soccer','uefa.champions'),('LaLiga','soccer','esp.1'),('Serie A','soccer','ita.1'),('Bundesliga','soccer','ger.1'),('Ligue 1','soccer','fra.1'),('UFC','mma','ufc'),('F1','racing','f1'),('IndyCar','racing','irl'),('NASCAR Cup','racing','nascar-premier'),('PGA','golf','pga'),('LPGA','golf','lpga'),('LIV Golf','golf','liv'),('ATP','tennis','atp'),('WTA','tennis','wta'),('PLL','lacrosse','pll'),('NLL','lacrosse','nll'),('FIVB Men','volleyball','fivb.m'),('FIVB Women','volleyball','fivb.w'),('NCAA VB','volleyball','womens-college-volleyball'),('NRL','rugby-league','3'),('AFL','australian-football','afl'),('ICC T20','cricket','icc.t20'),('IPL','cricket','ipl')]
 
 def get_json(url):
     with urllib.request.urlopen(urllib.request.Request(url,headers=HEADERS),timeout=12) as r:
@@ -43,10 +43,7 @@ def state(event):
     return {'in':'LIVE','post':'FINAL','final':'FINAL'}.get(str(s.get('state') or 'pre').lower(),'UPCOMING')
 
 def mlb_time_fallback(start, tag):
-    """ESPN can briefly leave an MLB game in pre-state after first pitch.
-    Use the scheduled start as a conservative backup so an active game is
-    not dropped merely because the scoreboard state lagged behind the clock.
-    """
+    """ESPN can briefly leave an MLB game in pre-state after first pitch."""
     if tag == 'FINAL':
         return False
     remote=dt(start)
