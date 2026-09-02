@@ -11,23 +11,15 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 29
-        versionName = "1.8.3"
+        versionCode = 30
+        versionName = "1.8.4"
         buildConfigField("String", "PAIRING_BASE_URL", "\"https://github.com/hurricanes92xx-hub/XSportsX-\"")
         buildConfigField("String", "SPORTS_SOURCE_URL", "\"https://xsportsx-sports-source.onrender.com\"")
     }
     flavorDimensions += "device"
     productFlavors {
-        create("mobile") {
-            dimension = "device"
-            applicationIdSuffix = ".mobile"
-            buildConfigField("boolean", "IS_TV_BUILD", "false")
-        }
-        create("tv") {
-            dimension = "device"
-            applicationIdSuffix = ".tv"
-            buildConfigField("boolean", "IS_TV_BUILD", "true")
-        }
+        create("mobile") { dimension = "device"; applicationIdSuffix = ".mobile"; buildConfigField("boolean", "IS_TV_BUILD", "false") }
+        create("tv") { dimension = "device"; applicationIdSuffix = ".tv"; buildConfigField("boolean", "IS_TV_BUILD", "true") }
     }
     signingConfigs {
         create("release") {
@@ -36,29 +28,18 @@ android {
             val keyAlias = System.getenv("XSORTSX_KEY_ALIAS")
             val keyPassword = System.getenv("XSORTSX_KEY_PASSWORD")
             if (listOf(keystorePath, storePassword, keyAlias, keyPassword).all { !it.isNullOrBlank() }) {
-                storeFile = file(keystorePath!!)
-                this.storePassword = storePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
+                storeFile = file(keystorePath!!); this.storePassword = storePassword; this.keyAlias = keyAlias; this.keyPassword = keyPassword
             }
         }
     }
     buildTypes {
         getByName("debug") { signingConfig = signingConfigs.getByName("debug") }
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
-        }
+        getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") }
     }
     buildFeatures { compose = true; buildConfig = true }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
-
 kotlin { jvmToolchain(17) }
-
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.04.01")
     implementation(composeBom)
