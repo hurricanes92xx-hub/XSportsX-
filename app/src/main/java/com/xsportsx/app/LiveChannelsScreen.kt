@@ -63,8 +63,8 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         reload(false)
         if (selectedEvent == null && filter.isNullOrBlank()) {
             while (true) {
-                delay(30_000L)
-                reload(false)
+                delay(10_000L)
+                reload(true)
             }
         }
     }
