@@ -3,40 +3,43 @@
   "generatedAt": "2026-09-02T21:01:23.899949+00:00",
   "refreshHours": 6,
   "eventCounts": {
+    "AEW": 4,
+    "AFL": 4,
+    "ATP": 5,
+    "BOXING": 8,
+    "Bundesliga": 27,
+    "EPL": 30,
+    "F1": 3,
+    "IPL": 74,
+    "IndyCar": 1,
+    "LPGA": 3,
+    "LaLiga": 40,
+    "Ligue 1": 27,
+    "MLB": 349,
+    "MLS": 76,
+    "NASCAR Cup": 4,
+    "NCAA FB": 614,
+    "NCAA Men Soccer": 1,
     "NCAA Men's Soccer": 127,
+    "NCAA Men's Water Polo": 44,
+    "NCAA VB": 1,
+    "NCAA Women Soccer": 2,
+    "NCAA Women's Field Hockey": 613,
+    "NCAA Women's Hockey": 743,
     "NCAA Women's Soccer": 382,
     "NCAA Women's Volleyball": 416,
-    "NCAA Men's Water Polo": 44,
-    "IPL": 74,
-    "ATP": 5,
-    "WTA": 17,
-    "MLB": 349,
-    "NCAA Women's Field Hockey": 613,
-    "NRL": 8,
-    "AFL": 4,
-    "Ligue 1": 27,
-    "LaLiga": 40,
-    "NCAA FB": 614,
-    "F1": 3,
-    "Bundesliga": 27,
-    "Serie A": 30,
-    "EPL": 30,
-    "MLS": 76,
-    "BOXING": 8,
-    "UFC": 8,
-    "IndyCar": 1,
-    "NASCAR Cup": 4,
-    "WWE": 13,
-    "PLL": 2,
-    "UCL": 18,
     "NFL": 16,
-    "LPGA": 3,
-    "PGA": 3,
-    "WNBA": 30,
-    "NCAA Women's Hockey": 743,
     "NHL": 86,
-    "AEW": 4,
-    "TNA": 1
+    "NRL": 8,
+    "PGA": 3,
+    "PLL": 2,
+    "Serie A": 30,
+    "TNA": 1,
+    "UCL": 18,
+    "UFC": 8,
+    "WNBA": 30,
+    "WTA": 17,
+    "WWE": 13
   },
   "failedSources": [
     "FIVB Men",
@@ -7884,15 +7887,17 @@
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
-      "tag": "UPCOMING",
-      "icon": "🎾"
+      "tag": "FINAL",
+      "icon": "🎾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "WTA",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
-      "tag": "UPCOMING",
-      "icon": "🎾"
+      "tag": "FINAL",
+      "icon": "🎾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -7905,15 +7910,17 @@
       "league": "MLB",
       "title": "Braves @ Nationals",
       "start": "2026-09-02T17:05Z",
-      "tag": "LIVE",
-      "icon": "⚾"
+      "tag": "FINAL",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Athletics @ Rangers",
       "start": "2026-09-02T18:35Z",
-      "tag": "LIVE",
-      "icon": "⚾"
+      "tag": "FINAL",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -7926,8 +7933,9 @@
       "league": "MLB",
       "title": "Phillies @ Diamondbacks",
       "start": "2026-09-02T19:40Z",
-      "tag": "LIVE",
-      "icon": "⚾"
+      "tag": "FINAL",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -32877,6 +32885,47 @@
       "start": "2027-02-20T21:30Z",
       "tag": "UPCOMING",
       "icon": "🏒"
+    },
+    {
+      "league": "NCAA Men Soccer",
+      "title": "UMass Lowell @ UMass",
+      "start": "2026-09-02T20:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Women Soccer",
+      "title": "Siena @ Le Moyne",
+      "start": "2026-09-02T20:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Women Soccer",
+      "title": "Canisius @ Buffalo",
+      "start": "2026-09-02T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Maryland @ Arkansas",
+      "start": "2026-09-02T21:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
     }
-  ]
+  ],
+  "repairReport": {
+    "liveStatusReconciled": 6,
+    "liveEventsAdded": 4,
+    "liveProviderFailures": 5
+  }
 }
