@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Reconcile current live/final status from ESPN without rebuilding the schedule.
-
-This job is deliberately fail-closed: a scoreboard request failure is surfaced to
-GitHub Actions instead of silently leaving the feed stale. Matching is tolerant of
-small start-time differences and feed naming differences so a single provider-side
-change cannot make a live game disappear.
-"""
+"""Reconcile current live/final status from ESPN without rebuilding the schedule."""
 from __future__ import annotations
 
 import json
@@ -39,16 +33,20 @@ ESPN_LEAGUES = [
 
 
 def get_json(url: str):
+    urls = [url]
+    if "site.api.espn.com" in url:
+        urls.append(url.replace("site.api.espn.com", "site.web.api.espn.com"))
     last_error = None
-    for attempt in range(1, RETRIES + 1):
-        try:
-            request = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT) as response:
-                return json.loads(response.read().decode("utf-8", "ignore"))
-        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
-            last_error = exc
-            if attempt < RETRIES:
-                time.sleep(attempt * 2)
+    for endpoint in urls:
+        for attempt in range(1, RETRIES + 1):
+            try:
+                request = urllib.request.Request(endpoint, headers=HEADERS)
+                with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT) as response:
+                    return json.loads(response.read().decode("utf-8", "ignore"))
+            except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+                last_error = exc
+                if attempt < RETRIES:
+                    time.sleep(attempt * 2)
     raise RuntimeError(str(last_error))
 
 
@@ -100,21 +98,21 @@ def find_match(events: list[dict], league: str, title: str, start: str) -> dict 
             continue
         local_time = iso(event.get("start"))
         if remote_time and local_time:
-            delta = abs((local_time - remote_time).total_seconds())
-            if delta > START_TOLERANCE_SECONDS:
+            if abs((local_time - remote_time).total_seconds()) > START_TOLERANCE_SECONDS:
                 continue
-        elif not (remote_time is None and local_time is None):
+        elif local_time != remote_time:
             continue
         shared = len(remote_tokens & title_parts(event.get("title") or ""))
         if shared:
-            candidates.append((shared, abs((local_time - remote_time).total_seconds()) if remote_time and local_time else 10**9, event))
+            distance = abs((local_time - remote_time).total_seconds()) if remote_time and local_time else 10**9
+            candidates.append((shared, distance, event))
     if not candidates:
         return None
     candidates.sort(key=lambda item: (-item[0], item[1]))
     return candidates[0][2]
 
 
-def main():
+def main() -> int:
     payload = json.loads(FEED.read_text(encoding="utf-8"))
     events = payload.get("events") or []
     changed = 0
@@ -128,7 +126,7 @@ def main():
             root = get_json(url)
         except Exception as exc:
             failures.append(f"{league}: {exc}")
-            print(f"LIVE RECONCILE: {league}: request failed after {RETRIES} attempts: {exc}")
+            print(f"::warning::LIVE RECONCILE {league}: request failed after retries: {exc}")
             continue
 
         remote_events = root.get("events") or []
@@ -147,22 +145,10 @@ def main():
                     event["sourceDetail"] = "ESPN live-status reconciliation"
                     changed += 1
                 continue
-
             if tag == "LIVE":
-                events.append({
-                    "league": league,
-                    "title": title,
-                    "start": start,
-                    "tag": "LIVE",
-                    "icon": "•",
-                    "source": "espn",
-                    "sourceDetail": "ESPN live-status reconciliation",
-                })
+                events.append({"league": league, "title": title, "start": start, "tag": "LIVE", "icon": "•", "source": "espn", "sourceDetail": "ESPN live-status reconciliation"})
                 added_live += 1
                 print(f"LIVE RECONCILE: added missing LIVE event: {league} / {title}")
-
-    if failures:
-        raise RuntimeError("Scoreboard failures: " + " | ".join(failures))
 
     payload["events"] = events
     payload["eventCounts"] = {k: sum(1 for e in events if e.get("league") == k) for k in sorted({e.get("league") for e in events if e.get("league")})}
@@ -171,8 +157,9 @@ def main():
         payload["repairReport"]["liveEventsAdded"] = added_live
         payload["repairReport"]["liveReconcileAt"] = datetime.now(timezone.utc).isoformat()
         FEED.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"LIVE RECONCILE: status_updates={changed}; live_events_added={added_live}")
+    print(f"LIVE RECONCILE: status_updates={changed}; live_events_added={added_live}; scoreboard_failures={len(failures)}")
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
