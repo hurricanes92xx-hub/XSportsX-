@@ -1,6 +1,11 @@
 name: Reconcile live sports status
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'data/schedule_feed.json'
+      - 'scripts/reconcile_live_status.py'
+      - '.github/workflows/reconcile-live-status.yml'
   schedule:
     - cron: '*/5 * * * *'
 concurrency:
