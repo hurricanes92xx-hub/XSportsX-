@@ -198,11 +198,14 @@ jobs:
           git add data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json data/ncaa_nonfootball_identity_catalog.json data/ncaa_hockey_field_hockey_catalog_audit.json data/ncaa_field_hockey_team_catalog.json data/ncaa_mens_hockey_team_catalog.json data/ncaa_womens_hockey_team_catalog.json
           git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
           git stash push --include-untracked -m 'xsportsx-refresh-runner-local' || true
+          refresh_commit=$(git rev-parse HEAD)
           for attempt in 1 2 3; do
             git fetch origin android-app
-            if git rebase origin/android-app; then
-              if git push origin HEAD:android-app; then exit 0; fi
-            else git rebase --abort || true; fi
+            git reset --hard origin/android-app
+            git checkout "$refresh_commit" -- data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json data/ncaa_nonfootball_identity_catalog.json data/ncaa_hockey_field_hockey_catalog_audit.json data/ncaa_field_hockey_team_catalog.json data/ncaa_mens_hockey_team_catalog.json data/ncaa_womens_hockey_team_catalog.json
+            git add data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json data/ncaa_nonfootball_identity_catalog.json data/ncaa_hockey_field_hockey_catalog_audit.json data/ncaa_field_hockey_team_catalog.json data/ncaa_mens_hockey_team_catalog.json data/ncaa_womens_hockey_team_catalog.json
+            git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
+            if git push origin HEAD:android-app; then exit 0; fi
             sleep $((attempt * 2))
           done
           echo 'Unable to publish after three race-safe retries' >&2; exit 1
