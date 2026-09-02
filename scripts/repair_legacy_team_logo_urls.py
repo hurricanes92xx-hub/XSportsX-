@@ -15,10 +15,12 @@ SPORT_NUMERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/(?:football|fi
 CFL = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/cfl/500/[^/]+\.png$")
 COUNTRY = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/countries/500/[^/]+\.png$")
 
+# Stable public artwork used only when a retired ESPN namespace cannot be
+# translated to a current team-logo URL.
 LEAGUE_ART = {
-    "CFL": "https://a.espncdn.com/i/teamlogos/leagues/500/cfl.png",
-    "Rugby World Cup": "https://a.espncdn.com/i/teamlogos/leagues/500/rugby-world-cup.png",
-    "Six Nations": "https://a.espncdn.com/i/teamlogos/leagues/500/six-nations.png",
+    "CFL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/CFL_Logo.svg",
+    "Rugby World Cup": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rugby_World_Cup_Logo%2C_used_post_RWC_2023.svg",
+    "Six Nations": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Guinness_Six_Nations_logo.png",
 }
 
 
