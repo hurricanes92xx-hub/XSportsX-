@@ -89,6 +89,7 @@ class MainActivityFuture : ComponentActivity() {
                                     connectSource = true
                                 }
                             },
+                            onSource = { connectSource = true },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") { selectedScheduleLeague = network.name; schedules = true }
                                 else { selectedEvent = null; liveFilter = network.name }
