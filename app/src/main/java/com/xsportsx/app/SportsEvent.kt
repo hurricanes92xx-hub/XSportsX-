@@ -18,24 +18,19 @@ data class SportsEvent(
     val sourceUrl: String = "",
     val youtubeVideoId: String = ""
 ) {
+    val isLive: Boolean
+        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true) || isLiveCandidate
+
     private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
 
-    private val providerLive: Boolean
-        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
-
-    private val terminal: Boolean
-        get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
-
-    /** Promote scheduled/pre-game rows to LIVE from three minutes before kickoff through a short safety window after kickoff. */
-    val isLive: Boolean
+    /** Keep scheduled rows LIVE from three minutes before kickoff through a 30-minute backend-status safety window. */
+    private val isLiveCandidate: Boolean
         get() {
-            if (providerLive) return true
-            if (terminal) return false
+            if (status.contains("final", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true)) return false
             val start = startMillis()
-            val now = System.currentTimeMillis()
             if (start <= 0L) return false
-            val scheduled = state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true)
-            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 30L * 60L * 1000L
+            val now = System.currentTimeMillis()
+            return start in (now - 30L * 60L * 1000L)..(now + 3L * 60L * 1000L)
         }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
