@@ -4,11 +4,12 @@ on:
   push:
     branches: [android-app]
     paths:
+      - 'scripts/audit_team_logo_coverage.py'
+      - 'scripts/validate_team_logo_http.py'
       - 'scripts/phase3_visual_enrichment.py'
       - 'scripts/classify_non_team_events.py'
       - 'scripts/repair_mlb_logo_gaps.py'
       - 'scripts/audit_mlb_incomplete_games.py'
-      - 'scripts/audit_team_logo_coverage.py'
       - 'scripts/audit_ncaa_hockey_field_hockey_catalogs.py'
       - 'scripts/hydrate_hockey_field_hockey_logos.py'
       - 'scripts/finalize_mlb_postseason_placeholders.py'
@@ -115,6 +116,14 @@ jobs:
           if-no-files-found: error
       - name: Generate corrected team-only logo audit
         run: python scripts/audit_team_logo_coverage.py
+      - name: Validate all team logo URLs over HTTP
+        run: python scripts/validate_team_logo_http.py
+      - name: Upload team logo HTTP validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: team-logo-http-validation
+          path: data/team_logo_http_validation.json
+          if-no-files-found: error
       - name: Verify IPL has no missing team-logo slots
         run: |
           python - <<'PY'
@@ -146,9 +155,7 @@ jobs:
           six=(report.get('all_leagues') or {}).get('Six Nations', {})
           missing=int(six.get('missing_logo_slots', 0) or 0); games=int(six.get('team_games', 0) or 0); complete=int(six.get('complete', 0) or 0)
           print(f'Six Nations verification: games={games}; complete={complete}; missing_logo_slots={missing}')
-          assert games >= 15, f'expected at least 15 Six Nations games, got {games}'
-          assert missing == 0, f'Six Nations still has {missing} missing logo slots'
-          assert complete == games, f'Six Nations incomplete: {complete}/{games}'
+          assert games >= 15 and missing == 0 and complete == games
           PY
       - name: Upload corrected team-only logo audit
         uses: actions/upload-artifact@v4
