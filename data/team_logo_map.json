@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T00:23:18.573598+00:00",
+  "generatedAt": "2026-09-02T01:56:18.353900+00:00",
   "sources": {
     "Bundesliga": {
       "provider": "ESPN team catalog",
@@ -9,7 +9,7 @@
     "CFL": {
       "completeCatalog": true,
       "provider": "ESPN CFL scoreboard + deterministic ESPN CDN fallback",
-      "resolvedAt": "2026-09-02T00:23:07.798517+00:00",
+      "resolvedAt": "2026-09-02T01:56:07.221048+00:00",
       "season": 2026,
       "teams": 9,
       "url": "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard"
@@ -63,7 +63,7 @@
     "NCAA Baseball": {
       "completeCatalog": true,
       "provider": "ESPN official team catalog",
-      "teams": 1987,
+      "teams": 1986,
       "url": "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=1000"
     },
     "NCAA FB": {
@@ -136,7 +136,7 @@
       "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/teams"
     },
     "Rugby World Cup": {
-      "aliases_written": 54,
+      "aliases_written": 0,
       "source": "ESPN country rugby logo CDN; 2027 teams corroborated by World Rugby",
       "teams": 24
     },
@@ -2244,7 +2244,7 @@
     "NCAA Baseball|BRYT": "https://a.espncdn.com/i/teamlogos/ncaa/500/2803.png",
     "NCAA Baseball|BSC": "https://a.espncdn.com/i/teamlogos/ncaa/500/3.png",
     "NCAA Baseball|BSU": "https://a.espncdn.com/i/teamlogos/ncaa/500/68.png",
-    "NCAA Baseball|BU": "https://a.espncdn.com/i/teamlogos/ncaa/500/2083.png",
+    "NCAA Baseball|BU": "https://a.espncdn.com/i/teamlogos/ncaa/500/104.png",
     "NCAA Baseball|BUCCANEERS": "https://a.espncdn.com/i/teamlogos/ncaa/500/2193.png",
     "NCAA Baseball|BUCK": "https://a.espncdn.com/i/teamlogos/ncaa/500/2083.png",
     "NCAA Baseball|BUCKEYES": "https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
@@ -2682,7 +2682,7 @@
     "NCAA Baseball|KEYDETS": "https://a.espncdn.com/i/teamlogos/ncaa/500/2678.png",
     "NCAA Baseball|KNIGHTS": "https://a.espncdn.com/i/teamlogos/ncaa/500/2685.png",
     "NCAA Baseball|KOHAWKS": "https://a.espncdn.com/i/teamlogos/ncaa/500/2141.png",
-    "NCAA Baseball|KSU": "https://a.espncdn.com/i/teamlogos/ncaa/500/338.png",
+    "NCAA Baseball|KSU": "https://a.espncdn.com/i/teamlogos/ncaa/500/2306.png",
     "NCAA Baseball|KU": "https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
     "NCAA Baseball|L MD": "https://a.espncdn.com/i/teamlogos/ncaa/500/2352.png",
     "NCAA Baseball|LA SALLE": "https://a.espncdn.com/i/teamlogos/ncaa/500/2325.png",
@@ -16752,7 +16752,19 @@
     "WNBA|VALKYRIES": "https://a.espncdn.com/i/teamlogos/wnba/500/gs.png",
     "WNBA|WASHINGTON MYSTICS": "https://a.espncdn.com/i/teamlogos/wnba/500/wsh.png",
     "WNBA|WINGS": "https://a.espncdn.com/i/teamlogos/wnba/500/dal.png",
-    "WNBA|WSH": "https://a.espncdn.com/i/teamlogos/wnba/500/wsh.png"
+    "WNBA|WSH": "https://a.espncdn.com/i/teamlogos/wnba/500/wsh.png",
+    "Six Nations|ENGLAND": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
+    "Six Nations|ENG": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
+    "Six Nations|FRANCE": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+    "Six Nations|FRA": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+    "Six Nations|IRELAND": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
+    "Six Nations|IRE": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
+    "Six Nations|ITALY": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+    "Six Nations|ITA": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+    "Six Nations|SCOTLAND": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
+    "Six Nations|SCO": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
+    "Six Nations|WALES": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png",
+    "Six Nations|WAL": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png"
   },
   "version": 3
 }

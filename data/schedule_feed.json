@@ -1,6 +1,6 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-02T00:23:47.738370+00:00",
+  "generatedAt": "2026-09-02T01:56:48.957556+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "AAA Wrestling": 12,
@@ -62,8 +62,8 @@
     "CFL": 90,
     "NBA": 1270,
     "WNBA": 30,
-    "NHL": 81,
-    "MLB": 2875,
+    "NHL": 86,
+    "MLB": 2884,
     "MLS": 76,
     "EPL": 30,
     "UCL": 18,
@@ -72,7 +72,7 @@
     "Serie A": 30,
     "Bundesliga": 27,
     "Ligue 1": 27,
-    "NWSL": 43,
+    "NWSL": 47,
     "UFC": 9,
     "BOXING": 8,
     "F1": 3,
@@ -29400,6 +29400,19 @@
       "homeTeamId": "48"
     },
     {
+      "league": "NHL",
+      "title": "Capitals @ Hurricanes",
+      "start": "2026-10-02T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
+      "eventType": "team_game",
+      "away": "Capitals",
+      "home": "Hurricanes",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/wsh.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/car.png"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Ohio State @ St. Thomas-Minnesota",
       "start": "2026-10-02T23:00:00Z",
@@ -29452,19 +29465,6 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/260.png"
     },
     {
-      "league": "NHL",
-      "title": "Capitals @ Hurricanes",
-      "start": "2026-10-02T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏒",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
-      "eventType": "team_game",
-      "away": "Capitals",
-      "home": "Hurricanes",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/wsh.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/car.png"
-    },
-    {
       "league": "NCAA FB",
       "title": "Penn State @ Northwestern",
       "start": "2026-10-03T00:00:00Z",
@@ -29494,6 +29494,19 @@
       "homeTeamId": "77"
     },
     {
+      "league": "NHL",
+      "title": "Bruins @ Jets",
+      "start": "2026-10-03T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
+      "eventType": "team_game",
+      "away": "Bruins",
+      "home": "Jets",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/bos.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/wpg.png"
+    },
+    {
       "league": "NWSL",
       "title": "San Diego @ Orlando",
       "start": "2026-10-03T00:00:00Z",
@@ -29517,19 +29530,6 @@
     },
     {
       "league": "NHL",
-      "title": "Bruins @ Jets",
-      "start": "2026-10-03T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏒",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
-      "eventType": "team_game",
-      "away": "Bruins",
-      "home": "Jets",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/bos.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/wpg.png"
-    },
-    {
-      "league": "NHL",
       "title": "Blues @ Stars",
       "start": "2026-10-03T01:00:00Z",
       "tag": "UPCOMING",
@@ -29540,19 +29540,6 @@
       "home": "Stars",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/stl.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/dal.png"
-    },
-    {
-      "league": "NWSL",
-      "title": "North Carolina @ Seattle",
-      "start": "2026-10-03T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
-      "eventType": "team_game",
-      "away": "North Carolina",
-      "home": "Seattle",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15366.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15363.png"
     },
     {
       "league": "NHL",
@@ -29566,6 +29553,19 @@
       "home": "Golden Knights",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/ana.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/nhl/500/vgk.png"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Seattle",
+      "start": "2026-10-03T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
+      "eventType": "team_game",
+      "away": "North Carolina",
+      "home": "Seattle",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15366.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15363.png"
     },
     {
       "league": "NCAA FB",
@@ -37227,6 +37227,19 @@
       "homeTeamId": "349"
     },
     {
+      "league": "NWSL",
+      "title": "Gotham @ Washington",
+      "start": "2026-10-17T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
+      "eventType": "team_game",
+      "away": "Gotham",
+      "home": "Washington",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15364.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15365.png"
+    },
+    {
       "league": "NCAA FB",
       "title": "The Citadel @ Texas A&M",
       "start": "2026-10-17T17:00:00Z",
@@ -37550,6 +37563,19 @@
       "sportLogo": ""
     },
     {
+      "league": "NWSL",
+      "title": "Kansas City @ Utah",
+      "start": "2026-10-17T22:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
+      "eventType": "team_game",
+      "away": "Kansas City",
+      "home": "Utah",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20907.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/19141.png"
+    },
+    {
       "league": "NCAA FB",
       "title": "Nevada @ N Dakota St",
       "start": "2026-10-17T23:00:00Z",
@@ -37577,6 +37603,19 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2449.png",
       "awayTeamId": "2440",
       "homeTeamId": "2449"
+    },
+    {
+      "league": "NWSL",
+      "title": "San Diego @ North Carolina",
+      "start": "2026-10-17T23:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
+      "eventType": "team_game",
+      "away": "San Diego",
+      "home": "North Carolina",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/21423.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15366.png"
     },
     {
       "league": "AEW",
@@ -37628,6 +37667,19 @@
       "home": "Long Island University",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2529.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2341.png"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Denver",
+      "start": "2026-10-18T00:45:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
+      "eventType": "team_game",
+      "away": "Angel City",
+      "home": "Denver",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/21422.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/131563.png"
     },
     {
       "league": "NCAA FB",
@@ -70285,8 +70337,8 @@
       "eventType": "team_game",
       "away": "England",
       "home": "Ireland",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -70840,8 +70892,8 @@
       "eventType": "team_game",
       "away": "Italy",
       "home": "Scotland",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png"
     },
     {
       "league": "Six Nations",
@@ -70853,8 +70905,8 @@
       "eventType": "team_game",
       "away": "Wales",
       "home": "France",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -72997,8 +73049,8 @@
       "eventType": "team_game",
       "away": "Ireland",
       "home": "Italy",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png"
     },
     {
       "league": "Six Nations",
@@ -73010,8 +73062,8 @@
       "eventType": "team_game",
       "away": "Wales",
       "home": "Scotland",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -73549,8 +73601,8 @@
       "eventType": "team_game",
       "away": "France",
       "home": "England",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png"
     },
     {
       "league": "NBA",
@@ -74565,8 +74617,8 @@
       "eventType": "team_game",
       "away": "Ireland",
       "home": "Wales",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png"
     },
     {
       "league": "Six Nations",
@@ -74578,8 +74630,8 @@
       "eventType": "team_game",
       "away": "Italy",
       "home": "England",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -74836,8 +74888,8 @@
       "eventType": "team_game",
       "away": "Scotland",
       "home": "France",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png"
     },
     {
       "league": "NBA",
@@ -75655,8 +75707,8 @@
       "eventType": "team_game",
       "away": "Ireland",
       "home": "Scotland",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png"
     },
     {
       "league": "NBA",
@@ -75746,8 +75798,8 @@
       "eventType": "team_game",
       "away": "France",
       "home": "Italy",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png"
     },
     {
       "league": "Six Nations",
@@ -75759,8 +75811,8 @@
       "eventType": "team_game",
       "away": "England",
       "home": "Wales",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png"
     },
     {
       "league": "NBA",
@@ -76435,8 +76487,8 @@
       "eventType": "team_game",
       "away": "Wales",
       "home": "Italy",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png"
     },
     {
       "league": "Six Nations",
@@ -76448,8 +76500,8 @@
       "eventType": "team_game",
       "away": "Scotland",
       "home": "England",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png"
     },
     {
       "league": "FORMULA E",
@@ -76500,8 +76552,8 @@
       "eventType": "team_game",
       "away": "France",
       "home": "Ireland",
-      "awayLogo": "",
-      "homeLogo": ""
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/countries/500/irl.png"
     },
     {
       "league": "NBA",
@@ -109072,6 +109124,132 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png"
     },
     {
+      "league": "MLB",
+      "title": "Baltimore @ Boston",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Baltimore",
+      "home": "Boston",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png"
+    },
+    {
+      "league": "MLB",
+      "title": "Pittsburgh @ Detroit",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Pittsburgh",
+      "home": "Detroit",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/det.png"
+    },
+    {
+      "league": "MLB",
+      "title": "Toronto @ Tampa Bay",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Toronto",
+      "home": "Tampa Bay",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png"
+    },
+    {
+      "league": "MLB",
+      "title": "Atlanta @ Philadelphia",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Atlanta",
+      "home": "Philadelphia",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png"
+    },
+    {
+      "league": "MLB",
+      "title": "NY Mets @ Miami",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "NY Mets",
+      "home": "Miami",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png"
+    },
+    {
+      "league": "MLB",
+      "title": "San Diego @ NY Yankees",
+      "start": "2027-09-02T07:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "San Diego",
+      "home": "NY Yankees",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png"
+    },
+    {
+      "league": "MLB",
+      "title": "Texas @ Houston",
+      "start": "2027-09-02T08:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Texas",
+      "home": "Houston",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
+    },
+    {
+      "league": "MLB",
+      "title": "Arizona @ Minnesota",
+      "start": "2027-09-02T08:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "Arizona",
+      "home": "Minnesota",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/ari.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/min.png"
+    },
+    {
+      "league": "MLB",
+      "title": "LA Angels @ Colorado",
+      "start": "2027-09-02T09:33:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API",
+      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+      "eventType": "team_game",
+      "away": "LA Angels",
+      "home": "Colorado",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/laa.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/col.png"
+    },
+    {
       "league": "Rugby World Cup",
       "title": "Hong Kong China @ Australia",
       "start": "2027-10-01T10:45:00Z",
@@ -109778,141 +109956,6 @@
       "nonTeamSport": true,
       "eventName": "NASCAR CRAFTSMAN Truck Series Championship Race — Homestead-Miami Speedway",
       "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/nascar.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Baltimore @ Boston",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Baltimore",
-      "home": "Boston",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Pittsburgh @ Detroit",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Pittsburgh",
-      "home": "Detroit",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/det.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Toronto @ Tampa Bay",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Toronto",
-      "home": "Tampa Bay",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Atlanta @ Philadelphia",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Atlanta",
-      "home": "Philadelphia",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png"
-    },
-    {
-      "league": "MLB",
-      "title": "NY Mets @ Miami",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "NY Mets",
-      "home": "Miami",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png"
-    },
-    {
-      "league": "MLB",
-      "title": "San Diego @ NY Yankees",
-      "start": "2027-09-02T07:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "San Diego",
-      "home": "NY Yankees",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Texas @ Houston",
-      "start": "2027-09-02T08:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Texas",
-      "home": "Houston",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
-    },
-    {
-      "league": "MLB",
-      "title": "Arizona @ Minnesota",
-      "start": "2027-09-02T08:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "Arizona",
-      "home": "Minnesota",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/ari.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/min.png"
-    },
-    {
-      "league": "MLB",
-      "title": "LA Angels @ Colorado",
-      "start": "2027-09-02T09:33:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "official_api",
-      "sourceDetail": "MLB Stats API",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-      "eventType": "team_game",
-      "away": "LA Angels",
-      "home": "Colorado",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/laa.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/col.png"
     },
     {
       "league": "NASCAR Cup",
@@ -123871,23 +123914,6 @@
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "South Carolina Upstate at UAB",
-      "start": "2026-09-05T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
-      "away": "South Carolina Upstate",
-      "home": "UAB",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/18391.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/5671.png",
-      "awayTeamId": "18391",
-      "homeTeamId": "5671",
-      "leagueArt": "",
-      "eventType": "team_game"
-    },
-    {
-      "league": "NCAA Men's Soccer",
       "title": "Elon at UNC Wilmington",
       "start": "2026-09-05T23:00:00Z",
       "tag": "UPCOMING",
@@ -123951,6 +123977,23 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/5869.png",
       "awayTeamId": "5696",
       "homeTeamId": "5869",
+      "leagueArt": "",
+      "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Men's Soccer",
+      "title": "South Carolina Upstate at UAB",
+      "start": "2026-09-06T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard",
+      "away": "South Carolina Upstate",
+      "home": "UAB",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/18391.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/5671.png",
+      "awayTeamId": "18391",
+      "homeTeamId": "5671",
       "leagueArt": "",
       "eventType": "team_game"
     },
@@ -149575,23 +149618,6 @@
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Richmond at Radford",
-      "start": "2026-09-06T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
-      "away": "Richmond",
-      "home": "Radford",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20345.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20477.png",
-      "awayTeamId": "20345",
-      "homeTeamId": "20477",
-      "leagueArt": "",
-      "eventType": "team_game"
-    },
-    {
-      "league": "NCAA Women's Soccer",
       "title": "Akron at Robert Morris",
       "start": "2026-09-06T17:00:00Z",
       "tag": "UPCOMING",
@@ -150148,6 +150174,23 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20509.png",
       "awayTeamId": "20423",
       "homeTeamId": "20509",
+      "leagueArt": "",
+      "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Richmond at Radford",
+      "start": "2026-09-06T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard",
+      "away": "Richmond",
+      "home": "Radford",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20345.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20477.png",
+      "awayTeamId": "20345",
+      "homeTeamId": "20477",
       "leagueArt": "",
       "eventType": "team_game"
     },
@@ -197447,23 +197490,6 @@
     },
     {
       "league": "NCAA Women's Volleyball",
-      "title": "Pacific Tigers at New Mexico State Aggies",
-      "start": "2026-09-12T18:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐",
-      "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
-      "away": "Pacific Tigers",
-      "home": "New Mexico State Aggies",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/volleyball/500/279.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/volleyball/500/166.png",
-      "awayTeamId": "279",
-      "homeTeamId": "166",
-      "leagueArt": "",
-      "eventType": "team_game"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
       "title": "Eastern Kentucky Colonels at Western Kentucky Hilltoppers",
       "start": "2026-09-12T18:00:00Z",
       "tag": "UPCOMING",
@@ -198921,6 +198947,23 @@
       "homeLogo": "https://a.espncdn.com/i/teamlogos/volleyball/500/2463.png",
       "awayTeamId": "2539",
       "homeTeamId": "2463",
+      "leagueArt": "",
+      "eventType": "team_game"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Pacific Tigers at New Mexico State Aggies",
+      "start": "2026-09-13T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "official_api",
+      "sourceDetail": "ESPN NCAA scoreboard",
+      "away": "Pacific Tigers",
+      "home": "New Mexico State Aggies",
+      "awayLogo": "https://a.espncdn.com/i/teamlogos/volleyball/500/279.png",
+      "homeLogo": "https://a.espncdn.com/i/teamlogos/volleyball/500/166.png",
+      "awayTeamId": "279",
+      "homeTeamId": "166",
       "leagueArt": "",
       "eventType": "team_game"
     },
@@ -254870,66 +254913,10 @@
       "homeTeamId": "219",
       "leagueArt": "",
       "eventType": "team_game"
-    },
-    {
-      "league": "NWSL",
-      "title": "Gotham @ Washington",
-      "start": "2026-10-17T16:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "espn",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
-      "eventType": "team_game",
-      "away": "Gotham",
-      "home": "Washington",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15364.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15365.png"
-    },
-    {
-      "league": "NWSL",
-      "title": "Kansas City @ Utah",
-      "start": "2026-10-17T22:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "espn",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
-      "eventType": "team_game",
-      "away": "Kansas City",
-      "home": "Utah",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20907.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/19141.png"
-    },
-    {
-      "league": "NWSL",
-      "title": "San Diego @ North Carolina",
-      "start": "2026-10-17T23:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "espn",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
-      "eventType": "team_game",
-      "away": "San Diego",
-      "home": "North Carolina",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/21423.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/15366.png"
-    },
-    {
-      "league": "NWSL",
-      "title": "Angel City @ Denver",
-      "start": "2026-10-18T00:45:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "espn",
-      "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/nwsl.png",
-      "eventType": "team_game",
-      "away": "Angel City",
-      "home": "Denver",
-      "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/21422.png",
-      "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/131563.png"
     }
   ],
   "seasonIntelligence": {
-    "generatedAt": "2026-09-02T00:22:15.459283+00:00",
+    "generatedAt": "2026-09-02T01:55:04.790268+00:00",
     "mode": "calendar_plus_observed_activity",
     "providerDecisions": [
       {
@@ -255048,7 +255035,7 @@
             30
           ]
         ],
-        "observedUpcoming": 81,
+        "observedUpcoming": 86,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -255068,8 +255055,8 @@
             15
           ]
         ],
-        "observedUpcoming": 2875,
-        "observedRecent": 56,
+        "observedUpcoming": 2884,
+        "observedRecent": 58,
         "provider": "official"
       },
       {
@@ -255230,7 +255217,7 @@
         "probeHours": 1,
         "reason": "observed_activity",
         "configuredSeason": [],
-        "observedUpcoming": 43,
+        "observedUpcoming": 47,
         "observedRecent": 0,
         "provider": "official"
       },
@@ -255945,7 +255932,7 @@
             30
           ]
         ],
-        "observedUpcoming": 81,
+        "observedUpcoming": 86,
         "observedRecent": 0,
         "provider": "espn"
       },
@@ -255985,8 +255972,8 @@
             15
           ]
         ],
-        "observedUpcoming": 2875,
-        "observedRecent": 56,
+        "observedUpcoming": 2884,
+        "observedRecent": 58,
         "provider": "espn"
       },
       {
@@ -256520,7 +256507,7 @@
     },
     "ncaaLogoAliasesApplied": 0,
     "adapterTimestampsNormalized": 155,
-    "finalDuplicateEventsRemoved": 174
+    "finalDuplicateEventsRemoved": 178
   },
   "officialApiAdapterReport": {
     "ncaa": {
@@ -256546,7 +256533,7 @@
       "NASCAR Xfinity": "official_api:33; parsed_in_horizon:9; added:9; current_future:9",
       "NASCAR Truck": "official_api:25; parsed_in_horizon:7; added:7; current_future:7"
     },
-    "MLB": "official_api:9",
+    "MLB": "official_api:0",
     "espnNCAA": {
       "NCAA FB": "espn:0; raw_events:940; requests:13; errors:0; season:always; status:duplicate_only",
       "NCAA FCS": "espn:724; raw_events:724; requests:13; errors:0; season:always; status:added",
@@ -256561,7 +256548,7 @@
       "NCAA Men's Hockey": "espn:740; raw_events:955; requests:13; errors:0; season:winter; status:added",
       "NCAA Women's Hockey": "espn:0; raw_events:743; requests:13; errors:0; season:winter; status:duplicate_only",
       "NCAA Women's Field Hockey": "espn:613; raw_events:613; requests:13; errors:0; season:fall; status:added",
-      "_logo_hydration": "cache_entries_changed:9069; existing_events_updated:51; deterministic_id_fallbacks:19948"
+      "_logo_hydration": "cache_entries_changed:8444; existing_events_updated:51; deterministic_id_fallbacks:19948"
     }
   },
   "providerRepairReport": {
@@ -256673,7 +256660,7 @@
       "parsed": 1273,
       "added": 0,
       "current_future_existing_or_added": 1223,
-      "reference": "2026-09-02T00:23:27.586293Z",
+      "reference": "2026-09-02T01:56:33.191521Z",
       "errors": []
     },
     "NLL": {
@@ -256710,15 +256697,15 @@
   },
   "phase3VisualReport": {
     "version": 9,
-    "events": 16624,
-    "team_games": 16343,
-    "team_games_complete": 16284,
-    "team_games_missing": 59,
-    "team_logo_fields_populated": 32581,
-    "league_art_fields_populated": 7099,
+    "events": 16628,
+    "team_games": 16347,
+    "team_games_complete": 16303,
+    "team_games_missing": 44,
+    "team_logo_fields_populated": 32619,
+    "league_art_fields_populated": 7103,
     "named_events": 281,
     "titles_cleaned": 0,
-    "cache_entries": 16591,
+    "cache_entries": 16603,
     "external_logo_discovery": false,
     "mlb_deterministic_canonical_fallback": true,
     "mlb_canonical_teams": 30,
@@ -256868,10 +256855,10 @@
         "logo_fields": 0
       },
       "NWSL": {
-        "team_games": 90,
-        "complete": 90,
+        "team_games": 94,
+        "complete": 94,
         "missing": 0,
-        "logo_fields": 180
+        "logo_fields": 188
       },
       "PLL": {
         "team_games": 4,
@@ -256893,9 +256880,9 @@
       },
       "Six Nations": {
         "team_games": 15,
-        "complete": 0,
-        "missing": 15,
-        "logo_fields": 0
+        "complete": 15,
+        "missing": 0,
+        "logo_fields": 30
       },
       "UCL": {
         "team_games": 18,
