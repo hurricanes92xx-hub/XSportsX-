@@ -3,7 +3,9 @@ package com.xsportsx.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,7 +37,14 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFF05060A)).padding(24.dp).semantics { testTagsAsResourceId = true },
+        Modifier
+            .fillMaxSize()
+            .background(Color(0xFF05060A))
+            .safeDrawingPadding()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp)
+            .semantics { testTagsAsResourceId = true },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -121,8 +130,28 @@ fun SourceConnectScreen(onBack: () -> Unit, onSaved: () -> Unit) {
             shape = RoundedCornerShape(16.dp)
         ) { Text(if (testing) "TESTING SOURCE…" else "TEST & CONNECT", fontWeight = FontWeight.Black) }
 
-        Spacer(Modifier.height(12.dp))
+        if (config.isConfigured()) {
+            Spacer(Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = {
+                    store.clear()
+                    config = SourceConfig()
+                    testing = false
+                    status = "Source disconnected"
+                },
+                enabled = !testing,
+                modifier = Modifier.fillMaxWidth().height(48.dp).semantics {
+                    testTagsAsResourceId = true
+                    testTag = "source_disconnect"
+                    contentDescription = "DISCONNECT SOURCE"
+                },
+                shape = RoundedCornerShape(16.dp)
+            ) { Text("DISCONNECT / LOG OUT", fontWeight = FontWeight.Black) }
+        }
+
+        Spacer(Modifier.height(14.dp))
         Text("Credentials are encrypted on this device. XSportsX only uses sources you provide and authorize.", color = Color(0xFF626A77), fontSize = 10.sp)
+        Spacer(Modifier.height(12.dp))
     }
 }
 
