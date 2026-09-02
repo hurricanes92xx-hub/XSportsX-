@@ -50,7 +50,7 @@ fun XSportsXApp() {
         background = Color(0xFF07080C), surface = Color(0xFF10131A), surfaceVariant = Color(0xFF171B24)
     )) {
         Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTagsAsResourceId = true },
+            modifier = Modifier.fillMaxSize().safeDrawingPadding().semantics { testTagsAsResourceId = true },
             color = Color(0xFF07080C)
         ) {
             if (playingStream != null) {
@@ -334,25 +334,69 @@ fun SourcesScreen() {
         saved = config.isConfigured()
     }
 
-    Column(Modifier.fillMaxSize()) {
-        Header("SOURCE CENTER", "Connect your authorized Xtream Codes or M3U source")
-        Column(Modifier.padding(horizontal = 34.dp).widthIn(max = 720.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("XTREAM CODES", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
-            OutlinedTextField(host, { host = it; saved = false; error = null }, Modifier.fillMaxWidth().semantics { testTag = "source_server" }, label = { Text("Server URL") }, placeholder = { Text("https://provider.example") }, singleLine = true)
-            OutlinedTextField(user, { user = it; saved = false; error = null }, Modifier.fillMaxWidth().semantics { testTag = "source_username" }, label = { Text("Username") }, singleLine = true)
-            OutlinedTextField(pass, { pass = it; saved = false; error = null }, Modifier.fillMaxWidth().semantics { testTag = "source_password" }, label = { Text("Password") }, singleLine = true)
-            Button(
-                onClick = {
-                    error = null
-                    runCatching { store.save(SourceConfig(type = "XTREAM", server = host, username = user, password = pass)) }
-                        .onSuccess { saved = true }
-                        .onFailure { saved = false; error = it.message ?: "Could not save source" }
-                },
-                Modifier.fillMaxWidth().height(52.dp).semantics { testTag = "source_connect" },
-                shape = RoundedCornerShape(14.dp)
-            ) { Text(if (saved) "SOURCE SAVED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black) }
-            error?.let { Text(it, color = Color(0xFFFF536C), fontSize = 12.sp) }
-            Text("Credentials are kept on-device in the production build. Stream discovery only uses the source you connect.", color = Color(0xFF737A87), fontSize = 12.sp)
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().imePadding(),
+        contentPadding = PaddingValues(start = 34.dp, end = 34.dp, top = 4.dp, bottom = 36.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item { Header("SOURCE CENTER", "Connect your authorized Xtream Codes or M3U source") }
+        item {
+            Column(
+                modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text("XTREAM CODES", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
+                OutlinedTextField(
+                    value = host,
+                    onValueChange = { host = it; saved = false; error = null },
+                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_server" },
+                    label = { Text("Server URL") },
+                    placeholder = { Text("https://provider.example") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = user,
+                    onValueChange = { user = it; saved = false; error = null },
+                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_username" },
+                    label = { Text("Username") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = pass,
+                    onValueChange = { pass = it; saved = false; error = null },
+                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_password" },
+                    label = { Text("Password") },
+                    singleLine = true
+                )
+                Button(
+                    onClick = {
+                        error = null
+                        runCatching { store.save(SourceConfig(type = "XTREAM", server = host, username = user, password = pass)) }
+                            .onSuccess { saved = true }
+                            .onFailure { saved = false; error = it.message ?: "Could not save source" }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(52.dp).semantics { testTag = "source_connect" },
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Text(if (saved) "SOURCE CONNECTED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black)
+                }
+                if (saved) {
+                    OutlinedButton(
+                        onClick = {
+                            store.clear()
+                            host = ""
+                            user = ""
+                            pass = ""
+                            saved = false
+                            error = null
+                        },
+                        modifier = Modifier.fillMaxWidth().height(48.dp).semantics { testTag = "source_disconnect" },
+                        shape = RoundedCornerShape(14.dp)
+                    ) { Text("DISCONNECT / LOG OUT", fontWeight = FontWeight.Black) }
+                }
+                error?.let { Text(it, color = Color(0xFFFF536C), fontSize = 12.sp) }
+                Text("Credentials are kept on-device in the production build. Stream discovery only uses the source you connect.", color = Color(0xFF737A87), fontSize = 12.sp)
+            }
         }
     }
 }
