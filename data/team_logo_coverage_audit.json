@@ -91,13 +91,13 @@
       "team_games": 1266
     },
     "NCAA FB": {
-      "complete": 1490,
+      "complete": 1494,
       "examples": [],
       "missing_away": 0,
       "missing_home": 0,
       "missing_logo_slots": 0,
       "placeholder_games": 4,
-      "team_games": 1494
+      "team_games": 1498
     },
     "NCAA FCS": {
       "complete": 723,
@@ -354,13 +354,13 @@
       "team_games": 1266
     },
     "NCAA FB": {
-      "complete": 1490,
+      "complete": 1494,
       "examples": [],
       "missing_away": 0,
       "missing_home": 0,
       "missing_logo_slots": 0,
       "placeholder_games": 4,
-      "team_games": 1494
+      "team_games": 1498
     },
     "NCAA FCS": {
       "complete": 723,
@@ -525,14 +525,14 @@
       "team_games": 30
     }
   },
-  "events_total": 16426,
-  "generated_at": "2026-09-02T10:15:37.471183Z",
+  "events_total": 16430,
+  "generated_at": "2026-09-02T10:38:54.632127Z",
   "missing_logo_slots": 0,
   "named_or_non_team_events": 322,
   "non_team_events_identified": 322,
   "rule": "Only eventType=team_game counts toward team-logo coverage. named_event/nonTeamSport events are excluded from team-logo failures.",
   "schema_version": 1,
-  "team_games": 16104,
-  "team_games_complete": 16093,
+  "team_games": 16108,
+  "team_games_complete": 16097,
   "team_games_with_missing_logos": 0
 }
