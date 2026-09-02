@@ -25,7 +25,7 @@ on:
       - 'scripts/audit_ncaa_football_logos.py'
       - 'data/ncaa_nonfootball_school_catalog.json'
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/5 * * * *'
 concurrency:
   group: xsportsx-schedule-refresh
   cancel-in-progress: true
