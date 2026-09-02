@@ -20,7 +20,7 @@ object CanonicalScheduleProvider {
 
     suspend fun load(league: String? = null, daysAhead: Int = 3): List<SportsEvent> = withContext(Dispatchers.IO) {
         runCatching {
-            val root = JSONObject(http(FEED_URL))
+            val root = JSONObject(http(cacheBustedFeedUrl()))
             if (root.optInt("schema", 0) < 4) return@runCatching emptyList()
             if (!isFresh(root.optString("generatedAt"))) return@runCatching emptyList()
 
@@ -66,6 +66,8 @@ object CanonicalScheduleProvider {
                 .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
         }.getOrDefault(emptyList())
     }
+
+    private fun cacheBustedFeedUrl(): String = "$FEED_URL?ts=${System.currentTimeMillis() / 10_000L}"
 
     private fun canonicalFeedLeague(label: String): String = when (label.trim().uppercase()) {
         "NCAA MEN'S SOCCER", "NCAA MEN SOCCER" -> "NCAA MEN SOCCER"
@@ -118,9 +120,14 @@ object CanonicalScheduleProvider {
 
     private fun http(target: String): String {
         val c = URL(target).openConnection() as HttpURLConnection
-        c.connectTimeout = CONNECT_TIMEOUT_MS; c.readTimeout = READ_TIMEOUT_MS
-        c.requestMethod = "GET"; c.instanceFollowRedirects = true
+        c.connectTimeout = CONNECT_TIMEOUT_MS
+        c.readTimeout = READ_TIMEOUT_MS
+        c.requestMethod = "GET"
+        c.instanceFollowRedirects = true
+        c.useCaches = false
         c.setRequestProperty("Accept", "application/json")
+        c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
+        c.setRequestProperty("Pragma", "no-cache")
         c.setRequestProperty("User-Agent", "XSportsX/2.0 Android")
         return try {
             if (c.responseCode !in 200..299) error("Schedule feed HTTP ${c.responseCode}")
