@@ -26,14 +26,16 @@ data class SportsEvent(
     private val terminal: Boolean
         get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
 
-    /** Treat a non-terminal scheduled event as live from three minutes before kickoff through kickoff. */
+    /** Promote scheduled/pre-game rows to LIVE from three minutes before kickoff through a short safety window after kickoff. */
     val isLive: Boolean
         get() {
-            if (providerLive || terminal) return providerLive
+            if (providerLive) return true
+            if (terminal) return false
             val start = startMillis()
             val now = System.currentTimeMillis()
-            return start > 0L && now >= start - 3L * 60L * 1000L && now < start &&
-                (state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true))
+            if (start <= 0L) return false
+            val scheduled = state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true)
+            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 30L * 60L * 1000L
         }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
