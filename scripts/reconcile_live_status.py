@@ -10,13 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
-HEADERS = {
-    "User-Agent": "XSportsX-LiveStatus/1.1",
-    "Accept": "application/json",
-}
+HEADERS = {"User-Agent": "XSportsX-LiveStatus/1.1", "Accept": "application/json"}
 
-# ESPN-backed leagues. Keep this list broad so Live Center is not accidentally
-# limited to the handful of major U.S. leagues.
 ESPN_LEAGUES = [
     ("NFL", "football", "nfl"),
     ("NCAA FB", "football", "college-football"),
@@ -99,24 +94,21 @@ def state_tag(event: dict) -> str:
     return "UPCOMING"
 
 
-def same_event(candidate: dict, league: str, title: str, start: str) -> bool:
-    if candidate.get("league") != league:
-        return False
-    candidate_start = iso(candidate.get("start"))
-    if candidate_start != start:
-        return False
+def find_match(events: list[dict], league: str, title: str, start: str) -> dict | None:
+    candidates = [e for e in events if e.get("league") == league and iso(e.get("start")) == start]
+    if not candidates:
+        return None
+    if len(candidates) == 1:
+        return candidates[0]
 
-    old = title_parts(candidate.get("title") or "")
     new = title_parts(title)
-    if old == new:
-        return True
-
-    # Team-name feeds frequently differ on suffixes such as FC, University,
-    # State, or city abbreviations. Matching the substantial shared tokens is
-    # safer than requiring the exact display title.
-    shared = old & new
-    significant = {token for token in shared if len(token) >= 4}
-    return len(significant) >= 2
+    ranked = []
+    for candidate in candidates:
+        old = title_parts(candidate.get("title") or "")
+        shared = {token for token in old & new if len(token) >= 4}
+        ranked.append((len(shared), candidate))
+    ranked.sort(key=lambda item: item[0], reverse=True)
+    return ranked[0][1] if ranked and ranked[0][0] >= 1 else None
 
 
 def main():
@@ -139,9 +131,8 @@ def main():
                 continue
             title = espn_title(remote, league)
             tag = state_tag(remote)
-            matches = [e for e in events if same_event(e, league, title, start)]
-            if matches:
-                event = matches[0]
+            event = find_match(events, league, title, start)
+            if event is not None:
                 if event.get("tag") != tag:
                     event["tag"] = tag
                     event["sourceDetail"] = "ESPN live-status reconciliation"
