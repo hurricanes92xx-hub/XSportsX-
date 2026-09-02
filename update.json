@@ -1,8 +1,8 @@
 {
-  "versionCode": 30,
-  "versionName": "1.8.4",
+  "versionCode": 31,
+  "versionName": "1.8.5",
   "mobileApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
   "tvApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-TV.apk",
   "apkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
-  "notes": "XSportsX 1.8.4: hardened centralized five-minute ESPN live reconciliation with tolerant matchup/time matching, provider failure reporting, 10-second Android live polling, stale-feed protection, and live matchup deduplication."
+  "notes": "XSportsX 1.8.5: fixes live-event discovery by adding the authoritative MLB live scoreboard fallback and hardens live refresh behavior."
 }
