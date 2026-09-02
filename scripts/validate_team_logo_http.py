@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Validate team-logo URLs actually referenced by the canonical schedule feed.
 
-The persistent team-logo catalog intentionally contains historical and broader
-sport/team entries that are not necessarily used by the current feed. Those
-cache-only URLs must not block publication. We validate every logo URL that is
-actually referenced by a current event, while separately reporting stale
-cache-only URLs for cleanup.
+Legacy ESPN URL namespaces are repaired immediately before validation. The
+persistent team-logo catalog may contain historical entries, so cache-only URLs
+are reported separately and never block publication.
 """
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 CACHE = ROOT / "data" / "team_logo_map.json"
 OUT = ROOT / "data" / "team_logo_http_validation.json"
+REPAIR = ROOT / "scripts" / "repair_legacy_team_logo_urls.py"
 TIMEOUT = 15
 WORKERS = 24
 LOGO_FIELDS = ("awayLogo", "homeLogo", "logo", "leagueLogo")
@@ -50,7 +51,7 @@ def check(url: str) -> dict:
     req = Request(
         url,
         headers={
-            "User-Agent": "XSportsX-LogoValidator/2.0",
+            "User-Agent": "XSportsX-LogoValidator/3.0",
             "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/png,image/*,*/*;q=0.8",
         },
     )
@@ -92,6 +93,8 @@ def validate(urls: set[str]) -> list[dict]:
 
 
 def main() -> None:
+    subprocess.run([sys.executable, str(REPAIR)], cwd=ROOT, check=True)
+
     feed_urls = urls_from_feed()
     cache_urls = urls_from_cache()
     cache_only_urls = cache_urls - feed_urls
@@ -101,15 +104,16 @@ def main() -> None:
     failures = [row for row in feed_results if not row["ok"]]
 
     report = {
-        "schema_version": 2,
+        "schema_version": 3,
         "feed_urls_checked": len(feed_results),
         "feed_urls_ok": len(feed_results) - len(failures),
         "feed_urls_failed": len(failures),
         "cache_urls_checked": len(cache_urls),
         "cache_only_urls": len(cache_only_urls),
         "cache_only_urls_not_validated": True,
+        "legacy_namespace_repair_enabled": True,
         "failures": failures,
-        "rule": "Every team-logo URL actually referenced by a current schedule-feed event must return an HTTP 2xx/3xx response with at least one readable byte. Cache-only historical URLs are reported but do not block publication.",
+        "rule": "Every team-logo URL actually referenced by a current schedule-feed event must return an HTTP 2xx/3xx response with at least one readable byte. Deterministic legacy NCAA ESPN namespaces are repaired before validation. Cache-only historical URLs are reported but do not block publication.",
     }
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
