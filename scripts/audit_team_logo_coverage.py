@@ -9,6 +9,8 @@ reports only real team games with missing away/home artwork.
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 OUT = ROOT / "data" / "team_logo_coverage_audit.json"
+HYDRATOR = ROOT / "scripts" / "hydrate_remaining_team_logo_catalogs.py"
 
 
 def is_placeholder(value: object) -> bool:
@@ -24,6 +27,11 @@ def is_placeholder(value: object) -> bool:
 
 
 def main() -> None:
+    # Make the remaining-team resolver part of the canonical audit boundary so
+    # the final refresh cannot publish a feed before AFL/NBA/NRL/PLL/UEL logos
+    # have been applied. The resolver is idempotent and also updates the cache.
+    subprocess.run([sys.executable, str(HYDRATOR)], cwd=ROOT, check=True)
+
     payload = json.loads(FEED.read_text(encoding="utf-8"))
     events = payload.get("events") or []
     by_league: dict[str, dict] = defaultdict(lambda: {
@@ -81,7 +89,6 @@ def main() -> None:
             row["complete"] += 1
             total_complete += 1
 
-    # Remove empty leagues and sort for stable diffs.
     leagues = {k: by_league[k] for k in sorted(by_league)}
     actionable = {
         k: v for k, v in leagues.items() if v["missing_logo_slots"] or v["team_games"]
