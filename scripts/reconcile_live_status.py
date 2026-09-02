@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reconcile current live/final status from ESPN scoreboards."""
+"""Reconcile current live/final status from authoritative scoreboards."""
 from __future__ import annotations
 import json, re, urllib.request
 from datetime import datetime, timezone, timedelta
@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/'data'/'schedule_feed.json'
-HEADERS={'User-Agent':'XSportsX-LiveStatus/1.5','Accept':'application/json'}
+HEADERS={'User-Agent':'XSportsX-LiveStatus/1.6','Accept':'application/json'}
 ESPN_LEAGUES=[
     ('NFL','football','nfl'),('NCAA FB','football','college-football'),('CFL','football','cfl'),
     ('NBA','basketball','nba'),('WNBA','basketball','wnba'),('NCAA BB','basketball','mens-college-basketball'),('NCAA WBB','basketball','womens-college-basketball'),
@@ -75,6 +75,38 @@ def find_match(events,league,name,start):
     ranked=sorted(((len(tokens & parts(e.get('title'))),e) for e in candidates),key=lambda x:x[0],reverse=True)
     return ranked[0][1] if ranked and ranked[0][0] else None
 
+def reconcile_mlb_authoritative(events,today):
+    """Use MLB Stats API as a second authoritative check for every MLB game.
+
+    ESPN is still used for the broad multi-league pass, but MLB's own live
+    scoreboard is the final authority for MLB in-progress games. This prevents
+    a game such as Athletics @ Rangers from disappearing when ESPN briefly
+    reports a pregame state or when the canonical schedule title differs.
+    """
+    root=get_json(f'https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={today:%Y-%m-%d}&hydrate=team,linescore')
+    changed=added=0
+    for date_block in root.get('dates') or []:
+        for game in date_block.get('games') or []:
+            status=game.get('status') or {}
+            abstract=str(status.get('abstractGameState') or '').lower()
+            detailed=str(status.get('detailedState') or '').lower()
+            if abstract not in {'live','in progress'} and 'progress' not in detailed and detailed not in {'live'}:
+                continue
+            teams=(game.get('teams') or {})
+            away=((teams.get('away') or {}).get('team') or {}).get('name') or ''
+            home=((teams.get('home') or {}).get('team') or {}).get('name') or ''
+            if not away or not home: continue
+            start=iso(game.get('gameDate'))
+            if not start: continue
+            name=f'{away} @ {home}'
+            event=find_match(events,'MLB',name,start)
+            if event is None:
+                event={'league':'MLB','title':name,'start':start,'tag':'LIVE','icon':'•','source':'mlb','sourceDetail':'MLB Stats API live-status reconciliation'}
+                events.append(event); added+=1
+            elif event.get('tag')!='LIVE':
+                event['tag']='LIVE'; event['sourceDetail']='MLB Stats API live-status reconciliation'; changed+=1
+    return changed,added
+
 def main():
     payload=json.loads(FEED.read_text(encoding='utf-8')); events=payload.get('events') or []
     changed=added=failures=0; today=datetime.now(timezone.utc).date()
@@ -93,11 +125,16 @@ def main():
                     event['tag']=tag; event['sourceDetail']='ESPN live-status reconciliation'; changed+=1
             elif tag=='LIVE':
                 events.append({'league':league,'title':name,'start':start,'tag':'LIVE','icon':'•','source':'espn','sourceDetail':'ESPN live-status reconciliation'}); added+=1
+    try:
+        c,a=reconcile_mlb_authoritative(events,today); changed+=c; added+=a
+        print(f'LIVE RECONCILE: MLB authoritative status_updates={c}; live_events_added={a}')
+    except Exception as exc:
+        failures+=1; print(f'LIVE RECONCILE: MLB Stats API request failed: {exc}')
     payload['events']=events
     payload['eventCounts']={k:sum(1 for e in events if e.get('league')==k) for k in sorted({e.get('league') for e in events if e.get('league')})}
     report=payload.setdefault('repairReport',{}); report['liveStatusReconciled']=changed; report['liveEventsAdded']=added; report['liveProviderFailures']=failures
     FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     print(f'LIVE RECONCILE: status_updates={changed}; live_events_added={added}; provider_failures={failures}')
-    if failures: raise SystemExit(f'{failures} ESPN scoreboard providers failed')
+    if failures: raise SystemExit(f'{failures} live scoreboard providers failed')
 
 if __name__=='__main__': main()
