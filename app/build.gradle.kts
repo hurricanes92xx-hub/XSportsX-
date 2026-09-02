@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.8.0"
+        versionCode = 27
+        versionName = "1.8.1"
         buildConfigField("String", "PAIRING_BASE_URL", "\"https://github.com/hurricanes92xx-hub/XSportsX-\"")
         buildConfigField("String", "SPORTS_SOURCE_URL", "\"https://xsportsx-sports-source.onrender.com\"")
     }
@@ -78,9 +78,4 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.6.1")
     implementation("androidx.camera:camera-view:1.6.1")
     implementation("androidx.security:security-crypto:1.1.0")
-    implementation("androidx.media3:media3-exoplayer:1.11.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.11.0")
-    implementation("androidx.media3:media3-ui:1.11.0")
-    implementation("com.caverock:androidsvg-aar:1.4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
 }
