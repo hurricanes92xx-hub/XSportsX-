@@ -79,11 +79,10 @@ class MainActivityFuture : ComponentActivity() {
                             if (network.startsWith("LEAGUE:")) { selectedScheduleLeague = network.removePrefix("LEAGUE:"); schedules = true }
                             else { selectedEvent = null; liveFilter = network }
                         }
-                    ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
+                    ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A)).navigationBarsPadding()) {
                         FuturisticHome(
                             onConnect = {
-                                if (sourceStore.load().isConfigured()) { selectedEvent = null; liveFilter = "" }
-                                else connectSource = true
+                                connectSource = true
                             },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") { selectedScheduleLeague = network.name; schedules = true }
