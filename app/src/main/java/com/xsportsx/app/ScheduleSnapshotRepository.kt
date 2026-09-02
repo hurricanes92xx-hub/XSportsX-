@@ -2,7 +2,11 @@ package com.xsportsx.app
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 import java.time.Instant
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 /** Single canonical schedule snapshot shared by Mobile and TV. */
@@ -11,6 +15,7 @@ object ScheduleSnapshotRepository {
     private const val LIVE_TTL_MS = 10_000L
     private const val UI_DAYS = 3
     private const val SNAPSHOT_DAYS = 7
+    private const val MLB_LIVE_URL = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&hydrate=team,linescore"
 
     private val snapshotMutex = Mutex()
     private val liveMutex = Mutex()
@@ -27,18 +32,12 @@ object ScheduleSnapshotRepository {
             val again = snapshotCache
             if (!force && again != null && age(again) < SNAPSHOT_TTL_MS) return@withLock again.events
 
-            val fresh = runCatching {
-                CanonicalScheduleProvider.load(null, SNAPSHOT_DAYS)
-            }.getOrDefault(emptyList())
+            val fresh = runCatching { CanonicalScheduleProvider.load(null, SNAPSHOT_DAYS) }.getOrDefault(emptyList())
             val normalized = normalize(fresh)
-
             if (normalized.isNotEmpty()) {
                 snapshotCache = CachedEvents(normalized, System.currentTimeMillis())
                 normalized
-            } else {
-                // Never erase a good schedule because the feed is temporarily unavailable.
-                again?.events.orEmpty()
-            }
+            } else again?.events.orEmpty()
         }
     }
 
@@ -46,7 +45,6 @@ object ScheduleSnapshotRepository {
         val canonical = league?.let(SportsScheduleService::canonicalLeagueFor)
         val now = Instant.now()
         val cutoff = now.plus(UI_DAYS.toLong(), ChronoUnit.DAYS)
-
         return all(force).asSequence()
             .filter { !it.isLive }
             .filter { event -> canonical == null || SportsScheduleService.canonicalLeagueFor(event.league) == canonical }
@@ -62,25 +60,75 @@ object ScheduleSnapshotRepository {
             .toList()
     }
 
-    /** Near-real-time live path. A forced refresh always goes to the canonical feed. */
+    /** Near-real-time live path. Combines the canonical feed with MLB's authoritative live scoreboard. */
     suspend fun live(force: Boolean = false): List<SportsEvent> {
         val cached = liveCache
         if (!force && cached != null && age(cached) < LIVE_TTL_MS) return cached.events
-
         return liveMutex.withLock {
             val again = liveCache
             if (!force && again != null && age(again) < LIVE_TTL_MS) return@withLock again.events
 
-            val fresh = runCatching { CanonicalScheduleProvider.load(null, 1) }
-                .getOrDefault(emptyList())
-            val normalized = normalize(fresh).filter { it.isLive }
-            if (normalized.isNotEmpty() || fresh.isNotEmpty()) {
+            val feedLive = runCatching { CanonicalScheduleProvider.load(null, 1) }.getOrDefault(emptyList())
+                .filter { it.isLive }
+            val mlbLive = runCatching { loadMlbLive() }.getOrDefault(emptyList())
+            val normalized = normalize(feedLive + mlbLive).filter { it.isLive }
+            if (normalized.isNotEmpty()) {
                 liveCache = CachedEvents(normalized, System.currentTimeMillis())
                 normalized
-            } else {
-                again?.events.orEmpty()
-            }
+            } else again?.events.orEmpty()
         }
+    }
+
+    private fun loadMlbLive(): List<SportsEvent> {
+        val url = "$MLB_LIVE_URL&date=${LocalDate.now()}"
+        val c = URL(url).openConnection() as HttpURLConnection
+        c.connectTimeout = 1_500
+        c.readTimeout = 2_500
+        c.requestMethod = "GET"
+        c.useCaches = false
+        c.setRequestProperty("Accept", "application/json")
+        c.setRequestProperty("Cache-Control", "no-cache")
+        c.setRequestProperty("User-Agent", "XSportsX/2.1 Android")
+        return try {
+            if (c.responseCode !in 200..299) return emptyList()
+            val root = JSONObject(c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() })
+            val dates = root.optJSONArray("dates") ?: return emptyList()
+            val out = ArrayList<SportsEvent>()
+            for (i in 0 until dates.length()) {
+                val games = dates.optJSONObject(i)?.optJSONArray("games") ?: continue
+                for (j in 0 until games.length()) {
+                    val game = games.optJSONObject(j) ?: continue
+                    val status = game.optJSONObject("status") ?: continue
+                    val abstractState = status.optString("abstractGameState").lowercase()
+                    val detailedState = status.optString("detailedState").lowercase()
+                    val live = abstractState == "live" || abstractState == "in progress" || detailedState == "live" || detailedState.contains("in progress")
+                    if (!live) continue
+                    val teams = game.optJSONObject("teams") ?: continue
+                    val awayTeam = teams.optJSONObject("away")?.optJSONObject("team")
+                    val homeTeam = teams.optJSONObject("home")?.optJSONObject("team")
+                    val away = awayTeam?.optString("name").orEmpty()
+                    val home = homeTeam?.optString("name").orEmpty()
+                    val start = game.optString("gameDate")
+                    if (away.isBlank() || home.isBlank() || start.isBlank()) continue
+                    val gamePk = game.optLong("gamePk", 0L)
+                    out += SportsEvent(
+                        id = if (gamePk > 0) "mlb-$gamePk" else "mlb-${start.take(16)}-${away}-${home}",
+                        sport = "Baseball",
+                        league = "MLB",
+                        title = "$away @ $home",
+                        startUtc = start,
+                        status = "LIVE",
+                        state = "in",
+                        home = home,
+                        away = away,
+                        homeLogo = awayTeam?.optString("link").orEmpty(),
+                        awayLogo = homeTeam?.optString("link").orEmpty(),
+                        sourceUrl = if (gamePk > 0) "https://www.mlb.com/gameday/$gamePk" else "https://www.mlb.com/scores"
+                    )
+                }
+            }
+            out
+        } finally { c.disconnect() }
     }
 
     fun clear() {
@@ -98,15 +146,10 @@ object ScheduleSnapshotRepository {
             .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
     }
 
-    /** Stable matchup key prevents duplicate live cards when the same game arrives with different feed IDs. */
     private fun eventKey(event: SportsEvent): String {
-        fun clean(value: String): String = value.lowercase()
-            .replace(Regex("[^a-z0-9]+"), " ")
-            .trim()
-            .replace(Regex("\\s+"), " ")
+        fun clean(value: String): String = value.lowercase().replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
         val teams = listOf(clean(event.away), clean(event.home)).sorted()
         val matchup = if (teams.any { it.isNotBlank() }) teams.joinToString("|") else clean(event.title)
-        val start = event.startUtc.take(16)
-        return "${clean(event.league)}|$matchup|$start"
+        return "${clean(event.league)}|$matchup|${event.startUtc.take(16)}"
     }
 }
