@@ -19,11 +19,11 @@
     "MLS": 76,
     "NASCAR Cup": 4,
     "NCAA FB": 614,
-    "NCAA Men Soccer": 1,
+    "NCAA Men Soccer": 3,
     "NCAA Men's Soccer": 127,
     "NCAA Men's Water Polo": 44,
-    "NCAA VB": 1,
-    "NCAA Women Soccer": 2,
+    "NCAA VB": 4,
+    "NCAA Women Soccer": 4,
     "NCAA Women's Field Hockey": 613,
     "NCAA Women's Hockey": 743,
     "NCAA Women's Soccer": 382,
@@ -7926,8 +7926,9 @@
       "league": "MLB",
       "title": "Orioles @ Rockies",
       "start": "2026-09-02T19:10Z",
-      "tag": "LIVE",
-      "icon": "⚾"
+      "tag": "FINAL",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -7941,8 +7942,9 @@
       "league": "MLB",
       "title": "Mariners @ Red Sox",
       "start": "2026-09-02T20:10Z",
-      "tag": "LIVE",
-      "icon": "⚾"
+      "tag": "FINAL",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NCAA Women's Field Hockey",
@@ -7964,50 +7966,57 @@
       "league": "MLB",
       "title": "Mets @ Rays",
       "start": "2026-09-02T22:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Giants @ Pirates",
       "start": "2026-09-02T22:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Blue Jays @ Guardians",
       "start": "2026-09-02T22:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Tigers @ Twins",
       "start": "2026-09-02T23:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Marlins @ Royals",
       "start": "2026-09-02T23:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Brewers @ Cubs",
       "start": "2026-09-02T23:40Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "White Sox @ Astros",
       "start": "2026-09-03T00:10Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "MLB Stats API live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -32890,7 +32899,7 @@
       "league": "NCAA Men Soccer",
       "title": "UMass Lowell @ UMass",
       "start": "2026-09-02T20:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "•",
       "source": "espn",
       "sourceDetail": "ESPN live-status reconciliation"
@@ -32899,7 +32908,7 @@
       "league": "NCAA Women Soccer",
       "title": "Siena @ Le Moyne",
       "start": "2026-09-02T20:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "•",
       "source": "espn",
       "sourceDetail": "ESPN live-status reconciliation"
@@ -32908,7 +32917,7 @@
       "league": "NCAA Women Soccer",
       "title": "Canisius @ Buffalo",
       "start": "2026-09-02T23:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "•",
       "source": "espn",
       "sourceDetail": "ESPN live-status reconciliation"
@@ -32921,11 +32930,74 @@
       "icon": "•",
       "source": "espn",
       "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Men Soccer",
+      "title": "Quinnipiac @ New Haven",
+      "start": "2026-09-02T22:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Men Soccer",
+      "title": "Colgate @ Binghamton",
+      "start": "2026-09-02T23:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Women Soccer",
+      "title": "Fairfield @ FDU",
+      "start": "2026-09-02T22:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA Women Soccer",
+      "title": "W Illinois @ Drake",
+      "start": "2026-09-02T22:30:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Auburn @ Minnesota",
+      "start": "2026-09-02T22:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Georgia @ Purdue",
+      "start": "2026-09-02T23:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "SMU @ TCU",
+      "start": "2026-09-02T23:30:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation"
     }
   ],
   "repairReport": {
-    "liveStatusReconciled": 6,
-    "liveEventsAdded": 4,
+    "liveStatusReconciled": 19,
+    "liveEventsAdded": 7,
     "liveProviderFailures": 5
   }
 }
