@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 OUT = ROOT / "data" / "team_logo_coverage_audit.json"
 HYDRATOR = ROOT / "scripts" / "hydrate_remaining_team_logo_catalogs.py"
+STRICT_LEAGUES = ("AFL", "NBA", "NRL", "PLL", "UEL")
 
 
 def is_placeholder(value: object) -> bool:
@@ -27,9 +28,8 @@ def is_placeholder(value: object) -> bool:
 
 
 def main() -> None:
-    # Make the remaining-team resolver part of the canonical audit boundary so
-    # the final refresh cannot publish a feed before AFL/NBA/NRL/PLL/UEL logos
-    # have been applied. The resolver is idempotent and also updates the cache.
+    # The resolver is part of the canonical audit boundary. Static fallbacks are
+    # seeded before ESPN is consulted, so provider outages cannot create gaps.
     subprocess.run([sys.executable, str(HYDRATOR)], cwd=ROOT, check=True)
 
     payload = json.loads(FEED.read_text(encoding="utf-8"))
@@ -90,9 +90,7 @@ def main() -> None:
             total_complete += 1
 
     leagues = {k: by_league[k] for k in sorted(by_league)}
-    actionable = {
-        k: v for k, v in leagues.items() if v["missing_logo_slots"] or v["team_games"]
-    }
+    actionable = {k: v for k, v in leagues.items() if v["missing_logo_slots"] or v["team_games"]}
     report = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -119,6 +117,20 @@ def main() -> None:
     for league, row in actionable.items():
         if row["missing_logo_slots"]:
             print(f"{league}: games={row['team_games']} complete={row['complete']} missing_slots={row['missing_logo_slots']} missing_away={row['missing_away']} missing_home={row['missing_home']}")
+
+    # This is the actual CI gate. The refresh must not publish a feed containing
+    # missing team artwork in the five leagues this audit is responsible for.
+    failures = {
+        league: {
+            "games": int(leagues.get(league, {}).get("team_games", 0) or 0),
+            "complete": int(leagues.get(league, {}).get("complete", 0) or 0),
+            "missing_logo_slots": int(leagues.get(league, {}).get("missing_logo_slots", 0) or 0),
+        }
+        for league in STRICT_LEAGUES
+        if int(leagues.get(league, {}).get("missing_logo_slots", 0) or 0) > 0
+    }
+    if failures:
+        raise SystemExit(f"STRICT TEAM-LOGO AUDIT FAILED: {json.dumps(failures, sort_keys=True)}")
 
 
 if __name__ == "__main__":
