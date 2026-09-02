@@ -241,12 +241,67 @@ fun SettingsScreen() {
 
 @Composable
 fun EventSheet(game: Game, onClose: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var searching by remember { mutableStateOf(false) }
+    var results by remember { mutableStateOf<List<EventStreamSearchResult>>(emptyList()) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(searching) {
+        if (!searching) return@LaunchedEffect
+        error = null
+        val resolver = StreamResolver(context)
+        runCatching {
+            EventFinder().searchWithStreams("${game.league} ${game.matchup}", resolver, 4)
+        }.onSuccess { results = it }
+            .onFailure { error = it.message ?: "Unable to match this event" }
+        searching = false
+    }
+
     Box(Modifier.fillMaxSize().background(Color(0x99000000)), contentAlignment = Alignment.BottomCenter) {
         Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)).background(Color(0xFF10131A)).padding(28.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) { Text(game.icon, fontSize = 42.sp); Spacer(Modifier.width(16.dp)); Column(Modifier.weight(1f)) { Text(game.matchup, color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Black); Text(game.league + " • " + game.time, color = Color(0xFF8A919E)) }; TextButton(onClick = onClose) { Text("CLOSE") } }
-            Spacer(Modifier.height(22.dp)); Text("SOURCE MATCHING", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
-            Text("XSportsX will search your connected Xtream/M3U source using team/fighter names, aliases, league and event metadata.", color = Color(0xFF9AA1AE), fontSize = 13.sp)
-            Spacer(Modifier.height(18.dp)); Button(onClick = { }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(15.dp)) { Text("FIND AVAILABLE STREAMS", fontWeight = FontWeight.Black) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(game.icon, fontSize = 42.sp)
+                Spacer(Modifier.width(16.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(game.matchup, color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Black)
+                    Text(game.league + " • " + game.time, color = Color(0xFF8A919E))
+                }
+                TextButton(onClick = onClose) { Text("CLOSE") }
+            }
+            Spacer(Modifier.height(22.dp))
+            Text("SOURCE MATCHING", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
+            Text("Event-first matching searches the canonical schedule, then ranks your authorized Xtream/M3U streams plus approved public and official video sources.", color = Color(0xFF9AA1AE), fontSize = 13.sp)
+            Spacer(Modifier.height(18.dp))
+
+            when {
+                searching -> {
+                    Box(Modifier.fillMaxWidth().height(110.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
+                }
+                error != null -> {
+                    Text(error!!, color = Color(0xFFFF536C), fontSize = 12.sp)
+                    Spacer(Modifier.height(10.dp))
+                    Button(onClick = { searching = true }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(15.dp)) { Text("RETRY MATCH", fontWeight = FontWeight.Black) }
+                }
+                results.isNotEmpty() -> {
+                    Text("${results.sumOf { it.streams.size }} MATCHED SOURCES", color = Color(0xFF858B98), fontSize = 10.sp, fontWeight = FontWeight.Black)
+                    Spacer(Modifier.height(8.dp))
+                    results.forEach { result ->
+                        Text(result.event.title, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        result.streams.take(3).forEach { stream ->
+                            Row(Modifier.fillMaxWidth().padding(vertical = 5.dp).clip(RoundedCornerShape(10.dp)).background(Color(0xFF171B24)).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Column(Modifier.weight(1f)) {
+                                    Text(stream.name, color = Color.White, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(stream.group, color = Color(0xFF777F8C), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                                Text("FOUND", color = Color(0xFF5CFF9D), fontSize = 9.sp, fontWeight = FontWeight.Black)
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    Button(onClick = { searching = true }, Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(15.dp)) { Text("FIND AVAILABLE STREAMS", fontWeight = FontWeight.Black) }
+                }
+            }
         }
     }
 }
