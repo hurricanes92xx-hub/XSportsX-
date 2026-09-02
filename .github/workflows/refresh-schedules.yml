@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/audit_team_logo_coverage.py'
       - 'scripts/validate_team_logo_http.py'
+      - 'scripts/repair_legacy_team_logo_urls.py'
       - 'scripts/phase3_visual_enrichment.py'
       - 'scripts/classify_non_team_events.py'
       - 'scripts/repair_mlb_logo_gaps.py'
