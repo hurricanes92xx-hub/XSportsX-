@@ -77,7 +77,7 @@ STATIC_LOGOS = {
         "Raiders": "https://www.nrl.com/.theme/raiders/badge.svg", "Cowboys": "https://www.nrl.com/.theme/cowboys/badge.svg",
         "Storm": "https://www.nrl.com/.theme/storm/badge.svg", "Sharks": "https://www.nrl.com/.theme/sharks/badge.svg",
         "Eels": "https://www.nrl.com/.theme/eels/badge.svg", "Dragons": "https://www.nrl.com/.theme/dragons/badge.svg",
-        "Wests Tigers": "https://www.nrl.com/.theme/weststigers/badge.svg", "Panthers": "https://www.nrl.com/.theme/panthers/badge.svg",
+        "Wests Tigers": "https://www.nrl.com/client/dist/logos/wests-tigers-badge.svg", "Panthers": "https://www.nrl.com/.theme/panthers/badge.svg",
     },
     "PLL": {
         "Outlaws": "https://premierlacrosseleague.com/wp-content/uploads/2023/11/denver-crest-1024x681.png",
@@ -127,7 +127,7 @@ def add_team(teams, league, team):
         return
     names = {display, team.get("name"), team.get("shortDisplayName"), team.get("location"), team.get("abbreviation"), team.get("slug")}
     if team.get("location") and team.get("name"):
-        names.add(f"{team['location']} {team['name']}")
+        names.add(f"{team['location']} {team['name']}" )
     for name in names:
         if name:
             teams[f"{league}|{norm(name)}"] = logo
@@ -184,8 +184,6 @@ def hydrate_and_apply():
     events = feed.get("events") or []
     summary = {}
     for league, (sport, slug) in LEAGUES.items():
-        # Static fallbacks are always seeded first, making this path independent
-        # of ESPN availability and protecting against future cache regressions.
         for name, logo in STATIC_LOGOS.get(league, {}).items():
             teams[f"{league}|{norm(name)}"] = logo
         records = catalog_for_league(league, sport, slug)
