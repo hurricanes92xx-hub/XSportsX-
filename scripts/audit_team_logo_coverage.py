@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 OUT = ROOT / "data" / "team_logo_coverage_audit.json"
 HYDRATOR = ROOT / "scripts" / "hydrate_remaining_team_logo_catalogs.py"
+LEGACY_REPAIR = ROOT / "scripts" / "repair_legacy_team_logo_urls.py"
 STRICT_LEAGUES = ("AFL", "NBA", "NRL", "PLL", "UEL")
 
 
@@ -31,6 +32,8 @@ def main() -> None:
     # The resolver is part of the canonical audit boundary. Static fallbacks are
     # seeded before ESPN is consulted, so provider outages cannot create gaps.
     subprocess.run([sys.executable, str(HYDRATOR)], cwd=ROOT, check=True)
+    # Repair deterministic legacy ESPN namespace drift before the HTTP gate.
+    subprocess.run([sys.executable, str(LEGACY_REPAIR)], cwd=ROOT, check=True)
 
     payload = json.loads(FEED.read_text(encoding="utf-8"))
     events = payload.get("events") or []
@@ -118,8 +121,6 @@ def main() -> None:
         if row["missing_logo_slots"]:
             print(f"{league}: games={row['team_games']} complete={row['complete']} missing_slots={row['missing_logo_slots']} missing_away={row['missing_away']} missing_home={row['missing_home']}")
 
-    # This is the actual CI gate. The refresh must not publish a feed containing
-    # missing team artwork in the five leagues this audit is responsible for.
     failures = {
         league: {
             "games": int(leagues.get(league, {}).get("team_games", 0) or 0),
