@@ -15,13 +15,13 @@ concurrency:
 jobs:
   reconcile:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - name: Checkout production schedule branch
         uses: actions/checkout@v4
         with:
           ref: android-app
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,30 +29,48 @@ jobs:
           python-version: '3.12'
 
       - name: Reconcile live events from authoritative scoreboards
+        id: reconcile
+        continue-on-error: true
         run: python3 scripts/reconcile_live_status.py
 
       - name: Publish live status changes
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'XSportsX Live Bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json
-          if git diff --cached --quiet; then
+
+          if git diff --quiet -- data/schedule_feed.json; then
             echo 'No live status changes.'
-            exit 0
+          else
+            git add data/schedule_feed.json
+            git commit -m 'chore: reconcile live event status'
           fi
-          git commit -m 'chore: reconcile live event status'
+
           for attempt in 1 2 3; do
             git fetch origin android-app
-            git rebase origin/android-app
-            if git push origin HEAD:android-app; then exit 0; fi
-            git rebase --abort || true
+            git rebase origin/android-app || {
+              git rebase --abort || true
+              git reset --hard origin/android-app
+              python3 scripts/reconcile_live_status.py || true
+              git add data/schedule_feed.json
+              git diff --cached --quiet || git commit -m 'chore: reconcile live event status'
+            }
+            if git push origin HEAD:android-app; then
+              exit 0
+            fi
             git reset --hard origin/android-app
-            python3 scripts/reconcile_live_status.py
+            python3 scripts/reconcile_live_status.py || true
             git add data/schedule_feed.json
             git diff --cached --quiet || git commit -m 'chore: reconcile live event status'
             sleep $((attempt * 2))
           done
           echo 'Unable to publish live status after three attempts.' >&2
+          exit 1
+
+      - name: Fail if scoreboard reconciliation had provider errors
+        if: steps.reconcile.outcome == 'failure'
+        run: |
+          echo 'One or more ESPN scoreboard endpoints failed. Changes from healthy leagues were still published.'
           exit 1
