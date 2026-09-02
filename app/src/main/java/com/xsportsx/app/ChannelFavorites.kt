@@ -25,4 +25,16 @@ object ChannelFavorites {
         prefs.edit().putStringSet(KEY, current).apply()
         return added
     }
+
+    /** Stable channel identities for local phone-to-TV transfer. */
+    fun export(context: Context): Set<String> = load(context)
+
+    /** Merge identities received from the paired device; never replaces local favorites. */
+    fun merge(context: Context, incoming: Collection<String>) {
+        if (incoming.isEmpty()) return
+        val prefs = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val merged = prefs.getStringSet(KEY, emptySet()).orEmpty().toMutableSet()
+        incoming.filter { it.isNotBlank() && it.length <= 512 }.forEach(merged::add)
+        prefs.edit().putStringSet(KEY, merged).apply()
+    }
 }
