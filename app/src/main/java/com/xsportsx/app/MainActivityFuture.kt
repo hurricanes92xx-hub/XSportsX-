@@ -82,7 +82,12 @@ class MainActivityFuture : ComponentActivity() {
                     ) else Box(Modifier.fillMaxSize().background(Color(0xFF05060A)).safeContentPadding()) {
                         FuturisticHome(
                             onConnect = {
-                                connectSource = true
+                                if (connected) {
+                                    selectedEvent = null
+                                    liveFilter = ""
+                                } else {
+                                    connectSource = true
+                                }
                             },
                             onNetwork = { network ->
                                 if (network.type == "LEAGUE") { selectedScheduleLeague = network.name; schedules = true }
