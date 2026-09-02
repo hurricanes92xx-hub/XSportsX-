@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Repair known legacy ESPN logo namespaces before HTTP validation."""
+"""Repair legacy ESPN logo namespaces and normalize CDN delivery URLs."""
 from __future__ import annotations
 
 import json
 import re
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data/schedule_feed.json"
@@ -14,6 +15,8 @@ GENERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/500/(\d+)\.png$")
 SPORT_NUMERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/(?:football|field-hockey|hockey)/500/(\d+)\.png$")
 CFL = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/cfl/500/[^/]+\.png$")
 COUNTRY = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/countries/500/[^/]+\.png$")
+ESPN_DIRECT = re.compile(r"^https://a\.espncdn\.com/(i/teamlogos/.+)$")
+ESPN_COMBINER = re.compile(r"^https://a\.espncdn\.com/combiner/i\?")
 
 # Stable public artwork used only when a retired ESPN namespace cannot be
 # translated to a current team-logo URL.
@@ -28,6 +31,12 @@ def is_ncaa(league: str) -> bool:
     return league.upper().startswith("NCAA ")
 
 
+def combiner(path: str) -> str:
+    # ESPN's combiner endpoint is the supported image-delivery path. Keep the
+    # original asset path intact while asking for a stable 500px rendition.
+    return "https://a.espncdn.com/combiner/i?img=" + quote("/" + path.lstrip("/"), safe="/") + "&h=500&w=500"
+
+
 def repair_url(url: object, league: str) -> tuple[object, bool, str]:
     if not isinstance(url, str):
         return url, False, ""
@@ -38,13 +47,17 @@ def repair_url(url: object, league: str) -> tuple[object, bool, str]:
     if is_ncaa(league):
         match = GENERIC.match(value) or SPORT_NUMERIC.match(value)
         if match:
-            return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{match.group(1)}.png", True, "ncaa_namespace"
+            return combiner(f"i/teamlogos/ncaa/500/{match.group(1)}.png"), True, "ncaa_namespace"
 
     if league == "CFL" and CFL.match(value):
         return LEAGUE_ART["CFL"], True, "cfl_league_fallback"
 
     if league in {"Rugby World Cup", "Six Nations"} and COUNTRY.match(value):
         return LEAGUE_ART[league], True, "country_league_fallback"
+
+    direct = ESPN_DIRECT.match(value)
+    if direct and not ESPN_COMBINER.match(value):
+        return combiner(direct.group(1)), True, "espn_combiner"
 
     return value, False, ""
 
