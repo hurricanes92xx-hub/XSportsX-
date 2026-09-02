@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repair legacy ESPN logo namespaces while preserving canonical CDN paths."""
+"""Repair legacy ESPN logo namespaces and durable league-art fallbacks."""
 from __future__ import annotations
 
 import json
@@ -14,12 +14,17 @@ GENERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/500/(\d+)\.png$")
 SPORT_NUMERIC = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/(?:football|field-hockey|hockey)/500/(\d+)\.png$")
 CFL = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/cfl/500/[^/]+\.png$")
 COUNTRY = re.compile(r"^https://a\.espncdn\.com/i/teamlogos/countries/500/[^/]+\.png$")
+LONDON_LIONS_OLD = re.compile(r"^https://commons\.wikimedia\.org/wiki/Special:Redirect/file/London%20Lions%20logo%20\(2025\)\.png$")
 
 LEAGUE_ART = {
     "CFL": "https://commons.wikimedia.org/wiki/Special:Redirect/file/CFL_Logo.svg",
     "Rugby World Cup": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rugby_World_Cup_Logo%2C_used_post_RWC_2023.svg",
     "Six Nations": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Guinness_Six_Nations_logo.png",
 }
+
+# Official London Lions 2025+ brand asset. The old Wikimedia redirect was a
+# dead 404 and was incorrectly attached to the AFL feed's London Lions row.
+LONDON_LIONS_OFFICIAL = "https://cdn.prod.website-files.com/6137737fec180a1d19af6471/68779ef01c49026774e65581_Artboard%202%20copy%202.png"
 
 
 def is_ncaa(league: str) -> bool:
@@ -30,14 +35,16 @@ def repair_url(url: object, league: str) -> tuple[object, bool, str]:
     if not isinstance(url, str):
         return url, False, ""
     value = url.strip()
+
+    if LONDON_LIONS_OLD.match(value):
+        return LONDON_LIONS_OFFICIAL, True, "london_lions_official"
+
     if not value.startswith("https://a.espncdn.com/"):
         return value, False, ""
 
     if is_ncaa(league):
         match = GENERIC.match(value) or SPORT_NUMERIC.match(value)
         if match:
-            # Preserve ESPN's direct PNG delivery path; only repair the legacy
-            # namespace. This avoids introducing an additional CDN transform.
             return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{match.group(1)}.png", True, "ncaa_namespace"
 
     if league == "CFL" and CFL.match(value):
@@ -46,7 +53,6 @@ def repair_url(url: object, league: str) -> tuple[object, bool, str]:
     if league in {"Rugby World Cup", "Six Nations"} and COUNTRY.match(value):
         return LEAGUE_ART[league], True, "country_league_fallback"
 
-    # Other ESPN CDN paths are already canonical. Do not rewrite them.
     return value, False, ""
 
 
