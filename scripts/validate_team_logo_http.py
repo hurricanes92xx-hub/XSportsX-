@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Validate team-logo URLs actually referenced by the canonical schedule feed.
+"""Validate current-feed logo URLs after deterministic namespace repair.
 
-Legacy ESPN URL namespaces are repaired immediately before validation. The
-persistent team-logo catalog may contain historical entries, so cache-only URLs
-are reported separately and never block publication.
+The validator remains strict: every active-feed URL must return 2xx/3xx and
+at least one readable byte. Historical cache-only URLs are reported separately.
 """
 from __future__ import annotations
 
@@ -48,35 +47,14 @@ def urls_from_cache() -> set[str]:
 
 
 def check(url: str) -> dict:
-    req = Request(
-        url,
-        headers={
-            "User-Agent": "XSportsX-LogoValidator/3.0",
-            "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/png,image/*,*/*;q=0.8",
-        },
-    )
+    req = Request(url, headers={"User-Agent": "XSportsX-LogoValidator/4.0", "Accept": "image/*,*/*;q=0.8"})
     try:
         with urlopen(req, timeout=TIMEOUT) as response:
             status = int(response.status)
-            content_type = response.headers.get("Content-Type", "")
             body = response.read(64)
-            return {
-                "url": url,
-                "ok": 200 <= status < 400 and bool(body),
-                "status": status,
-                "content_type": content_type,
-                "bytes_sampled": len(body),
-                "error": None,
-            }
+            return {"url": url, "ok": 200 <= status < 400 and bool(body), "status": status, "content_type": response.headers.get("Content-Type", ""), "bytes_sampled": len(body), "error": None}
     except HTTPError as exc:
-        return {
-            "url": url,
-            "ok": False,
-            "status": int(exc.code),
-            "content_type": exc.headers.get("Content-Type", "") if exc.headers else "",
-            "bytes_sampled": 0,
-            "error": str(exc),
-        }
+        return {"url": url, "ok": False, "status": int(exc.code), "content_type": exc.headers.get("Content-Type", "") if exc.headers else "", "bytes_sampled": 0, "error": str(exc)}
     except (URLError, TimeoutError, OSError) as exc:
         return {"url": url, "ok": False, "status": None, "content_type": "", "bytes_sampled": 0, "error": str(exc)}
     except Exception as exc:
@@ -94,17 +72,14 @@ def validate(urls: set[str]) -> list[dict]:
 
 def main() -> None:
     subprocess.run([sys.executable, str(REPAIR)], cwd=ROOT, check=True)
-
     feed_urls = urls_from_feed()
     cache_urls = urls_from_cache()
     cache_only_urls = cache_urls - feed_urls
-
     print(f"Validating {len(feed_urls)} current-feed logo URLs with {WORKERS} workers")
     feed_results = validate(feed_urls)
     failures = [row for row in feed_results if not row["ok"]]
-
     report = {
-        "schema_version": 3,
+        "schema_version": 4,
         "feed_urls_checked": len(feed_results),
         "feed_urls_ok": len(feed_results) - len(failures),
         "feed_urls_failed": len(failures),
@@ -112,19 +87,12 @@ def main() -> None:
         "cache_only_urls": len(cache_only_urls),
         "cache_only_urls_not_validated": True,
         "legacy_namespace_repair_enabled": True,
+        "durable_league_fallbacks_enabled": True,
         "failures": failures,
-        "rule": "Every team-logo URL actually referenced by a current schedule-feed event must return an HTTP 2xx/3xx response with at least one readable byte. Deterministic legacy NCAA ESPN namespaces are repaired before validation. Cache-only historical URLs are reported but do not block publication.",
+        "rule": "Every active schedule-feed logo URL must return HTTP 2xx/3xx with at least one readable byte. Deterministic NCAA namespace repairs and durable CFL/rugby league-art fallbacks run before validation. Historical cache-only URLs do not block publication.",
     }
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-    print(json.dumps({
-        "feed_urls_checked": report["feed_urls_checked"],
-        "feed_urls_ok": report["feed_urls_ok"],
-        "feed_urls_failed": report["feed_urls_failed"],
-        "cache_urls_checked": report["cache_urls_checked"],
-        "cache_only_urls": report["cache_only_urls"],
-    }, indent=2))
-
+    print(json.dumps({k: report[k] for k in ("feed_urls_checked", "feed_urls_ok", "feed_urls_failed", "cache_urls_checked", "cache_only_urls")}, indent=2))
     if failures:
         for row in failures[:50]:
             print(f"FAIL {row['status']} {row['url']} :: {row['error']}")
