@@ -18,10 +18,23 @@ data class SportsEvent(
     val sourceUrl: String = "",
     val youtubeVideoId: String = ""
 ) {
-    val isLive: Boolean
+    private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
+
+    private val providerLive: Boolean
         get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
 
-    private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
+    private val terminal: Boolean
+        get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
+
+    /** Treat a non-terminal scheduled event as live from three minutes before kickoff through kickoff. */
+    val isLive: Boolean
+        get() {
+            if (providerLive || terminal) return providerLive
+            val start = startMillis()
+            val now = System.currentTimeMillis()
+            return start > 0L && now >= start - 3L * 60L * 1000L && now < start &&
+                (state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true))
+        }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
         val start = startMillis()
