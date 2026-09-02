@@ -26,16 +26,17 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
     var liveEvents by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
+    var refreshing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var playerStream by remember { mutableStateOf<ResolvedStream?>(null) }
     var selectedEvent by remember { mutableStateOf<SportsEvent?>(event) }
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
 
-    fun reload(force: Boolean = false) {
+    fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
-            loading = true
-            error = null
+            if (background) refreshing = true else loading = true
+            if (!background) error = null
             runCatching {
                 if (selectedEvent != null) {
                     StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
@@ -51,11 +52,17 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                         streams = result as List<ResolvedStream>
                     } else {
                         @Suppress("UNCHECKED_CAST")
-                        liveEvents = result as List<SportsEvent>
+                        val refreshedEvents = result as List<SportsEvent>
+                        // Never blank an already-rendered live list during a background refresh.
+                        if (refreshedEvents.isNotEmpty() || liveEvents.isEmpty()) liveEvents = refreshedEvents
                     }
+                    error = null
                 }
-                .onFailure { error = it.message ?: "Unable to load live events" }
-            loading = false
+                .onFailure {
+                    // Keep the last good results visible while a background refresh/provider is unavailable.
+                    if (!background) error = it.message ?: "Unable to load live events"
+                }
+            if (background) refreshing = false else loading = false
         }
     }
 
@@ -64,7 +71,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         if (selectedEvent == null && filter.isNullOrBlank()) {
             while (true) {
                 delay(10_000L)
-                reload(true)
+                reload(true, background = true)
             }
         }
     }
@@ -104,12 +111,16 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744))
                 }
             }
-            TextButton(onClick = { reload(true) }) { Text("REFRESH") }
+            TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
+        }
+
+        if (refreshing) {
+            LinearProgressIndicator(Modifier.fillMaxWidth(), color = Color(0xFFFF1744))
         }
 
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
-            error != null -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
+            error != null && (selectedEvent != null || streams.isEmpty() && liveEvents.isEmpty()) -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
                     Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White)
