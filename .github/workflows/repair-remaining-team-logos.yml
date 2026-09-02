@@ -1,6 +1,12 @@
 name: Repair remaining team logos
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/hydrate_remaining_team_logo_catalogs.py'
+      - '.github/workflows/repair-remaining-team-logos.yml'
   workflow_run:
     workflows: ["Refresh complete schedules"]
     types: [completed]
@@ -11,7 +17,7 @@ concurrency:
 
 jobs:
   repair:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
