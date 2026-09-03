@@ -1,45 +1,43 @@
 {
   "schema": 6,
-  "generatedAt": "2026-09-02T21:01:23.899949+00:00",
+  "generatedAt": "2026-09-03T04:20:41.198085+00:00",
   "refreshHours": 6,
   "eventCounts": {
-    "AEW": 4,
-    "AFL": 4,
-    "ATP": 5,
-    "BOXING": 8,
-    "Bundesliga": 27,
-    "EPL": 30,
-    "F1": 3,
+    "NCAA Men's Soccer": 142,
+    "NCAA Women's Soccer": 337,
+    "NCAA Women's Volleyball": 481,
+    "NCAA Men's Water Polo": 42,
     "IPL": 74,
-    "IndyCar": 1,
-    "LPGA": 3,
-    "LaLiga": 40,
-    "Ligue 1": 27,
-    "MLB": 349,
-    "MLS": 76,
-    "NASCAR Cup": 4,
-    "NCAA FB": 614,
-    "NCAA Men Soccer": 3,
-    "NCAA Men's Soccer": 127,
-    "NCAA Men's Water Polo": 44,
-    "NCAA VB": 4,
-    "NCAA Women Soccer": 4,
-    "NCAA Women's Field Hockey": 613,
-    "NCAA Women's Hockey": 743,
-    "NCAA Women's Soccer": 382,
-    "NCAA Women's Volleyball": 416,
-    "NFL": 16,
-    "NHL": 86,
-    "NRL": 8,
-    "PGA": 3,
-    "PLL": 2,
-    "Serie A": 30,
-    "TNA": 1,
-    "UCL": 18,
-    "UFC": 8,
-    "WNBA": 30,
+    "ATP": 5,
     "WTA": 17,
-    "WWE": 13
+    "NCAA Women's Field Hockey": 613,
+    "NRL": 8,
+    "AFL": 4,
+    "MLB": 335,
+    "Ligue 1": 27,
+    "LaLiga": 40,
+    "NCAA FB": 614,
+    "F1": 4,
+    "Bundesliga": 27,
+    "Serie A": 30,
+    "EPL": 30,
+    "MLS": 76,
+    "BOXING": 8,
+    "UFC": 9,
+    "IndyCar": 1,
+    "NASCAR Cup": 4,
+    "WWE": 13,
+    "PLL": 2,
+    "UCL": 18,
+    "NFL": 17,
+    "LPGA": 3,
+    "PGA": 3,
+    "WNBA": 30,
+    "NCAA Women's Hockey": 743,
+    "NHL": 99,
+    "AEW": 4,
+    "NBA": 1,
+    "TNA": 1
   },
   "failedSources": [
     "FIVB Men",
@@ -140,328 +138,6 @@
   "events": [
     {
       "league": "NCAA Men's Soccer",
-      "title": "SUNY Maritime @ Manhattan",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "FINAL",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "UMass Lowell @ Massachusetts",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "LIVE",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "St. Cloud St. @ St. Thomas (MN)",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "LIVE",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Quinnipiac @ New Haven",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Georgia St. @ Lipscomb",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "IU Indy @ Southern Ind.",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Radford @ Old Dominion",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Merrimack @ Rhode Island",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Liberty @ Ga. Southern",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Western Mich. @ Bryant",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "VCU @ High Point",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Colgate @ Binghamton",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Western Ill. @ Bradley",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Green Bay @ Saint Louis",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Milwaukee @ Drake",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "UNLV @ LMU (CA)",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "LIFE Pacific @ UC Riverside",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Siena @ Le Moyne",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "LIVE",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Western Ill. @ Drake",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Fairfield @ FDU",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Canisius @ Buffalo",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "New Hampshire @ Merrimack",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Michigan St. @ South Carolina",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "LIVE",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Maryland @ Arkansas",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Indiana @ Texas A&M",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Auburn @ Minnesota",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Canisius @ Buffalo",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Oakland @ Central Mich.",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Hampton @ Norfolk St.",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Delaware St. @ Saint Peter's",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Manhattan @ NJIT",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Ohio St. @ Ole Miss",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "LSU @ Michigan",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Stonehill @ Bryant",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "UCLA @ Kentucky",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Tarleton St. @ Rice",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Georgia @ Purdue",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Nicholls @ Grambling",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Alabama A&M @ North Ala.",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "SMU @ TCU",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Portland St. @ DePaul",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Nebraska @ South Dakota St.",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Rutgers @ Vanderbilt",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Florida @ Wisconsin",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern California @ Texas",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Men's Water Polo",
-      "title": "Air Force @ Iona",
-      "start": "09/02/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🤽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
       "title": "Manchester @ Purdue Fort Wayne",
       "start": "09/03/2026T00:00:00Z",
       "tag": "UPCOMING",
@@ -490,13 +166,6 @@
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Wright St. @ Louisville",
-      "start": "09/03/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
       "title": "Akron @ West Virginia",
       "start": "09/03/2026T00:00:00Z",
       "tag": "UPCOMING",
@@ -519,6 +188,13 @@
     {
       "league": "NCAA Men's Soccer",
       "title": "Brown @ UConn",
+      "start": "09/03/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "NCAA Men's Soccer",
+      "title": "Wright St. @ Louisville",
       "start": "09/03/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
@@ -2115,48 +1791,6 @@
     {
       "league": "NCAA Men's Soccer",
       "title": "Air Force @ San Francisco",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Southeast Mo. St. @ Missouri",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Northern Colo. @ Creighton",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Kennesaw St. @ Troy",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Jackson St. @ Arkansas",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Pepperdine @ UCLA",
-      "start": "09/04/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Seattle U @ Washington",
       "start": "09/04/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
@@ -3779,6 +3413,1126 @@
       "icon": "⚽"
     },
     {
+      "league": "NCAA Women's Volleyball",
+      "title": "LMU (CA) @ Hawaii",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lehigh @ Delaware St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Alabama St. @ Gardner-Webb",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNCW @ Gardner-Webb",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNCW @ West Florida",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Quinnipiac @ Delaware St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Rider @ UAB",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Hofstra @ Santa Clara",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Coppin St. @ Penn",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "FIU @ Duke",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Fairfield @ Holy Cross",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Eastern Ky. @ Prairie View",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Arkansas St. @ American",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Morehead St. @ Siena",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Presbyterian @ Queens (NC)",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UAlbany @ Cornell",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "FDU @ Lafayette",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Western Ill. @ Northern Ariz.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Green Bay @ Austin Peay",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Utah Valley @ Air Force",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lindenwood @ Murray St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UMES @ George Mason",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southern-N.O. @ Mississippi Val.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Chattanooga @ Jackson St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "James Madison @ Colorado St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Army West Point @ UT Arlington",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Illinois St. @ Central Mich.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "CSUN @ Drake",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Stonehill @ Bucknell",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southeast Mo. St. @ Merrimack",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Western Mich. @ Louisiana Tech",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UTEP @ UTRGV",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Elon @ Eastern Mich.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Binghamton @ Sacred Heart",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Idaho @ SIUE",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lehigh @ NJIT",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Dayton @ Western Ky.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Michigan @ Cincinnati",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "East Texas A&M @ St. John's (NY)",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Youngstown St. @ Marshall",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southern Miss. @ Central Ark.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southern Ind. @ Xavier",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Jacksonville St. @ Bellarmine",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Providence @ Bryant",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "California @ SFA",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Manhattan @ Yale",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Montana St. @ UIC",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNC Greensboro @ App State",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Northwestern St. @ Little Rock",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Cal St. Fullerton @ Oral Roberts",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Kansas City @ Evansville",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Missouri S&T @ Ark.-Pine Bluff",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tulane @ North Florida",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Illinois @ McNeese",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lamar University @ High Point",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "West Ga. @ Georgia St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Memphis @ Louisiana",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Dartmouth @ Buffalo",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UMBC @ Canisius",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Alabama A&M @ Kennesaw St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Haven @ Delaware",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Radford @ Ga. Southern",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "West Florida @ USC Upstate",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Florida @ Baylor",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "N.C. A&T @ Furman",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "West Virginia @ FGCU",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tarleton St. @ UIW",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Cleveland St. @ Mercyhurst",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Bradley @ South Dakota St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Mexico St. @ Southern Utah",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "George Washington @ Charlotte",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Wyoming @ Eastern Ill.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "ETSU @ William & Mary",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Texas Tech @ Nevada",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Hampshire @ Boston College",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Montana @ California Baptist",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNLV @ North Dakota St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Old Dominion @ Winthrop",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Nicholls @ Southern-N.O.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Chicago St. @ Omaha",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Howard @ UAlbany",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Col. of Charleston @ South Carolina St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNI @ South Dakota",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Middle Tenn. @ South Alabama",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Idaho St. @ Boise St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Sam Houston @ Kent St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Marist @ Denver",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Villanova @ Arizona St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Wichita St. @ Northern Colo.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Purdue Fort Wayne @ Miami (OH)",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Cal Poly @ UC Davis",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Akron @ IU Indy",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Texas St. @ A&M-Corpus Christi",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Robert Morris @ Duquesne",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tennessee St. @ Tennessee Tech",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Davidson @ Georgetown",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Hampton @ UMES",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Iona @ FDU",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Saint Louis @ Southern Ill.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UConn @ Jacksonville",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Portland St. @ Murray St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Seton Hall @ UNC Asheville",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Brown @ Rhode Island",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Milwaukee @ St. Thomas (MN)",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Nicholls @ Mississippi Val.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Penn @ Navy",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "LSU New Orleans  @ Pacific",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UCLA @ Miami (FL)",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Marquette @ South Fla.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Notre Dame @ Toledo",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UT Martin @ North Ala.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Pepperdine @ Creighton",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Indiana St. @ Missouri St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Le Moyne @ Binghamton",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Loyola Maryland @ Morgan St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Campbell @ Georgia Tech",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Ball St. @ Wright St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Saint Peter's @ Towson",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "NJIT @ Quinnipiac",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Saint Mary's (CA) @ Sacramento St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Hofstra @ Manhattan",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Coastal Carolina @ Florida A&M",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Fairfield @ Northeastern",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "East Carolina @ Clemson",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Northern Ky. @ Bowling Green",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Ohio @ Butler",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Eastern Wash. @ Gonzaga",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Bethune-Cookman @ Stetson",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Portland @ UC Riverside",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UCF @ Wake Forest",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Seattle U @ Oregon St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Michigan St. @ Central Mich.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Princeton @ Colgate",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Charleston So. @ The Citadel",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UC Irvine @ Fresno St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Wofford @ NC State",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Syracuse @ Cornell",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Temple @ ULM",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Central Conn. St. @ Sacred Heart",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Virginia @ VCU",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lafayette @ Columbia",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Ark.-Pine Bluff @ Henderson St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tulsa @ Arizona",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Western Caro. @ Jacksonville St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lindenwood @ NIU",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Stony Brook @ Coppin St.",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Oakland @ Valparaiso",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Samford @ Belmont",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southern Miss. @ Ole Miss",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Sam Houston @ UT Arlington",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Holy Cross @ Harvard",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Santa Clara @ Yale",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Florida St. @ Lipscomb",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Washington St. @ LIU",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Mercer @ North Dakota",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Mexico @ Colorado",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Utah St. @ UC Santa Barbara",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Long Beach St. @ Utah",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "San Francisco @ Grand Canyon",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Weber St. @ CSU Bakersfield",
+      "start": "09/05/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
       "league": "NCAA Men's Water Polo",
       "title": "Salem (WV) @ Princeton",
       "start": "09/05/2026T00:00:00Z",
@@ -3903,139 +4657,6 @@
       "start": "09/05/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "🤽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Howard @ Manhattan",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "La Salle @ Monmouth",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Colgate @ Bryant",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Liberty @ American",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Bucknell @ Old Dominion",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Michigan @ Notre Dame",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Chicago St. @ DePaul",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Florida Poly @ UCF",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Fisher @ UConn",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Stony Brook @ Northeastern",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "FIU @ St. John's (NY)",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "UTRGV @ South Fla.",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "North Carolina @ California",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Saint Peter's @ Brown",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Saint Louis @ SIUE",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "VCU @ Marshall",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Sacramento St. @ San Jose St.",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Omaha @ UCLA",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "UNLV @ UC Riverside",
-      "start": "09/06/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -5361,1565 +5982,1173 @@
       "icon": "🤽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "George Mason @ Maryland",
+      "league": "NCAA Men's Soccer",
+      "title": "James Madison @ NJIT",
       "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Indiana @ Southern Ind.",
+      "league": "NCAA Men's Soccer",
+      "title": "FDU @ Villanova",
       "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Penn St. @ DePaul",
+      "league": "NCAA Men's Soccer",
+      "title": "Butler @ Western Mich.",
       "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Grambling @ Alabama",
+      "league": "NCAA Men's Soccer",
+      "title": "Loyola Chicago @ Gonzaga",
       "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "New Mexico St. @ New Mexico",
+      "league": "NCAA Men's Soccer",
+      "title": "Princeton @ Massachusetts",
       "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Men's Soccer",
-      "title": "Duke @ NC State",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "SIUE @ Loyola Chicago",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Air Force @ Saint Mary's (CA)",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Saint Mary's (CA) @ Creighton",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Stonehill @ Dartmouth",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Western Ill. @ UIC",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Marist @ San Francisco",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Yale @ Omaha",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Santa Clara @ Creighton",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Pacific @ San Jose St.",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Rhode Island @ Providence",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "Utah Tech @ Cal Poly",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Penn @ Pittsburgh",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Men's Soccer",
-      "title": "UC San Diego @ UNLV",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "High Point @ South Carolina",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "American @ George Washington",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "NJIT @ LIU",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Charleston So. @ The Citadel",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Illinois St. @ Eastern Ill.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Yale @ Massachusetts",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Boston U. @ Boston College",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Temple @ Le Moyne",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UMBC @ Robert Morris",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Bucknell @ Villanova",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Richmond @ VMI",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "St. Thomas (MN) @ UNI",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Western Ill. @ UIC",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Jacksonville St. @ Alcorn",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Duquesne @ Youngstown St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Holy Cross @ Dartmouth",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "VCU @ East Carolina",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Saint Joseph's @ Penn",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Wagner @ Seton Hall",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Cornell @ Army West Point",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Col. of Charleston @ Coastal Carolina",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Southern Ind. @ Cleveland St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Iowa St. @ Loyola Maryland",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "La Salle @ Lehigh",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Winthrop @ Wofford",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Maine @ Providence",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Hofstra @ FDU",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UMass Lowell @ Stonehill",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "James Madison @ Liberty",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Kansas St. @ Colorado St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "App State @ ETSU",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "George Mason @ Longwood",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Navy @ Towson",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Kennesaw St. @ Presbyterian",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Dayton @ Xavier",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "North Florida @ UCF",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Northeastern @ Harvard",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UNCW @ Charlotte",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Colgate @ Princeton",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "ULM @ Rice",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UAB @ Samford",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Akron @ Mercyhurst",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Mercer @ South Fla.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Eastern Ky. @ Northern Ky.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UNC Asheville @ Davidson",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Georgia St. @ West Ga.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Florida @ South Carolina",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Vanderbilt @ Georgia",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "USC Upstate @ Furman",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Wisconsin @ Illinois",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Saint Mary's (CA) @ Sacramento St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Penn St. @ Ohio St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UT Martin @ Austin Peay",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Chattanooga @ North Ala.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Georgetown @ Delaware",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Brown @ Rhode Island",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Detroit Mercy @ Bowling Green",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "FIU @ Stetson",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Eastern Mich. @ Milwaukee",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "UNC Greensboro @ Campbell",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Fordham @ Columbia",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Fla. Atlantic @ North Dakota St.",
-      "start": "09/10/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Butler @ IU Indy",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "George Mason @ West Virginia",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Buffalo @ Lafayette",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "UC Santa Barbara @ Rutgers",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Missouri St. @ Kansas City",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Georgetown @ Maryland",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Wright St. @ Bellarmine",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "CSUN @ Stanford",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "California @ North Carolina",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Kansas City @ Drake",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "UC Davis @ LMU (CA)",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Denver @ Indiana",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "SIUE @ Southern Ill.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "UIW @ SMU",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Michigan @ Northwestern",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Central Baptist @ Central Ark.",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "UTEP @ UTRGV",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Houston Christian @ Grand Canyon",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "TAMU-San Antonio @ Lamar University",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Cal Poly @ LMU (CA)",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Iowa @ Minnesota",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Delta St. @ Jackson St.",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Alabama A&M @ East Texas A&M",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "West Florida @ Troy",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "SFA @ Texas Southern",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Montreat @ Gardner-Webb",
+      "start": "09/07/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Texas St. @ Louisiana",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Lafayette @ LIU",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Tulsa @ Oral Roberts",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "St. Bonaventure @ Boston College",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Southern Miss. @ Nicholls",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "New Haven @ New Hampshire",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Oakland @ Valparaiso",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Winthrop @ Col. of Charleston",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Sam Houston @ Houston",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Oregon St. @ Virginia",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Evansville @ Middle Tenn.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Wofford @ UNC Asheville",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Chicago St. @ Green Bay",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Bellarmine @ Southern Ind.",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "UIW @ UTSA",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Vermont @ Boston U.",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Ark.-Pine Bluff @ Northwestern St.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Holy Cross @ UMass Lowell",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Loyola Chicago @ NIU",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Delaware @ Loyola Maryland",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Indiana St. @ Morehead St.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "William Peace @ Queens (NC)",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Seattle U @ Oregon St.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Siena @ UAlbany",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Nelson @ North Texas",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Lehigh @ Seton Hall",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Murray St. @ Tennessee Tech",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Central Conn. St. @ Merrimack",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Marquette @ Baylor",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Cornell @ Akron",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Nevada @ Central Ark.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "USC Upstate @ Wake Forest",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Indiana @ Nebraska",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Navy @ Mount St. Mary's",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Cal Poly @ Pacific",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Saint Joseph's @ Rider",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "UC Santa Barbara @ Idaho St.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Ohio St. @ Kentucky",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "CSUN @ Utah Tech",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Lipscomb @ Belmont",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
-      "title": "Air Force @ Northern Colo.",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Louisville @ Evansville",
+      "start": "09/08/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Soccer",
+      "league": "NCAA Men's Soccer",
       "title": "San Diego @ UC Irvine",
-      "start": "09/10/2026T00:00:00Z",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "NCAA Men's Soccer",
+      "title": "Southern Ore. @ Portland",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Rutgers-Camden @ Delaware St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Gardner-Webb @ Western Caro.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Western Mich. @ Michigan St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Howard @ American",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Col. of Charleston @ Presbyterian",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Charleston So. @ Duke",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Marist @ Holy Cross",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Liberty @ Radford",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Bryant @ UConn",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "App State @ Elon",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "UNC Asheville @ N.C. Central",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Rhode Island @ Rutgers",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "LIU @ Rutgers",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "William & Mary @ Norfolk St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "California @ South Carolina",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Southeastern La. @ Southern U.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Wichita St. @ Kansas",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "SFA @ Sam Houston",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Notre Dame @ Georgia",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "St. John's (NY) @ Fordham",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Hampshire @ Merrimack",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Auburn @ Florida St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Clemson @ Ole Miss",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "North Ala. @ Tennessee St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Lamar University @ Houston",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Iowa @ Iowa St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Jackson St. @ Northwestern St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Alcorn @ Louisiana Tech",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Mississippi St. @ Wake Forest",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Texas Southern @ UTRGV",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "NC State @ LSU",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tulsa @ Oral Roberts",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Butler @ Northwestern",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "BYU @ Boise St.",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Oklahoma @ Georgia Tech",
+      "start": "09/08/2026T00:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Sacred Heart @ Yale",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Texas @ Arkansas",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Schreiner @ Prairie View",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Rutgers @ Oregon",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Massachusetts @ Ohio",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Portland St. @ Portland",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Virginia Tech @ Syracuse",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "South Dakota St. @ Weber St.",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "UMBC @ Vermont",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Michigan St. @ Southern California",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "UAlbany @ Maine",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "BYU @ Utah St.",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Columbia @ Delaware",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Boise St. @ CSU Bakersfield",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "UConn @ Harvard",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Purdue @ UCLA",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "UNCW @ Hampton",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Northern Ariz. @ Arizona",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Richmond @ George Washington",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Pepperdine @ Fresno St.",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Samford @ Western Caro.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
       "league": "NCAA Women's Soccer",
-      "title": "Maryland @ Washington",
-      "start": "09/10/2026T00:00:00Z",
+      "title": "Bowling Green @ Akron",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
       "icon": "⚽"
     },
     {
-      "league": "NCAA Men's Water Polo",
-      "title": "Biola @ California Baptist",
-      "start": "09/10/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Coastal Carolina @ Louisiana",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🤽"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "New Mexico @ New Mexico St.",
-      "start": "09/21/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "UNI @ Indiana St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Ohio @ Central Mich.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Loyola Maryland @ Holy Cross",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Jacksonville St. @ Delaware",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Central Mich. @ Eastern Mich.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "New Mexico @ Hawaii",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Howard @ New Haven",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Montana St. @ Northern Colo.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Michigan @ Michigan St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Rhode Island @ George Mason",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Monmouth @ Stony Brook",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "West Florida @ Queens (NC)",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Miami (FL) @ NC State",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Abilene Christian @ West Ga.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Northeastern @ Drexel",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "FIU @ Missouri St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Central Conn. St. @ Wagner",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Davidson @ Dayton",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "The Citadel @ Chattanooga",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Ga. Southern @ Coastal Carolina",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Towson @ Hofstra",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "South Alabama @ James Madison",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "FDU @ Stonehill",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "LSU New Orleans  @ SFA",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "UMass Lowell @ Binghamton",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Middle Tenn. @ Liberty",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Ball St. @ Western Mich.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Saint Louis @ George Washington",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Miami (OH) @ Kent St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Marist @ Saint Peter's",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Purdue @ Rutgers",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Colorado St. @ Texas St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Loyola Chicago @ Fordham",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Nicholls @ UTRGV",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Alcorn @ North Carolina",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southeastern La. @ Lamar University",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Toledo @ Buffalo",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Milwaukee @ Northern Ky.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "New Hampshire @ NJIT",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Towson @ Col. of Charleston",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Morehead St. @ Bellarmine",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Murray St. @ UNI",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Northwestern @ Minnesota",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern Miss. @ Louisiana Tech",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Lindenwood @ Western Ky.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Merrimack @ Iona",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Texas Southern @ Abilene Christian",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "The Citadel @ Mercer",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Illinois St. @ Murray St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Sacred Heart @ Niagara",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Eastern Wash. @ Air Force",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "N.C. A&T @ Northeastern",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "UIC @ Belmont",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Northwestern St. @ UIW",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Drake @ Valparaiso",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "North Ala. @ Tarleton St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Indiana @ Wisconsin",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "UNCW @ Campbell",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Central Ark. @ Southeast Mo. St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Western Ky. @ New Mexico St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Xavier @ Southern Ind.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Fordham @ Duquesne",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "ETSU @ Wofford",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Cleveland St. @ Purdue Fort Wayne",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "LIU @ Mercyhurst",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "McNeese @ A&M-Corpus Christi",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Middle Tenn. @ Jackson St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "East Texas A&M @ Houston Christian",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Delaware St. @ Chicago St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "VCU @ Loyola Chicago",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Bryant @ Dartmouth",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Fairfield @ Canisius",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "UNC Greensboro @ VMI",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "St. Thomas (MN) @ North Dakota",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "SIUE @ Missouri St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Columbia @ Cornell",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Gonzaga @ Utah St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Austin Peay @ Central Ark.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Omaha @ North Dakota St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "NIU @ Wright St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Oral Roberts @ Kansas City",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Lipscomb @ Bellarmine",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Eastern Ky. @ Little Rock",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Quinnipiac @ Manhattan",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Western Caro. @ UNC Greensboro",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "California Baptist @ Utah Valley",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Louisiana @ Troy",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Oakland @ Green Bay",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Pacific @ San Diego",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Belmont @ UIC",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Saint Mary's (CA) @ Denver",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southeast Mo. St. @ Western Ill.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern Ind. @ Eastern Ill.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Sam Houston @ Kennesaw St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
+      "league": "NCAA Women's Soccer",
       "title": "Furman @ Tennessee Tech",
-      "start": "09/26/2026T00:00:00Z",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Marquette @ Providence",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Washington @ Nebraska",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "San Jose St. @ Air Force",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Saint Mary's (CA) @ Utah St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Robert Morris @ IU Indy",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Idaho St. @ New Mexico",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Dartmouth @ Harvard",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Northern Ariz. @ New Mexico St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Portland @ Seattle U",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Northern Colo. @ San Diego St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Wofford @ Chattanooga",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "CSU Bakersfield @ Fresno St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Colgate @ Holy Cross",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Princeton @ Villanova",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "LMU (CA) @ Santa Clara",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "South Carolina St. @ Alabama A&M",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "San Diego St. @ Fresno St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Wake Forest @ Stanford",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Villanova @ Xavier",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Idaho @ UC Davis",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "DePaul @ UConn",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "San Diego @ Portland St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Western Mich. @ Ball St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Louisville @ California",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Yale @ Brown",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Colorado St. @ Colorado Col.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "UT Martin @ SIUE",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Montana @ Gonzaga",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Winthrop @ Gardner-Webb",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Campbell @ Elon",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Lafayette @ American",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Jacksonville St. @ UT Martin",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "UC Davis @ UNLV",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Ark.-Pine Bluff @ Tulsa",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Washington St. @ Oregon St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Women's Soccer",
+      "title": "Santa Clara @ Texas St.",
+      "start": "09/20/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Bucknell @ Navy",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Mercyhurst @ FDU",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Lehigh @ Loyola Maryland",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Chicago St. @ Stonehill",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Utah Tech @ Northern Ariz.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Central Conn. St. @ Howard",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Creighton @ St. John's (NY)",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Bucknell @ Boston U.",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Idaho St. @ Eastern Wash.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "VMI @ ETSU",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern Ill. @ Indiana St.",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Coastal Carolina @ Georgia St.",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Georgetown @ Butler",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "SMU @ Virginia Tech",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Bradley @ Evansville",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "LIU @ New Haven",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "North Florida @ Jacksonville",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "UNCW @ Col. of Charleston",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Stetson @ FGCU",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Kentucky @ UCF",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Siena @ Rider",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "Old Dominion @ Ga. Southern",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Hofstra @ Stony Brook",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "UNC Asheville @ Presbyterian",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Maryland @ Indiana",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "James Madison @ South Carolina",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
-      "league": "NCAA Women's Volleyball",
-      "title": "Oregon @ Minnesota",
-      "start": "09/26/2026T00:00:00Z",
+      "league": "NCAA Men's Soccer",
+      "title": "West Virginia @ Marshall",
+      "start": "09/27/2026T00:00:00Z",
       "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Rutgers @ Iowa",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "CSUN @ Cal Poly",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "ETSU @ Samford",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern California @ Illinois",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "UCLA @ Northwestern",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Illinois St. @ Valparaiso",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Long Beach St. @ UC San Diego",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "UTEP @ Wyoming",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Southern Utah @ Portland St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Cal St. Fullerton @ UC Irvine",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "Ohio St. @ Nebraska",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
-    },
-    {
-      "league": "NCAA Women's Volleyball",
-      "title": "UC Riverside @ Sacramento St.",
-      "start": "09/26/2026T00:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏐"
+      "icon": "⚽"
     },
     {
       "league": "IPL",
@@ -7887,64 +8116,15 @@
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
-      "tag": "FINAL",
-      "icon": "🎾",
-      "sourceDetail": "ESPN live-status reconciliation"
+      "tag": "UPCOMING",
+      "icon": "🎾"
     },
     {
       "league": "WTA",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
-      "tag": "FINAL",
-      "icon": "🎾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Padres @ Reds",
-      "start": "2026-09-02T16:40Z",
-      "tag": "FINAL",
-      "icon": "⚾"
-    },
-    {
-      "league": "MLB",
-      "title": "Braves @ Nationals",
-      "start": "2026-09-02T17:05Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Athletics @ Rangers",
-      "start": "2026-09-02T18:35Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Orioles @ Rockies",
-      "start": "2026-09-02T19:10Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Phillies @ Diamondbacks",
-      "start": "2026-09-02T19:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Mariners @ Red Sox",
-      "start": "2026-09-02T20:10Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
+      "tag": "UPCOMING",
+      "icon": "🎾"
     },
     {
       "league": "NCAA Women's Field Hockey",
@@ -7961,78 +8141,6 @@
       "homeTeamId": "2166",
       "leagueArt": "",
       "eventType": "team_game"
-    },
-    {
-      "league": "MLB",
-      "title": "Mets @ Rays",
-      "start": "2026-09-02T22:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Giants @ Pirates",
-      "start": "2026-09-02T22:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Blue Jays @ Guardians",
-      "start": "2026-09-02T22:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Tigers @ Twins",
-      "start": "2026-09-02T23:40Z",
-      "tag": "LIVE",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Marlins @ Royals",
-      "start": "2026-09-02T23:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Brewers @ Cubs",
-      "start": "2026-09-02T23:40Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "White Sox @ Astros",
-      "start": "2026-09-03T00:10Z",
-      "tag": "FINAL",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Yankees @ Angels",
-      "start": "2026-09-03T01:38Z",
-      "tag": "LIVE",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "MLB",
-      "title": "Cardinals @ Dodgers",
-      "start": "2026-09-03T02:10Z",
-      "tag": "LIVE",
-      "icon": "⚾",
-      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NRL",
@@ -14630,6 +14738,13 @@
       "icon": "⚾"
     },
     {
+      "league": "NFL",
+      "title": "Lions @ Bills",
+      "start": "2026-09-18T00:15Z",
+      "tag": "UPCOMING",
+      "icon": "🏈"
+    },
+    {
       "league": "NCAA Women's Field Hockey",
       "title": "Northwestern Wildcats at Stanford Cardinal",
       "start": "2026-09-18T01:00:00Z",
@@ -20651,6 +20766,13 @@
       "icon": "🏒"
     },
     {
+      "league": "F1",
+      "title": "Gulf Air Bahrain Grand Prix in Malaysia",
+      "start": "2026-10-02T04:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Minnesota Duluth @ Vermont",
       "start": "2026-10-02T15:00Z",
@@ -21675,6 +21797,13 @@
       "icon": "🏒"
     },
     {
+      "league": "MLB",
+      "title": "TBD @ TBD",
+      "start": "2026-10-03T04:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾"
+    },
+    {
       "league": "NCAA Women's Field Hockey",
       "title": "Bucknell Bison at Holy Cross Crusaders",
       "start": "2026-10-03T15:00:00Z",
@@ -21835,6 +21964,13 @@
       "icon": "🏒"
     },
     {
+      "league": "UFC",
+      "title": "UFC 332",
+      "start": "2026-10-03T21:00Z",
+      "tag": "UPCOMING",
+      "icon": "🥊"
+    },
+    {
       "league": "NCAA FB",
       "title": "Oregon St @ Colorado St",
       "start": "2026-10-03T22:00Z",
@@ -21856,6 +21992,62 @@
       "icon": "🏒"
     },
     {
+      "league": "NBA",
+      "title": "Heat @ Raptors",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏀"
+    },
+    {
+      "league": "NHL",
+      "title": "Blackhawks @ Sabres",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Canadiens @ Penguins",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Capitals @ Lightning",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Senators @ Maple Leafs",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Hurricanes @ Flyers",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Mammoth @ Blue Jackets",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Kraken @ Oilers",
+      "start": "2026-10-03T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Boston College @ Stonehill",
       "start": "2026-10-03T23:00Z",
@@ -21868,6 +22060,13 @@
       "start": "2026-10-03T23:30Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "NHL",
+      "title": "Devils @ Islanders",
+      "start": "2026-10-03T23:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
     },
     {
       "league": "NCAA FB",
@@ -21884,11 +22083,46 @@
       "icon": "🏈"
     },
     {
+      "league": "NHL",
+      "title": "Bruins @ Wild",
+      "start": "2026-10-04T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Stars @ Predators",
+      "start": "2026-10-04T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Blues @ Avalanche",
+      "start": "2026-10-04T01:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
       "league": "NCAA FB",
       "title": "Fresno St @ Washington St",
       "start": "2026-10-04T01:30Z",
       "tag": "UPCOMING",
       "icon": "🏈"
+    },
+    {
+      "league": "NHL",
+      "title": "Flames @ Canucks",
+      "start": "2026-10-04T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
+    },
+    {
+      "league": "NHL",
+      "title": "Kings @ Sharks",
+      "start": "2026-10-04T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏒"
     },
     {
       "league": "NCAA FB",
@@ -32896,110 +33130,6 @@
       "start": "2027-02-20T21:30Z",
       "tag": "UPCOMING",
       "icon": "🏒"
-    },
-    {
-      "league": "NCAA Men Soccer",
-      "title": "UMass Lowell @ UMass",
-      "start": "2026-09-02T20:00:00Z",
-      "tag": "FINAL",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Women Soccer",
-      "title": "Siena @ Le Moyne",
-      "start": "2026-09-02T20:00:00Z",
-      "tag": "FINAL",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Women Soccer",
-      "title": "Canisius @ Buffalo",
-      "start": "2026-09-02T23:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA VB",
-      "title": "Maryland @ Arkansas",
-      "start": "2026-09-02T21:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Men Soccer",
-      "title": "Quinnipiac @ New Haven",
-      "start": "2026-09-02T22:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Men Soccer",
-      "title": "Colgate @ Binghamton",
-      "start": "2026-09-02T23:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Women Soccer",
-      "title": "Fairfield @ FDU",
-      "start": "2026-09-02T22:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA Women Soccer",
-      "title": "W Illinois @ Drake",
-      "start": "2026-09-02T22:30:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA VB",
-      "title": "Auburn @ Minnesota",
-      "start": "2026-09-02T22:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA VB",
-      "title": "Georgia @ Purdue",
-      "start": "2026-09-02T23:00:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
-    },
-    {
-      "league": "NCAA VB",
-      "title": "SMU @ TCU",
-      "start": "2026-09-02T23:30:00Z",
-      "tag": "LIVE",
-      "icon": "•",
-      "source": "espn",
-      "sourceDetail": "ESPN live-status reconciliation"
     }
-  ],
-  "repairReport": {
-    "liveStatusReconciled": 8,
-    "liveEventsAdded": 0,
-    "liveProviderFailures": 5
-  }
+  ]
 }
