@@ -1,9 +1,8 @@
-name: Refresh XSportsX schedules
-
+name: Refresh complete schedules
 on:
-  schedule:
-    - cron: '17 */6 * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: write
@@ -15,23 +14,104 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout production branch
         uses: actions/checkout@v4
         with:
           ref: android-app
-      - name: Refresh schedule feed
-        run: python3 scripts/refresh_schedules.py
-      - name: Commit only when schedule changed
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Refresh canonical schedule feed
+        run: python scripts/refresh_schedules_engine.py
+      - name: Repair known source endpoint drift
+        run: python scripts/repair_schedule_sources.py
+      - name: Add authoritative official API schedules
+        run: python scripts/official_api_adapters.py
+      - name: Add ESPN NCAA schedules
+        run: python scripts/espn_ncaa_adapter.py
+      - name: Repair active motorsport and lacrosse sources
+        run: python scripts/special_schedule_repairs.py
+      - name: Repair wrestling schedules
+        run: python scripts/wrestling_schedule_repairs.py
+      - name: Phase 1 official schedule repairs
+        run: python scripts/phase1_schedule_repairs.py
+      - name: Phase 2 guarded schedule repairs
+        run: python scripts/phase2_schedule_repairs.py
+      - name: Phase 3 visual enrichment
+        run: python scripts/phase3_visual_enrichment.py
+      - name: Classify non-team events
+        run: python scripts/classify_non_team_events.py
+      - name: Finalize MLB postseason placeholders
+        run: python scripts/finalize_mlb_postseason_placeholders.py
+      - name: Finalize NCAA football postseason placeholders
+        run: python scripts/finalize_ncaa_football_postseason_placeholders.py
+      - name: Repair MLB logo gaps
+        run: python scripts/repair_mlb_logo_gaps.py
+      - name: Audit incomplete MLB games
+        run: python scripts/audit_mlb_incomplete_games.py
+      - name: Audit NCAA football logos
+        run: python scripts/audit_ncaa_football_logos.py
+      - name: Generate league schedule audit
+        run: python scripts/league_schedule_audit.py
+      - name: Normalize, dedupe, and validate feed
         run: |
           set -euo pipefail
-          git config user.name 'XSportsX Schedule Bot'
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          pth=Path('data/schedule_feed.json')
+          p=json.loads(pth.read_text())
+          events=p.get('events') or []
+          assert events and p.get('schema',0) >= 5
+          fixed=0
+          seen=set()
+          unique=[]
+          for e in events:
+              raw=str(e.get('start') or '').strip()
+              normalized=None
+              for candidate in (raw, raw.replace('Z','+00:00'), raw.replace('z','+00:00')):
+                  try:
+                      normalized=datetime.fromisoformat(candidate).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+                      break
+                  except ValueError:
+                      pass
+              if normalized is None:
+                  raise SystemExit(f'REFRESH REJECTED: malformed timestamp: {raw!r}')
+              e['start']=normalized
+              fixed += raw != normalized
+              key=(e.get('league'),e.get('title'),e.get('start'))
+              if key not in seen:
+                  seen.add(key); unique.append(e)
+          p['events']=unique
+          p['eventCounts']={k:sum(1 for e in unique if e.get('league')==k) for k in sorted({e.get('league') for e in unique if e.get('league')})}
+          p['generatedAt']=datetime.now(timezone.utc).isoformat()
+          p.setdefault('repairReport',{})['finalDuplicateEventsRemoved']=len(events)-len(unique)
+          p['repairReport']['adapterTimestampsNormalized']=fixed
+          pth.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n')
+          print(f"Prepared {len(unique)} events across {len(p['eventCounts'])} leagues")
+          PY
+      - name: Strict schedule coverage validation
+        run: python scripts/validate_schedule_refresh.py
+      - name: Publish schedule feed safely
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json
-          if git diff --cached --quiet; then
-            echo 'Schedule feed unchanged.'
-            exit 0
-          fi
-          git commit -m 'chore: refresh sports schedules'
-          git push origin HEAD:android-app
+          git add data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json
+          git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
+          refresh_commit=$(git rev-parse HEAD)
+          for attempt in 1 2 3; do
+            git fetch origin android-app
+            git reset --hard origin/android-app
+            git checkout "$refresh_commit" -- data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json
+            git add data/schedule_feed.json data/league_schedule_audit.json data/team_logo_map.json
+            git diff --cached --quiet || git commit -m 'chore: refresh complete schedule feed'
+            if git push origin HEAD:android-app; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish after three race-safe retries' >&2
+          exit 1
