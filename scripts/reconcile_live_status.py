@@ -78,53 +78,58 @@ def find_match(events,league,name,start):
 def reconcile_mlb_authoritative(events,today):
     """Use MLB Stats API as a second authoritative check for every MLB game.
 
-    ESPN is still used for the broad multi-league pass, but MLB's own live
-    scoreboard is the final authority for MLB in-progress games. This prevents
-    a game such as Athletics @ Rangers from disappearing when ESPN briefly
-    reports a pregame state or when the canonical schedule title differs.
+    MLB schedule dates are local baseball game dates. During the evening in
+    North America, the current UTC date can already be the next calendar day,
+    while late games are still listed under yesterday's MLB date. Check both
+    dates so the live feed survives the UTC rollover.
     """
-    root=get_json(f'https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={today:%Y-%m-%d}&hydrate=team,linescore')
     changed=added=0
-    for date_block in root.get('dates') or []:
-        for game in date_block.get('games') or []:
-            status=game.get('status') or {}
-            abstract=str(status.get('abstractGameState') or '').lower()
-            detailed=str(status.get('detailedState') or '').lower()
-            if abstract not in {'live','in progress'} and 'progress' not in detailed and detailed not in {'live'}:
-                continue
-            teams=(game.get('teams') or {})
-            away=((teams.get('away') or {}).get('team') or {}).get('name') or ''
-            home=((teams.get('home') or {}).get('team') or {}).get('name') or ''
-            if not away or not home: continue
-            start=iso(game.get('gameDate'))
-            if not start: continue
-            name=f'{away} @ {home}'
-            event=find_match(events,'MLB',name,start)
-            if event is None:
-                event={'league':'MLB','title':name,'start':start,'tag':'LIVE','icon':'•','source':'mlb','sourceDetail':'MLB Stats API live-status reconciliation'}
-                events.append(event); added+=1
-            elif event.get('tag')!='LIVE':
-                event['tag']='LIVE'; event['sourceDetail']='MLB Stats API live-status reconciliation'; changed+=1
+    for game_date in (today-timedelta(days=1), today):
+        root=get_json(f'https://statsapi.mlb.com/api/v1/schedule?sportId=1&date={game_date:%Y-%m-%d}&hydrate=team,linescore')
+        for date_block in root.get('dates') or []:
+            for game in date_block.get('games') or []:
+                status=game.get('status') or {}
+                abstract=str(status.get('abstractGameState') or '').lower()
+                detailed=str(status.get('detailedState') or '').lower()
+                if abstract not in {'live','in progress'} and 'progress' not in detailed and detailed not in {'live'}:
+                    continue
+                teams=(game.get('teams') or {})
+                away=((teams.get('away') or {}).get('team') or {}).get('name') or ''
+                home=((teams.get('home') or {}).get('team') or {}).get('name') or ''
+                if not away or not home: continue
+                start=iso(game.get('gameDate'))
+                if not start: continue
+                name=f'{away} @ {home}'
+                event=find_match(events,'MLB',name,start)
+                if event is None:
+                    event={'league':'MLB','title':name,'start':start,'tag':'LIVE','icon':'•','source':'mlb','sourceDetail':'MLB Stats API live-status reconciliation'}
+                    events.append(event); added+=1
+                elif event.get('tag')!='LIVE':
+                    event['tag']='LIVE'; event['sourceDetail']='MLB Stats API live-status reconciliation'; changed+=1
     return changed,added
 
 def main():
     payload=json.loads(FEED.read_text(encoding='utf-8')); events=payload.get('events') or []
     changed=added=failures=0; today=datetime.now(timezone.utc).date()
     for league,sport,slug in ESPN_LEAGUES:
-        try: root=get_json(f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={today:%Y%m%d}&limit=1000')
-        except Exception as exc:
-            failures+=1; print(f'LIVE RECONCILE: {league}: request failed: {exc}'); continue
-        for remote in root.get('events') or []:
-            start=iso(remote.get('date'))
-            if not start: continue
-            name=title(remote,league); tag=state(remote)
-            if league=='MLB' and tag!='FINAL' and mlb_time_fallback(start,tag): tag='LIVE'
-            event=find_match(events,league,name,start)
-            if event is not None:
-                if event.get('tag')!=tag:
-                    event['tag']=tag; event['sourceDetail']='ESPN live-status reconciliation'; changed+=1
-            elif tag=='LIVE':
-                events.append({'league':league,'title':name,'start':start,'tag':'LIVE','icon':'•','source':'espn','sourceDetail':'ESPN live-status reconciliation'}); added+=1
+        # ESPN's MLB scoreboard also follows the local MLB game date. Query
+        # both sides of UTC midnight for MLB; other leagues keep the fast path.
+        scoreboard_dates=(today-timedelta(days=1), today) if league=='MLB' else (today,)
+        for scoreboard_date in scoreboard_dates:
+            try: root=get_json(f'https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={scoreboard_date:%Y%m%d}&limit=1000')
+            except Exception as exc:
+                failures+=1; print(f'LIVE RECONCILE: {league} {scoreboard_date}: request failed: {exc}'); continue
+            for remote in root.get('events') or []:
+                start=iso(remote.get('date'))
+                if not start: continue
+                name=title(remote,league); tag=state(remote)
+                if league=='MLB' and tag!='FINAL' and mlb_time_fallback(start,tag): tag='LIVE'
+                event=find_match(events,league,name,start)
+                if event is not None:
+                    if event.get('tag')!=tag:
+                        event['tag']=tag; event['sourceDetail']='ESPN live-status reconciliation'; changed+=1
+                elif tag=='LIVE':
+                    events.append({'league':league,'title':name,'start':start,'tag':'LIVE','icon':'•','source':'espn','sourceDetail':'ESPN live-status reconciliation'}); added+=1
     try:
         c,a=reconcile_mlb_authoritative(events,today); changed+=c; added+=a
         print(f'LIVE RECONCILE: MLB authoritative status_updates={c}; live_events_added={a}')
