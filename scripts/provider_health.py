@@ -12,7 +12,7 @@ BROAD_LEAGUES = {
     "NFL","CFL","NBA","WNBA","NHL","MLB","MLS","EPL","UCL","UEL",
     "LaLiga","Serie A","Bundesliga","Ligue 1","UFC","F1","IndyCar",
     "PGA","LPGA","LIV Golf","ATP","WTA","PLL","NLL","NASCAR Cup",
-    "NASCAR Xfinity","NASCAR Truck","NCAA FB"
+    "NASCAR Xfinity","NASCAR Truck","NCAA FB","NCAA BB","NCAA WBB"
 }
 SPORTMONKS_LEAGUES = {"MLS","EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","NWSL","ICC T20","IPL","F1"}
 CFBD_LEAGUES = {"NCAA FB"}
@@ -68,8 +68,7 @@ def build_matrix(league_names,official,dedicated,espn,sportsdb):
         if league in DIRECT_LEAGUES: candidates.append(DIRECT_LEAGUES[league])
         elif league in dedicated: candidates.append(dedicated[league])
         elif league in official: candidates.append("official")
-        if league in BROAD_LEAGUES:
-            candidates += ["sportradar","sportsdataio"]
+        if league in BROAD_LEAGUES: candidates += ["sportradar","sportsdataio"]
         if league in SPORTMONKS_LEAGUES: candidates.append("sportmonks")
         if league in CFBD_LEAGUES: candidates.append("cfbd")
         if league == "Esports": candidates.append("pandascore")
@@ -80,8 +79,6 @@ def build_matrix(league_names,official,dedicated,espn,sportsdb):
             if p not in unique: unique.append(p)
         configured=[p for p in unique if p == "cache" or _configured(p)][:3]
         standby=[p for p in unique if p not in configured and p != "cache"]
-        # If a provider isn't configured yet, do not burn a refresh attempt on it.
-        # It remains visible as standby until its credential/endpoint is supplied.
         active=provider_order(league,configured)
         matrix[league]={"configured":configured,"activeOrder":active,"primary":active[0] if active else "cache","secondary":active[1] if len(active)>1 else "cache","tertiary":active[2] if len(active)>2 else "cache","cachedRecovery":"cache","standbyProviders":standby}
     return matrix
