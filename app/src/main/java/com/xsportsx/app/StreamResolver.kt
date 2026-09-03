@@ -2,15 +2,9 @@ package com.xsportsx.app
 
 import android.content.Context
 import android.util.LruCache
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.BufferedInputStream
 import java.io.InputStream
@@ -32,7 +26,7 @@ class StreamResolver(context: Context) {
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
     private val channelIndex = ChannelIndex()
     private val preResolvedCache = PreResolvedStreamCache(appContext)
-    private val eventInFlight = ConcurrentHashMap<String, kotlinx.coroutines.Deferred<List<ResolvedStream>>>()
+    private val eventInFlight = ConcurrentHashMap<String, Deferred<List<ResolvedStream>>>()
     private val refreshScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
@@ -50,24 +44,18 @@ class StreamResolver(context: Context) {
         val streams = cacheMutex.withLock {
             val fresh = cache.get(key)
             if (!force && fresh != null && System.currentTimeMillis() - fresh.loadedAt < CACHE_TTL_MS) fresh.streams
-            else {
-                coroutineScope {
-                    val privateDeferred = async(Dispatchers.IO) {
-                        if (config.isConfigured()) {
-                            runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList())
-                        } else emptyList()
-                    }
-                    val publicDeferred = async(Dispatchers.IO) {
-                        runCatching { publicResolver.load(force) }.getOrDefault(emptyList())
-                            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
-                    }
-                    val merged = dedupe(privateDeferred.await() + publicDeferred.await())
-                    cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
+            else coroutineScope {
+                val privateDeferred = async(Dispatchers.IO) {
+                    if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList()
                 }
+                val publicDeferred = async(Dispatchers.IO) {
+                    runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+                }
+                val merged = dedupe(privateDeferred.await() + publicDeferred.await())
+                cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
             }
         }
-        channelIndex.rebuild(streams)
-        streams.size
+        channelIndex.rebuild(streams); streams.size
     }
 
     suspend fun loadLiveStreams(force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
@@ -81,8 +69,7 @@ class StreamResolver(context: Context) {
         val terms = filter?.split("||")?.map { it.trim() }?.filter { it.length >= 3 }.orEmpty()
         if (terms.isEmpty()) return all
         val indexed = terms.flatMap { channelIndex.find(it, 16) }.distinctBy { it.url }
-        if (indexed.isNotEmpty()) return indexed
-        return all.filter { stream -> val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); terms.any { haystack.contains(normalize(it)) } }
+        return if (indexed.isNotEmpty()) indexed else all.filter { stream -> val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); terms.any { haystack.contains(normalize(it)) } }
     }
 
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
@@ -110,21 +97,19 @@ class StreamResolver(context: Context) {
         if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return it }
         val (privateMatches, indexed) = coroutineScope {
             val privateDeferred = async(Dispatchers.IO) {
-                if (config.isConfigured()) {
-                    val private = runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList())
-                    val indexedCandidates = channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24)
-                    matchEventAgainstStreams(event, dedupe(private + indexedCandidates))
-                } else matchEventAgainstStreams(event, channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24))
+                val raw = if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList()
+                // Step 16: private/Xtream candidates must pass strict event relevance.
+                matchEventAgainstStreams(event, raw + channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32), strict = true)
             }
             val publicIndexDeferred = async(Dispatchers.IO) {
-                publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 8)
+                publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16)
                     .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
             }
             privateDeferred.await() to publicIndexDeferred.await()
         }
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
-        val publicMatches = indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+        val publicMatches = matchEventAgainstStreams(event, indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }, strict = true)
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let { ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it") }
         val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
         eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
@@ -132,20 +117,33 @@ class StreamResolver(context: Context) {
         return resolved
     }
 
-    private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
+    /** Step 16 relevance gate: unrelated live channels are rejected instead of merely ranked lower. */
+    private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>, strict: Boolean = false): List<ResolvedStream> {
         if (streams.isEmpty()) return emptyList()
         val titleTerms = splitTerms(event.title); val teamTerms = splitTerms("${event.home} ${event.away}"); val leagueTerms = splitTerms(event.league); val broadcastTerms = broadcastAliases(event.broadcast); val eventIsLive = event.isLive
         data class Scored(val score: Int, val stream: ResolvedStream)
         val scored = streams.mapNotNull { stream ->
-            val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); var score = 0
-            val teamHits = teamTerms.count { term -> term.length >= 4 && haystack.contains(term) }; val titleHits = titleTerms.count { term -> term.length >= 4 && haystack.contains(term) }; val leagueHits = leagueTerms.count { term -> term.length >= 3 && haystack.contains(term) }; val networkHits = broadcastTerms.count { term -> term.length >= 3 && haystack.contains(term) }
-            score += teamHits * 8; score += titleHits * 5; score += leagueHits * 3; score += networkHits * 12; if (eventIsLive && networkHits > 0) score += 6
-            if (networkHits > 0 || teamHits > 0 || titleHits > 0) Scored(score, stream) else null
+            val haystack = normalize("${stream.name} ${stream.group} ${stream.url}")
+            val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }
+            val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }
+            val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }
+            val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
+            val hasTeamEvidence = teamHits >= if (teamTerms.size >= 2) 1 else 0
+            val hasStrongTeamPair = teamTerms.size >= 2 && teamTerms.count { haystack.contains(it) } >= 2
+            val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0
+            val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
+            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else {
+                // For a real event, require team evidence. A network-only hit is not a game match.
+                // If both teams are available, prefer the pair; otherwise one team plus league/network is acceptable.
+                hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork)
+            }
+            if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
     }
 
-    private fun splitTerms(value: String): List<String> = normalize(value).split(' ').filter { it.length >= 3 }.distinct()
+    private fun splitTerms(value: String): List<String> = normalize(value).split(' ').filter { it.length >= 3 && it !in STOP_WORDS }.distinct()
+    private val STOP_WORDS = setOf("the", "and", "with", "vs", "versus", "game", "live", "network", "sports")
     private fun broadcastAliases(value: String): List<String> {
         val n = normalize(value); if (n.isBlank()) return emptyList(); val aliases = linkedSetOf(n)
         when { n.contains("espn plus") || n == "espn+" -> aliases += listOf("espn+", "espn plus", "espn"); n.contains("espn2") -> aliases += listOf("espn2", "espn 2", "espn"); n.contains("espnu") -> aliases += listOf("espnu", "espn u", "espn"); n.contains("fs1") -> aliases += listOf("fs1", "fox sports 1", "fox sports"); n.contains("fs2") -> aliases += listOf("fs2", "fox sports 2", "fox sports"); n.contains("cbs sports") -> aliases += listOf("cbs sports", "cbs"); n.contains("acc network") -> aliases += listOf("acc network", "acc"); n.contains("sec network") -> aliases += listOf("sec network", "sec"); n.contains("big ten") -> aliases += listOf("big ten network", "btn", "big ten"); n.contains("nfl network") -> aliases += listOf("nfl network", "nfl"); n.contains("netflix") -> aliases += listOf("netflix", "wwe"); n.contains("usa network") || n == "usa" -> aliases += listOf("usa network", "usa", "wwe"); n.contains("wwe network") -> aliases += listOf("wwe network", "wwe"); n.contains("peacock") -> aliases += listOf("peacock", "wwe"); n == "cw" || n.contains("cw network") -> aliases += listOf("cw", "cw network", "wwe") }
