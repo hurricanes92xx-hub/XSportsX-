@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""NCAA schedule provider with current scoreboard and ESPN fallback.
+"""NCAA schedule provider with dual-authority coverage.
 
-The NCAA mirror retired its modern /schedule route for current seasons. Use
-scoreboard date routes for the current/future UI window, then fall back to the
-public ESPN scoreboard for leagues where the NCAA mirror is unavailable.
+The NCAA mirror is the primary authority, but it is not assumed to be complete.
+ESPN is queried as a structured secondary authority for every NCAA league and
+its records are unioned with the NCAA mirror. The canonical publisher performs
+cross-provider identity merge, so this improves coverage without publishing
+aliases twice.
 """
 import json
-import re
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
 BASE = "https://ncaa-api.henrygd.me"
-HEADERS = {"User-Agent": "XSportsX-Schedule/4.0", "Accept": "application/json"}
-ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/4.0", "Accept": "application/json"}
+HEADERS = {"User-Agent": "XSportsX-Schedule/5.0", "Accept": "application/json"}
+ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/5.0", "Accept": "application/json"}
 NCAA_TZ = ZoneInfo("America/New_York")
 
 NCAA_LEAGUES = [
@@ -23,6 +24,7 @@ NCAA_LEAGUES = [
     ("NCAA Baseball", "baseball", "d1", "⚾"),
     ("NCAA Softball", "softball", "d1", "🥎"),
     ("NCAA Men's Hockey", "icehockey-men", "d1", "🏒"),
+    ("NCAA Women's Hockey", "icehockey-women", "d1", "🏒"),
     ("NCAA Men's Soccer", "soccer-men", "d1", "⚽"),
     ("NCAA Women's Soccer", "soccer-women", "d1", "⚽"),
     ("NCAA Men's Lacrosse", "lacrosse-men", "d1", "🥍"),
@@ -126,6 +128,10 @@ def _normalize(game, league, icon):
     tag = "LIVE" if state in {"live", "in-progress", "in", "in progress", "in_progress"} else "FINAL" if state in {"final", "f", "complete", "completed", "closed"} else "UPCOMING"
     provider_id = game.get("contestId") or game.get("gameID") or game.get("gameId") or ""
     event = {"league": league, "title": title, "start": start, "tag": tag, "icon": icon, "source": "ncaa"}
+    if away:
+        event["away"] = away
+    if home:
+        event["home"] = home
     if provider_id:
         event["providerEventId"] = f"ncaa:{provider_id}"
     return event
@@ -175,7 +181,7 @@ def _fetch_espn_days(league, days):
         try:
             root = _get(url, ESPN_HEADERS, timeout=20)
         except Exception as exc:
-            print(f"ERROR ESPN NCAA fallback {league} {day}: {exc}")
+            print(f"ERROR ESPN NCAA secondary {league} {day}: {exc}")
             continue
         for game in root.get("events") or []:
             event = _normalize_espn(game, league, next(x[3] for x in NCAA_LEAGUES if x[0] == league))
@@ -184,46 +190,47 @@ def _fetch_espn_days(league, days):
     return out
 
 
+def _in_window(event, now, cutoff):
+    dt = _parse_iso(event.get("start"))
+    return bool(dt and now - timedelta(hours=12) <= dt <= cutoff)
+
+
 def fetch_league(league, sport, division, icon, horizon_days=30):
     now = datetime.now(timezone.utc)
     cutoff = now + timedelta(days=min(horizon_days, 7))
     days = [now.date() + timedelta(days=i) for i in range((cutoff.date() - now.date()).days + 1)]
-    events = []
-    seen = set()
+    primary = []
+    secondary = []
 
-    # Current NCAA scoreboard is the primary authority. The old /schedule route
-    # is intentionally gone because the upstream documents it as historical only.
-    if sport == "football":
-        roots = [_fetch_scoreboard_day(sport, division, now.date())]
-    else:
-        roots = [_fetch_scoreboard_day(sport, division, day) for day in days]
+    # Primary NCAA mirror.
+    roots = [_fetch_scoreboard_day(sport, division, now.date())] if sport == "football" else [_fetch_scoreboard_day(sport, division, day) for day in days]
     for root in roots:
         if not root:
             continue
         for game in _walk_games(root):
             event = _normalize(game, league, icon)
-            if not event:
-                continue
-            dt = _parse_iso(event["start"])
-            if not dt or dt < now - timedelta(hours=12) or dt > cutoff:
-                continue
-            key = (event["title"], event["start"])
-            if key not in seen:
-                seen.add(key)
-                events.append(event)
+            if event and _in_window(event, now, cutoff):
+                primary.append(event)
 
-    # ESPN is a structured secondary authority for NCAA scoreboard coverage.
-    # It is only used when the primary feed returned nothing, avoiding duplicate
-    # network traffic while still recovering leagues whose NCAA mirror is down.
-    if not events:
-        for event in _fetch_espn_days(league, days):
-            dt = _parse_iso(event["start"])
-            if not dt or dt < now - timedelta(hours=12) or dt > cutoff:
-                continue
-            key = (event["title"], event["start"])
-            if key not in seen:
-                seen.add(key)
-                events.append(event)
-        if events:
-            print(f"REPAIRED NCAA {league} via ESPN fallback: {len(events)} events")
-    return events
+    # Always query the structured secondary authority. The old implementation
+    # queried ESPN only when the NCAA feed returned zero rows, which silently
+    # dropped live matches whenever the primary feed was merely incomplete.
+    secondary = [e for e in _fetch_espn_days(league, days) if _in_window(e, now, cutoff)]
+
+    # Deduplicate within the provider using structured provider IDs when present,
+    # otherwise exact matchup/start. Cross-provider merging is done centrally by
+    # refresh_schedules.py, where source priority and broader identity matching live.
+    out = []
+    seen = set()
+    for event in primary + secondary:
+        key = event.get("providerEventId") or (event.get("league"), event.get("away"), event.get("home"), event.get("start"))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(event)
+
+    if secondary and not primary:
+        print(f"REPAIRED NCAA {league} via ESPN secondary: {len(secondary)} events")
+    elif secondary:
+        print(f"NCAA {league}: primary={len(primary)} secondary={len(secondary)} union={len(out)}")
+    return out
