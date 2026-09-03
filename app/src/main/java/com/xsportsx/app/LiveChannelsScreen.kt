@@ -34,24 +34,18 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
 
+    // The live screen is intentionally kept lightweight. Predictive resolution is
+    // disabled here until the core live path proves stable on real hardware.
     val liveEvents = engineState.liveEvents
     val playbackEventKey = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
 
-    // Step 13: rank the handoff using both source health and actual playback history.
-    // A stream that resolves quickly but repeatedly fails at the player should not win.
     fun ranked(list: List<ResolvedStream>): List<ResolvedStream> = list
         .distinctBy { it.url }
         .sortedWith(
             compareByDescending<ResolvedStream> { stream ->
                 healthStore.score(stream.url) + playbackHealth.score(playbackEventKey, stream) + playbackHealth.globalScore(stream)
-            }
-                .thenBy { it.name.lowercase() }
+            }.thenBy { it.name.lowercase() }
         )
-
-    // Step 14: while the user is browsing, resolve the most likely next events in the background.
-    LaunchedEffect(liveEvents, selectedEvent?.id) {
-        PredictivePlaybackCoordinator.predict(context, liveEvents, selectedEvent)
-    }
 
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
@@ -140,9 +134,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 TextButton(onClick = {
                     showFavorites = !showFavorites
                     favorites = ChannelFavorites.load(context)
-                }) {
-                    Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744))
-                }
+                }) { Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744)) }
             }
             TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
         }
@@ -164,7 +156,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }
                         Spacer(Modifier.width(14.dp))
-                        Column(Modifier.weight(1f)) {
+                        Column(Modifier.weight(1.sp.value.toFloat().dp)) {
                             Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                             Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                             Text(game.status.ifBlank { "LIVE" }, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -188,10 +180,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                         Box(Modifier.size(44.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)).clickable { playerStream = stream }, contentAlignment = Alignment.Center) { Text("▶", color = Color(0xFFFF1744), fontWeight = FontWeight.Black) }
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f).clickable { playerStream = stream }) { Text(stream.name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis); Text(stream.group, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                        TextButton(onClick = {
-                            ChannelFavorites.toggle(context, stream)
-                            favorites = ChannelFavorites.load(context)
-                        }) { Text(if (favorite) "★" else "☆", color = if (favorite) Color(0xFFFF1744) else Color(0xFF737B89), fontSize = 22.sp) }
+                        TextButton(onClick = { ChannelFavorites.toggle(context, stream); favorites = ChannelFavorites.load(context) }) { Text(if (favorite) "★" else "☆", color = if (favorite) Color(0xFFFF1744) else Color(0xFF737B89), fontSize = 22.sp) }
                         Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black, modifier = Modifier.clickable { playerStream = stream })
                     }
                 }
