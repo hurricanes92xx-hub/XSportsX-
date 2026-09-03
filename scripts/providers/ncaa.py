@@ -15,7 +15,7 @@ HEADERS = {"User-Agent": "XSportsX-Schedule/3.0", "Accept": "application/json"}
 NCAA_TZ = ZoneInfo("America/New_York")
 
 NCAA_LEAGUES = [
-    ("NCAA Football", "football", "fbs", "🏈"),
+    ("NCAA FB", "football", "fbs", "🏈"),
     ("NCAA BB", "basketball-men", "d1", "🏀"),
     ("NCAA WBB", "basketball-women", "d1", "🏀"),
     ("NCAA Baseball", "baseball", "d1", "⚾"),
