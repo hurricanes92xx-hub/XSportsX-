@@ -1,0 +1,175 @@
+package com.xsportsx.app
+
+import android.content.Context
+import org.json.JSONArray
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+import java.util.concurrent.ConcurrentHashMap
+import java.util.zip.GZIPInputStream
+import java.io.BufferedInputStream
+import java.io.InputStream
+
+/**
+ * Fast Xtream metadata index. Categories are fetched first and sports categories
+ * are resolved on demand; the complete catalog can be hydrated in the background.
+ * Credentials are never persisted here; only stream metadata is cached locally.
+ */
+class XtreamSourceIndex(context: Context) {
+    data class Category(val id: String, val name: String)
+    data class Channel(val id: String, val name: String, val categoryId: String, val group: String, val icon: String)
+
+    private val prefs = context.applicationContext.getSharedPreferences("xsportsx_xtream_index", Context.MODE_PRIVATE)
+    private val categoryCache = ConcurrentHashMap<String, List<Category>>()
+    private val channelCache = ConcurrentHashMap<String, List<Channel>>()
+    private val running = ConcurrentHashMap<String, Boolean>()
+
+    companion object {
+        private const val CATEGORY_TTL = 6 * 60 * 60 * 1000L
+        private const val INDEX_TTL = 30 * 60 * 1000L
+        private val SPORTS_TERMS = setOf(
+            "sport", "sports", "espn", "fox", "fs1", "fs2", "cbs sport", "nfl", "mlb", "nba", "nhl",
+            "ncaa", "college", "sec", "acc", "big ten", "btn", "tnt", "tbs", "trutv", "usa sport",
+            "wwe", "aew", "tna", "wrestling", "ufc", "fight", "boxing", "dazn", "tsn", "sportsnet",
+            "paramount", "peacock", "fubo", "fanduel", "golf", "tennis", "nascar", "racing", "soccer", "football",
+            "hockey", "baseball", "basketball", "motorsport", "bein", "tudn"
+        )
+    }
+
+    suspend fun fastResolve(config: SourceConfig, event: SportsEvent, maxCategories: Int = 12): List<Channel> {
+        if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
+        val categories = getCategories(config, force = false)
+        val ranked = categories.map { it to categoryScore(it.name, event) }
+            .filter { it.second > 0 }
+            .sortedByDescending { it.second }
+            .take(maxCategories)
+            .map { it.first }
+        if (ranked.isEmpty()) return emptyList()
+        val loaded = ranked.flatMap { category -> getCategoryChannels(config, category.id, force = false) }
+        return loaded.distinctBy { it.id }
+    }
+
+    fun warm(config: SourceConfig) {
+        if (!config.isConfigured() || config.type != "XTREAM") return
+        val key = sourceKey(config)
+        if (running.putIfAbsent("all:$key", true) != null) return
+        Thread {
+            try {
+                val categories = getCategoriesBlocking(config, false)
+                categories.forEach { getCategoryChannelsBlocking(config, it.id, false) }
+            } catch (_: Throwable) {
+            } finally {
+                running.remove("all:$key")
+            }
+        }.start()
+    }
+
+    fun getCachedAll(config: SourceConfig): List<Channel> {
+        val key = sourceKey(config)
+        return channelCache[key] ?: loadPersistedChannels(key)
+    }
+
+    private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> =
+        getCategoriesBlocking(config, force)
+
+    private fun getCategoriesBlocking(config: SourceConfig, force: Boolean): List<Category> {
+        val key = sourceKey(config)
+        categoryCache[key]?.let { if (!force) return it }
+        val savedAt = prefs.getLong("cat_time_$key", 0L)
+        if (!force && System.currentTimeMillis() - savedAt < CATEGORY_TTL) {
+            loadPersistedCategories(key)?.let { categoryCache[key] = it; return it }
+        }
+        val query = authQuery(config)
+        val array = JSONArray(http("${config.server.trim().removeSuffix("/")}/player_api.php?$query&action=get_live_categories"))
+        val result = ArrayList<Category>(array.length())
+        for (i in 0 until array.length()) {
+            val o = array.optJSONObject(i) ?: continue
+            val id = o.optString("category_id").trim()
+            val name = o.optString("category_name").trim()
+            if (id.isNotBlank() && name.isNotBlank()) result += Category(id, name)
+        }
+        categoryCache[key] = result
+        persistCategories(key, result)
+        return result
+    }
+
+    private suspend fun getCategoryChannels(config: SourceConfig, categoryId: String, force: Boolean): List<Channel> =
+        getCategoryChannelsBlocking(config, categoryId, force)
+
+    private fun getCategoryChannelsBlocking(config: SourceConfig, categoryId: String, force: Boolean): List<Channel> {
+        val key = sourceKey(config) + ":" + categoryId
+        channelCache[key]?.let { if (!force) return it }
+        val savedAt = prefs.getLong("stream_time_$key", 0L)
+        if (!force && System.currentTimeMillis() - savedAt < INDEX_TTL) {
+            loadPersistedChannels(key)?.let { channelCache[key] = it; return it }
+        }
+        val query = authQuery(config)
+        val url = "${config.server.trim().removeSuffix("/")}/player_api.php?$query&action=get_live_streams&category_id=${enc(categoryId)}"
+        val array = JSONArray(http(url))
+        val result = ArrayList<Channel>(array.length())
+        for (i in 0 until array.length()) {
+            val o = array.optJSONObject(i) ?: continue
+            val id = o.optString("stream_id").trim()
+            val name = o.optString("name").trim()
+            if (id.isBlank() || name.isBlank()) continue
+            val group = o.optString("category_name").ifBlank { categoryId }
+            result += Channel(id, name, o.optString("category_id").ifBlank { categoryId }, group, o.optString("stream_icon"))
+        }
+        channelCache[key] = result
+        persistChannels(key, result)
+        return result
+    }
+
+    private fun categoryScore(name: String, event: SportsEvent): Int {
+        val n = normalize(name)
+        var score = 0
+        SPORTS_TERMS.forEach { if (n.contains(normalize(it))) score += 10 }
+        val eventTerms = normalize("${event.sport} ${event.league} ${event.broadcast} ${event.title}")
+        listOf("${event.sport}", event.league, event.broadcast).forEach { term ->
+            val t = normalize(term)
+            if (t.length >= 3 && n.contains(t)) score += 25
+        }
+        if (eventTerms.contains("wwe") && n.contains("wrestling")) score += 25
+        if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
+        return score
+    }
+
+    private fun sourceKey(config: SourceConfig): String = sha1("${config.server}|${config.username}")
+    private fun authQuery(config: SourceConfig): String = "username=${enc(config.username)}&password=${enc(config.password)}"
+    private fun enc(value: String): String = URLEncoder.encode(value, "UTF-8")
+    private fun normalize(value: String): String = value.lowercase().replace("+", " plus ").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
+
+    private fun persistCategories(key: String, values: List<Category>) {
+        val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name)) }
+        prefs.edit().putString("cat_$key", a.toString()).putLong("cat_time_$key", System.currentTimeMillis()).apply()
+    }
+    private fun loadPersistedCategories(key: String): List<Category>? = runCatching {
+        val a = JSONArray(prefs.getString("cat_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Category(o.optString("id"), o.optString("name"))) } }
+    }.getOrNull()?.takeIf { it.isNotEmpty() }
+
+    private fun persistChannels(key: String, values: List<Channel>) {
+        val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name).put("categoryId", it.categoryId).put("group", it.group).put("icon", it.icon)) }
+        prefs.edit().putString("streams_$key", a.toString()).putLong("stream_time_$key", System.currentTimeMillis()).apply()
+    }
+    private fun loadPersistedChannels(key: String): List<Channel>? = runCatching {
+        val a = JSONArray(prefs.getString("streams_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Channel(o.optString("id"), o.optString("name"), o.optString("categoryId"), o.optString("group"), o.optString("icon"))) } }
+    }.getOrNull()?.takeIf { it.isNotEmpty() }
+
+    private fun sha1(value: String): String {
+        val bytes = java.security.MessageDigest.getInstance("SHA-1").digest(value.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
+    private fun http(target: String): String {
+        val c = (URL(target).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"; connectTimeout = 2500; readTimeout = 6000; instanceFollowRedirects = true; useCaches = true
+            setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive")
+        }
+        return try {
+            val code = c.responseCode; if (code !in 200..299) error("Source returned HTTP $code")
+            val raw: InputStream = BufferedInputStream(c.inputStream)
+            val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw
+            input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { c.disconnect() }
+    }
+}
