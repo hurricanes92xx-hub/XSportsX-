@@ -33,11 +33,9 @@ fun NativePlayerScreen(
     }
 
     val context = androidx.compose.ui.platform.LocalContext.current
-    val healthStore = remember { StreamHealthStore(context) }
     var error by remember(streamUrl) { mutableStateOf<String?>(null) }
     var activeUrl by remember(streamUrl) { mutableStateOf(streamUrl) }
     var fallbackUsed by remember(streamUrl) { mutableStateOf(false) }
-    var startedAtMs by remember(streamUrl) { mutableLongStateOf(0L) }
 
     val player = remember(streamUrl) {
         val httpFactory = DefaultHttpDataSource.Factory()
@@ -51,7 +49,6 @@ fun NativePlayerScreen(
     }
 
     fun prepareUrl(url: String) {
-        startedAtMs = System.currentTimeMillis()
         val lower = url.lowercase()
         val mime = when {
             lower.contains(".m3u8") -> MimeTypes.APPLICATION_M3U8
@@ -69,14 +66,10 @@ fun NativePlayerScreen(
     DisposableEffect(player) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == Player.STATE_READY) {
-                    healthStore.recordSuccess(activeUrl, System.currentTimeMillis() - startedAtMs)
-                    onPlaybackSuccess()
-                }
+                if (playbackState == Player.STATE_READY) onPlaybackSuccess()
             }
 
             override fun onPlayerError(exception: PlaybackException) {
-                healthStore.recordFailure(activeUrl)
                 onPlaybackFailure()
                 val lower = activeUrl.lowercase()
                 val alternate = when {
