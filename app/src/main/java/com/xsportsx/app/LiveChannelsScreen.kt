@@ -48,6 +48,11 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 .thenBy { it.name.lowercase() }
         )
 
+    // Step 14: while the user is browsing, resolve the most likely next events in the background.
+    LaunchedEffect(liveEvents, selectedEvent?.id) {
+        PredictivePlaybackCoordinator.predict(context, liveEvents, selectedEvent)
+    }
+
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
             if (background) refreshing = true else loading = true
