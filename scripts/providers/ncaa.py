@@ -7,11 +7,12 @@ calendar month instead of hammering the public API once per day.
 """
 import json
 import urllib.request
-from calendar import monthrange
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 
 BASE = "https://ncaa-api.henrygd.me"
 HEADERS = {"User-Agent": "XSportsX-Schedule/3.0", "Accept": "application/json"}
+NCAA_TZ = ZoneInfo("America/New_York")
 
 NCAA_LEAGUES = [
     ("NCAA Football", "football", "fbs", "🏈"),
@@ -79,8 +80,9 @@ def _parse_time(game):
         return f"{date}T00:00:00Z"
     for fmt in ("%Y-%m-%d %I:%M%p", "%Y-%m-%d %H:%M", "%Y-%m-%dT%I:%M%p", "%Y-%m-%dT%H:%M"):
         try:
-            dt = datetime.strptime(f"{date} {raw}" if "T" not in date else f"{date}T{raw}", fmt)
-            return dt.replace(tzinfo=timezone(timedelta(hours=-5))).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+            text = f"{date} {raw}" if "T" not in date else f"{date}T{raw}"
+            dt = datetime.strptime(text, fmt)
+            return dt.replace(tzinfo=NCAA_TZ).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
         except ValueError:
             continue
     return f"{date}T00:00:00Z"
