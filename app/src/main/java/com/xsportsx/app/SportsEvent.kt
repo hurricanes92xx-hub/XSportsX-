@@ -27,19 +27,19 @@ data class SportsEvent(
         get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
 
     /**
-     * Promote scheduled/pre-game rows to LIVE from three minutes before kickoff
-     * through a generous six-hour safety window. Feeds sometimes lag their LIVE
-     * state update, and long games must not disappear after 30 minutes.
+     * Canonical live state. Provider state wins, but a non-terminal event whose
+     * scheduled start has passed is promoted to LIVE as a feed-lag fallback.
+     * This prevents games such as MLB from remaining in UPCOMING simply because
+     * the upstream status field has not flipped yet.
      */
     val isLive: Boolean
         get() {
             if (providerLive) return true
             if (terminal) return false
             val start = startMillis()
-            val now = System.currentTimeMillis()
             if (start <= 0L) return false
-            val scheduled = state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true)
-            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 6L * 60L * 60L * 1000L
+            val now = System.currentTimeMillis()
+            return now >= start - 3L * 60L * 1000L && now < start + 6L * 60L * 60L * 1000L
         }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
@@ -49,13 +49,9 @@ data class SportsEvent(
 
     val isUpcoming: Boolean
         get() {
-            if (isLive) return false
+            if (isLive || terminal) return false
             val start = startMillis()
             val now = System.currentTimeMillis()
-            if (status.contains("upcoming", true) || status.contains("scheduled", true)) {
-                return start >= now - 26L * 60L * 60L * 1000L
-            }
-            if (start <= now) return false
-            return state.equals("pre", true) || state.equals("scheduled", true) || state.isBlank()
+            return start > now && start <= now + 3L * 24L * 60L * 60L * 1000L
         }
 }
