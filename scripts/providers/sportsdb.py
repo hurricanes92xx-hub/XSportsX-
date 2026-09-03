@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
-"""TheSportsDB schedule adapter.
+"""Free TheSportsDB schedule fallback.
 
-Designed as a low-pressure secondary schedule authority. Premium V2 is preferred
-because it can return an entire league season in one request; V1 is supported for
-backend development when a key is supplied. The caller owns caching/fallback policy.
+This adapter intentionally uses only the public V1 API and demo key ``123``.
+It is a low-pressure fallback after primary providers fail; it is not a live
+score authority and does not require a secret or Premium subscription.
 """
 import json
-import os
-import re
-import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
-BASE_V1 = "https://www.thesportsdb.com/api/v1/json"
-BASE_V2 = "https://www.thesportsdb.com/api/v2/json"
-KEY = os.getenv("SPORTSDB_API_KEY", "").strip()
+BASE_V1 = "https://www.thesportsdb.com/api/v1/json/123"
 
 LEAGUE_MAP = {
     "EPL": 4328,
@@ -33,13 +28,12 @@ LEAGUE_MAP = {
 SPORTDB_LEAGUES = set(LEAGUE_MAP)
 
 
-def _request(url, headers=None, timeout=12):
+def _request(url, timeout=8):
     req = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "XSportsX-Schedule/2.1",
+            "User-Agent": "XSportsX-Schedule/2.2",
             "Accept": "application/json",
-            **(headers or {}),
         },
     )
     with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -70,15 +64,17 @@ def _normalize_event(item, league):
     if not title and home and away:
         title = f"{away} @ {home}"
     start = _parse_time(item.get("strTimestamp"))
-    if not start:
-        date = item.get("dateEvent")
-        time = item.get("strTime")
-        if date:
-            start = _parse_time(f"{date}T{time or '00:00:00'}Z")
+    if not start and item.get("dateEvent"):
+        start = _parse_time(f"{item['dateEvent']}T{item.get('strTime') or '00:00:00'}Z")
     if not title or not start:
         return None
     status = str(item.get("strStatus") or "").lower()
-    tag = "FINAL" if status in {"match finished", "finished", "ft"} else "LIVE" if status in {"live", "in progress", "1h", "2h", "ht"} else "UPCOMING"
+    if status in {"match finished", "finished", "ft"}:
+        tag = "FINAL"
+    elif status in {"live", "in progress", "1h", "2h", "ht"}:
+        tag = "LIVE"
+    else:
+        tag = "UPCOMING"
     return {
         "league": league,
         "title": title,
@@ -93,28 +89,20 @@ def _normalize_event(item, league):
 
 
 def fetch_league(league, season=None):
-    """Return normalized events or [] without raising provider errors."""
-    if not KEY or league not in SPORTDB_LEAGUES:
+    """Fetch the next available league events using only free V1."""
+    if league not in SPORTDB_LEAGUES:
         return []
-    league_id = LEAGUE_MAP[league]
     try:
-        if season:
-            path = f"/schedule/league/{league_id}/{urllib.parse.quote(str(season), safe='-') }"
-            raw = _request(BASE_V2 + path, {"X-API-KEY": KEY})
-            root = json.loads(raw)
-            items = root.get("events") or root.get("data") or []
-        else:
-            # V1 next-league is intentionally only a safety fallback. It has a
-            # small free-key result cap, so it must never be used as a bulk source.
-            url = f"{BASE_V1}/{urllib.parse.quote(KEY, safe='')}/eventsnextleague.php?id={league_id}"
-            root = json.loads(_request(url))
-            items = root.get("events") or []
+        league_id = LEAGUE_MAP[league]
+        root = json.loads(_request(f"{BASE_V1}/eventsnextleague.php?id={league_id}"))
+        items = root.get("events") or []
         return [event for event in (_normalize_event(x, league) for x in items) if event]
     except Exception as exc:
-        print(f"ERROR SportsDB {league}: {exc}")
+        print(f"ERROR SportsDB free fallback {league}: {exc}")
         return []
 
 
 def current_season():
+    """Retained for the canonical engine interface; free V1 does not use it."""
     now = datetime.now(timezone.utc)
     return f"{now.year}-{now.year + 1}" if now.month >= 7 else f"{now.year - 1}-{now.year}"
