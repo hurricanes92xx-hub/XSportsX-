@@ -26,6 +26,7 @@ class PreResolvedStreamCache(context: Context) {
     }
 
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val playbackHealth = PlaybackHealthStore(context)
     private val entries = LinkedHashMap<String, Entry>()
 
     init { load() }
@@ -38,7 +39,12 @@ class PreResolvedStreamCache(context: Context) {
             entries.remove(eventId); persist(); return null
         }
         if (!allowStale && age >= FRESH_TTL_MS) return null
-        return entry
+        val ranked = applyPlaybackHealth(entry, eventId)
+        if (ranked.candidates != entry.candidates) {
+            entries[eventId] = ranked
+            persist()
+        }
+        return ranked
     }
 
     @Synchronized
@@ -56,7 +62,8 @@ class PreResolvedStreamCache(context: Context) {
                 checkedAtMs = nowMs
             )
         }
-        entries.remove(eventId); entries[eventId] = Entry(eventId, candidates, nowMs)
+        val ranked = applyPlaybackHealth(Entry(eventId, candidates, nowMs), eventId)
+        entries.remove(eventId); entries[eventId] = ranked
         trim(); persist()
     }
 
@@ -86,17 +93,24 @@ class PreResolvedStreamCache(context: Context) {
                 failures = if (success) maxOf(0, candidate.failures - 1) else candidate.failures + 1,
                 checkedAtMs = nowMs
             )
-        }.sortedWith(compareBy<Candidate> { healthPenalty(it, nowMs) }.thenBy { it.rank })
-            .mapIndexed { index, candidate -> candidate.copy(rank = index) }
-        entries[eventId] = entry.copy(candidates = updated, savedAtMs = nowMs)
+        }
+        entries[eventId] = applyPlaybackHealth(entry.copy(candidates = updated, savedAtMs = nowMs), eventId)
         persist()
     }
 
-    private fun healthPenalty(candidate: Candidate, nowMs: Long): Long {
+    private fun applyPlaybackHealth(entry: Entry, eventId: String): Entry {
+        val ranked = entry.candidates.sortedWith(
+            compareByDescending<Candidate> { playbackHealth.score(eventId, it.stream) + playbackHealth.globalScore(it.stream) }
+                .thenBy { healthPenalty(it) }
+                .thenBy { it.rank }
+        ).mapIndexed { index, candidate -> candidate.copy(rank = index) }
+        return entry.copy(candidates = ranked)
+    }
+
+    private fun healthPenalty(candidate: Candidate): Long {
         val failurePenalty = candidate.failures.toLong() * 5000L
         val latencyPenalty = if (candidate.latencyMs == Long.MAX_VALUE) 10000L else candidate.latencyMs.coerceAtMost(30000L)
-        val successBonus = if (candidate.lastSuccessMs > 0L && nowMs - candidate.lastSuccessMs < 30 * 60 * 1000L) -15000L else 0L
-        return failurePenalty + latencyPenalty + successBonus
+        return failurePenalty + latencyPenalty
     }
 
     private fun trim() { while (entries.size > MAX_EVENTS) entries.remove(entries.entries.first().key) }
