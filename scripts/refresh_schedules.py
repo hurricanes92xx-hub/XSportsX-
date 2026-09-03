@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 # Canonical schedule publisher: official sources first, provider fallbacks second.
-# Official events are preferred when the same event is found by multiple sources;
-# fallbacks remain enabled so an official page that exposes only partial structured
-# data cannot make an otherwise healthy league disappear.
+# TheSportsDB is an optional low-pressure secondary authority used when a
+# primary provider fails, preventing repeated upstream retries from becoming
+# the only way a league can recover.
 import json, re, urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from providers.sportsdb import fetch_league, current_season, SPORTDB_LEAGUES
+
 OUT = Path('data/schedule_feed.json')
 OFFICIAL_REGISTRY = Path('data/official_schedule_sources.json')
 HEADERS = {
-    'User-Agent': 'XSportsX-Schedule/2.0',
+    'User-Agent': 'XSportsX-Schedule/2.1',
     'Accept': 'application/json, text/plain, text/html, */*',
     'Accept-Language': 'en-US,en;q=0.9',
 }
@@ -105,8 +107,7 @@ def add_official_source(events, source):
         if not is_event: continue
         title=str(obj.get('name') or '').strip(); dt=parse_iso(obj.get('startDate'))
         if not title or not dt or dt < now or dt > horizon: continue
-        event={'league':name,'title':title,'start':dt.isoformat().replace('+00:00','Z'),'tag':'UPCOMING','icon':'🏆','source':'official'}
-        events.append(event); added+=1
+        events.append({'league':name,'title':title,'start':dt.isoformat().replace('+00:00','Z'),'tag':'UPCOMING','icon':'🏆','source':'official'}); added+=1
     return True,added
 
 def add_official_sources(events):
@@ -142,6 +143,17 @@ def add_espn(events,name,sport,league,icon,days):
         if event.get('date'):
             events.append({'league':name,'title':title,'start':event['date'],'tag':tag,'icon':icon,'source':'espn'}); added+=1
     return True,added
+
+def add_sportsdb(events,name,icon):
+    if name not in SPORTDB_LEAGUES:
+        return False,0
+    raw=fetch_league(name,current_season())
+    if not raw:
+        return False,0
+    for event in raw:
+        event['icon']=icon
+        events.append(event)
+    return True,len(raw)
 
 def parse_ncaa_time(start_date,start_time):
     if not start_date:return None
@@ -189,14 +201,20 @@ def add_wrestling(events):
             events.append({'league':brand,'title':title,'start':start,'tag':tag,'icon':icon,'source':'fallback'})
 
 def main():
-    events=[]; failures=[]; counts={}
+    events=[]; failures=[]; counts={}; sportsdb_failures=[]
     official_failures,official_counts=add_official_sources(events)
     # Keep wrestling's specialized parser because WWE/AEW/TNA pages expose useful
     # event markup/text that is not always represented as JSON-LD.
     add_wrestling(events)
     for league in ESPN_LEAGUES:
         ok,n=add_espn(events,*league); counts[league[0]]=n
-        if not ok: failures.append(league[0])
+        if not ok:
+            failures.append(league[0])
+            # Use TheSportsDB only after ESPN fails. This is intentionally a
+            # fallback, so healthy ESPN leagues do not consume SportsDB quota.
+            db_ok,db_n=add_sportsdb(events,league[0],league[3])
+            if db_ok:
+                counts[league[0]]=db_n; sportsdb_failures.append(league[0])
     for league in NCAA_LEAGUES:
         ok,n=add_ncaa(events,*league); counts[league[0]]=n
         if not ok: failures.append(league[0])
@@ -213,10 +231,10 @@ def main():
         events.extend(e for e in prev_events if e.get('league')==league)
         counts[league]=sum(1 for e in events if e.get('league')==league)
     # Official sources win duplicate keys; provider data fills gaps.
-    priority={'official':0,'ncaa':1,'espn':2,'fallback':3,None:4}
+    priority={'official':0,'ncaa':1,'espn':2,'sportsdb':3,'fallback':4,None:5}
     unique={}
     for event in events:
-        event=event.copy(); source=event.pop('source',None); event['_sourcePriority']=priority.get(source,4)
+        event=event.copy(); source=event.pop('source',None); event['_sourcePriority']=priority.get(source,5)
         key=(event.get('league'),event.get('title'),event.get('start'))
         old=unique.get(key)
         if old is None or event['_sourcePriority'] < old['_sourcePriority']:
@@ -233,11 +251,12 @@ def main():
         'refreshHours':6,
         'eventCounts':per,
         'failedSources':failures,
+        'sportsDbFallbackSources':sportsdb_failures,
         'officialSourceFailures':official_failures,
         'officialSourceCounts':official_counts,
         'events':events,
     }
     tmp=OUT.with_suffix('.tmp'); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); tmp.replace(OUT)
-    print(f'wrote {len(events)} events across {len(per)} leagues; provider_failures={failures}; official_failures={official_failures}')
+    print(f'wrote {len(events)} events across {len(per)} leagues; provider_failures={failures}; sportsdb_fallbacks={sportsdb_failures}; official_failures={official_failures}')
 
 if __name__=='__main__':main()
