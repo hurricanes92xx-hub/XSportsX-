@@ -7966,7 +7966,7 @@
       "league": "MLB",
       "title": "Mets @ Rays",
       "start": "2026-09-02T22:40Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "sourceDetail": "ESPN live-status reconciliation"
     },
@@ -7974,7 +7974,7 @@
       "league": "MLB",
       "title": "Giants @ Pirates",
       "start": "2026-09-02T22:40Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "sourceDetail": "ESPN live-status reconciliation"
     },
@@ -7982,7 +7982,7 @@
       "league": "MLB",
       "title": "Blue Jays @ Guardians",
       "start": "2026-09-02T22:40Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "sourceDetail": "ESPN live-status reconciliation"
     },
@@ -7998,7 +7998,7 @@
       "league": "MLB",
       "title": "Marlins @ Royals",
       "start": "2026-09-02T23:40Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "sourceDetail": "ESPN live-status reconciliation"
     },
@@ -8006,7 +8006,7 @@
       "league": "MLB",
       "title": "Brewers @ Cubs",
       "start": "2026-09-02T23:40Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "sourceDetail": "ESPN live-status reconciliation"
     },
@@ -8014,23 +8014,25 @@
       "league": "MLB",
       "title": "White Sox @ Astros",
       "start": "2026-09-03T00:10Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
-      "sourceDetail": "MLB Stats API live-status reconciliation"
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Yankees @ Angels",
       "start": "2026-09-03T01:38Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
       "title": "Cardinals @ Dodgers",
       "start": "2026-09-03T02:10Z",
-      "tag": "UPCOMING",
-      "icon": "⚾"
+      "tag": "LIVE",
+      "icon": "⚾",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NRL",
@@ -32996,8 +32998,8 @@
     }
   ],
   "repairReport": {
-    "liveStatusReconciled": 19,
-    "liveEventsAdded": 7,
+    "liveStatusReconciled": 8,
+    "liveEventsAdded": 0,
     "liveProviderFailures": 5
   }
 }
