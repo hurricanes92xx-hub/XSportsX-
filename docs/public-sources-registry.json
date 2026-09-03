@@ -1,23 +1,39 @@
 {
-  "version": 6,
-  "updated": "2026-08-27",
+  "version": 7,
+  "updated": "2026-09-03",
   "cacheTtlMinutes": 15,
+  "sportsPreset": {
+    "id": "sports-core-us-ca",
+    "description": "Prioritize commonly used sports, wrestling and combat-sports broadcasters while preserving the source itself.",
+    "aliases": [
+      "ESPN", "ESPN2", "ESPNU", "ESPN News", "ESPN+", "ESPN Plus",
+      "SEC Network", "ACC Network", "Big Ten Network", "BTN",
+      "NFL Network", "MLB Network", "NBA TV", "NHL Network",
+      "FOX", "FS1", "FS2", "CBS", "CBS Sports", "CBS Sports Network", "NBC", "USA Network", "ABC", "The CW",
+      "TNT", "TBS", "truTV", "Peacock", "Paramount+", "Paramount Plus",
+      "TSN", "TSN1", "TSN2", "TSN3", "TSN4", "TSN5", "Sportsnet", "Sportsnet One",
+      "Fight Network", "DAZN", "DAZN Combat", "FanDuel TV", "Fubo Sports", "SportsGrid",
+      "WWE", "WWE Network", "AEW", "TNA", "Impact Wrestling", "NXT",
+      "UFC", "ESPN MMA", "Boxing", "PBR", "NASCAR", "F1", "Golf Channel", "Tennis Channel",
+      "beIN Sports", "TUDN", "Telemundo", "Universo", "FOX Deportes", "FIFA+"
+    ]
+  },
   "sources": [
     {"id":"iptv-org-sports","name":"IPTV-org Sports","playlist":"https://iptv-org.github.io/iptv/categories/sports.m3u","enabled":true,"public":true,"kind":"sports"},
-    {"id":"iptv-org-us","name":"IPTV-org USA","playlist":"https://iptv-org.github.io/iptv/countries/us.m3u","enabled":true,"public":true,"kind":"local-us"},
-    {"id":"iptv-org-us-fl","name":"IPTV-org Florida","playlist":"https://iptv-org.github.io/iptv/subdivisions/us-fl.m3u","enabled":true,"public":true,"kind":"local-us"},
-    {"id":"iptv-org-ca","name":"IPTV-org Canada","playlist":"https://iptv-org.github.io/iptv/countries/ca.m3u","enabled":true,"public":true,"kind":"local-ca"},
-    {"id":"iptv-org-ca-on","name":"IPTV-org Ontario","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-on.m3u","enabled":true,"public":true,"kind":"local-ca"},
-    {"id":"iptv-org-ca-bc","name":"IPTV-org British Columbia","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-bc.m3u","enabled":true,"public":true,"kind":"local-ca"},
-    {"id":"iptv-org-ca-ab","name":"IPTV-org Alberta","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-ab.m3u","enabled":true,"public":true,"kind":"local-ca"},
+    {"id":"iptv-org-us","name":"IPTV-org USA Sports Core","playlist":"https://iptv-org.github.io/iptv/countries/us.m3u","enabled":true,"public":true,"kind":"local-us","allowlist":"ESPN|ESPN2|ESPNU|ESPN News|ESPN+|SEC Network|ACC Network|Big Ten Network|BTN|NFL Network|MLB Network|NBA TV|NHL Network|FOX|FS1|FS2|CBS|CBS Sports|CBS Sports Network|NBC|USA Network|ABC|The CW|TNT|TBS|truTV|Peacock|Paramount|TSN|Sportsnet|Fight Network|DAZN|FanDuel|Fubo Sports|SportsGrid|WWE|AEW|TNA|Impact Wrestling|NXT|UFC|Boxing|PBR|NASCAR|F1|Golf Channel|Tennis Channel|beIN Sports|TUDN|Telemundo|Universo|FOX Deportes|FIFA+"},
+    {"id":"iptv-org-us-fl","name":"IPTV-org Florida Sports Core","playlist":"https://iptv-org.github.io/iptv/subdivisions/us-fl.m3u","enabled":true,"public":true,"kind":"local-us","allowlist":"ESPN|ESPN2|ESPNU|ESPN News|ESPN+|SEC Network|ACC Network|Big Ten Network|BTN|NFL Network|MLB Network|NBA TV|NHL Network|FOX|FS1|FS2|CBS|CBS Sports|CBS Sports Network|NBC|USA Network|ABC|The CW|TNT|TBS|truTV|Peacock|Paramount|TSN|Sportsnet|Fight Network|DAZN|FanDuel|Fubo Sports|SportsGrid|WWE|AEW|TNA|Impact Wrestling|NXT|UFC|Boxing|PBR|NASCAR|F1|Golf Channel|Tennis Channel|beIN Sports|TUDN|Telemundo|Universo|FOX Deportes|FIFA+"},
+    {"id":"iptv-org-ca","name":"IPTV-org Canada Sports Core","playlist":"https://iptv-org.github.io/iptv/countries/ca.m3u","enabled":true,"public":true,"kind":"local-ca","allowlist":"ESPN|ESPN2|ESPNU|ESPN+|TSN|TSN1|TSN2|TSN3|TSN4|TSN5|Sportsnet|Sportsnet One|Sportsnet Ontario|Sportsnet Pacific|Sportsnet West|Sportsnet East|CBC|CTV|Citytv|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|Fight Network|DAZN|DAZN Combat|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|beIN Sports|TUDN|Telemundo|FIFA+"},
+    {"id":"iptv-org-ca-on","name":"IPTV-org Ontario Sports Core","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-on.m3u","enabled":true,"public":true,"kind":"local-ca","allowlist":"TSN|TSN1|TSN2|TSN3|TSN4|TSN5|Sportsnet|Sportsnet One|Sportsnet Ontario|CBC|CTV|Citytv|ESPN|ESPN2|ESPN+|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|Fight Network|DAZN|DAZN Combat|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|beIN Sports"},
+    {"id":"iptv-org-ca-bc","name":"IPTV-org British Columbia Sports Core","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-bc.m3u","enabled":true,"public":true,"kind":"local-ca","allowlist":"TSN|TSN1|TSN2|TSN3|TSN4|TSN5|Sportsnet|Sportsnet One|Sportsnet Pacific|CBC|CTV|Citytv|ESPN|ESPN2|ESPN+|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|Fight Network|DAZN|DAZN Combat|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|beIN Sports"},
+    {"id":"iptv-org-ca-ab","name":"IPTV-org Alberta Sports Core","playlist":"https://iptv-org.github.io/iptv/subdivisions/ca-ab.m3u","enabled":true,"public":true,"kind":"local-ca","allowlist":"TSN|TSN1|TSN2|TSN3|TSN4|TSN5|Sportsnet|Sportsnet One|Sportsnet West|CBC|CTV|Citytv|ESPN|ESPN2|ESPN+|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|Fight Network|DAZN|DAZN Combat|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|beIN Sports"},
     {"id":"dearbulut-sports","name":"DearBulut Sports (health-checked)","playlist":"https://dearbulut.github.io/iptv/playlists/category/sports.m3u","enabled":true,"public":true,"kind":"sports-health-checked"},
-    {"id":"free-tv-usa","name":"Free-TV USA","playlist":"https://cdn.jsdelivr.net/gh/Free-TV/IPTV@master/playlists/playlist_usa.m3u8","enabled":true,"public":true,"kind":"local-us"},
-    {"id":"free-tv","name":"Free-TV/IPTV","playlist":"https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8","enabled":true,"public":true,"kind":"general-free"},
+    {"id":"free-tv-usa","name":"Free-TV USA Sports Core","playlist":"https://cdn.jsdelivr.net/gh/Free-TV/IPTV@master/playlists/playlist_usa.m3u8","enabled":true,"public":true,"kind":"local-us","allowlist":"ESPN|ESPN2|ESPNU|ESPN+|FOX|FS1|FS2|CBS|CBS Sports|NBC|USA Network|ABC|CW|TNT|TBS|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|DAZN|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel"},
+    {"id":"free-tv","name":"Free-TV/IPTV Sports Core","playlist":"https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8","enabled":true,"public":true,"kind":"general-free","allowlist":"ESPN|ESPN2|ESPNU|ESPN+|FOX|FS1|FS2|CBS|CBS Sports|NBC|USA Network|ABC|CW|TNT|TBS|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|DAZN|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel"},
     {"id":"freecasthub-sports","name":"FreeCastHub Sports","playlist":"https://raw.githubusercontent.com/freecasthub/public-iptv/main/sports.m3u","enabled":true,"public":true,"kind":"sports-official"},
-    {"id":"samsung-tv-plus-us","name":"Samsung TV Plus US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/samsungtvplus_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"pluto-tv-us","name":"Pluto TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plutotv_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"plex-tv-us","name":"Plex TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plex_us.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"roku-tv-us","name":"Roku TV US","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us"},
-    {"id":"maximmur-curated-sports","name":"Curated Supplemental Sports (public FAST)","playlist":"https://raw.githubusercontent.com/maximmur/iptvlist/cur/sport.m3u8","enabled":true,"public":true,"kind":"sports-supplemental-curated","allowlist":"Pac 12 Insider|ACCDN|Fubo Sports Network|FanDuel TV|FanDuel Racing|NBC Sports NOW|SportsGrid|FIFA+|Real Madrid TV|Fox Sports en Espanol|Red Bull TV|World of Freesports|CBS Sports HQ|CBS Sports Golazo Network|MAVTV|TVS Sports|TVS Sports Bureau|TVS Women Sports|DAZN Combat|Glory Kickboxing|L'Equipe|Teledeporte|RTA Sport|RTSH Sport|San Marino RTV Sport|Trace Sports Stars|Unbeaten|More Than Sports TV|Fuel TV|W14DK-D 14.5 All Sports Television Network"}
+    {"id":"samsung-tv-plus-us","name":"Samsung TV Plus US Sports Core","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/samsungtvplus_us.m3u","enabled":true,"public":true,"kind":"fast-us","allowlist":"ESPN|ESPN2|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel"},
+    {"id":"pluto-tv-us","name":"Pluto TV US Sports Core","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plutotv_us.m3u","enabled":true,"public":true,"kind":"fast-us","allowlist":"ESPN|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|PBR"},
+    {"id":"plex-tv-us","name":"Plex TV US Sports Core","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/plex_us.m3u","enabled":true,"public":true,"kind":"fast-us","allowlist":"ESPN|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|PBR"},
+    {"id":"roku-tv-us","name":"Roku TV US Sports Core","playlist":"https://cdn.jsdelivr.net/gh/BuddyChewChew/app-m3u-generator@main/playlists/roku_all.m3u","enabled":true,"public":true,"kind":"fast-us","allowlist":"ESPN|FOX|FS1|CBS|NBC|ABC|TNT|TBS|USA Network|NFL Network|MLB Network|NBA TV|NHL Network|TSN|Sportsnet|Fight Network|WWE|AEW|TNA|UFC|Boxing|Golf Channel|Tennis Channel|PBR"},
+    {"id":"maximmur-curated-sports","name":"Curated Supplemental Sports (public FAST)","playlist":"https://raw.githubusercontent.com/maximmur/iptvlist/cur/sport.m3u8","enabled":true,"public":true,"kind":"sports-supplemental-curated","allowlist":"Pac 12 Insider|ACCDN|Fubo Sports Network|FanDuel TV|FanDuel Racing|NBC Sports NOW|SportsGrid|FIFA+|Real Madrid TV|Fox Sports en Espanol|Red Bull TV|World of Freesports|CBS Sports HQ|CBS Sports Golazo Network|MAVTV|TVS Sports|TVS Sports Bureau|TVS Women Sports|TVS Women Sports|DAZN Combat|Glory Kickboxing|L'Equipe|Teledeporte|RTA Sport|RTSH Sport|San Marino RTV Sport|Trace Sports Stars|Unbeaten|More Than Sports TV|Fuel TV|W14DK-D 14.5 All Sports Television Network|WWE|AEW|TNA|UFC|Fight Network|TSN|Sportsnet|Paramount|USA Network|TNT|TBS"}
   ]
 }
