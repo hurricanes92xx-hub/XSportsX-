@@ -1,7 +1,9 @@
 package com.xsportsx.app
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -82,7 +84,7 @@ object ScheduleSnapshotRepository {
         }
     }
 
-    private fun loadMlbSchedule(daysAhead: Int): List<SportsEvent> {
+    private suspend fun loadMlbSchedule(daysAhead: Int): List<SportsEvent> = withContext(Dispatchers.IO) {
         val startDate = LocalDate.now(ZoneOffset.UTC)
         val endDate = startDate.plusDays(daysAhead.toLong().coerceAtLeast(1L) - 1L)
         val url = "$MLB_SCHEDULE_URL&startDate=$startDate&endDate=$endDate"
@@ -96,10 +98,10 @@ object ScheduleSnapshotRepository {
         c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
         c.setRequestProperty("Pragma", "no-cache")
         c.setRequestProperty("User-Agent", "XSportsX/2.2 Android")
-        return try {
-            if (c.responseCode !in 200..299) return emptyList()
+        return@withContext try {
+            if (c.responseCode !in 200..299) return@withContext emptyList()
             val root = JSONObject(c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() })
-            val dates = root.optJSONArray("dates") ?: return emptyList()
+            val dates = root.optJSONArray("dates") ?: return@withContext emptyList()
             val out = ArrayList<SportsEvent>()
             for (i in 0 until dates.length()) {
                 val games = dates.optJSONObject(i)?.optJSONArray("games") ?: continue
