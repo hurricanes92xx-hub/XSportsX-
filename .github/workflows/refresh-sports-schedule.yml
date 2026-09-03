@@ -42,6 +42,15 @@ jobs:
       - name: Run canonical schedule engine
         env:
           PYTHONUNBUFFERED: '1'
+          SPORTRADAR_API_KEY: ${{ secrets.SPORTRADAR_API_KEY }}
+          SPORTRADAR_ENDPOINT_TEMPLATE: ${{ vars.SPORTRADAR_ENDPOINT_TEMPLATE }}
+          SPORTSDATAIO_API_KEY: ${{ secrets.SPORTSDATAIO_API_KEY }}
+          SPORTSDATAIO_ENDPOINT_TEMPLATE: ${{ vars.SPORTSDATAIO_ENDPOINT_TEMPLATE }}
+          SPORTMONKS_API_TOKEN: ${{ secrets.SPORTMONKS_API_TOKEN }}
+          SPORTMONKS_ENDPOINT_TEMPLATE: ${{ vars.SPORTMONKS_ENDPOINT_TEMPLATE }}
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+          PANDASCORE_API_TOKEN: ${{ secrets.PANDASCORE_API_TOKEN }}
+          PANDASCORE_ENDPOINT_TEMPLATE: ${{ vars.PANDASCORE_ENDPOINT_TEMPLATE }}
         run: python3 scripts/refresh_schedules.py
       - name: Normalize app-facing schedule contract
         run: python3 scripts/normalize_schedule_feed.py
@@ -68,6 +77,9 @@ jobs:
           print(f"Schema: {data.get('schema')}")
           print(f"Identity merges: {data.get('identityMergeCount',0)}")
           print(f"Provider counts: {data.get('sourceRecordCounts',{})}")
+          matrix=data.get('leagueProviderMatrix') or {}
+          print(f"Provider matrix leagues: {len(matrix)}")
+          print(f"Provider promotions: {len(data.get('providerPromotions') or {})}")
           PY
       - name: Run deep canonical integrity gate
         run: python3 scripts/validate_schedule_integrity.py
