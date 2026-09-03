@@ -31,6 +31,7 @@
     "NCAA Men's Hockey": 741,
     "NCAA Men's Soccer": 1535,
     "NCAA Men's Water Polo": 40,
+    "NCAA VB": 3,
     "NCAA Women's Field Hockey": 579,
     "NCAA Women's Hockey": 1265,
     "NCAA Women's Soccer": 2268,
@@ -1222,7 +1223,7 @@
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🎾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
       "eventType": "named_event",
@@ -1230,7 +1231,9 @@
       "nonTeamSport": true,
       "eventName": "US Open",
       "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
-      "eventId": "evt_bca2cade6800c2cd0722c99a"
+      "eventId": "evt_bca2cade6800c2cd0722c99a",
+      "providerEventId": "espn:189-2026",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "WTA",
@@ -4100,7 +4103,8 @@
       "home": "Bulldogs",
       "awayLogo": "https://www.nrl.com/.theme/broncos/badge.svg",
       "homeLogo": "https://www.nrl.com/.theme/bulldogs/badge.svg",
-      "eventId": "evt_1c279ab349259dab5857e395"
+      "eventId": "evt_1c279ab349259dab5857e395",
+      "providerEventId": "espn:603450"
     },
     {
       "league": "AFL",
@@ -4114,13 +4118,14 @@
       "home": "Fremantle",
       "awayLogo": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Hawthorn.svg",
       "homeLogo": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fremantle%20Football%20Club%20Colours.svg",
-      "eventId": "evt_3a6fdeaa2053cfaffffe2780"
+      "eventId": "evt_3a6fdeaa2053cfaffffe2780",
+      "providerEventId": "espn:1133701"
     },
     {
       "league": "NCAA Women's Soccer",
       "title": "Mercyhurst at Morehead State",
       "start": "2026-09-03T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚽",
       "sourceDetail": "ESPN live-status reconciliation",
       "away": "Mercyhurst",
@@ -4155,7 +4160,7 @@
       "league": "MLB",
       "title": "Giants @ Pirates",
       "start": "2026-09-03T16:35:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
@@ -4163,15 +4168,17 @@
       "home": "Pirates",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
-      "eventId": "evt_9ba4d7da52e9689809e8effb"
+      "eventId": "evt_9ba4d7da52e9689809e8effb",
+      "providerEventId": "espn:401816789",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NCAA Women's Soccer",
       "title": "UNC Greensboro at American University",
       "start": "2026-09-03T17:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
-      "sourceDetail": "ESPN NCAA scoreboard",
+      "sourceDetail": "ESPN live-status reconciliation",
       "away": "UNC Greensboro",
       "home": "American University",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20351.png",
@@ -4187,9 +4194,9 @@
       "league": "NCAA Women's Soccer",
       "title": "Toledo at Duquesne",
       "start": "2026-09-03T17:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "⚽",
-      "sourceDetail": "ESPN NCAA scoreboard",
+      "sourceDetail": "ESPN live-status reconciliation",
       "away": "Toledo",
       "home": "Duquesne",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20584.png",
@@ -4239,7 +4246,7 @@
       "league": "MLB",
       "title": "Blue Jays @ Guardians",
       "start": "2026-09-03T17:10:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
@@ -4247,15 +4254,17 @@
       "home": "Guardians",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png",
-      "eventId": "evt_160506e18e6b3b65869cb384"
+      "eventId": "evt_160506e18e6b3b65869cb384",
+      "providerEventId": "mlb:824388",
+      "sourceDetail": "MLB Stats API live-status reconciliation"
     },
     {
       "league": "NCAA Women's Soccer",
       "title": "St. John's at Monmouth",
       "start": "2026-09-03T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
-      "sourceDetail": "ESPN NCAA scoreboard",
+      "sourceDetail": "ESPN live-status reconciliation",
       "away": "St. John's",
       "home": "Monmouth",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/20325.png",
@@ -4288,7 +4297,7 @@
       "league": "MLB",
       "title": "White Sox @ Astros",
       "start": "2026-09-03T18:10:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
@@ -4296,13 +4305,15 @@
       "home": "Astros",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/chw.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
-      "eventId": "evt_e75f85352ab9e8546564fad0"
+      "eventId": "evt_e75f85352ab9e8546564fad0",
+      "providerEventId": "mlb:824144",
+      "sourceDetail": "MLB Stats API live-status reconciliation"
     },
     {
       "league": "Ligue 1",
       "title": "Lille @ Toulouse",
       "start": "2026-09-03T18:45:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/9.png",
       "eventType": "team_game",
@@ -4310,7 +4321,9 @@
       "home": "Toulouse",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/179.png",
-      "eventId": "evt_90bdc4cd8299577c22d93f85"
+      "eventId": "evt_90bdc4cd8299577c22d93f85",
+      "providerEventId": "espn:401876468",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -4402,7 +4415,7 @@
       "league": "LaLiga",
       "title": "Celta Vigo @ Real Sociedad",
       "start": "2026-09-03T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
       "eventType": "team_game",
@@ -4410,7 +4423,9 @@
       "home": "Real Sociedad",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
-      "eventId": "evt_9288de05881ac21851830728"
+      "eventId": "evt_9288de05881ac21851830728",
+      "providerEventId": "espn:401882867",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -6601,7 +6616,8 @@
       "home": "Orioles",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
-      "eventId": "evt_e33b41c746a2a326a8ce8834"
+      "eventId": "evt_e33b41c746a2a326a8ce8834",
+      "providerEventId": "espn:401816788"
     },
     {
       "league": "MLB",
@@ -6615,7 +6631,8 @@
       "home": "Cubs",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mil.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png",
-      "eventId": "evt_ad7d1ef269d021246bba1117"
+      "eventId": "evt_ad7d1ef269d021246bba1117",
+      "providerEventId": "espn:401816793"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -6769,7 +6786,8 @@
       "home": "Royals",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/kc.png",
-      "eventId": "evt_95be6ba03263a8d1fb61293e"
+      "eventId": "evt_95be6ba03263a8d1fb61293e",
+      "providerEventId": "espn:401816792"
     },
     {
       "league": "NCAA FB",
@@ -10632,7 +10650,8 @@
       "home": "Rangers",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
-      "eventId": "evt_90437056d1dff826e716ea48"
+      "eventId": "evt_90437056d1dff826e716ea48",
+      "providerEventId": "espn:401816794"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -11009,7 +11028,8 @@
       "home": "Mariners",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/ath.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
-      "eventId": "evt_0d95a65e101d22c25cb2acff"
+      "eventId": "evt_0d95a65e101d22c25cb2acff",
+      "providerEventId": "espn:401816795"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -11308,7 +11328,8 @@
       "home": "Dodgers",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/stl.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
-      "eventId": "evt_c508df316f6d5cba13d3ea67"
+      "eventId": "evt_c508df316f6d5cba13d3ea67",
+      "providerEventId": "espn:401816796"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -275453,6 +275474,39 @@
       "awayLogo": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
       "eventId": "evt_d850e9f20227017d74bd6d82"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Dillard @ Alcorn St",
+      "start": "2026-09-03T17:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation",
+      "eventId": "evt_3a24729c0e167ef574e69af0",
+      "providerEventId": "espn:401909238"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Texas Southern @ Houston",
+      "start": "2026-09-03T18:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation",
+      "eventId": "evt_f4b3f59db5b936e087748da7",
+      "providerEventId": "espn:401888856"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Northwestern @ Alabama",
+      "start": "2026-09-03T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation",
+      "eventId": "evt_9e8f37af50c54d6214e8aa5a",
+      "providerEventId": "espn:401896472"
     }
   ],
   "repairReport": {
@@ -275484,7 +275538,17 @@
     },
     "ncaaLogoAliasesApplied": 0,
     "finalDuplicateEventsRemoved": 28,
-    "adapterTimestampsNormalized": 0
+    "adapterTimestampsNormalized": 0,
+    "liveStatusReconciled": 10,
+    "liveEventsAdded": 3,
+    "liveProviderFailures": 5,
+    "liveFailedProviders": [
+      "NCAA SOFTBALL:2026-09-03",
+      "FIVB Men:2026-09-03",
+      "FIVB Women:2026-09-03",
+      "ICC T20:2026-09-03",
+      "IPL:2026-09-03"
+    ]
   },
   "officialApiAdapterReport": {
     "ncaa": {
