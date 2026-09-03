@@ -8,6 +8,7 @@ import refresh_schedules_legacy as engine
 from event_identity import identity_match, merge_event_records, event_identity, normalize_league
 from provider_health import build_matrix, provider_order, record
 from providers.ncaa import ESPN_FALLBACK as NCAA_ESPN
+from providers.expanded import fetch as fetch_expanded
 ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"data"/"schedule_feed.json"
 _WRESTLING_CACHE=None
 
@@ -19,10 +20,11 @@ def official_map():
     return out
 
 def icon_map():
-    out={x[0]:x[3] for x in engine.ESPN_LEAGUES}; out.update({x[0]:x[3] for x in engine.NCAA_LEAGUES}); out.update({x:"🏎️" for x in engine.NASCAR_SERIES}); out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼"}); return out
+    out={x[0]:x[3] for x in engine.ESPN_LEAGUES}; out.update({x[0]:x[3] for x in engine.NCAA_LEAGUES}); out.update({x:"🏎️" for x in engine.NASCAR_SERIES}); out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","Esports":"🎮"}); return out
 
 def dedupe(events):
-    priority={"official":0,"ncaa":1,"nascar":1,"wrestling":1,"espn":2,"espn-ncaa":2,"sportsdb":3,"fallback":4,"cache":5}; canonical=[]; merges=0; counts={}
+    priority={"mlb-official":0,"nhl-official":0,"official":0,"ncaa":1,"nascar":1,"wrestling":1,"sportradar":1,"sportsdataio":1,"sportmonks":1,"cfbd":1,"pandascore":1,"espn":2,"espn-ncaa":2,"sportsdb":3,"fallback":4,"cache":5}
+    canonical=[]; merges=0; counts={}
     for raw in events:
         candidate=dict(raw); source=candidate.get("source") or "unknown"; counts[source]=counts.get(source,0)+1
         match=next((i for i,e in enumerate(canonical) if identity_match(e,candidate)),None)
@@ -37,6 +39,8 @@ def dedupe(events):
 def fetch(provider,league,meta,official,previous):
     global _WRESTLING_CACHE
     try:
+        if provider in {"sportradar","sportsdataio","sportmonks","cfbd","mlb-official","nhl-official","pandascore"}:
+            return fetch_expanded(provider,league,meta["icon"])
         if provider=="official":
             events=[]; ok=False
             for source in official.get(league,[]):
@@ -77,7 +81,7 @@ def main():
         try: previous=json.loads(OUT.read_text(encoding="utf-8"))
         except Exception: previous={}
     previous_events=previous.get("events") or []; officials=official_map(); icons=icon_map(); espn={x[0]:x[1:] for x in engine.ESPN_LEAGUES}; ncaa={x[0]:x[1:] for x in engine.NCAA_LEAGUES}
-    dedicated_names=set(ncaa)|set(engine.NASCAR_SERIES)|{"WWE","AEW","TNA"}; official_names=set(officials); sportsdb_names=set(engine.SPORTDB_LEAGUES); all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names
+    dedicated_names=set(ncaa)|set(engine.NASCAR_SERIES)|{"WWE","AEW","TNA"}; official_names=set(officials); sportsdb_names=set(engine.SPORTDB_LEAGUES); all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"Esports"}
     dedicated={name:("ncaa" if name in ncaa else "nascar" if name in engine.NASCAR_SERIES else "wrestling") for name in dedicated_names}
     matrix=build_matrix(all_leagues,official_names,dedicated,set(espn),sportsdb_names)
     events=[]; failures=[]; attempts={}; promotions={}; cache_recovery=[]
@@ -92,7 +96,7 @@ def main():
         if ordered and selected!=ordered[0]: matrix[league]["promotedFrom"]=ordered[0]; matrix[league]["promotedTo"]=selected; promotions[league]=selected
     events,merges,source_counts=dedupe(events); events.sort(key=lambda e:e.get("start","")); per={}
     for e in events: per[e.get("league","Unknown")]=per.get(e.get("league","Unknown"),0)+1
-    payload={"schema":9,"generatedAt":datetime.now(timezone.utc).isoformat(),"refreshHours":6,"eventCounts":per,"failedSources":failures,"providerFailures":failures,"sportsDbFallbackSources":[],"officialSourceFailures":[],"officialSourceCounts":{},"identityMergeCount":merges,"sourceRecordCounts":source_counts,"leagueProviderMatrix":matrix,"providerAttempts":attempts,"providerPromotions":promotions,"cacheRecoveryLeagues":cache_recovery,"events":events}
+    payload={"schema":10,"generatedAt":datetime.now(timezone.utc).isoformat(),"refreshHours":6,"eventCounts":per,"failedSources":failures,"providerFailures":failures,"sportsDbFallbackSources":[],"officialSourceFailures":[],"officialSourceCounts":{},"identityMergeCount":merges,"sourceRecordCounts":source_counts,"leagueProviderMatrix":matrix,"providerAttempts":attempts,"providerPromotions":promotions,"cacheRecoveryLeagues":cache_recovery,"events":events}
     tmp=OUT.with_suffix(".tmp"); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8"); tmp.replace(OUT)
     print(f"wrote {len(events)} canonical events across {len(per)} leagues; matrix={len(matrix)}; promotions={len(promotions)}; cache={len(cache_recovery)}; identity_merges={merges}")
 if __name__=="__main__": main()
