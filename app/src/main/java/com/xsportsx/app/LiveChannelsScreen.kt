@@ -34,7 +34,6 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
 
-    // Keep the live screen lightweight until the core real-device path is stable.
     val liveEvents = engineState.liveEvents
     val playbackEventKey = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
 
@@ -45,30 +44,40 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         }.thenBy { it.name.lowercase() })
 
     fun reload(force: Boolean = false, background: Boolean = false) {
+        val requestEventId = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
+        val requestFilter = filter
         scope.launch {
             if (background) refreshing = true else loading = true
             if (!background) error = null
-            runCatching {
+            val result = runCatching {
                 ScheduleEngine.start(context)
                 when {
                     selectedEvent != null -> StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
-                    !filter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(filter, force)
+                    !requestFilter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(requestFilter, force)
                     else -> {
                         if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
                         emptyList<ResolvedStream>()
                     }
                 }
             }
-                .onSuccess { result ->
-                    if (selectedEvent != null || !filter.isNullOrBlank()) streams = ranked(result)
-                    error = null
-                }
-                .onFailure { if (!background) error = it.message ?: "Unable to load live events" }
+            if (selectedEvent?.let { EventIdentity.id(it) }.orEmpty() != requestEventId) return@launch
+            result.onSuccess { resolved ->
+                if (selectedEvent != null || !requestFilter.isNullOrBlank()) streams = ranked(resolved)
+                error = null
+            }.onFailure { if (!background) error = it.message ?: "Unable to load live events" }
             if (background) refreshing = false else loading = false
         }
     }
 
-    LaunchedEffect(filter, selectedEvent?.id) { reload(false) }
+    LaunchedEffect(filter, selectedEvent?.id) {
+        // A new event owns a new result set. Never render the previous game's
+        // channels while the resolver is still working on the new event.
+        streams = emptyList()
+        playerStream = null
+        loading = true
+        error = null
+        reload(false)
+    }
 
     if (playerStream != null) {
         val activeStream = playerStream!!
@@ -88,7 +97,9 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 if (next != null) playerStream = next
                 else if (selectedEvent != null) {
                     scope.launch {
+                        val requestedId = EventIdentity.id(selectedEvent!!)
                         val refreshed = runCatching { StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, true) }.getOrDefault(emptyList())
+                        if (EventIdentity.id(selectedEvent ?: return@launch) != requestedId) return@launch
                         streams = ranked(refreshed)
                         playerStream = streams.firstOrNull { it.url != activeStream.url }
                     }
@@ -138,7 +149,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             selectedEvent == null && filter.isNullOrBlank() && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No live games right now", color = Color(0xFF858B98)) }
             selectedEvent == null && filter.isNullOrBlank() -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(liveEvents, key = { EventIdentity.id(it) }) { game ->
-                    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable {
+                        // Clear immediately so a previous event can never flash
+                        // underneath the new event's loading state.
+                        streams = emptyList()
+                        loading = true
+                        error = null
+                        selectedEvent = game
+                    }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
@@ -150,7 +168,10 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     }
                 }
             }
-            streams.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No matching public or authorized game streams found", color = Color(0xFF858B98)) }
+            streams.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (loading) CircularProgressIndicator(color = Color(0xFFFF1744))
+                else Text("No matching public or authorized game streams found", color = Color(0xFF858B98))
+            }
             showFavorites && visibleStreams.isEmpty() -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("★", color = Color(0xFFFF1744), fontSize = 42.sp)
