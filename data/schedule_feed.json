@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-03T21:34:13.264803+00:00",
+  "generatedAt": "2026-09-03T21:41:21.374950+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "IPL": 74,
@@ -17,6 +17,7 @@
     "NCAA FB": 48,
     "NCAA Men's Water Polo": 40,
     "F1": 4,
+    "NASCAR Xfinity": 17,
     "NCAA Women's Field Hockey": 76,
     "Bundesliga": 27,
     "Serie A": 30,
@@ -25,13 +26,12 @@
     "UFC": 9,
     "IndyCar": 1,
     "NASCAR Cup": 4,
-    "NASCAR Xfinity": 4,
-    "NASCAR Truck": 4,
     "WWE": 13,
     "PLL": 2,
     "UCL": 18,
     "NFL": 17,
     "LPGA": 3,
+    "NASCAR Truck": 10,
     "PGA": 3,
     "WNBA": 30,
     "NCAA Women's Hockey": 743,
@@ -72,25 +72,14 @@
     "NCAA Men's Water Polo",
     "NCAA Women's Water Polo",
     "NCAA Beach Volleyball",
-    "NASCAR Cup",
-    "NASCAR Xfinity",
-    "NASCAR Truck"
+    "NASCAR Cup"
   ],
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [
-    "Serie A",
-    "BOXING",
-    "BOXING",
-    "NASCAR Cup",
-    "ATP",
     "IPL",
-    "NCAA Men's Hockey",
-    "NCAA Women's Hockey",
     "NCAA Men's Water Polo",
     "NCAA Women's Water Polo",
-    "NCAA Women's Field Hockey",
-    "NASCAR Xfinity",
-    "NASCAR Truck"
+    "NCAA Women's Field Hockey"
   ],
   "officialSourceCounts": {
     "NFL": 0,
@@ -105,19 +94,15 @@
     "UCL": 0,
     "UEL": 0,
     "LaLiga": 0,
-    "Serie A": 0,
     "Bundesliga": 0,
     "Ligue 1": 0,
     "NWSL": 0,
     "UFC": 0,
-    "BOXING": 0,
     "F1": 0,
     "IndyCar": 0,
-    "NASCAR Cup": 0,
     "PGA": 0,
     "LPGA": 0,
     "LIV Golf": 0,
-    "ATP": 0,
     "WTA": 0,
     "PLL": 0,
     "NLL": 0,
@@ -133,8 +118,6 @@
     "NCAA WBB": 0,
     "NCAA Baseball": 0,
     "NCAA Softball": 0,
-    "NCAA Men's Hockey": 0,
-    "NCAA Women's Hockey": 0,
     "NCAA Men's Soccer": 0,
     "NCAA Women's Soccer": 0,
     "NCAA Men's Lacrosse": 0,
@@ -155,15 +138,14 @@
     "FORMULA E": 0,
     "MXGP": 0,
     "MONSTER JAM": 0,
-    "AAA Wrestling": 0,
-    "NASCAR Xfinity": 0,
-    "NASCAR Truck": 0
+    "AAA Wrestling": 0
   },
-  "identityMergeCount": 12,
+  "identityMergeCount": 36,
   "sourceRecordCounts": {
     "fallback": 18,
-    "espn": 1553,
+    "espn": 1545,
     "espn-ncaa": 1106,
+    "nascar": 51,
     "unknown": 854
   },
   "events": [
@@ -1887,7 +1869,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Marshall @ Akron",
       "start": "2026-09-03T20:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Marshall",
@@ -2069,7 +2051,7 @@
       "league": "NCAA Women's Soccer",
       "title": "Stetson @ W Florida",
       "start": "2026-09-03T21:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn-ncaa",
       "away": "Stetson",
@@ -2083,7 +2065,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "E Washington @ Oral Roberts",
       "start": "2026-09-03T21:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "E Washington",
@@ -2097,7 +2079,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Idaho St @ UNLV",
       "start": "2026-09-03T21:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Idaho St",
@@ -4878,6 +4860,18 @@
       "sport": "racing"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Race @ Darlington Raceway",
+      "start": "2026-09-04T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:3:202609041300",
+      "id": "evt_76372809fa43543eb9180dd9",
+      "startUtc": "2026-09-04T13:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA Women's Volleyball",
       "title": "UNC Wilmington @ Gardner-Webb",
       "start": "2026-09-04T14:00:00Z",
@@ -6610,6 +6604,18 @@
       "home": "Queens University",
       "providerEventId": "espn:401890512",
       "id": "evt_6222b665f0513dabe05fd169",
+      "startUtc": "2026-09-04T21:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Race @ Darlington Raceway",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:3:202609042100",
+      "id": "evt_9deb3c996a0ee4093bc6cc6c",
       "startUtc": "2026-09-04T21:00:00Z",
       "sport": "other"
     },
@@ -10028,6 +10034,18 @@
       "sport": "other"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Race @ Darlington Raceway",
+      "start": "2026-09-05T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:3:202609051600",
+      "id": "evt_6f3cba300ae353cf9780ecbb",
+      "startUtc": "2026-09-05T16:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "Serie A",
       "title": "Napoli @ Inter Milan",
       "start": "2026-09-05T16:00Z",
@@ -10538,6 +10556,18 @@
       "sport": "other"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Practice @ Darlington Raceway",
+      "start": "2026-09-05T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:1:202609051730",
+      "id": "evt_64a532b313a8de6c558f839c",
+      "startUtc": "2026-09-05T17:30:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA FB",
       "title": "Rhode Island @ Temple",
       "start": "2026-09-05T18:00:00Z",
@@ -11011,6 +11041,18 @@
       "providerEventId": "espn:401890663",
       "id": "evt_cc9c89e8c246c87437eac24d",
       "startUtc": "2026-09-05T18:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Qualifying @ Darlington Raceway",
+      "start": "2026-09-05T18:35:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:2:202609051835",
+      "id": "evt_1b46f55c4e38eda67f872fe8",
+      "startUtc": "2026-09-05T18:35:00Z",
       "sport": "other"
     },
     {
@@ -12385,6 +12427,18 @@
       "providerEventId": "espn:401903031",
       "id": "evt_7c62504030a749cec1600676",
       "startUtc": "2026-09-05T22:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Fleetio 200 — Race @ Darlington Raceway",
+      "start": "2026-09-05T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5658:3:202609052240",
+      "id": "evt_f1e9548f321e4bb65f30af26",
+      "startUtc": "2026-09-05T22:40:00Z",
       "sport": "other"
     },
     {
@@ -16659,30 +16713,6 @@
       "source": "espn",
       "providerEventId": "espn:202609063891",
       "id": "evt_74b50fc68aeb745770bc21ab",
-      "startUtc": "2026-09-06T21:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Xfinity",
-      "title": "NASCAR Cup Series at Darlington",
-      "start": "2026-09-06T21:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609063891",
-      "id": "evt_4f8e4be0f3eeef1740b90229",
-      "startUtc": "2026-09-06T21:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Truck",
-      "title": "NASCAR Cup Series at Darlington",
-      "start": "2026-09-06T21:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609063891",
-      "id": "evt_173d92c5cd4dc0236146292e",
       "startUtc": "2026-09-06T21:00Z",
       "sport": "other"
     },
@@ -21171,6 +21201,18 @@
       "sport": "racing"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Race @ World Wide Technology Raceway",
+      "start": "2026-09-11T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:3:202609111600",
+      "id": "evt_122c052c2654f007177f2867",
+      "startUtc": "2026-09-11T16:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Pirates @ Cubs",
       "start": "2026-09-11T18:20Z",
@@ -21249,6 +21291,18 @@
       "id": "evt_7328cb11a9a7519a3a676209",
       "startUtc": "2026-09-11T19:00Z",
       "sport": "soccer"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Race @ World Wide Technology Raceway",
+      "start": "2026-09-11T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:3:202609112200",
+      "id": "evt_de756719b4c6c9a7e16c5af5",
+      "startUtc": "2026-09-11T22:00:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -21699,6 +21753,18 @@
       "sport": "soccer"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Race @ World Wide Technology Raceway",
+      "start": "2026-09-12T15:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:3:202609121530",
+      "id": "evt_a5726406ffa89ff4e265beaf",
+      "startUtc": "2026-09-12T15:30:00Z",
+      "sport": "other"
+    },
+    {
       "league": "Serie A",
       "title": "Milan @ Lazio",
       "start": "2026-09-12T16:00Z",
@@ -21763,6 +21829,18 @@
       "sport": "soccer"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Practice @ World Wide Technology Raceway",
+      "start": "2026-09-12T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:1:202609121700",
+      "id": "evt_805a03159a64d1cdfa975de3",
+      "startUtc": "2026-09-12T17:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Rockies @ Tigers",
       "start": "2026-09-12T17:10Z",
@@ -21805,6 +21883,18 @@
       "id": "evt_23471682280dfb9fadc96576",
       "startUtc": "2026-09-12T18:00Z",
       "sport": "mma"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Qualifying @ World Wide Technology Raceway",
+      "start": "2026-09-12T18:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:2:202609121805",
+      "id": "evt_8533b7710288cf368bda8beb",
+      "startUtc": "2026-09-12T18:05:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -22045,6 +22135,18 @@
       "id": "evt_9418a9ec28f4a1b68d0ac58c",
       "startUtc": "2026-09-12T22:10Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Race @ World Wide Technology Raceway",
+      "start": "2026-09-12T22:50:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5659:3:202609122250",
+      "id": "evt_c304eef5bca73b4c17e2ee99",
+      "startUtc": "2026-09-12T22:50:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -22883,30 +22985,6 @@
       "source": "espn",
       "providerEventId": "espn:202609134249",
       "id": "evt_ea62f4b47a6604409c043ba9",
-      "startUtc": "2026-09-13T19:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Xfinity",
-      "title": "NASCAR Cup Series at World Wide Technology Raceway",
-      "start": "2026-09-13T19:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609134249",
-      "id": "evt_db2b12ba4a66e81171628808",
-      "startUtc": "2026-09-13T19:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Truck",
-      "title": "NASCAR Cup Series at World Wide Technology Raceway",
-      "start": "2026-09-13T19:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609134249",
-      "id": "evt_4a90e80afcdb0922a7eb5b7e",
       "startUtc": "2026-09-13T19:00Z",
       "sport": "other"
     },
@@ -23830,6 +23908,30 @@
       "sport": "soccer"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Food City 300 — Race @ Bristol Motor Speedway",
+      "start": "2026-09-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5660:3:202609162100",
+      "id": "evt_485a6b4cb6ce7c293f315c8f",
+      "startUtc": "2026-09-16T21:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "UNOH 250 presented by Ohio Logistics — Race @ Bristol Motor Speedway",
+      "start": "2026-09-16T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5686:3:202609162100",
+      "id": "evt_78343a6dbb729590efd48547",
+      "startUtc": "2026-09-16T21:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Athletics @ Rays",
       "start": "2026-09-16T22:40Z",
@@ -24018,6 +24120,18 @@
       "sport": "golf"
     },
     {
+      "league": "NASCAR Truck",
+      "title": "UNOH 250 presented by Ohio Logistics — Race @ Bristol Motor Speedway",
+      "start": "2026-09-17T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5686:3:202609171200",
+      "id": "evt_8c70afd6201517b390c2f8a9",
+      "startUtc": "2026-09-17T12:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Brewers @ Pirates",
       "start": "2026-09-17T16:35Z",
@@ -24082,6 +24196,18 @@
       "sport": "baseball"
     },
     {
+      "league": "NASCAR Truck",
+      "title": "UNOH 250 presented by Ohio Logistics — Practice @ Bristol Motor Speedway",
+      "start": "2026-09-17T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5686:1:202609171900",
+      "id": "evt_8d9e2b3e55f4103517550baa",
+      "startUtc": "2026-09-17T19:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Padres @ Rockies",
       "start": "2026-09-17T19:10Z",
@@ -24112,6 +24238,18 @@
       "id": "evt_1660d0973e5cb0182bc322ca",
       "startUtc": "2026-09-17T19:30Z",
       "sport": "soccer"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "UNOH 250 presented by Ohio Logistics — Qualifying @ Bristol Motor Speedway",
+      "start": "2026-09-17T20:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5686:2:202609172005",
+      "id": "evt_e4525bb929274f4f6bb33194",
+      "startUtc": "2026-09-17T20:05:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -24160,6 +24298,18 @@
       "id": "evt_39d652d581f956f5912e324d",
       "startUtc": "2026-09-17T23:30Z",
       "sport": "basketball"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "UNOH 250 presented by Ohio Logistics — Race @ Bristol Motor Speedway",
+      "start": "2026-09-17T23:35:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5686:3:202609172335",
+      "id": "evt_2c005467efe1564a65c8cd4b",
+      "startUtc": "2026-09-17T23:35:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -24290,6 +24440,30 @@
       "sport": "basketball"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Food City 300 — Race @ Bristol Motor Speedway",
+      "start": "2026-09-18T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5660:3:202609181100",
+      "id": "evt_a1c647d4ebe2849637d4fbde",
+      "startUtc": "2026-09-18T11:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Food City 300 — Practice @ Bristol Motor Speedway",
+      "start": "2026-09-18T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5660:1:202609181800",
+      "id": "evt_c2954946f337f5059401d562",
+      "startUtc": "2026-09-18T18:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "Bundesliga",
       "title": "Union Berlin @ Bayern",
       "start": "2026-09-18T18:30Z",
@@ -24370,6 +24544,18 @@
       "sport": "soccer"
     },
     {
+      "league": "NASCAR Xfinity",
+      "title": "Food City 300 — Qualifying @ Bristol Motor Speedway",
+      "start": "2026-09-18T19:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5660:2:202609181905",
+      "id": "evt_820b7938ac08fc6546c5167e",
+      "startUtc": "2026-09-18T19:05:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Lindenwood @ Post University",
       "start": "2026-09-18T20:30Z",
@@ -24432,6 +24618,18 @@
       "id": "evt_b47dbee5fdfa61558582eb60",
       "startUtc": "2026-09-18T22:40Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NASCAR Xfinity",
+      "title": "Food City 300 — Race @ Bristol Motor Speedway",
+      "start": "2026-09-18T22:50:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5660:3:202609182250",
+      "id": "evt_dc74ebb3640678fe019dd047",
+      "startUtc": "2026-09-18T22:50:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -25430,30 +25628,6 @@
       "source": "espn",
       "providerEventId": "espn:202609190016",
       "id": "evt_2130980c062834e762a9179b",
-      "startUtc": "2026-09-19T23:30Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Xfinity",
-      "title": "NASCAR Cup Series at Bristol",
-      "start": "2026-09-19T23:30Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609190016",
-      "id": "evt_9cccfbeae395b8e0fc5735fd",
-      "startUtc": "2026-09-19T23:30Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Truck",
-      "title": "NASCAR Cup Series at Bristol",
-      "start": "2026-09-19T23:30Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609190016",
-      "id": "evt_660358feefb9d98270f0f664",
       "startUtc": "2026-09-19T23:30Z",
       "sport": "other"
     },
@@ -27813,6 +27987,18 @@
       "sport": "baseball"
     },
     {
+      "league": "NASCAR Truck",
+      "title": "Race to Stop Suicide 200 — Race @ Kansas Speedway",
+      "start": "2026-09-24T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5675:3:202609242200",
+      "id": "evt_41087426ce2a0a0acd1d67c8",
+      "startUtc": "2026-09-24T22:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Ohio State @ Penn State",
       "start": "2026-09-24T22:00Z",
@@ -28225,6 +28411,18 @@
       "sport": "golf"
     },
     {
+      "league": "NASCAR Truck",
+      "title": "Race to Stop Suicide 200 — Race @ Kansas Speedway",
+      "start": "2026-09-25T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5675:3:202609251300",
+      "id": "evt_820c5f3c87fcd546e9f5fd71",
+      "startUtc": "2026-09-25T13:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Rensselaer @ Minnesota St",
       "start": "2026-09-25T16:00Z",
@@ -28302,6 +28500,18 @@
       "awayTeamId": "194",
       "id": "evt_5be9e5581e09781933be35fc",
       "startUtc": "2026-09-25T20:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "Race to Stop Suicide 200 — Practice @ Kansas Speedway",
+      "start": "2026-09-25T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5675:1:202609252100",
+      "id": "evt_0ebf496a08ed7da2cc04f733",
+      "startUtc": "2026-09-25T21:00:00Z",
       "sport": "other"
     },
     {
@@ -28414,6 +28624,18 @@
       "awayTeamId": "2507",
       "id": "evt_eb271619e711e23b051abb61",
       "startUtc": "2026-09-25T22:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "Race to Stop Suicide 200 — Qualifying @ Kansas Speedway",
+      "start": "2026-09-25T22:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5675:2:202609252205",
+      "id": "evt_126bec93408e5d365e6e0493",
+      "startUtc": "2026-09-25T22:05:00Z",
       "sport": "other"
     },
     {
@@ -28783,6 +29005,18 @@
       "id": "evt_656755c4b4ea61f365ce30ba",
       "startUtc": "2026-09-26T04:00Z",
       "sport": "hockey"
+    },
+    {
+      "league": "NASCAR Truck",
+      "title": "Race to Stop Suicide 200 — Race @ Kansas Speedway",
+      "start": "2026-09-26T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "nascar",
+      "providerEventId": "nascar:5675:3:202609261400",
+      "id": "evt_d43c4e4f43a755273ef9c59b",
+      "startUtc": "2026-09-26T14:00:00Z",
+      "sport": "other"
     },
     {
       "league": "MLB",
@@ -29707,30 +29941,6 @@
       "source": "espn",
       "providerEventId": "espn:202609270039",
       "id": "evt_78a7bef68e08376e929c3961",
-      "startUtc": "2026-09-27T19:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Xfinity",
-      "title": "NASCAR Cup Series at Kansas",
-      "start": "2026-09-27T19:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609270039",
-      "id": "evt_f163fff99aee9d74148e4265",
-      "startUtc": "2026-09-27T19:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NASCAR Truck",
-      "title": "NASCAR Cup Series at Kansas",
-      "start": "2026-09-27T19:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏎️",
-      "source": "espn",
-      "providerEventId": "espn:202609270039",
-      "id": "evt_7bbb43a1ef228a7d493814cc",
       "startUtc": "2026-09-27T19:00Z",
       "sport": "other"
     },
