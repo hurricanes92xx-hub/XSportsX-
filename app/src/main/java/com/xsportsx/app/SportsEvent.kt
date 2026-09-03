@@ -19,19 +19,10 @@ data class SportsEvent(
     val youtubeVideoId: String = ""
 ) {
     private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
+    private val providerLive: Boolean get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
+    private val terminal: Boolean get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
 
-    private val providerLive: Boolean
-        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
-
-    private val terminal: Boolean
-        get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
-
-    /**
-     * Canonical live state. Provider state wins, but a non-terminal event whose
-     * scheduled start has passed is promoted to LIVE as a feed-lag fallback.
-     * This prevents games such as MLB from remaining in UPCOMING simply because
-     * the upstream status field has not flipped yet.
-     */
+    /** Sport-aware feed-lag fallback; provider LIVE and explicit terminal states always win. */
     val isLive: Boolean
         get() {
             if (providerLive) return true
@@ -39,7 +30,19 @@ data class SportsEvent(
             val start = startMillis()
             if (start <= 0L) return false
             val now = System.currentTimeMillis()
-            return now >= start - 3L * 60L * 1000L && now < start + 6L * 60L * 60L * 1000L
+            val key = "$sport $league $title".lowercase()
+            val window = when {
+                key.contains("mlb") || key.contains("baseball") -> 6L * 60L * 60L * 1000L
+                key.contains("soccer") -> 3L * 60L * 60L * 1000L
+                key.contains("volleyball") -> 3L * 60L * 60L * 1000L
+                key.contains("tennis") -> 5L * 60L * 60L * 1000L
+                key.contains("nfl") || key.contains("football") -> 5L * 60L * 60L * 1000L
+                key.contains("hockey") -> 4L * 60L * 60L * 1000L
+                key.contains("basketball") -> 4L * 60L * 60L * 1000L
+                key.contains("golf") -> 7L * 60L * 60L * 1000L
+                else -> 4L * 60L * 60L * 1000L
+            }
+            return now >= start - 3L * 60L * 1000L && now < start + window
         }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
