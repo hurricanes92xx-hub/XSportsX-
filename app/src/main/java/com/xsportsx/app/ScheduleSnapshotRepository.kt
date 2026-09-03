@@ -19,6 +19,7 @@ object ScheduleSnapshotRepository {
     private const val UI_DAYS = 3
     private const val SNAPSHOT_DAYS = 7
     private const val MLB_SCHEDULE_URL = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&hydrate=team,linescore"
+    private const val ESPN_MLB_LIVE_URL = "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard"
 
     private val snapshotMutex = Mutex()
     private val liveMutex = Mutex()
@@ -65,7 +66,7 @@ object ScheduleSnapshotRepository {
             .toList()
     }
 
-    /** Near-real-time live path. Combines the canonical feed with MLB's authoritative live scoreboard. */
+    /** Near-real-time live path. Uses both MLB Stats API and ESPN as independent fallbacks. */
     suspend fun live(force: Boolean = false): List<SportsEvent> {
         val cached = liveCache
         if (!force && cached != null && age(cached) < LIVE_TTL_MS) return cached.events
@@ -76,7 +77,10 @@ object ScheduleSnapshotRepository {
             val feedLive = runCatching { CanonicalScheduleProvider.load(null, 1) }.getOrDefault(emptyList())
                 .filter { it.isLive }
             val mlbLive = runCatching { loadMlbSchedule(1).filter { it.isLive } }.getOrDefault(emptyList())
-            val normalized = normalize(feedLive + mlbLive).filter { it.isLive }
+            // Some Android/network paths can reach ESPN when MLB Stats API is unavailable.
+            // Merge both so MLB never disappears merely because one provider is blocked.
+            val espnMlbLive = runCatching { loadEspnMlbLive() }.getOrDefault(emptyList())
+            val normalized = normalize(feedLive + mlbLive + espnMlbLive).filter { it.isLive }
             if (normalized.isNotEmpty()) {
                 liveCache = CachedEvents(normalized, System.currentTimeMillis())
                 normalized
@@ -121,20 +125,69 @@ object ScheduleSnapshotRepository {
                     if (away.isBlank() || home.isBlank() || start.isBlank()) continue
                     val gamePk = game.optLong("gamePk", 0L)
                     out += SportsEvent(
-                        id = if (gamePk > 0) "mlb-$gamePk" else "mlb-${start.take(16)}-${away}-${home}",
-                        sport = "Baseball",
-                        league = "MLB",
-                        title = "$away @ $home",
-                        startUtc = start,
+                        id = if (gamePk > 0) "mlb-$gamePk" else "mlb-${start.take(16)}-$away-$home",
+                        sport = "Baseball", league = "MLB", title = "$away @ $home", startUtc = start,
                         status = when { live -> "LIVE"; final -> "FINAL"; else -> "UPCOMING" },
                         state = when { live -> "in"; final -> "post"; else -> "pre" },
-                        home = home,
-                        away = away,
-                        homeLogo = homeTeam?.optString("link").orEmpty(),
-                        awayLogo = awayTeam?.optString("link").orEmpty(),
+                        home = home, away = away,
+                        homeLogo = homeTeam?.optString("link").orEmpty(), awayLogo = awayTeam?.optString("link").orEmpty(),
                         sourceUrl = if (gamePk > 0) "https://www.mlb.com/gameday/$gamePk" else "https://www.mlb.com/scores"
                     )
                 }
+            }
+            out
+        } finally { c.disconnect() }
+    }
+
+    private suspend fun loadEspnMlbLive(): List<SportsEvent> = withContext(Dispatchers.IO) {
+        val target = "$ESPN_MLB_LIVE_URL?dates=${LocalDate.now(ZoneOffset.UTC).toString().replace("-", "")}&limit=1000"
+        val c = URL(target).openConnection() as HttpURLConnection
+        c.connectTimeout = 1_500
+        c.readTimeout = 2_500
+        c.requestMethod = "GET"
+        c.instanceFollowRedirects = true
+        c.useCaches = false
+        c.setRequestProperty("Accept", "application/json")
+        c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
+        c.setRequestProperty("Pragma", "no-cache")
+        c.setRequestProperty("User-Agent", "XSportsX/2.2 Android")
+        return@withContext try {
+            if (c.responseCode !in 200..299) return@withContext emptyList()
+            val root = JSONObject(c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() })
+            val events = root.optJSONArray("events") ?: return@withContext emptyList()
+            val out = ArrayList<SportsEvent>()
+            for (i in 0 until events.length()) {
+                val event = events.optJSONObject(i) ?: continue
+                val competition = event.optJSONArray("competitions")?.optJSONObject(0) ?: continue
+                val status = competition.optJSONObject("status")?.optJSONObject("type")
+                    ?: event.optJSONObject("status")?.optJSONObject("type") ?: continue
+                val state = status.optString("state").lowercase()
+                val detail = status.optString("detail").lowercase()
+                val live = state == "in" || detail.contains("in progress") || detail.contains("live")
+                if (!live) continue
+                val competitors = competition.optJSONArray("competitors") ?: continue
+                var home = ""
+                var away = ""
+                var homeLogo = ""
+                var awayLogo = ""
+                for (j in 0 until competitors.length()) {
+                    val team = competitors.optJSONObject(j) ?: continue
+                    val obj = team.optJSONObject("team") ?: continue
+                    val name = obj.optString("shortDisplayName").ifBlank { obj.optString("displayName") }
+                    val logo = obj.optString("logo")
+                    if (team.optString("homeAway") == "home") { home = name; homeLogo = logo }
+                    else if (team.optString("homeAway") == "away") { away = name; awayLogo = logo }
+                }
+                val start = event.optString("date")
+                if (home.isBlank() || away.isBlank() || start.isBlank()) continue
+                val id = event.optString("id")
+                out += SportsEvent(
+                    id = if (id.isBlank()) "espn-mlb-${start.take(16)}-$away-$home" else "espn-mlb-$id",
+                    sport = "Baseball", league = "MLB", title = "$away @ $home", startUtc = start,
+                    status = "LIVE", state = "in", home = home, away = away,
+                    homeLogo = homeLogo, awayLogo = awayLogo,
+                    sourceUrl = if (id.isBlank()) "https://www.espn.com/mlb/scoreboard" else "https://www.espn.com/mlb/game/_/gameId/$id"
+                )
             }
             out
         } finally { c.disconnect() }
