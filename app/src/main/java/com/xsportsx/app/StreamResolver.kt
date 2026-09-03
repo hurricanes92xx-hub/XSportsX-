@@ -2,9 +2,12 @@ package com.xsportsx.app
 
 import android.content.Context
 import android.util.LruCache
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -22,11 +25,16 @@ private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loade
 private data class EventStreamCacheEntry(val streams: List<ResolvedStream>, val loadedAt: Long)
 
 class StreamResolver(context: Context) {
-    private val store = SourceStore(context.applicationContext)
-    private val publicHealthIndex = PublicSourceHealthIndex(context.applicationContext)
+    private val appContext = context.applicationContext
+    private val store = SourceStore(appContext)
+    private val publicHealthIndex = PublicSourceHealthIndex(appContext)
     private val publicResolver = PublicSourceResolver()
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
+    private val channelIndex = ChannelIndex()
+    private val preResolvedCache = PreResolvedStreamCache(appContext)
     private val eventInFlight = ConcurrentHashMap<String, kotlinx.coroutines.Deferred<List<ResolvedStream>>>()
+    private val refreshScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
         private const val EVENT_CACHE_TTL_MS = 2 * 60 * 1000L
@@ -47,21 +55,29 @@ class StreamResolver(context: Context) {
                 val privateStreams = if (config.isConfigured()) { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) } else emptyList()
                 val publicStreams = runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
                 val merged = dedupe(privateStreams + publicStreams)
+                channelIndex.rebuild(merged)
                 cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
             }
         }
+        channelIndex.rebuild(streams)
         streams.size
     }
 
     suspend fun loadLiveStreams(force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load(); val key = cacheKey(config); val now = System.currentTimeMillis()
-        cache.get(key)?.takeIf { !force && now - it.loadedAt < CACHE_TTL_MS }?.streams?.let { return@withContext it }
-        preloadLiveStreams(force); cache.get(key)?.streams.orEmpty()
+        cache.get(key)?.takeIf { !force && now - it.loadedAt < CACHE_TTL_MS }?.streams?.let {
+            channelIndex.rebuild(it)
+            return@withContext it
+        }
+        preloadLiveStreams(force); cache.get(key)?.streams.orEmpty().also { channelIndex.rebuild(it) }
     }
 
     suspend fun loadMatchingStreams(filter: String?, force: Boolean = false): List<ResolvedStream> {
-        val all = loadLiveStreams(force); val terms = filter?.split("||")?.map { it.trim() }?.filter { it.length >= 3 }.orEmpty()
+        val all = loadLiveStreams(force)
+        val terms = filter?.split("||")?.map { it.trim() }?.filter { it.length >= 3 }.orEmpty()
         if (terms.isEmpty()) return all
+        val indexed = terms.flatMap { channelIndex.find(it, 16) }.distinctBy { it.url }
+        if (indexed.isNotEmpty()) return indexed
         return all.filter { stream -> val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); terms.any { haystack.contains(normalize(it)) } }
     }
 
@@ -69,7 +85,18 @@ class StreamResolver(context: Context) {
         val config = store.load()
         val eventKey = eventCacheKey(config, event)
         val now = System.currentTimeMillis()
-        if (!force) eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
+
+        if (!force) {
+            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
+            preResolvedCache.get(event.id, allowStale = true, nowMs = now)?.let { cached ->
+                val age = now - cached.savedAtMs
+                if (age < PreResolvedStreamCache.FRESH_TTL_MS) return@withContext cached.candidates.map { it.stream }
+                val stale = cached.candidates.map { it.stream }
+                refreshScope.launch { loadMatchingEventStreams(event, true) }
+                return@withContext stale
+            }
+        }
+
         val existing = eventInFlight[eventKey]
         if (existing != null) return@withContext existing.await()
         coroutineScope {
@@ -88,8 +115,11 @@ class StreamResolver(context: Context) {
 
         val privateMatches = if (config.isConfigured()) {
             val private = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
-            matchEventAgainstStreams(event, private)
-        } else emptyList()
+            val indexedCandidates = channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24)
+            matchEventAgainstStreams(event, dedupe(private + indexedCandidates))
+        } else {
+            matchEventAgainstStreams(event, channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24))
+        }
 
         val indexed = publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 8)
             .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
@@ -101,6 +131,7 @@ class StreamResolver(context: Context) {
         }
         val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
         eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
+        preResolvedCache.put(event.id, resolved)
         return resolved
     }
 
