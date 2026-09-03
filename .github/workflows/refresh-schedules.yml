@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Refresh canonical schedule feed
-        run: python scripts/refresh_schedules_engine.py
+        run: python scripts/refresh_schedules.py
       - name: Repair known source endpoint drift
         run: python scripts/repair_schedule_sources.py
       - name: Add authoritative official API schedules
