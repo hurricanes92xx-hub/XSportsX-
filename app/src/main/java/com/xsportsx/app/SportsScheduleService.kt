@@ -3,9 +3,10 @@ package com.xsportsx.app
 /**
  * Canonical schedule facade used by Mobile and TV.
  *
- * All schedule data now comes from the repository-refreshed canonical feed.
- * Keeping this object as the public facade avoids duplicate schedule clients
- * scattered through the UI while preserving the league normalization API.
+ * ScheduleEngine owns the runtime schedule state. This facade remains as the
+ * compatibility API for older screens, but it no longer creates an independent
+ * provider request path. That prevents UI callers from bypassing the engine's
+ * warm cache, live overlay, refresh cadence, and last-good state.
  */
 object SportsScheduleService {
     private val uiChoices = listOf(
@@ -36,10 +37,24 @@ object SportsScheduleService {
 
     val uiLeagueChoices: List<String> = uiChoices
 
-    suspend fun load(): List<SportsEvent> = CanonicalScheduleProvider.load(null, 3)
+    /** Return the engine's canonical warm schedule, refreshing only when empty. */
+    suspend fun load(): List<SportsEvent> {
+        ScheduleEngine.start()
+        if (ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
+        return ScheduleEngine.state.value.events
+    }
 
-    suspend fun loadBackground(): List<SportsEvent> = CanonicalScheduleProvider.load(null, 7)
+    /** Return the engine's canonical schedule, including the wider warm horizon. */
+    suspend fun loadBackground(): List<SportsEvent> {
+        ScheduleEngine.start()
+        if (ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
+        return ScheduleEngine.state.value.events
+    }
 
-    suspend fun loadForLeague(label: String, daysAhead: Int = 3): List<SportsEvent> =
-        CanonicalScheduleProvider.load(normalizeLeague(label), daysAhead.coerceIn(1, 7))
+    /** Filter the canonical engine state rather than starting a separate provider request. */
+    suspend fun loadForLeague(label: String, daysAhead: Int = 3): List<SportsEvent> {
+        val events = load()
+        val league = normalizeLeague(label)
+        return events.filter { normalizeLeague(it.league) == league }
+    }
 }
