@@ -1,4 +1,4 @@
-name: Refresh complete schedules
+name: Refresh production schedule feed
 on:
   workflow_dispatch:
   schedule:
@@ -56,7 +56,7 @@ jobs:
         run: python scripts/audit_ncaa_football_logos.py
       - name: Generate league schedule audit
         run: python scripts/league_schedule_audit.py
-      - name: Normalize, dedupe, and validate feed
+      - name: Normalize and dedupe feed
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -92,8 +92,10 @@ jobs:
           p.setdefault('repairReport',{})['finalDuplicateEventsRemoved']=len(events)-len(unique)
           p['repairReport']['adapterTimestampsNormalized']=fixed
           pth.write_text(json.dumps(p,indent=2,ensure_ascii=False)+'\n')
-          print(f"Prepared {len(unique)} events across {len(p['eventCounts'])} leagues")
+          print(f'Prepared {len(unique)} events across {len(p["eventCounts"])} leagues')
           PY
+      - name: Reconcile live and final status
+        run: python scripts/reconcile_live_status.py
       - name: Strict schedule coverage validation
         run: python scripts/validate_schedule_refresh.py
       - name: Publish schedule feed safely
