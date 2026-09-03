@@ -12,6 +12,9 @@ import android.app.Application
 class XSportsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        ScheduleEngine.start()
+        // Supplying context here enables background event prewarming before any
+        // sports screen is opened. The launcher loading activity also calls start
+        // defensively, but ScheduleEngine is idempotent.
+        ScheduleEngine.start(this)
     }
 }
