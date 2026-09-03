@@ -3,23 +3,17 @@ package com.xsportsx.app
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * Keeps the resolver warm ahead of user interaction.
- *
- * Only a small live/upcoming working set is resolved. Existing fresh cache entries
- * are left alone, while stale/missing entries are refreshed in the background.
- */
+/** Keeps only a tiny working set warm; never competes with the interactive UI. */
 object StreamPrewarmCoordinator {
-    private const val MAX_LIVE = 6
-    private const val MAX_UPCOMING = 6
-    private const val UPCOMING_WINDOW_MS = 45 * 60 * 1000L
-    private const val PREWARM_TTL_MS = 90 * 1000L
+    private const val MAX_LIVE = 2
+    private const val MAX_UPCOMING = 2
+    private const val UPCOMING_WINDOW_MS = 30 * 60 * 1000L
+    private const val PREWARM_TTL_MS = 120 * 1000L
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val lastWarmed = ConcurrentHashMap<String, Long>()
@@ -37,24 +31,18 @@ object StreamPrewarmCoordinator {
         targets.forEach { event ->
             val id = EventIdentity.id(event)
             val previous = lastWarmed[id] ?: 0L
-            if (now - previous < PREWARM_TTL_MS) return@forEach
-            if (inFlight.containsKey(id)) return@forEach
-
+            if (now - previous < PREWARM_TTL_MS || inFlight.containsKey(id)) return@forEach
             lastWarmed[id] = now
-            val job = scope.launch {
+            inFlight[id] = scope.launch {
                 try {
-                    // Force only the prewarm pass; normal Play requests can use the
-                    // persisted fresh cache and never wait on this background work.
-                    StreamResolver(context.applicationContext).loadMatchingEventStreams(event, force = true)
+                    StreamResolver(context.applicationContext).loadMatchingEventStreams(event, force = false)
                 } finally {
                     inFlight.remove(id)
                 }
             }
-            inFlight[id] = job
         }
 
-        // Prevent the bookkeeping map from growing forever as the schedule rolls.
-        if (lastWarmed.size > 256) {
+        if (lastWarmed.size > 128) {
             val cutoff = now - (PREWARM_TTL_MS * 4)
             lastWarmed.entries.removeIf { it.value < cutoff }
         }
