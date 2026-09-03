@@ -372,7 +372,7 @@ fun SettingsScreen() {
 @Composable fun EmptyState(text: String) { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("◉", fontSize = 48.sp, color = Color(0xFF333944)); Text(text, color = Color(0xFF858B98), fontSize = 16.sp, fontWeight = FontWeight.Bold) } } }
 
 @Composable
-fun EventSheet(event: SportsEvent, onClose: () -> Unit, onPlay: (ResolvedStream) -> Unit) {
+fun EventSheet(event: SportsEvent, onClose: () -> Unit, onBack: () -> Unit = onClose, onPlay: (ResolvedStream) -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var loading by remember { mutableStateOf(true) }
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
