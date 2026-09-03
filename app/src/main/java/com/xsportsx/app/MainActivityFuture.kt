@@ -49,9 +49,6 @@ class MainActivityFuture : ComponentActivity() {
                 checkForUpdate()
                 while (isActive) { delay(30 * 60 * 1000L); checkForUpdate() }
             }
-            LaunchedEffect(Unit) {
-                if (!BuildConfig.IS_TV_BUILD) scope.launch { runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) } }
-            }
             LaunchedEffect(sourceVersion, connected) {
                 if (sourceVersion > 0 && !BuildConfig.IS_TV_BUILD) runCatching { StreamResolver(this@MainActivityFuture).preloadLiveStreams(force = true) }
             }
