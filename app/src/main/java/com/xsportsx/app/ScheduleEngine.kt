@@ -3,7 +3,6 @@ package com.xsportsx.app
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +13,8 @@ import kotlinx.coroutines.launch
 /**
  * Single runtime schedule engine shared by Mobile and TV.
  *
- * Schedule data is warm state; live state is hot state.  UI code must consume
- * this engine instead of creating one-shot schedule requests of its own.
+ * Schedule data is warm state; live state is hot state. UI code consumes this
+ * engine instead of creating one-shot schedule requests of its own.
  */
 object ScheduleEngine {
     private const val LIVE_REFRESH_MS = 10_000L
@@ -80,8 +79,9 @@ object ScheduleEngine {
         runCatching { ScheduleSnapshotRepository.all(force) }
             .onSuccess { events ->
                 val current = mutableState.value
+                val merged = mergeLive(events, current.liveEvents)
                 mutableState.value = current.copy(
-                    events = events,
+                    events = merged,
                     loading = false,
                     refreshing = false,
                     lastUpdatedMs = System.currentTimeMillis(),
@@ -103,6 +103,7 @@ object ScheduleEngine {
             .onSuccess { live ->
                 val current = mutableState.value
                 mutableState.value = current.copy(
+                    events = mergeLive(current.events, live),
                     liveEvents = live,
                     lastUpdatedMs = System.currentTimeMillis(),
                     error = if (current.events.isEmpty() && live.isEmpty()) current.error else null
@@ -115,4 +116,36 @@ object ScheduleEngine {
                 }
             }
     }
+
+    /** Overlay the hot live feed onto the warm schedule without duplicating events. */
+    private fun mergeLive(base: List<SportsEvent>, live: List<SportsEvent>): List<SportsEvent> {
+        if (live.isEmpty()) return base
+        val liveById = live.filter { it.id.isNotBlank() }.associateBy { it.id }
+        val liveByFallback = live.associateBy { fallbackKey(it) }
+        val seenLive = HashSet<String>()
+
+        val merged = base.map { event ->
+            val replacement = liveById[event.id]?.also { seenLive.add(it.id) }
+                ?: liveByFallback[fallbackKey(event)]?.also { seenLive.add(it.id) }
+            replacement ?: event
+        }.toMutableList()
+
+        live.forEach { event ->
+            val key = if (event.id.isNotBlank()) "id:${event.id}" else "key:${fallbackKey(event)}"
+            val alreadyPresent = merged.any {
+                if (event.id.isNotBlank() && it.id.isNotBlank()) it.id == event.id
+                else fallbackKey(it) == fallbackKey(event)
+            }
+            if (!alreadyPresent && seenLive.add(key)) merged.add(event)
+        }
+
+        return merged.sortedWith(compareByDescending<SportsEvent> { it.isLive }.thenBy { it.startUtc })
+    }
+
+    private fun fallbackKey(event: SportsEvent): String = listOf(
+        event.league.trim().uppercase(),
+        event.home.trim().uppercase(),
+        event.away.trim().uppercase(),
+        event.startUtc.take(16)
+    ).joinToString("|")
 }
