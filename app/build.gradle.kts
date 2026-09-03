@@ -11,8 +11,8 @@ android {
         applicationId = "com.xsportsx.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 32
-        versionName = "1.8.6"
+        versionCode = 33
+        versionName = "1.8.7"
         buildConfigField("String", "PAIRING_BASE_URL", "\"https://github.com/hurricanes92xx-hub/XSportsX-\"")
         buildConfigField("String", "SPORTS_SOURCE_URL", "\"https://xsportsx-sports-source.onrender.com\"")
     }
