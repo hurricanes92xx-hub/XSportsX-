@@ -1,5 +1,6 @@
 package com.xsportsx.app
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,8 +41,11 @@ object ScheduleEngine {
     @Volatile private var started = false
     private var scheduleJob: Job? = null
     private var liveJob: Job? = null
+    @Volatile private var appContext: Context? = null
 
-    fun start() {
+    /** Start the shared schedule engine and enable background stream prewarming. */
+    fun start(context: Context? = null) {
+        context?.let { appContext = it.applicationContext }
         if (started) return
         synchronized(this) {
             if (started) return
@@ -118,6 +122,9 @@ object ScheduleEngine {
             lastUpdatedMs = System.currentTimeMillis(),
             error = null
         )
+
+        // Fire-and-forget: schedule refreshes never wait on stream discovery.
+        appContext?.let { StreamPrewarmCoordinator.onSchedulePublished(it, merged) }
     }
 
     /** Overlay the hot live feed onto the warm schedule without duplicating events. */
