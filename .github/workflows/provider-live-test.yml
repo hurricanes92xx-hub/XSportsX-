@@ -1,0 +1,41 @@
+name: Provider Live Test
+on:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/**'
+      - 'data/official_schedule_sources.json'
+      - '.github/workflows/provider-live-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 1
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run canonical provider live test
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python3 scripts/provider_live_test.py | tee provider-live-report.txt
+      - name: Upload provider report and generated feed
+        uses: actions/upload-artifact@v4
+        with:
+          name: xsportsx-provider-live-report
+          path: |
+            provider-live-report.txt
+            data/schedule_feed.json
+          retention-days: 7
