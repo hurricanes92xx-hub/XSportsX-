@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBack: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
+    val healthStore = remember { StreamHealthStore(context) }
     val engineState by ScheduleEngine.state.collectAsState()
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
@@ -33,6 +34,10 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var showFavorites by remember { mutableStateOf(false) }
 
     val liveEvents = engineState.liveEvents
+
+    fun ranked(list: List<ResolvedStream>): List<ResolvedStream> = list
+        .distinctBy { it.url }
+        .sortedWith(compareByDescending<ResolvedStream> { healthStore.score(it.url) }.thenBy { it.name.lowercase() })
 
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
@@ -50,7 +55,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 }
             }
                 .onSuccess { result ->
-                    if (selectedEvent != null || !filter.isNullOrBlank()) streams = result
+                    if (selectedEvent != null || !filter.isNullOrBlank()) streams = ranked(result)
                     error = null
                 }
                 .onFailure {
@@ -68,8 +73,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             activeStream.url,
             activeStream.name,
             onBack = { playerStream = null },
-            onPlaybackSuccess = { },
-            onPlaybackFailure = { }
+            onPlaybackSuccess = {
+                healthStore.recordSuccess(activeStream.url)
+            },
+            onPlaybackFailure = {
+                healthStore.recordFailure(activeStream.url)
+                val next = streams.dropWhile { it.url != activeStream.url }.drop(1).firstOrNull()
+                if (next != null) playerStream = next else playerStream = null
+            }
         )
         return
     }
