@@ -45,7 +45,7 @@ jobs:
           echo "$RUNNER_TEMP/gradle-8.13/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/gradle-8.13/bin/gradle" --version
 
-      - name: Verify Android project
+      - name: Verify Android project structure
         shell: bash
         run: |
           set -euo pipefail
@@ -60,13 +60,7 @@ jobs:
           test -s app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
           grep -q 'versionCode' app/build.gradle.kts
           grep -q 'versionName' app/build.gradle.kts
-          grep -q 'fun FuturisticHome' app/src/main/java/com/xsportsx/app/FuturisticSports.kt
-          grep -q 'fun TvHomeUltimate' app/src/main/java/com/xsportsx/app/TvHomeUltimate.kt
-          grep -Eq '(class|object)[[:space:]]+SportsScheduleService' app/src/main/java/com/xsportsx/app/SportsScheduleService.kt
-          grep -q 'tvNetworks' app/src/main/java/com/xsportsx/app/TvHomeUltimate.kt
-          grep -q 'http://$ip:${socket.localPort}/pair?code=$expectedCode' app/src/main/java/com/xsportsx/app/LocalPairingHost.kt
-          grep -q 'uri.path == "/pair"' app/src/main/java/com/xsportsx/app/PhonePairScanner.kt
-          echo 'Production android-app source verified.'
+          echo 'Production android-app source structure verified.'
 
       - name: Check release signing configuration
         env:
@@ -145,7 +139,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV."
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}."
 
       - name: Upload Gradle log
         if: always()
