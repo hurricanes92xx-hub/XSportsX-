@@ -34,18 +34,15 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
 
-    // The live screen is intentionally kept lightweight. Predictive resolution is
-    // disabled here until the core live path proves stable on real hardware.
+    // Keep the live screen lightweight until the core real-device path is stable.
     val liveEvents = engineState.liveEvents
     val playbackEventKey = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
 
     fun ranked(list: List<ResolvedStream>): List<ResolvedStream> = list
         .distinctBy { it.url }
-        .sortedWith(
-            compareByDescending<ResolvedStream> { stream ->
-                healthStore.score(stream.url) + playbackHealth.score(playbackEventKey, stream) + playbackHealth.globalScore(stream)
-            }.thenBy { it.name.lowercase() }
-        )
+        .sortedWith(compareByDescending<ResolvedStream> { stream ->
+            healthStore.score(stream.url) + playbackHealth.score(playbackEventKey, stream) + playbackHealth.globalScore(stream)
+        }.thenBy { it.name.lowercase() })
 
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
@@ -66,9 +63,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     if (selectedEvent != null || !filter.isNullOrBlank()) streams = ranked(result)
                     error = null
                 }
-                .onFailure {
-                    if (!background) error = it.message ?: "Unable to load live events"
-                }
+                .onFailure { if (!background) error = it.message ?: "Unable to load live events" }
             if (background) refreshing = false else loading = false
         }
     }
@@ -90,19 +85,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 healthStore.recordFailure(activeStream.url)
                 streams = ranked(streams)
                 val next = streams.firstOrNull { it.url != activeStream.url }
-                if (next != null) {
-                    playerStream = next
-                } else if (selectedEvent != null) {
+                if (next != null) playerStream = next
+                else if (selectedEvent != null) {
                     scope.launch {
-                        val refreshed = runCatching {
-                            StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, true)
-                        }.getOrDefault(emptyList())
+                        val refreshed = runCatching { StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, true) }.getOrDefault(emptyList())
                         streams = ranked(refreshed)
                         playerStream = streams.firstOrNull { it.url != activeStream.url }
                     }
-                } else {
-                    playerStream = null
-                }
+                } else playerStream = null
             }
         )
         return
@@ -120,25 +110,20 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(when { selectedEvent != null -> "GAME STREAMS"; filter.isNullOrBlank() -> "LIVE GAMES"; else -> "GAME STREAMS" }, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
-                Text(
-                    when {
-                        selectedEvent != null -> "${selectedEvent!!.title.ifBlank { "Live event" }} • ${selectedEvent!!.league} • ${streams.size} sources"
-                        filter.isNullOrBlank() -> "Live events across all leagues • ${liveEvents.size} games"
-                        showFavorites -> "MY FAVORITES • ${visibleStreams.size} channels"
-                        else -> "Free public + authorized streams • ${streams.size} matches"
-                    },
-                    color = Color(0xFF737B89), fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis
-                )
+                Text(when {
+                    selectedEvent != null -> "${selectedEvent!!.title.ifBlank { "Live event" }} • ${selectedEvent!!.league} • ${streams.size} sources"
+                    filter.isNullOrBlank() -> "Live events across all leagues • ${liveEvents.size} games"
+                    showFavorites -> "MY FAVORITES • ${visibleStreams.size} channels"
+                    else -> "Free public + authorized streams • ${streams.size} matches"
+                }, color = Color(0xFF737B89), fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             if (selectedEvent == null && !filter.isNullOrBlank()) {
-                TextButton(onClick = {
-                    showFavorites = !showFavorites
-                    favorites = ChannelFavorites.load(context)
-                }) { Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744)) }
+                TextButton(onClick = { showFavorites = !showFavorites; favorites = ChannelFavorites.load(context) }) {
+                    Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744))
+                }
             }
             TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
         }
-
         if (refreshing || engineState.refreshing) LinearProgressIndicator(Modifier.fillMaxWidth(), color = Color(0xFFFF1744))
 
         when {
@@ -156,7 +141,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }
                         Spacer(Modifier.width(14.dp))
-                        Column(Modifier.weight(1.sp.value.toFloat().dp)) {
+                        Column(Modifier.weight(1f)) {
                             Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                             Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                             Text(game.status.ifBlank { "LIVE" }, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
