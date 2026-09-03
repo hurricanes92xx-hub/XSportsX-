@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 @Composable
 fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBack: () -> Unit) {
@@ -33,6 +34,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var selectedEvent by remember { mutableStateOf<SportsEvent?>(event) }
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
+    var reloadJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
 
     val liveEvents = engineState.liveEvents
     val playbackEventKey = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
@@ -44,34 +46,38 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         }.thenBy { it.name.lowercase() })
 
     fun reload(force: Boolean = false, background: Boolean = false) {
+        reloadJob?.cancel()
         val requestEventId = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
         val requestFilter = filter
-        scope.launch {
+        reloadJob = scope.launch {
             if (background) refreshing = true else loading = true
             if (!background) error = null
             val result = runCatching {
                 ScheduleEngine.start(context)
-                when {
-                    selectedEvent != null -> StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
-                    !requestFilter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(requestFilter, force)
-                    else -> {
-                        if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
-                        emptyList<ResolvedStream>()
+                val resolved = withTimeoutOrNull(10_000L) {
+                    when {
+                        selectedEvent != null -> StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
+                        !requestFilter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(requestFilter, force)
+                        else -> {
+                            if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
+                            emptyList<ResolvedStream>()
+                        }
                     }
-                }
+                } ?: throw IllegalStateException("Stream search timed out")
+                resolved
             }
             if (selectedEvent?.let { EventIdentity.id(it) }.orEmpty() != requestEventId) return@launch
             result.onSuccess { resolved ->
                 if (selectedEvent != null || !requestFilter.isNullOrBlank()) streams = ranked(resolved)
                 error = null
-            }.onFailure { if (!background) error = it.message ?: "Unable to load live events" }
+            }.onFailure {
+                if (!background) error = it.message ?: "Unable to load live events"
+            }
             if (background) refreshing = false else loading = false
         }
     }
 
     LaunchedEffect(filter, selectedEvent?.id) {
-        // A new event owns a new result set. Never render the previous game's
-        // channels while the resolver is still working on the new event.
         streams = emptyList()
         playerStream = null
         loading = true
@@ -141,7 +147,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             loading && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null && (selectedEvent != null || streams.isEmpty() && liveEvents.isEmpty()) -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
+                    Text("STREAM ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
                     Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White)
                     Spacer(Modifier.height(12.dp)); TextButton(onClick = { reload(true) }) { Text("RETRY") }
                 }
@@ -150,8 +156,6 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             selectedEvent == null && filter.isNullOrBlank() -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(liveEvents, key = { EventIdentity.id(it) }) { game ->
                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable {
-                        // Clear immediately so a previous event can never flash
-                        // underneath the new event's loading state.
                         streams = emptyList()
                         loading = true
                         error = null
@@ -162,7 +166,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                         Column(Modifier.weight(1f)) {
                             Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                             Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                            Text(game.status.ifBlank { "LIVE" }, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(if (game.isLive) "LIVE" else "UPCOMING", color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                         Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
                     }
