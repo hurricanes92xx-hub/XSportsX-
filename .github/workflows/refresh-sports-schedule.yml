@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: [android-app]
+    paths:
+      - 'scripts/**'
+      - 'data/official_schedule_sources.json'
+      - '.github/workflows/refresh-sports-schedule.yml'
     paths-ignore:
       - 'data/schedule_feed.json'
   schedule:
@@ -12,34 +16,91 @@ on:
 permissions:
   contents: write
 
+# Never allow an overlapping refresh to publish over another refresh.
 concurrency:
   group: xsportsx-schedule-refresh
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   refresh:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout canonical engine
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: android-app
-      - uses: actions/setup-python@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - name: Refresh provider schedule
-        run: python3 scripts/refresh_schedule_feed.py
-      - name: Validate feed
-        run: python3 -m json.tool data/schedule_feed.json >/dev/null
-      - name: Commit changed schedule
+
+      - name: Install provider dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Snapshot previous feed
+        run: |
+          if [ -f data/schedule_feed.json ]; then cp data/schedule_feed.json /tmp/schedule_feed.previous.json; else echo '{}' > /tmp/schedule_feed.previous.json; fi
+
+      - name: Run canonical schedule engine
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python3 scripts/refresh_schedules.py
+
+      - name: Validate canonical feed
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('data/schedule_feed.json')
+          if not path.exists():
+              raise SystemExit('ERROR: schedule_feed.json was not generated')
+
+          data = json.loads(path.read_text(encoding='utf-8'))
+          if not isinstance(data, dict):
+              raise SystemExit('ERROR: schedule feed root is not an object')
+
+          events = data.get('events')
+          if not isinstance(events, list):
+              raise SystemExit('ERROR: schedule feed events is not a list')
+
+          # A provider outage must never publish an empty replacement over a
+          # previously healthy schedule.
+          previous = json.loads(Path('/tmp/schedule_feed.previous.json').read_text(encoding='utf-8'))
+          previous_events = previous.get('events') or []
+          if previous_events and not events:
+              raise SystemExit('ERROR: canonical engine produced an empty feed over a non-empty previous feed')
+
+          ids = [str(e.get('id', '')) for e in events if isinstance(e, dict)]
+          if len(ids) != len(set(ids)):
+              raise SystemExit('ERROR: duplicate canonical event IDs detected')
+
+          required = ('id', 'sport', 'league', 'title', 'startUtc')
+          for i, event in enumerate(events):
+              missing = [key for key in required if not event.get(key)]
+              if missing:
+                  raise SystemExit(f'ERROR: event {i} missing required fields: {missing}')
+
+          print(f'Canonical events: {len(events)}')
+          print(f"Schema: {data.get('schema')}")
+          print(f"Identity merges: {data.get('identityMergeCount', 0)}")
+          print(f"Provider counts: {data.get('sourceRecordCounts', {})}")
+          PY
+
+      - name: Publish only if canonical data changed
         shell: bash
         run: |
           set -euo pipefail
           if git diff --quiet -- data/schedule_feed.json; then
-            echo 'No schedule changes to commit.'
+            echo 'No canonical schedule changes.'
             exit 0
           fi
+
           git config user.name 'XSportsX Schedule Bot'
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
           git add data/schedule_feed.json
