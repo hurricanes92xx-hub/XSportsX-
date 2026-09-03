@@ -45,12 +45,8 @@ class StreamResolver(context: Context) {
             val fresh = cache.get(key)
             if (!force && fresh != null && System.currentTimeMillis() - fresh.loadedAt < CACHE_TTL_MS) fresh.streams
             else coroutineScope {
-                val privateDeferred = async(Dispatchers.IO) {
-                    if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList()
-                }
-                val publicDeferred = async(Dispatchers.IO) {
-                    runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
-                }
+                val privateDeferred = async(Dispatchers.IO) { if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList() }
+                val publicDeferred = async(Dispatchers.IO) { runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) } }
                 val merged = dedupe(privateDeferred.await() + publicDeferred.await())
                 cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
             }
@@ -75,13 +71,23 @@ class StreamResolver(context: Context) {
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load(); val eventKey = eventCacheKey(config, event); val canonicalEventId = EventIdentity.id(event); val now = System.currentTimeMillis()
         if (!force) {
-            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return@withContext it }
+            // Never trust a cached candidate solely because it is fresh. Step 16's
+            // relevance gate must run on every cache read so old broad matches cannot
+            // leak back onto the screen after the matcher has been tightened.
+            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
+                val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
+                if (valid.isNotEmpty()) return@withContext valid
+                eventCache.remove(eventKey)
+            }
             preResolvedCache.get(canonicalEventId, allowStale = true, nowMs = now)?.let { cached ->
-                val age = now - cached.savedAtMs
-                if (age < PreResolvedStreamCache.FRESH_TTL_MS) return@withContext cached.candidates.map { it.stream }
-                val stale = cached.candidates.map { it.stream }
-                refreshScope.launch { loadMatchingEventStreams(event, true) }
-                return@withContext stale
+                val valid = matchEventAgainstStreams(event, cached.candidates.map { it.stream }, strict = true)
+                if (valid.isNotEmpty() && now - cached.savedAtMs < PreResolvedStreamCache.FRESH_TTL_MS) return@withContext valid
+                if (valid.isNotEmpty()) {
+                    refreshScope.launch { loadMatchingEventStreams(event, true) }
+                    return@withContext valid
+                }
+                // Cache is from the pre-Step-16 matcher or otherwise unrelated: do not
+                // serve it. A fresh resolution is required.
             }
         }
         val existing = eventInFlight[eventKey]
@@ -94,11 +100,13 @@ class StreamResolver(context: Context) {
     }
 
     private suspend fun resolveEventStreams(config: SourceConfig, eventKey: String, event: SportsEvent, force: Boolean): List<ResolvedStream> {
-        if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return it }
+        if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
+            val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
+            if (valid.isNotEmpty()) return valid
+        }
         val (privateMatches, indexed) = coroutineScope {
             val privateDeferred = async(Dispatchers.IO) {
                 val raw = if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList()
-                // Step 16: private/Xtream candidates must pass strict event relevance.
                 matchEventAgainstStreams(event, raw + channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32), strict = true)
             }
             val publicIndexDeferred = async(Dispatchers.IO) {
@@ -117,7 +125,7 @@ class StreamResolver(context: Context) {
         return resolved
     }
 
-    /** Step 16 relevance gate: unrelated live channels are rejected instead of merely ranked lower. */
+    /** Strict event relevance: unrelated live channels are rejected, not merely ranked lower. */
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>, strict: Boolean = false): List<ResolvedStream> {
         if (streams.isEmpty()) return emptyList()
         val titleTerms = splitTerms(event.title); val teamTerms = splitTerms("${event.home} ${event.away}"); val leagueTerms = splitTerms(event.league); val broadcastTerms = broadcastAliases(event.broadcast); val eventIsLive = event.isLive
@@ -128,15 +136,12 @@ class StreamResolver(context: Context) {
             val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }
             val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }
             val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
-            val hasTeamEvidence = teamHits >= if (teamTerms.size >= 2) 1 else 0
-            val hasStrongTeamPair = teamTerms.size >= 2 && teamTerms.count { haystack.contains(it) } >= 2
+            val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1
+            val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2
             val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0
             val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
-            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else {
-                // For a real event, require team evidence. A network-only hit is not a game match.
-                // If both teams are available, prefer the pair; otherwise one team plus league/network is acceptable.
-                hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork)
-            }
+            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0)
+            else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork))
             if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
