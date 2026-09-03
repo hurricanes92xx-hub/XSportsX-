@@ -9,6 +9,7 @@ aliases twice.
 """
 import json
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
@@ -170,24 +171,39 @@ def _fetch_scoreboard_day(sport, division, day):
         return None
 
 
-def _fetch_espn_days(league, days):
+def _fetch_espn_day(league, day):
     mapping = ESPN_FALLBACK.get(league)
     if not mapping:
         return []
     sport, slug = mapping
+    url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={day:%Y%m%d}&limit=1000"
+    try:
+        root = _get(url, ESPN_HEADERS, timeout=20)
+    except Exception as exc:
+        print(f"ERROR ESPN NCAA secondary {league} {day}: {exc}")
+        return []
+    icon = next(x[3] for x in NCAA_LEAGUES if x[0] == league)
+    return [event for game in (root.get("events") or []) if (event := _normalize_espn(game, league, icon))]
+
+
+def _fetch_espn_days(league, days):
     out = []
-    for day in days:
-        url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={day:%Y%m%d}&limit=1000"
-        try:
-            root = _get(url, ESPN_HEADERS, timeout=20)
-        except Exception as exc:
-            print(f"ERROR ESPN NCAA secondary {league} {day}: {exc}")
-            continue
-        for game in root.get("events") or []:
-            event = _normalize_espn(game, league, next(x[3] for x in NCAA_LEAGUES if x[0] == league))
-            if event:
-                out.append(event)
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(days)))) as pool:
+        futures = [pool.submit(_fetch_espn_day, league, day) for day in days]
+        for future in as_completed(futures):
+            out.extend(future.result())
     return out
+
+
+def _fetch_primary_days(sport, division, days):
+    if sport == "football":
+        return [_fetch_scoreboard_day(sport, division, days[0])]
+    roots = []
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(days)))) as pool:
+        futures = [pool.submit(_fetch_scoreboard_day, sport, division, day) for day in days]
+        for future in as_completed(futures):
+            roots.append(future.result())
+    return roots
 
 
 def _in_window(event, now, cutoff):
@@ -200,11 +216,9 @@ def fetch_league(league, sport, division, icon, horizon_days=30):
     cutoff = now + timedelta(days=min(horizon_days, 7))
     days = [now.date() + timedelta(days=i) for i in range((cutoff.date() - now.date()).days + 1)]
     primary = []
-    secondary = []
 
     # Primary NCAA mirror.
-    roots = [_fetch_scoreboard_day(sport, division, now.date())] if sport == "football" else [_fetch_scoreboard_day(sport, division, day) for day in days]
-    for root in roots:
+    for root in _fetch_primary_days(sport, division, days):
         if not root:
             continue
         for game in _walk_games(root):
