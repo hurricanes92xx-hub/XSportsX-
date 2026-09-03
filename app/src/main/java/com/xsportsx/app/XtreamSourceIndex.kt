@@ -67,7 +67,7 @@ class XtreamSourceIndex(context: Context) {
 
     fun getCachedAll(config: SourceConfig): List<Channel> {
         val key = sourceKey(config)
-        return channelCache[key] ?: loadPersistedChannels(key)
+        return channelCache[key] ?: loadPersistedChannels(key).orEmpty()
     }
 
     private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> =
@@ -126,7 +126,7 @@ class XtreamSourceIndex(context: Context) {
         var score = 0
         SPORTS_TERMS.forEach { if (n.contains(normalize(it))) score += 10 }
         val eventTerms = normalize("${event.sport} ${event.league} ${event.broadcast} ${event.title}")
-        listOf("${event.sport}", event.league, event.broadcast).forEach { term ->
+        listOf(event.sport, event.league, event.broadcast).forEach { term ->
             val t = normalize(term)
             if (t.length >= 3 && n.contains(t)) score += 25
         }
