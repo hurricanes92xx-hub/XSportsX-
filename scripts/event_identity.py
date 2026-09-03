@@ -35,8 +35,12 @@ def canonical_event_key(event):
     league=normalize_league(event.get("league")); sport=SPORT_BY_LEAGUE.get(league,normalize_text(event.get("sport"))); start=normalize_start(event.get("start") or event.get("startUtc")); bucket=int(datetime.fromisoformat(start.replace("Z","+00:00")).timestamp()//1800) if start else ""; home,away=_extract_teams(event,league)
     return (sport,league,home,away,bucket) if home and away else (sport,league,normalize_text(event.get("title")),bucket)
 def event_identity(league,title,start,home=None,away=None):
-    league_n=normalize_league(league); h,a=_extract_teams({"home":home,"away":away,"title":title},league_n); day=normalize_start(start)[:10]
-    canonical="|".join((league_n,h,a,day)) if h and a else "|".join((league_n,normalize_text(title),day))
+    league_n=normalize_league(league); h,a=_extract_teams({"home":home,"away":away,"title":title},league_n); start_n=normalize_start(start)
+    if h and a and start_n:
+        dt=datetime.fromisoformat(start_n.replace("Z","+00:00")); time_bucket=int(dt.timestamp()//1800)
+        canonical="|".join((league_n,h,a,str(time_bucket)))
+    else:
+        canonical="|".join((league_n,normalize_text(title),start_n[:10]))
     return "evt_"+hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:24]
 def identity_match(a,b):
     la,lb=normalize_league(a.get("league")),normalize_league(b.get("league"))
