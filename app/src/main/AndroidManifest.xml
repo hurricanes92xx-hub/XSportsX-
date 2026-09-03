@@ -17,7 +17,7 @@
         android:resizeableActivity="true">
 
         <activity
-            android:name=".MainActivityFuture"
+            android:name=".StartupLoadingActivity"
             android:screenOrientation="unspecified"
             android:exported="true">
             <intent-filter>
@@ -26,6 +26,11 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivityFuture"
+            android:screenOrientation="unspecified"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
