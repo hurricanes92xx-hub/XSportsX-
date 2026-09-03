@@ -35,10 +35,9 @@ fun NativePlayerScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val playbackHealth = remember(context) { PlaybackHealthStore(context) }
     var error by remember(streamUrl) { mutableStateOf<String?>(null) }
-    var activeUrl by remember(streamUrl) { mutableStateOf(streamUrl) }
-    var fallbackUsed by remember(streamUrl) { mutableStateOf(false) }
     var attemptStartedAt by remember(streamUrl) { mutableLongStateOf(System.currentTimeMillis()) }
     var successRecorded by remember(streamUrl) { mutableStateOf(false) }
+    var failureReported by remember(streamUrl) { mutableStateOf(false) }
 
     val player = remember(streamUrl) {
         val httpFactory = DefaultHttpDataSource.Factory()
@@ -60,6 +59,7 @@ fun NativePlayerScreen(
         }
         attemptStartedAt = System.currentTimeMillis()
         successRecorded = false
+        failureReported = false
         val item = MediaItem.Builder().setUri(url).apply {
             if (mime != null) setMimeType(mime)
         }.build()
@@ -74,34 +74,26 @@ fun NativePlayerScreen(
                 if (playbackState == Player.STATE_READY && !successRecorded) {
                     successRecorded = true
                     val latency = (System.currentTimeMillis() - attemptStartedAt).coerceAtLeast(0L)
-                    val stream = ResolvedStream(title, "PLAYBACK", activeUrl)
+                    val stream = ResolvedStream(title, "PLAYBACK", streamUrl)
                     playbackHealth.recordSuccess(title.ifBlank { "unknown-event" }, stream, latency)
                     onPlaybackSuccess()
                 }
             }
 
             override fun onPlayerError(exception: PlaybackException) {
-                val failedUrl = activeUrl
-                playbackHealth.recordFailure(title.ifBlank { "unknown-event" }, ResolvedStream(title, "PLAYBACK", failedUrl))
+                if (failureReported) return
+                failureReported = true
+                val stream = ResolvedStream(title, "PLAYBACK", streamUrl)
+                playbackHealth.recordFailure(title.ifBlank { "unknown-event" }, stream)
+                // Candidate fallback is owned by LiveChannelsScreen/StreamResolver.
+                // Do not invent alternate URL forms here; the resolver supplies the
+                // next ranked candidate (#2, then #3) and the parent swaps the player.
                 onPlaybackFailure()
-                val lower = failedUrl.lowercase()
-                val alternate = when {
-                    !fallbackUsed && lower.contains(".m3u8") -> failedUrl.replace(Regex("\\.m3u8(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".ts")
-                    !fallbackUsed && lower.contains(".ts") -> failedUrl.replace(Regex("\\.ts(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".m3u8")
-                    else -> null
-                }
-                if (alternate != null && alternate != failedUrl) {
-                    fallbackUsed = true
-                    activeUrl = alternate
-                    error = null
-                    prepareUrl(alternate)
-                } else {
-                    error = exception.message ?: exception.errorCodeName
-                }
+                error = exception.message ?: exception.errorCodeName
             }
         }
         player.addListener(listener)
-        prepareUrl(activeUrl)
+        prepareUrl(streamUrl)
         onDispose {
             player.removeListener(listener)
             player.release()
@@ -129,8 +121,6 @@ fun NativePlayerScreen(
                     Spacer(Modifier.height(8.dp)); Text(msg, color = Color.White)
                     Spacer(Modifier.height(12.dp)); TextButton(onClick = {
                         error = null
-                        fallbackUsed = false
-                        activeUrl = streamUrl
                         prepareUrl(streamUrl)
                     }) { Text("RETRY") }
                 }
