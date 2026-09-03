@@ -1,5 +1,4 @@
 from pathlib import Path
-import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,6 +29,9 @@ def replace_between(text: str, start: str, end: str, replacement: str) -> str:
     return text[:a] + replacement + text[b:]
 
 
+# Mobile catalog remains generated from the canonical league list.
+# TV no longer has a second schedule catalog: TvHomeUltimate derives its
+# sports rail from SportsScheduleService.uiLeagueChoices.
 mobile = ROOT / "app/src/main/java/com/xsportsx/app/FuturisticSports.kt"
 text = mobile.read_text()
 mobile_items = ",\n".join(f'    SportVisual("{name}", "{icon}", "")' for name, icon, _, _ in LEAGUES)
@@ -40,24 +42,4 @@ text = replace_between(
     f"private val sports = listOf(\n{mobile_items}\n)\n\n",
 )
 mobile.write_text(text)
-
-
-tv = ROOT / "app/src/main/java/com/xsportsx/app/TvHome.kt"
-text = tv.read_text()
-tv_sports = "private val tvSports = listOf(" + ",".join(
-    f'TvSport("{name}", "{icon}")' for name, icon, _, _ in LEAGUES
-) + ")\n"
-# Canonical TV source owns liveLeagues; only synchronize the visible TV sports catalog.
-text = replace_between(text, "private val tvSports = listOf(", "private val tvNetworks", tv_sports)
-
-# Keep SETTINGS before else (Kotlin requires else to be the final when branch).
-legacy = re.compile(
-    r'\n\s*"NFL","NCAA FB","NBA","WNBA","NCAA BB","MLB","NHL","MLS","EPL"->\{.*?\}\n\s*"UFC","BOXING"->\{.*?\}\n\s*"SETTINGS"->TvSettings\{onConnect\(\)\}',
-    re.S,
-)
-if legacy.search(text):
-    generic = '''\n                    "SETTINGS"->TvSettings{onConnect()}\n                    else->{\n                        TvSection(selectedNav,"LIVE + UPCOMING")\n                        val games=(liveGames+upcomingGames)\n                            .filter{it.league==selectedNav}\n                            .distinctBy{it.league+it.home+it.away+it.timestamp}\n                        if(games.isNotEmpty()) TvGameRow(games,onNetwork)\n                        else TvEmpty("No ${selectedNav} events in the current schedule window")\n                    }'''
-    text = legacy.sub(generic, text, count=1)
-tv.write_text(text)
-
-print(f"Synchronized {len(LEAGUES)} leagues across Mobile and TV")
+print(f"Synchronized {len(LEAGUES)} canonical leagues into the Mobile catalog; TV derives its catalog from SportsScheduleService.")
