@@ -1,46 +1,17 @@
 package com.xsportsx.app
 
 import android.app.Application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 /**
- * Keeps schedule reconciliation off the UI thread. The visible screens still
- * request only their three-day window; this worker quietly refreshes a broader
- * window while the app process is alive.
+ * Process-level bootstrap for the single schedule/live runtime engine.
+ *
+ * Mobile and TV screens consume ScheduleEngine.state; they do not own their
+ * own schedule polling loops. This keeps warm schedule and hot live state
+ * coherent across the entire application process.
  */
 class XSportsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        ScheduleBackgroundSync.start()
-    }
-}
-
-object ScheduleBackgroundSync {
-    @Volatile var latest: List<SportsEvent> = emptyList()
-        private set
-    @Volatile var lastUpdatedMillis: Long = 0L
-        private set
-
-    // Broad reconciliation is intentionally slower than the UI/live refresh path.
-    private const val REFRESH_MS = 15L * 60L * 1000L
-    private var started = false
-
-    fun start() {
-        if (started) return
-        started = true
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            while (isActive) {
-                runCatching {
-                    latest = SportsScheduleService.loadBackground()
-                    lastUpdatedMillis = System.currentTimeMillis()
-                }
-                delay(REFRESH_MS)
-            }
-        }
+        ScheduleEngine.start()
     }
 }
