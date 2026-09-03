@@ -4,7 +4,7 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Persistent event -> ranked stream candidates cache with fresh and stale TTLs. */
+/** Persistent event -> ranked stream candidates cache with health-aware ordering. */
 class PreResolvedStreamCache(context: Context) {
     data class Candidate(
         val stream: ResolvedStream,
@@ -44,11 +44,30 @@ class PreResolvedStreamCache(context: Context) {
     @Synchronized
     fun put(eventId: String, streams: List<ResolvedStream>, nowMs: Long = System.currentTimeMillis()) {
         if (eventId.isBlank() || streams.isEmpty()) return
+        val old = entries[eventId]?.candidates?.associateBy { it.stream.url }.orEmpty()
         val candidates = streams.distinctBy { it.url }.take(MAX_CANDIDATES).mapIndexed { index, stream ->
-            Candidate(stream, index, checkedAtMs = nowMs)
+            val previous = old[stream.url]
+            Candidate(
+                stream = stream,
+                rank = index,
+                latencyMs = previous?.latencyMs ?: Long.MAX_VALUE,
+                lastSuccessMs = previous?.lastSuccessMs ?: 0L,
+                failures = previous?.failures ?: 0,
+                checkedAtMs = nowMs
+            )
         }
         entries.remove(eventId); entries[eventId] = Entry(eventId, candidates, nowMs)
         trim(); persist()
+    }
+
+    @Synchronized
+    fun recordSuccess(eventId: String, streamUrl: String, latencyMs: Long, nowMs: Long = System.currentTimeMillis()) {
+        updateHealth(eventId, streamUrl, latencyMs.coerceAtLeast(0L), true, nowMs)
+    }
+
+    @Synchronized
+    fun recordFailure(eventId: String, streamUrl: String, nowMs: Long = System.currentTimeMillis()) {
+        updateHealth(eventId, streamUrl, Long.MAX_VALUE, false, nowMs)
     }
 
     @Synchronized
@@ -56,6 +75,29 @@ class PreResolvedStreamCache(context: Context) {
 
     @Synchronized
     fun size(): Int = entries.size
+
+    private fun updateHealth(eventId: String, streamUrl: String, latencyMs: Long, success: Boolean, nowMs: Long) {
+        val entry = entries[eventId] ?: return
+        val updated = entry.candidates.map { candidate ->
+            if (candidate.stream.url != streamUrl) candidate
+            else candidate.copy(
+                latencyMs = if (success) latencyMs else candidate.latencyMs,
+                lastSuccessMs = if (success) nowMs else candidate.lastSuccessMs,
+                failures = if (success) maxOf(0, candidate.failures - 1) else candidate.failures + 1,
+                checkedAtMs = nowMs
+            )
+        }.sortedWith(compareBy<Candidate> { healthPenalty(it, nowMs) }.thenBy { it.rank })
+            .mapIndexed { index, candidate -> candidate.copy(rank = index) }
+        entries[eventId] = entry.copy(candidates = updated, savedAtMs = nowMs)
+        persist()
+    }
+
+    private fun healthPenalty(candidate: Candidate, nowMs: Long): Long {
+        val failurePenalty = candidate.failures.toLong() * 5000L
+        val latencyPenalty = if (candidate.latencyMs == Long.MAX_VALUE) 10000L else candidate.latencyMs.coerceAtMost(30000L)
+        val successBonus = if (candidate.lastSuccessMs > 0L && nowMs - candidate.lastSuccessMs < 30 * 60 * 1000L) -15000L else 0L
+        return failurePenalty + latencyPenalty + successBonus
+    }
 
     private fun trim() { while (entries.size > MAX_EVENTS) entries.remove(entries.entries.first().key) }
 
