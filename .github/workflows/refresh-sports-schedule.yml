@@ -8,8 +8,6 @@ on:
       - 'scripts/**'
       - 'data/official_schedule_sources.json'
       - '.github/workflows/refresh-sports-schedule.yml'
-    paths-ignore:
-      - 'data/schedule_feed.json'
   schedule:
     - cron: '*/30 * * * *'
 
@@ -23,7 +21,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout canonical engine
         uses: actions/checkout@v5
