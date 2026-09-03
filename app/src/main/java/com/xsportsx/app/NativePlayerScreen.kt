@@ -20,16 +20,24 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 
 @Composable
-fun NativePlayerScreen(streamUrl: String, title: String = "XSportsX", onBack: () -> Unit) {
+fun NativePlayerScreen(
+    streamUrl: String,
+    title: String = "XSportsX",
+    onBack: () -> Unit,
+    onPlaybackSuccess: () -> Unit = {},
+    onPlaybackFailure: () -> Unit = {}
+) {
     if (isYouTubeUrl(streamUrl)) {
         YouTubeEventPlayer(streamUrl, title, onBack)
         return
     }
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    val healthStore = remember { StreamHealthStore(context) }
     var error by remember(streamUrl) { mutableStateOf<String?>(null) }
     var activeUrl by remember(streamUrl) { mutableStateOf(streamUrl) }
     var fallbackUsed by remember(streamUrl) { mutableStateOf(false) }
+    var startedAtMs by remember(streamUrl) { mutableLongStateOf(0L) }
 
     val player = remember(streamUrl) {
         val httpFactory = DefaultHttpDataSource.Factory()
@@ -43,6 +51,7 @@ fun NativePlayerScreen(streamUrl: String, title: String = "XSportsX", onBack: ()
     }
 
     fun prepareUrl(url: String) {
+        startedAtMs = System.currentTimeMillis()
         val lower = url.lowercase()
         val mime = when {
             lower.contains(".m3u8") -> MimeTypes.APPLICATION_M3U8
@@ -59,7 +68,16 @@ fun NativePlayerScreen(streamUrl: String, title: String = "XSportsX", onBack: ()
 
     DisposableEffect(player) {
         val listener = object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_READY) {
+                    healthStore.recordSuccess(activeUrl, System.currentTimeMillis() - startedAtMs)
+                    onPlaybackSuccess()
+                }
+            }
+
             override fun onPlayerError(exception: PlaybackException) {
+                healthStore.recordFailure(activeUrl)
+                onPlaybackFailure()
                 val lower = activeUrl.lowercase()
                 val alternate = when {
                     !fallbackUsed && lower.contains(".m3u8") -> activeUrl.replace(Regex("\\.m3u8(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".ts")
