@@ -44,7 +44,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             if (background) refreshing = true else loading = true
             if (!background) error = null
             runCatching {
-                ScheduleEngine.start()
+                ScheduleEngine.start(context)
                 when {
                     selectedEvent != null -> StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
                     !filter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(filter, force)
@@ -85,8 +85,6 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 if (next != null) {
                     playerStream = next
                 } else if (selectedEvent != null) {
-                    // All known candidates failed. Force a fresh resolver pass so
-                    // self-healing can discover/re-rank a replacement candidate.
                     scope.launch {
                         val refreshed = runCatching {
                             StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, true)
