@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-03T21:29:53.079030+00:00",
+  "generatedAt": "2026-09-03T21:34:13.264803+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "IPL": 74,
@@ -9,7 +9,7 @@
     "NRL": 8,
     "AFL": 4,
     "NCAA Women's Soccer": 291,
-    "NCAA Women's Volleyball": 523,
+    "NCAA Women's Volleyball": 524,
     "MLB": 335,
     "Ligue 1": 27,
     "LaLiga": 40,
@@ -22,7 +22,6 @@
     "Serie A": 30,
     "EPL": 30,
     "MLS": 76,
-    "BOXING": 9,
     "UFC": 9,
     "IndyCar": 1,
     "NASCAR Cup": 4,
@@ -80,6 +79,8 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [
     "Serie A",
+    "BOXING",
+    "BOXING",
     "NASCAR Cup",
     "ATP",
     "IPL",
@@ -88,10 +89,6 @@
     "NCAA Men's Water Polo",
     "NCAA Women's Water Polo",
     "NCAA Women's Field Hockey",
-    "ESPORTS",
-    "ESPORTS - Rocket League",
-    "ESPORTS - Apex Legends",
-    "ACTION SPORTS",
     "NASCAR Xfinity",
     "NASCAR Truck"
   ],
@@ -113,7 +110,7 @@
     "Ligue 1": 0,
     "NWSL": 0,
     "UFC": 0,
-    "BOXING": 9,
+    "BOXING": 0,
     "F1": 0,
     "IndyCar": 0,
     "NASCAR Cup": 0,
@@ -158,21 +155,15 @@
     "FORMULA E": 0,
     "MXGP": 0,
     "MONSTER JAM": 0,
-    "ESPORTS": 0,
-    "ESPORTS - Rocket League": 0,
-    "ESPORTS - Apex Legends": 0,
-    "ESPORTS - Rainbow Six": 0,
-    "ACTION SPORTS": 0,
     "AAA Wrestling": 0,
     "NASCAR Xfinity": 0,
     "NASCAR Truck": 0
   },
   "identityMergeCount": 12,
   "sourceRecordCounts": {
-    "official": 9,
     "fallback": 18,
     "espn": 1553,
-    "espn-ncaa": 1105,
+    "espn-ncaa": 1106,
     "unknown": 854
   },
   "events": [
@@ -9147,17 +9138,6 @@
       "id": "evt_4d400ea9fdc3eeab4f8161e7",
       "startUtc": "2026-09-05T05:15Z",
       "sport": "australian-football"
-    },
-    {
-      "league": "BOXING",
-      "title": "Katie Taylor vs. Flora Pili",
-      "start": "2026-09-05T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_5f50fabd300f55e9f446e43e",
-      "startUtc": "2026-09-05T06:00:00Z",
-      "sport": "other"
     },
     {
       "league": "NRL",
@@ -21105,6 +21085,20 @@
       "sport": "other"
     },
     {
+      "league": "NCAA Women's Volleyball",
+      "title": "Saint Mary's @ E Washington",
+      "start": "2026-09-10T21:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Saint Mary's",
+      "home": "E Washington",
+      "providerEventId": "espn:401888428",
+      "id": "evt_bd6a7dc9062ef70fec3f3201",
+      "startUtc": "2026-09-10T21:30:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Rockies @ Yankees",
       "start": "2026-09-10T23:05Z",
@@ -21479,17 +21473,6 @@
       "id": "evt_66528f418cf77326d9e2c822",
       "startUtc": "2026-09-12T02:15Z",
       "sport": "baseball"
-    },
-    {
-      "league": "BOXING",
-      "title": "Ryan Garcia vs. Conor Benn",
-      "start": "2026-09-12T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_c172556c6606a49caf0b8294",
-      "startUtc": "2026-09-12T06:00:00Z",
-      "sport": "other"
     },
     {
       "league": "LaLiga",
@@ -24723,50 +24706,6 @@
       "sport": "baseball"
     },
     {
-      "league": "BOXING",
-      "title": "Beaven Sibanda vs. Joey Canoy",
-      "start": "2026-09-19T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_1dd9bb3f2cf758f6e06e3cea",
-      "startUtc": "2026-09-19T06:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "BOXING",
-      "title": "Isaac Cruz vs. Nestor Bravo",
-      "start": "2026-09-19T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_7bba25d6fb4f1eea3973b807",
-      "startUtc": "2026-09-19T06:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "BOXING",
-      "title": "Jesus Ramos Jr. vs. Meiirim Nursultanov",
-      "start": "2026-09-19T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_7277e1a876fe8b12078f55a7",
-      "startUtc": "2026-09-19T06:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "BOXING",
-      "title": "Diana Fernandez vs. Clothilde Del Ben",
-      "start": "2026-09-19T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_2aa2fcaa4978ad7c0295b60a",
-      "startUtc": "2026-09-19T06:00:00Z",
-      "sport": "other"
-    },
-    {
       "league": "EPL",
       "title": "Aston Villa @ Spurs",
       "start": "2026-09-19T11:30Z",
@@ -26870,17 +26809,6 @@
       "sport": "basketball"
     },
     {
-      "league": "BOXING",
-      "title": "Erika Bolivar vs. Joanna Zuniga",
-      "start": "2026-09-22T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_53bd0dae0862892e8ce91ac7",
-      "startUtc": "2026-09-22T06:00:00Z",
-      "sport": "other"
-    },
-    {
       "league": "MLB",
       "title": "Rays @ Yankees",
       "start": "2026-09-22T17:05Z",
@@ -28857,17 +28785,6 @@
       "sport": "hockey"
     },
     {
-      "league": "BOXING",
-      "title": "Mai Soliman vs. Maria Micheo Santizo",
-      "start": "2026-09-26T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_e9a6169df2054eca3dc31dcb",
-      "startUtc": "2026-09-26T06:00:00Z",
-      "sport": "other"
-    },
-    {
       "league": "MLB",
       "title": "Pirates @ Tigers",
       "start": "2026-09-26T17:10Z",
@@ -29780,17 +29697,6 @@
       "id": "evt_59c98f9c452c23ebf3cc134a",
       "startUtc": "2026-09-27T02:30Z",
       "sport": "soccer"
-    },
-    {
-      "league": "BOXING",
-      "title": "Takuma Inoue vs. Tenshin Nasukawa",
-      "start": "2026-09-27T06:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏆",
-      "source": "official",
-      "id": "evt_b8840560476cfc1db5efdc4f",
-      "startUtc": "2026-09-27T06:00:00Z",
-      "sport": "other"
     },
     {
       "league": "NASCAR Cup",
