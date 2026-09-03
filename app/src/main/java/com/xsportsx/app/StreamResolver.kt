@@ -71,9 +71,6 @@ class StreamResolver(context: Context) {
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load(); val eventKey = eventCacheKey(config, event); val canonicalEventId = EventIdentity.id(event); val now = System.currentTimeMillis()
         if (!force) {
-            // Never trust a cached candidate solely because it is fresh. Step 16's
-            // relevance gate must run on every cache read so old broad matches cannot
-            // leak back onto the screen after the matcher has been tightened.
             eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
                 val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
                 if (valid.isNotEmpty()) return@withContext valid
@@ -86,8 +83,6 @@ class StreamResolver(context: Context) {
                     refreshScope.launch { loadMatchingEventStreams(event, true) }
                     return@withContext valid
                 }
-                // Cache is from the pre-Step-16 matcher or otherwise unrelated: do not
-                // serve it. A fresh resolution is required.
             }
         }
         val existing = eventInFlight[eventKey]
@@ -104,10 +99,18 @@ class StreamResolver(context: Context) {
             val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
             if (valid.isNotEmpty()) return valid
         }
+
+        // The first event may need the network, but every subsequent event should
+        // reuse the warm source index. Re-fetching Xtream on every click was the
+        // main source of the several-second "previous game -> new game" lag.
         val (privateMatches, indexed) = coroutineScope {
             val privateDeferred = async(Dispatchers.IO) {
-                val raw = if (config.isConfigured()) runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList()) else emptyList()
-                matchEventAgainstStreams(event, raw + channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32), strict = true)
+                val raw = runCatching { loadLiveStreams(force) }.getOrDefault(emptyList())
+                matchEventAgainstStreams(
+                    event,
+                    raw + channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32),
+                    strict = true
+                )
             }
             val publicIndexDeferred = async(Dispatchers.IO) {
                 publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16)
@@ -115,10 +118,17 @@ class StreamResolver(context: Context) {
             }
             privateDeferred.await() to publicIndexDeferred.await()
         }
+
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
-        val publicMatches = matchEventAgainstStreams(event, indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }, strict = true)
-        val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let { ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it") }
+        val publicMatches = matchEventAgainstStreams(
+            event,
+            indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) },
+            strict = true
+        )
+        val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let {
+            ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it")
+        }
         val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
         eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
         preResolvedCache.put(EventIdentity.id(event), resolved)
