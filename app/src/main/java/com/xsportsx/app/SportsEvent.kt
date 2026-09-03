@@ -18,21 +18,25 @@ data class SportsEvent(
     val sourceUrl: String = "",
     val youtubeVideoId: String = ""
 ) {
+    private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
+
+    private val providerLive: Boolean
+        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
+
+    private val terminal: Boolean
+        get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
+
+    /** Promote scheduled/pre-game rows to LIVE from three minutes before kickoff through a short safety window after kickoff. */
     val isLive: Boolean
         get() {
-            if (state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)) return true
-
-            // MLB games can cross midnight UTC. Keep a non-final MLB game live
-            // for the same five-hour window used by the server reconciliation.
-            if (league.equals("MLB", true) && !status.contains("final", true) && !state.equals("post", true)) {
-                val start = startMillis()
-                val now = System.currentTimeMillis()
-                if (start > 0L && start <= now && start >= now - 5L * 60L * 60L * 1000L) return true
-            }
-            return false
+            if (providerLive) return true
+            if (terminal) return false
+            val start = startMillis()
+            val now = System.currentTimeMillis()
+            if (start <= 0L) return false
+            val scheduled = state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true)
+            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 30L * 60L * 1000L
         }
-
-    private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
         val start = startMillis()
