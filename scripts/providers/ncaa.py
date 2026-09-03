@@ -14,42 +14,30 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
 BASE = "https://ncaa-api.henrygd.me"
-HEADERS = {"User-Agent": "XSportsX-Schedule/6.0", "Accept": "application/json"}
-ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/6.0", "Accept": "application/json"}
+HEADERS = {"User-Agent": "XSportsX-Schedule/6.1", "Accept": "application/json"}
+ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/6.1", "Accept": "application/json"}
 NCAA_TZ = ZoneInfo("America/New_York")
 MAX_WORKERS = 3
 RETRIES = 3
 
 NCAA_LEAGUES = [
-    ("NCAA FB", "football", "fbs", "🏈"),
-    ("NCAA BB", "basketball-men", "d1", "🏀"),
-    ("NCAA WBB", "basketball-women", "d1", "🏀"),
-    ("NCAA Baseball", "baseball", "d1", "⚾"),
-    ("NCAA Softball", "softball", "d1", "🥎"),
-    ("NCAA Men's Hockey", "icehockey-men", "d1", "🏒"),
-    ("NCAA Women's Hockey", "icehockey-women", "d1", "🏒"),
-    ("NCAA Men's Soccer", "soccer-men", "d1", "⚽"),
-    ("NCAA Women's Soccer", "soccer-women", "d1", "⚽"),
-    ("NCAA Men's Lacrosse", "lacrosse-men", "d1", "🥍"),
-    ("NCAA Women's Lacrosse", "lacrosse-women", "d1", "🥍"),
-    ("NCAA Men's Volleyball", "volleyball-men", "d1", "🏐"),
-    ("NCAA Women's Volleyball", "volleyball-women", "d1", "🏐"),
-    ("NCAA Men's Water Polo", "waterpolo-men", "d1", "🤽"),
-    ("NCAA Women's Water Polo", "waterpolo-women", "d1", "🤽"),
-    ("NCAA Women's Field Hockey", "fieldhockey-women", "d1", "🏑"),
+    ("NCAA FB", "football", "fbs", "🏈"), ("NCAA BB", "basketball-men", "d1", "🏀"),
+    ("NCAA WBB", "basketball-women", "d1", "🏀"), ("NCAA Baseball", "baseball", "d1", "⚾"),
+    ("NCAA Softball", "softball", "d1", "🥎"), ("NCAA Men's Hockey", "icehockey-men", "d1", "🏒"),
+    ("NCAA Women's Hockey", "icehockey-women", "d1", "🏒"), ("NCAA Men's Soccer", "soccer-men", "d1", "⚽"),
+    ("NCAA Women's Soccer", "soccer-women", "d1", "⚽"), ("NCAA Men's Lacrosse", "lacrosse-men", "d1", "🥍"),
+    ("NCAA Women's Lacrosse", "lacrosse-women", "d1", "🥍"), ("NCAA Men's Volleyball", "volleyball-men", "d1", "🏐"),
+    ("NCAA Women's Volleyball", "volleyball-women", "d1", "🏐"), ("NCAA Men's Water Polo", "waterpolo-men", "d1", "🤽"),
+    ("NCAA Women's Water Polo", "waterpolo-women", "d1", "🤽"), ("NCAA Women's Field Hockey", "fieldhockey-women", "d1", "🏑"),
     ("NCAA Beach Volleyball", "beach-volleyball", "d1", "🏐"),
 ]
-
 ESPN_FALLBACK = {
-    "NCAA FB": ("football", "college-football"), "NCAA BB": ("basketball", "mens-college-basketball"),
-    "NCAA WBB": ("basketball", "womens-college-basketball"), "NCAA Baseball": ("baseball", "college-baseball"),
-    "NCAA Softball": ("softball", "college-softball"), "NCAA Men's Hockey": ("hockey", "mens-college-hockey"),
-    "NCAA Women's Hockey": ("hockey", "womens-college-hockey"), "NCAA Men's Soccer": ("soccer", "usa.ncaa.m.1"),
-    "NCAA Women's Soccer": ("soccer", "usa.ncaa.w.1"), "NCAA Men's Lacrosse": ("lacrosse", "mens-college-lacrosse"),
-    "NCAA Women's Lacrosse": ("lacrosse", "womens-college-lacrosse"), "NCAA Men's Volleyball": ("volleyball", "mens-college-volleyball"),
-    "NCAA Women's Volleyball": ("volleyball", "womens-college-volleyball"), "NCAA Men's Water Polo": ("water-polo", "mens-college-water-polo"),
-    "NCAA Women's Water Polo": ("water-polo", "womens-college-water-polo"), "NCAA Women's Field Hockey": ("field-hockey", "womens-college-field-hockey"),
-    "NCAA Beach Volleyball": ("beach-volleyball", "ncaa-beach-volleyball"),
+    "NCAA FB": ("football", "college-football"), "NCAA BB": ("basketball", "mens-college-basketball"), "NCAA WBB": ("basketball", "womens-college-basketball"),
+    "NCAA Baseball": ("baseball", "college-baseball"), "NCAA Softball": ("softball", "college-softball"), "NCAA Men's Hockey": ("hockey", "mens-college-hockey"),
+    "NCAA Women's Hockey": ("hockey", "womens-college-hockey"), "NCAA Men's Soccer": ("soccer", "usa.ncaa.m.1"), "NCAA Women's Soccer": ("soccer", "usa.ncaa.w.1"),
+    "NCAA Men's Lacrosse": ("lacrosse", "mens-college-lacrosse"), "NCAA Women's Lacrosse": ("lacrosse", "womens-college-lacrosse"), "NCAA Men's Volleyball": ("volleyball", "mens-college-volleyball"),
+    "NCAA Women's Volleyball": ("volleyball", "womens-college-volleyball"), "NCAA Men's Water Polo": ("water-polo", "mens-college-water-polo"), "NCAA Women's Water Polo": ("water-polo", "womens-college-water-polo"),
+    "NCAA Women's Field Hockey": ("field-hockey", "womens-college-field-hockey"), "NCAA Beach Volleyball": ("beach-volleyball", "ncaa-beach-volleyball"),
 }
 
 def _get(url, headers=HEADERS, timeout=15):
@@ -57,16 +45,13 @@ def _get(url, headers=HEADERS, timeout=15):
     for attempt in range(RETRIES):
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=timeout) as response:
-                return json.loads(response.read())
+            with urllib.request.urlopen(req, timeout=timeout) as response: return json.loads(response.read())
         except urllib.error.HTTPError as exc:
             last = exc
-            if exc.code not in {429, 500, 502, 503, 504}:
-                break
+            if exc.code not in {429, 500, 502, 503, 504}: break
             time.sleep(1.5 * (attempt + 1))
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-            last = exc
-            time.sleep(0.75 * (attempt + 1))
+            last = exc; time.sleep(0.75 * (attempt + 1))
     raise last
 
 def _parse_iso(value):
@@ -99,12 +84,10 @@ def _parse_time(game):
     return f"{date}T00:00:00Z"
 
 def _normalize(game, league, icon):
-    away, home = _team_name(game.get("away")), _team_name(game.get("home"))
-    teams = game.get("teams") or []
+    away, home = _team_name(game.get("away")), _team_name(game.get("home")); teams = game.get("teams") or []
     if not away and isinstance(teams, list) and teams: away = _team_name(teams[0])
     if not home and isinstance(teams, list) and len(teams) > 1: home = _team_name(teams[1])
-    title = f"{away} @ {home}" if away and home else str(game.get("title") or game.get("contestName") or league)
-    start = _parse_time(game)
+    title = f"{away} @ {home}" if away and home else str(game.get("title") or game.get("contestName") or league); start = _parse_time(game)
     if not start: return None
     state = str(game.get("gameState") or game.get("status") or "").lower()
     if isinstance(game.get("status"), dict): state = str(game["status"].get("state") or game["status"].get("name") or "").lower()
@@ -117,14 +100,13 @@ def _normalize(game, league, icon):
     return event
 
 def _normalize_espn(game, league, icon):
-    dt = _parse_iso(game.get("date"))
+    dt = _parse_iso(game.get("date"));
     if not dt: return None
     comp = (game.get("competitions") or [{}])[0]; competitors = comp.get("competitors") or []
     home = next((x.get("team", {}).get("shortDisplayName") or x.get("team", {}).get("displayName") for x in competitors if x.get("homeAway") == "home"), "")
     away = next((x.get("team", {}).get("shortDisplayName") or x.get("team", {}).get("displayName") for x in competitors if x.get("homeAway") == "away"), "")
     title = f"{away} @ {home}" if away and home else str(game.get("name") or game.get("shortName") or league)
-    state = str(((comp.get("status") or {}).get("type") or {}).get("state") or "").lower()
-    tag = "LIVE" if state == "in" else "FINAL" if state == "post" else "UPCOMING"
+    state = str(((comp.get("status") or {}).get("type") or {}).get("state") or "").lower(); tag = "LIVE" if state == "in" else "FINAL" if state == "post" else "UPCOMING"
     event = {"league": league, "title": title, "start": dt.isoformat().replace("+00:00", "Z"), "tag": tag, "icon": icon, "source": "espn-ncaa"}
     if away: event["away"] = away
     if home: event["home"] = home
@@ -132,10 +114,9 @@ def _normalize_espn(game, league, icon):
     return event
 
 def _fetch_scoreboard_day(sport, division, day):
-    if sport == "football":
-        url = f"{BASE}/scoreboard/football/{division}/{day:%Y}/1/all-conf"
-    else:
-        url = f"{BASE}/scoreboard/{sport}/{division}/{day:%Y/%m/%d}"
+    # Football's NCAA scoreboard route is week-based; the legacy endpoint is the stable
+    # current-week route. Other sports expose date-based scoreboard routes.
+    url = f"{BASE}/scoreboard/football/{division}" if sport == "football" else f"{BASE}/scoreboard/{sport}/{division}/{day:%Y/%m/%d}"
     try: return _get(url)
     except Exception as exc: print(f"ERROR NCAA scoreboard {sport}/{division} {day}: {exc}"); return None
 
@@ -163,8 +144,7 @@ def _in_window(event, now, cutoff):
     dt = _parse_iso(event.get("start")); return bool(dt and now - timedelta(hours=12) <= dt <= cutoff)
 
 def fetch_league(league, sport, division, icon, horizon_days=30):
-    now = datetime.now(timezone.utc); cutoff = now + timedelta(days=min(horizon_days, 7))
-    days = [now.date() + timedelta(days=i) for i in range((cutoff.date() - now.date()).days + 1)]
+    now = datetime.now(timezone.utc); cutoff = now + timedelta(days=min(horizon_days, 7)); days = [now.date() + timedelta(days=i) for i in range((cutoff.date() - now.date()).days + 1)]
     primary, secondary = [], []
     for root in _fetch_primary_days(sport, division, days):
         if root:
