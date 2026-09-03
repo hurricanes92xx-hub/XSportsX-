@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""NCAA schedule provider with dual-authority coverage.
+"""NCAA schedule provider with throttled dual-authority coverage.
 
-The NCAA mirror is the primary authority. ESPN is always queried as a structured
-secondary authority for every NCAA lane; the central publisher merges the union
-using canonical event identity and explicit provider priority.
+NCAA is primary; ESPN is a structured secondary authority. Requests are deliberately
+throttled/retried because the public NCAA mirror documents a 5 req/s/IP limit.
+The publisher performs the final canonical union/dedupe across authorities.
 """
 import json
+import time
 import urllib.request
+import urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
 BASE = "https://ncaa-api.henrygd.me"
-HEADERS = {"User-Agent": "XSportsX-Schedule/5.1", "Accept": "application/json"}
-ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/5.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "XSportsX-Schedule/6.0", "Accept": "application/json"}
+ESPN_HEADERS = {"User-Agent": "XSportsX-Schedule/6.0", "Accept": "application/json"}
 NCAA_TZ = ZoneInfo("America/New_York")
+MAX_WORKERS = 3
+RETRIES = 3
 
 NCAA_LEAGUES = [
     ("NCAA FB", "football", "fbs", "🏈"),
@@ -49,8 +53,21 @@ ESPN_FALLBACK = {
 }
 
 def _get(url, headers=HEADERS, timeout=15):
-    req = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(req, timeout=timeout) as response: return json.loads(response.read())
+    last = None
+    for attempt in range(RETRIES):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                return json.loads(response.read())
+        except urllib.error.HTTPError as exc:
+            last = exc
+            if exc.code not in {429, 500, 502, 503, 504}:
+                break
+            time.sleep(1.5 * (attempt + 1))
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            last = exc
+            time.sleep(0.75 * (attempt + 1))
+    raise last
 
 def _parse_iso(value):
     if not value: return None
@@ -115,7 +132,10 @@ def _normalize_espn(game, league, icon):
     return event
 
 def _fetch_scoreboard_day(sport, division, day):
-    url = f"{BASE}/scoreboard/football/{division}" if sport == "football" else f"{BASE}/scoreboard/{sport}/{division}/{day:%Y/%m/%d}"
+    if sport == "football":
+        url = f"{BASE}/scoreboard/football/{division}/{day:%Y}/1/all-conf"
+    else:
+        url = f"{BASE}/scoreboard/{sport}/{division}/{day:%Y/%m/%d}"
     try: return _get(url)
     except Exception as exc: print(f"ERROR NCAA scoreboard {sport}/{division} {day}: {exc}"); return None
 
@@ -130,14 +150,13 @@ def _fetch_espn_day(league, day):
 
 def _fetch_espn_days(league, days):
     out = []
-    with ThreadPoolExecutor(max_workers=min(8, max(1, len(days)))) as pool:
+    with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, max(1, len(days)))) as pool:
         futures = [pool.submit(_fetch_espn_day, league, day) for day in days]
         for future in as_completed(futures): out.extend(future.result())
     return out
 
 def _fetch_primary_days(sport, division, days):
-    if sport == "football": return [_fetch_scoreboard_day(sport, division, days[0])]
-    with ThreadPoolExecutor(max_workers=min(8, max(1, len(days)))) as pool:
+    with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, max(1, len(days)))) as pool:
         return [future.result() for future in as_completed([pool.submit(_fetch_scoreboard_day, sport, division, day) for day in days])]
 
 def _in_window(event, now, cutoff):
