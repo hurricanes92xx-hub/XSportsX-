@@ -16,15 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBack: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
+    val engineState by ScheduleEngine.state.collectAsState()
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
-    var liveEvents by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var refreshing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -33,48 +32,35 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var favorites by remember { mutableStateOf(ChannelFavorites.load(context)) }
     var showFavorites by remember { mutableStateOf(false) }
 
+    val liveEvents = engineState.liveEvents
+
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
             if (background) refreshing = true else loading = true
             if (!background) error = null
             runCatching {
-                if (selectedEvent != null) {
-                    StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
-                } else if (filter.isNullOrBlank()) {
-                    ScheduleSnapshotRepository.live(force)
-                } else {
-                    StreamResolver(context).loadMatchingStreams(filter, force)
+                ScheduleEngine.start()
+                when {
+                    selectedEvent != null -> StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
+                    !filter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(filter, force)
+                    else -> {
+                        if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
+                        emptyList<ResolvedStream>()
+                    }
                 }
             }
                 .onSuccess { result ->
-                    if (selectedEvent != null || !filter.isNullOrBlank()) {
-                        @Suppress("UNCHECKED_CAST")
-                        streams = result as List<ResolvedStream>
-                    } else {
-                        @Suppress("UNCHECKED_CAST")
-                        val refreshedEvents = result as List<SportsEvent>
-                        // Never blank an already-rendered live list during a background refresh.
-                        if (refreshedEvents.isNotEmpty() || liveEvents.isEmpty()) liveEvents = refreshedEvents
-                    }
+                    if (selectedEvent != null || !filter.isNullOrBlank()) streams = result
                     error = null
                 }
                 .onFailure {
-                    // Keep the last good results visible while a background refresh/provider is unavailable.
                     if (!background) error = it.message ?: "Unable to load live events"
                 }
             if (background) refreshing = false else loading = false
         }
     }
 
-    LaunchedEffect(filter, selectedEvent?.id) {
-        reload(false)
-        if (selectedEvent == null && filter.isNullOrBlank()) {
-            while (true) {
-                delay(10_000L)
-                reload(true, background = true)
-            }
-        }
-    }
+    LaunchedEffect(filter, selectedEvent?.id) { reload(false) }
 
     if (playerStream != null) {
         NativePlayerScreen(playerStream!!.url, playerStream!!.name) { playerStream = null }
@@ -114,12 +100,10 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
         }
 
-        if (refreshing) {
-            LinearProgressIndicator(Modifier.fillMaxWidth(), color = Color(0xFFFF1744))
-        }
+        if (refreshing || engineState.refreshing) LinearProgressIndicator(Modifier.fillMaxWidth(), color = Color(0xFFFF1744))
 
         when {
-            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
+            loading && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null && (selectedEvent != null || streams.isEmpty() && liveEvents.isEmpty()) -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
@@ -129,7 +113,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             }
             selectedEvent == null && filter.isNullOrBlank() && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No live games right now", color = Color(0xFF858B98)) }
             selectedEvent == null && filter.isNullOrBlank() -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(liveEvents, key = { it.id.ifBlank { "${it.league}|${it.home}|${it.away}|${it.startUtc}" } }) { game ->
+                items(liveEvents, key = { EventIdentity.id(it) }) { game ->
                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }
                         Spacer(Modifier.width(14.dp))
