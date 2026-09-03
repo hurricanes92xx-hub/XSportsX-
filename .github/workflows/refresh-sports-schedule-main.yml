@@ -1,0 +1,64 @@
+name: Refresh XSportsX Production Schedule
+
+# The repository default branch is main, so GitHub's scheduled-workflow
+# service cannot reliably schedule the android-app branch directly. This
+# workflow lives on main, but executes the exact production scripts from
+# android-app and publishes the resulting feed back to android-app.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-production-schedule
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout production branch
+        uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Refresh canonical provider schedule
+        run: python3 scripts/refresh_schedule_feed.py
+
+      - name: Validate canonical feed
+        run: |
+          python3 -m json.tool data/schedule_feed.json >/dev/null
+          python3 - <<'PY'
+          import json
+          p=json.load(open('data/schedule_feed.json', encoding='utf-8'))
+          events=p.get('events') or []
+          if not p.get('generatedAt') or not isinstance(events, list):
+              raise SystemExit('invalid canonical feed')
+          print('canonical_events=', len(events))
+          print('leagues=', len(p.get('eventCounts') or {}))
+          print('provider_failures=', p.get('providerFailures') or [])
+          print('identity_merges=', p.get('identityMergeCount', 0))
+          PY
+
+      - name: Publish changed production feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- data/schedule_feed.json; then
+            echo 'No schedule changes to publish.'
+            exit 0
+          fi
+          git config user.name 'XSportsX Schedule Bot'
+          git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
+          git add data/schedule_feed.json
+          git commit -m 'chore: refresh canonical sports schedule'
+          git push origin HEAD:android-app
