@@ -72,6 +72,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
         NativePlayerScreen(
             activeStream.url,
             activeStream.name,
+            eventId = selectedEvent?.let { EventIdentity.id(it) }.orEmpty(),
             onBack = { playerStream = null },
             onPlaybackSuccess = {
                 healthStore.recordSuccess(activeStream.url)
@@ -79,11 +80,23 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             },
             onPlaybackFailure = {
                 healthStore.recordFailure(activeStream.url)
-                // Immediately demote the failed candidate and continue with the best
-                // remaining known candidate. The health score persists across launches.
                 streams = ranked(streams)
                 val next = streams.firstOrNull { it.url != activeStream.url }
-                if (next != null) playerStream = next else playerStream = null
+                if (next != null) {
+                    playerStream = next
+                } else if (selectedEvent != null) {
+                    // All known candidates failed. Force a fresh resolver pass so
+                    // self-healing can discover/re-rank a replacement candidate.
+                    scope.launch {
+                        val refreshed = runCatching {
+                            StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, true)
+                        }.getOrDefault(emptyList())
+                        streams = ranked(refreshed)
+                        playerStream = streams.firstOrNull { it.url != activeStream.url }
+                    }
+                } else {
+                    playerStream = null
+                }
             }
         )
         return
