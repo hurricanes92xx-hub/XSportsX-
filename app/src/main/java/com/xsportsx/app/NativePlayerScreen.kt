@@ -23,6 +23,7 @@ import androidx.media3.ui.PlayerView
 fun NativePlayerScreen(
     streamUrl: String,
     title: String = "XSportsX",
+    eventId: String = "",
     onPlaybackSuccess: () -> Unit = {},
     onPlaybackFailure: () -> Unit = {},
     onBack: () -> Unit
@@ -34,6 +35,7 @@ fun NativePlayerScreen(
 
     val context = androidx.compose.ui.platform.LocalContext.current
     val playbackHealth = remember(context) { PlaybackHealthStore(context) }
+    val healthKey = eventId.ifBlank { title.ifBlank { "unknown-event" } }
     var error by remember(streamUrl) { mutableStateOf<String?>(null) }
     var attemptStartedAt by remember(streamUrl) { mutableLongStateOf(System.currentTimeMillis()) }
     var successRecorded by remember(streamUrl) { mutableStateOf(false) }
@@ -75,7 +77,7 @@ fun NativePlayerScreen(
                     successRecorded = true
                     val latency = (System.currentTimeMillis() - attemptStartedAt).coerceAtLeast(0L)
                     val stream = ResolvedStream(title, "PLAYBACK", streamUrl)
-                    playbackHealth.recordSuccess(title.ifBlank { "unknown-event" }, stream, latency)
+                    playbackHealth.recordSuccess(healthKey, stream, latency)
                     onPlaybackSuccess()
                 }
             }
@@ -84,10 +86,7 @@ fun NativePlayerScreen(
                 if (failureReported) return
                 failureReported = true
                 val stream = ResolvedStream(title, "PLAYBACK", streamUrl)
-                playbackHealth.recordFailure(title.ifBlank { "unknown-event" }, stream)
-                // Candidate fallback is owned by LiveChannelsScreen/StreamResolver.
-                // Do not invent alternate URL forms here; the resolver supplies the
-                // next ranked candidate (#2, then #3) and the parent swaps the player.
+                playbackHealth.recordFailure(healthKey, stream)
                 onPlaybackFailure()
                 error = exception.message ?: exception.errorCodeName
             }
