@@ -45,20 +45,22 @@ class StreamResolver(context: Context) {
             val fresh = cache.get(key)
             if (!force && fresh != null && System.currentTimeMillis() - fresh.loadedAt < CACHE_TTL_MS) fresh.streams
             else coroutineScope {
-                val privateDeferred = async(Dispatchers.IO) {
+                val privateDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) {
                     if (!config.isConfigured()) emptyList()
                     else runCatching {
                         if (config.type == "M3U") {
                             val indexed = m3uIndex.get(config.m3uUrl, allowStale = !force)
                             if (indexed.isNotEmpty() && !force) indexed else loadM3u(config.m3uUrl).also { m3uIndex.put(config.m3uUrl, it) }
                         } else {
-                            val cached = xtreamIndex.getCachedAll(config)
-                            xtreamIndex.warm(config)
-                            cached
+                            xtreamIndex.getCachedAll(config).map { c ->
+                                ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon)
+                            }.also { xtreamIndex.warm(config) }
                         }
                     }.getOrDefault(emptyList())
                 }
-                val publicDeferred = async(Dispatchers.IO) { runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) } }
+                val publicDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) {
+                    runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+                }
                 val merged = dedupe(privateDeferred.await() + publicDeferred.await())
                 cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
             }
@@ -104,19 +106,23 @@ class StreamResolver(context: Context) {
         if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
             val valid = matchEventAgainstStreams(event, cached.streams, strict = true); if (valid.isNotEmpty()) return valid
         }
-        val privateDeferred = async(Dispatchers.IO) {
-            val candidates = when {
-                !config.isConfigured() -> emptyList()
-                config.type == "XTREAM" -> xtreamIndex.fastResolve(config, event, 12).map { c ->
-                    ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon)
+        val (privateMatches, indexed) = coroutineScope {
+            val privateDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) {
+                val candidates: List<ResolvedStream> = when {
+                    !config.isConfigured() -> emptyList()
+                    config.type == "XTREAM" -> xtreamIndex.fastResolve(config, event, 12).map { c ->
+                        ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon)
+                    }
+                    else -> m3uIndex.get(config.m3uUrl, allowStale = true)
                 }
-                else -> m3uIndex.get(config.m3uUrl, allowStale = true)
+                val local: List<ResolvedStream> = if (candidates.isEmpty()) channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32) else emptyList()
+                matchEventAgainstStreams(event, candidates + local, strict = true)
             }
-            val local = if (candidates.isEmpty()) channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32) else emptyList()
-            matchEventAgainstStreams(event, candidates + local, strict = true)
+            val publicIndexDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) {
+                publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+            }
+            privateDeferred.await() to publicIndexDeferred.await()
         }
-        val publicIndexDeferred = async(Dispatchers.IO) { publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) } }
-        val (privateMatches, indexed) = privateDeferred.await() to publicIndexDeferred.await()
         if (config.type == "M3U" && m3uIndex.get(config.m3uUrl, allowStale = true).isEmpty()) refreshScope.launch { runCatching { loadM3u(config.m3uUrl).also { m3uIndex.put(config.m3uUrl, it); channelIndex.rebuild(it) } } }
         if (config.type == "XTREAM") xtreamIndex.warm(config)
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
