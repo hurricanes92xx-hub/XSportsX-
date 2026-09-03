@@ -23,9 +23,9 @@ import androidx.media3.ui.PlayerView
 fun NativePlayerScreen(
     streamUrl: String,
     title: String = "XSportsX",
-    onBack: () -> Unit,
     onPlaybackSuccess: () -> Unit = {},
-    onPlaybackFailure: () -> Unit = {}
+    onPlaybackFailure: () -> Unit = {},
+    onBack: () -> Unit
 ) {
     if (isYouTubeUrl(streamUrl)) {
         YouTubeEventPlayer(streamUrl, title, onBack)
