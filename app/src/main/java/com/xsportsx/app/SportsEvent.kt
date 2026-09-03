@@ -19,7 +19,18 @@ data class SportsEvent(
     val youtubeVideoId: String = ""
 ) {
     val isLive: Boolean
-        get() = state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)
+        get() {
+            if (state.equals("in", true) || state.equals("live", true) || status.contains("live", true) || status.contains("in progress", true)) return true
+
+            // MLB games can cross midnight UTC. Keep a non-final MLB game live
+            // for the same five-hour window used by the server reconciliation.
+            if (league.equals("MLB", true) && !status.contains("final", true) && !state.equals("post", true)) {
+                val start = startMillis()
+                val now = System.currentTimeMillis()
+                if (start > 0L && start <= now && start >= now - 5L * 60L * 60L * 1000L) return true
+            }
+            return false
+        }
 
     private fun startMillis(): Long = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
 
