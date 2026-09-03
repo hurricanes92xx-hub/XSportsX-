@@ -12,30 +12,15 @@ from datetime import datetime, timezone
 BASE_V1 = "https://www.thesportsdb.com/api/v1/json/123"
 
 LEAGUE_MAP = {
-    "EPL": 4328,
-    "LaLiga": 4335,
-    "Serie A": 4332,
-    "Bundesliga": 4331,
-    "Ligue 1": 4334,
-    "MLS": 4346,
-    "NBA": 4387,
-    "NHL": 4380,
-    "NFL": 4391,
-    "MLB": 4424,
-    "UFC": 4442,
+    "EPL": 4328, "LaLiga": 4335, "Serie A": 4332, "Bundesliga": 4331,
+    "Ligue 1": 4334, "MLS": 4346, "NBA": 4387, "NHL": 4380,
+    "NFL": 4391, "MLB": 4424, "UFC": 4442,
 }
-
 SPORTDB_LEAGUES = set(LEAGUE_MAP)
 
 
 def _request(url, timeout=8):
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "XSportsX-Schedule/2.2",
-            "Accept": "application/json",
-        },
-    )
+    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX-Schedule/2.2", "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.read()
 
@@ -75,17 +60,17 @@ def _normalize_event(item, league):
         tag = "LIVE"
     else:
         tag = "UPCOMING"
-    return {
-        "league": league,
-        "title": title,
-        "start": start,
-        "tag": tag,
-        "icon": "🏆",
-        "source": "sportsdb",
+    event = {
+        "league": league, "title": title, "start": start, "tag": tag,
+        "icon": "🏆", "source": "sportsdb",
         "sportsDbEventId": str(item.get("idEvent") or ""),
         "sportsDbHomeTeamId": str(item.get("idHomeTeam") or ""),
         "sportsDbAwayTeamId": str(item.get("idAwayTeam") or ""),
     }
+    if home: event["home"] = home
+    if away: event["away"] = away
+    if item.get("strThumb"): event["artUrl"] = str(item["strThumb"])
+    return event
 
 
 def fetch_league(league, season=None):
@@ -95,14 +80,12 @@ def fetch_league(league, season=None):
     try:
         league_id = LEAGUE_MAP[league]
         root = json.loads(_request(f"{BASE_V1}/eventsnextleague.php?id={league_id}"))
-        items = root.get("events") or []
-        return [event for event in (_normalize_event(x, league) for x in items) if event]
+        return [event for event in (_normalize_event(x, league) for x in (root.get("events") or [])) if event]
     except Exception as exc:
         print(f"ERROR SportsDB free fallback {league}: {exc}")
         return []
 
 
 def current_season():
-    """Retained for the canonical engine interface; free V1 does not use it."""
     now = datetime.now(timezone.utc)
     return f"{now.year}-{now.year + 1}" if now.month >= 7 else f"{now.year - 1}-{now.year}"
