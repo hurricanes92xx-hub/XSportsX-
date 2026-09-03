@@ -1,8 +1,8 @@
 {
-  "versionCode": 31,
-  "versionName": "1.8.5",
+  "versionCode": 34,
+  "versionName": "1.8.8",
   "mobileApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
   "tvApkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-TV.apk",
   "apkUrl": "https://github.com/hurricanes92xx-hub/XSportsX-/releases/latest/download/XSportsX-Mobile.apk",
-  "notes": "XSportsX 1.8.5: fixes live-event discovery by adding the authoritative MLB live scoreboard fallback and hardens live refresh behavior."
+  "notes": "XSportsX 1.8.8: hardens the schedule engine with direct NCAA football fallback, unified NCAA league normalization, and fail-closed three-day football coverage validation."
 }
