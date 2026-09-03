@@ -7,14 +7,25 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 /**
- * Event-first matcher for public sports sources. Broadcast aliases are expanded
- * by sport/league so smaller college events can resolve through conference,
- * school, and national network feeds instead of requiring an exact channel name.
+ * Event-first matcher for public sports sources. Event discovery is targeted so
+ * a game click never waits for the full public catalog + global health sweep.
  */
 class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSourceResolver()) {
     suspend fun find(event: SportsEvent, force: Boolean = false, maxResults: Int = 8): List<PublicResolvedStream> =
         withContext(Dispatchers.Default) {
-            val streams = resolver.load(force)
+            val terms = listOf(
+                event.home,
+                event.away,
+                event.title,
+                event.broadcast,
+                event.league,
+                event.sport
+            ).filter { it.isNotBlank() }
+
+            // Search only the relevant playlists for this event. The old path
+            // loaded the entire public catalog and then health-checked up to 240
+            // streams, which could leave a game click spinning for a long time.
+            val streams = resolver.searchTargeted(terms)
             val ranked = streams.mapNotNull { stream ->
                 val score = score(event, stream)
                 if (score <= 0) null else score to stream
@@ -37,7 +48,6 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
         val sport = normalize(event.sport)
         var score = 0
 
-        // Exact event/team references remain the strongest signal.
         if (title.length >= 4 && haystack.contains(title)) score += 100
         if (home.length >= 3 && haystack.contains(home)) score += 75
         if (away.length >= 3 && haystack.contains(away)) score += 75
@@ -51,9 +61,6 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
         if (broadcast.length >= 3 && haystack.contains(broadcast)) score += 45
         if (sport.length >= 3 && haystack.contains(sport)) score += 10
 
-        // Expand current broadcast names into the same aliases used by the
-        // resolver. This is especially important for ESPN+, SECN+, ACCNX,
-        // BTN and regional/school college streams.
         val broadcastAliases = broadcastAliasesFor(event)
         for (alias in broadcastAliases) {
             val n = normalize(alias)
@@ -63,8 +70,6 @@ class PublicEventMatcher(private val resolver: PublicSourceResolver = PublicSour
             }
         }
 
-        // College events frequently have no national network in the feed. A
-        // recognized college/school/conference sports source is still useful.
         if (isCollege(event)) {
             val collegeTerms = listOf(
                 "ncaa", "college", "university", "volleyball", "basketball",
