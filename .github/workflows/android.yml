@@ -36,18 +36,15 @@ jobs:
           python3 scripts/refresh_schedules.py
           python3 - <<'PY'
           import json
-          from datetime import datetime, timezone
           p=json.load(open('data/schedule_feed.json'))
           assert p.get('schema',0) >= 5
           events=p.get('events') or []
           assert events
           assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events})
-          now=datetime.now(timezone.utc)
           upcoming=[e for e in events if e.get('tag') == 'UPCOMING']
           assert upcoming, 'canonical feed has no upcoming events'
           print(f'canonical schedule: {len(events)} events, {len(upcoming)} upcoming')
           PY
-          git diff -- data/schedule_feed.json || true
 
       - name: Set up Java 17
         uses: actions/setup-java@v5
@@ -65,13 +62,6 @@ jobs:
           echo "GRADLE_HOME=$RUNNER_TEMP/gradle-8.13" >> "$GITHUB_ENV"
           echo "$RUNNER_TEMP/gradle-8.13/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/gradle-8.13/bin/gradle" --version
-
-      - name: Synchronize Mobile + TV league catalog
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/sync_league_catalog.py
-          echo 'Mobile + TV league catalog synchronized.'
 
       - name: Verify Android project
         shell: bash
@@ -173,7 +163,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV."
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}."
 
       - name: Upload Gradle log
         if: always()
