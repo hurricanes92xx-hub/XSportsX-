@@ -31,6 +31,7 @@
     "NCAA Men's Hockey": 741,
     "NCAA Men's Soccer": 1535,
     "NCAA Men's Water Polo": 40,
+    "NCAA VB": 1,
     "NCAA Women's Field Hockey": 579,
     "NCAA Women's Hockey": 1265,
     "NCAA Women's Soccer": 2268,
@@ -13925,7 +13926,7 @@
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🎾",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
       "eventType": "named_event",
@@ -13933,7 +13934,9 @@
       "nonTeamSport": true,
       "eventName": "US Open",
       "sportLogo": "https://a.espncdn.com/i/teamlogos/leagues/500/atp.png",
-      "eventId": "evt_bca2cade6800c2cd0722c99a"
+      "eventId": "evt_bca2cade6800c2cd0722c99a",
+      "providerEventId": "espn:189-2026",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "WTA",
@@ -13961,13 +13964,14 @@
       "home": "Bulldogs",
       "awayLogo": "https://www.nrl.com/.theme/broncos/badge.svg",
       "homeLogo": "https://www.nrl.com/.theme/bulldogs/badge.svg",
-      "eventId": "evt_1c279ab349259dab5857e395"
+      "eventId": "evt_1c279ab349259dab5857e395",
+      "providerEventId": "espn:603450"
     },
     {
       "league": "AFL",
       "title": "Hawthorn @ Fremantle",
       "start": "2026-09-03T10:10:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏉",
       "leagueArt": "",
       "eventType": "team_game",
@@ -13975,7 +13979,9 @@
       "home": "Fremantle",
       "awayLogo": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Hawthorn.svg",
       "homeLogo": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fremantle%20Football%20Club%20Colours.svg",
-      "eventId": "evt_3a6fdeaa2053cfaffffe2780"
+      "eventId": "evt_3a6fdeaa2053cfaffffe2780",
+      "providerEventId": "espn:1133701",
+      "sourceDetail": "ESPN live-status reconciliation"
     },
     {
       "league": "MLB",
@@ -13989,7 +13995,8 @@
       "home": "Pirates",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
-      "eventId": "evt_9ba4d7da52e9689809e8effb"
+      "eventId": "evt_9ba4d7da52e9689809e8effb",
+      "providerEventId": "espn:401816789"
     },
     {
       "league": "MLB",
@@ -14003,7 +14010,8 @@
       "home": "Guardians",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png",
-      "eventId": "evt_160506e18e6b3b65869cb384"
+      "eventId": "evt_160506e18e6b3b65869cb384",
+      "providerEventId": "espn:401816790"
     },
     {
       "league": "MLB",
@@ -14017,7 +14025,8 @@
       "home": "Astros",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/chw.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
-      "eventId": "evt_e75f85352ab9e8546564fad0"
+      "eventId": "evt_e75f85352ab9e8546564fad0",
+      "providerEventId": "espn:401816791"
     },
     {
       "league": "Ligue 1",
@@ -14031,7 +14040,8 @@
       "home": "Toulouse",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/179.png",
-      "eventId": "evt_90bdc4cd8299577c22d93f85"
+      "eventId": "evt_90bdc4cd8299577c22d93f85",
+      "providerEventId": "espn:401876468"
     },
     {
       "league": "LaLiga",
@@ -14045,7 +14055,8 @@
       "home": "Real Sociedad",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
-      "eventId": "evt_9288de05881ac21851830728"
+      "eventId": "evt_9288de05881ac21851830728",
+      "providerEventId": "espn:401882867"
     },
     {
       "league": "NCAA FB",
@@ -14059,7 +14070,8 @@
       "home": "Rutgers",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/113.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/164.png",
-      "eventId": "evt_501508e42e5e5a442ee703da"
+      "eventId": "evt_501508e42e5e5a442ee703da",
+      "providerEventId": "espn:401858423"
     },
     {
       "league": "NCAA FB",
@@ -14073,7 +14085,8 @@
       "home": "UCF",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2065.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/2116.png",
-      "eventId": "evt_aac7dec665b30e4f56d34828"
+      "eventId": "evt_aac7dec665b30e4f56d34828",
+      "providerEventId": "espn:401856767"
     },
     {
       "league": "NCAA FB",
@@ -14087,7 +14100,8 @@
       "home": "Wake Forest",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2006.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/154.png",
-      "eventId": "evt_35ed051c0d84c11f2f366302"
+      "eventId": "evt_35ed051c0d84c11f2f366302",
+      "providerEventId": "espn:401858204"
     },
     {
       "league": "NCAA FB",
@@ -14101,7 +14115,8 @@
       "home": "Delaware",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2771.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/48.png",
-      "eventId": "evt_1c824429817d1169521eb798"
+      "eventId": "evt_1c824429817d1169521eb798",
+      "providerEventId": "espn:401864424"
     },
     {
       "league": "NCAA FB",
@@ -14115,7 +14130,8 @@
       "home": "Kennesaw St",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2698.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/338.png",
-      "eventId": "evt_1750e24af223078990294d81"
+      "eventId": "evt_1750e24af223078990294d81",
+      "providerEventId": "espn:401864425"
     },
     {
       "league": "NCAA FB",
@@ -14129,7 +14145,8 @@
       "home": "Buffalo",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/399.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/2084.png",
-      "eventId": "evt_31b33adce540d50534568810"
+      "eventId": "evt_31b33adce540d50534568810",
+      "providerEventId": "espn:401866409"
     },
     {
       "league": "MLB",
@@ -14143,7 +14160,8 @@
       "home": "Orioles",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
-      "eventId": "evt_e33b41c746a2a326a8ce8834"
+      "eventId": "evt_e33b41c746a2a326a8ce8834",
+      "providerEventId": "espn:401816788"
     },
     {
       "league": "MLB",
@@ -14157,7 +14175,8 @@
       "home": "Cubs",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mil.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png",
-      "eventId": "evt_ad7d1ef269d021246bba1117"
+      "eventId": "evt_ad7d1ef269d021246bba1117",
+      "providerEventId": "espn:401816793"
     },
     {
       "league": "MLB",
@@ -14171,7 +14190,8 @@
       "home": "Royals",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/kc.png",
-      "eventId": "evt_95be6ba03263a8d1fb61293e"
+      "eventId": "evt_95be6ba03263a8d1fb61293e",
+      "providerEventId": "espn:401816792"
     },
     {
       "league": "NCAA FB",
@@ -14185,7 +14205,8 @@
       "home": "Missouri",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2029.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/142.png",
-      "eventId": "evt_5c43d91f387d4219e2279610"
+      "eventId": "evt_5c43d91f387d4219e2279610",
+      "providerEventId": "espn:401856663"
     },
     {
       "league": "NCAA FB",
@@ -14199,7 +14220,8 @@
       "home": "Georgia Tech",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/38.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/59.png",
-      "eventId": "evt_4080f95523e005e26b0a34d8"
+      "eventId": "evt_4080f95523e005e26b0a34d8",
+      "providerEventId": "espn:401856776"
     },
     {
       "league": "NCAA FB",
@@ -14213,7 +14235,8 @@
       "home": "Minnesota",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/2197.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/135.png",
-      "eventId": "evt_29f152c7220afae4442ca1ed"
+      "eventId": "evt_29f152c7220afae4442ca1ed",
+      "providerEventId": "espn:401858422"
     },
     {
       "league": "MLB",
@@ -14227,7 +14250,8 @@
       "home": "Rangers",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
-      "eventId": "evt_90437056d1dff826e716ea48"
+      "eventId": "evt_90437056d1dff826e716ea48",
+      "providerEventId": "espn:401816794"
     },
     {
       "league": "NCAA FB",
@@ -14241,7 +14265,8 @@
       "home": "Utah",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/70.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/254.png",
-      "eventId": "evt_d4bf07d2e57ac3b25b933026"
+      "eventId": "evt_d4bf07d2e57ac3b25b933026",
+      "providerEventId": "espn:401856768"
     },
     {
       "league": "NCAA FB",
@@ -14255,7 +14280,8 @@
       "home": "Illinois",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/football/500/5.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/football/500/356.png",
-      "eventId": "evt_0949f0b1a4f5f87812c699db"
+      "eventId": "evt_0949f0b1a4f5f87812c699db",
+      "providerEventId": "espn:401858424"
     },
     {
       "league": "MLB",
@@ -14269,7 +14295,8 @@
       "home": "Mariners",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/ath.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
-      "eventId": "evt_0d95a65e101d22c25cb2acff"
+      "eventId": "evt_0d95a65e101d22c25cb2acff",
+      "providerEventId": "espn:401816795"
     },
     {
       "league": "MLB",
@@ -14283,7 +14310,8 @@
       "home": "Dodgers",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/stl.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
-      "eventId": "evt_c508df316f6d5cba13d3ea67"
+      "eventId": "evt_c508df316f6d5cba13d3ea67",
+      "providerEventId": "espn:401816796"
     },
     {
       "league": "NRL",
@@ -54386,17 +54414,18 @@
       "league": "MLB",
       "title": "San Francisco @ Pittsburgh",
       "start": "2026-09-03T16:35:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚾",
       "source": "official_api",
-      "sourceDetail": "MLB Stats API",
+      "sourceDetail": "MLB Stats API live-status reconciliation",
       "leagueArt": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
       "eventType": "team_game",
       "away": "San Francisco",
       "home": "Pittsburgh",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
-      "eventId": "evt_f339c2e7dabe5836c3edaa76"
+      "eventId": "evt_f339c2e7dabe5836c3edaa76",
+      "providerEventId": "mlb:823337"
     },
     {
       "league": "MLB",
@@ -120720,7 +120749,8 @@
       "homeTeamId": "5607",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_c01bb5156bf5de9fa477ef03"
+      "eventId": "evt_c01bb5156bf5de9fa477ef03",
+      "providerEventId": "espn:401898799"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120738,7 +120768,8 @@
       "homeTeamId": "5639",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_fd84f4ebd049e7a1f979c3d2"
+      "eventId": "evt_fd84f4ebd049e7a1f979c3d2",
+      "providerEventId": "espn:401898426"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120756,7 +120787,8 @@
       "homeTeamId": "5591",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_ec750a4ee194957ea43816f1"
+      "eventId": "evt_ec750a4ee194957ea43816f1",
+      "providerEventId": "espn:401898340"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120774,7 +120806,8 @@
       "homeTeamId": "5628",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_dc461bfcfc6f896533d4f8ff"
+      "eventId": "evt_dc461bfcfc6f896533d4f8ff",
+      "providerEventId": "espn:401900647"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120792,7 +120825,8 @@
       "homeTeamId": "5701",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_48a3d5c480ae3477fb3dd69c"
+      "eventId": "evt_48a3d5c480ae3477fb3dd69c",
+      "providerEventId": "espn:401898786"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120810,7 +120844,8 @@
       "homeTeamId": "5673",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_86ddca83eedcb3eb87c47dd3"
+      "eventId": "evt_86ddca83eedcb3eb87c47dd3",
+      "providerEventId": "espn:401901664"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120828,7 +120863,8 @@
       "homeTeamId": "5658",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_1a5329af0820abcb032603b5"
+      "eventId": "evt_1a5329af0820abcb032603b5",
+      "providerEventId": "espn:401890747"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120846,7 +120882,8 @@
       "homeTeamId": "5605",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8665a436409f4ab8f382b6ef"
+      "eventId": "evt_8665a436409f4ab8f382b6ef",
+      "providerEventId": "espn:401887548"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120864,7 +120901,8 @@
       "homeTeamId": "5681",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_00b5eef808597ed2138e5cbc"
+      "eventId": "evt_00b5eef808597ed2138e5cbc",
+      "providerEventId": "espn:401891744"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120882,7 +120920,8 @@
       "homeTeamId": "5724",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_120ca8fdbdd3912dc9f18fd3"
+      "eventId": "evt_120ca8fdbdd3912dc9f18fd3",
+      "providerEventId": "espn:401898810"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120900,7 +120939,8 @@
       "homeTeamId": "17425",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0dd432cda651fd95479f1c7d"
+      "eventId": "evt_0dd432cda651fd95479f1c7d",
+      "providerEventId": "espn:401891210"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120918,7 +120958,8 @@
       "homeTeamId": "18010",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_6a07e100cc106dd85769c6cc"
+      "eventId": "evt_6a07e100cc106dd85769c6cc",
+      "providerEventId": "espn:401898973"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120936,7 +120977,8 @@
       "homeTeamId": "17411",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8a9d9cc7b7ea0cb7b465d7c4"
+      "eventId": "evt_8a9d9cc7b7ea0cb7b465d7c4",
+      "providerEventId": "espn:401898984"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -120954,7 +120996,8 @@
       "homeTeamId": "5636",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_76f839adb138976580c0fbbd"
+      "eventId": "evt_76f839adb138976580c0fbbd",
+      "providerEventId": "espn:401891055"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -145836,10 +145879,10 @@
       "league": "NCAA Women's Soccer",
       "title": "Mercyhurst at Morehead State",
       "start": "2026-09-03T15:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "official_api",
-      "sourceDetail": "ESPN NCAA scoreboard",
+      "sourceDetail": "ESPN live-status reconciliation",
       "away": "Mercyhurst",
       "home": "Morehead State",
       "awayLogo": "https://a.espncdn.com/i/teamlogos/soccer/500/22313.png",
@@ -145848,7 +145891,8 @@
       "homeTeamId": "20592",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_414a7fddf1f7146176d69344"
+      "eventId": "evt_414a7fddf1f7146176d69344",
+      "providerEventId": "espn:401900078"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145866,7 +145910,8 @@
       "homeTeamId": "20454",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_5557acec368df600ed576286"
+      "eventId": "evt_5557acec368df600ed576286",
+      "providerEventId": "espn:401889585"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145884,7 +145929,8 @@
       "homeTeamId": "20378",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_083d90c17f9370030b676974"
+      "eventId": "evt_083d90c17f9370030b676974",
+      "providerEventId": "espn:401886909"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145902,7 +145948,8 @@
       "homeTeamId": "20347",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_236fce8e4908519dc46f242f"
+      "eventId": "evt_236fce8e4908519dc46f242f",
+      "providerEventId": "espn:401886624"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145920,7 +145967,8 @@
       "homeTeamId": "20613",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_9c7da7a660cd9f3470f108cc"
+      "eventId": "evt_9c7da7a660cd9f3470f108cc",
+      "providerEventId": "espn:401897718"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145938,7 +145986,8 @@
       "homeTeamId": "20416",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_45c314edd00b6b511fefbb58"
+      "eventId": "evt_45c314edd00b6b511fefbb58",
+      "providerEventId": "espn:401900250"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145956,7 +146005,8 @@
       "homeTeamId": "20607",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_3872a85a672f737643594956"
+      "eventId": "evt_3872a85a672f737643594956",
+      "providerEventId": "espn:401886892"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145974,7 +146024,8 @@
       "homeTeamId": "20506",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_59a7a2b84ae03f7b548037df"
+      "eventId": "evt_59a7a2b84ae03f7b548037df",
+      "providerEventId": "espn:401886901"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -145992,7 +146043,8 @@
       "homeTeamId": "20625",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_e22851dc4bbf56f083b200a7"
+      "eventId": "evt_e22851dc4bbf56f083b200a7",
+      "providerEventId": "espn:401900290"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146010,7 +146062,8 @@
       "homeTeamId": "20397",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_97249e737649365759028a7f"
+      "eventId": "evt_97249e737649365759028a7f",
+      "providerEventId": "espn:401901077"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146028,7 +146081,8 @@
       "homeTeamId": "20355",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_cf5045846ababe7bc74c9d8d"
+      "eventId": "evt_cf5045846ababe7bc74c9d8d",
+      "providerEventId": "espn:401886637"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146046,7 +146100,8 @@
       "homeTeamId": "20424",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_eb59e92b2f4cafba2c15e44b"
+      "eventId": "evt_eb59e92b2f4cafba2c15e44b",
+      "providerEventId": "espn:401886235"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146064,7 +146119,8 @@
       "homeTeamId": "20569",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_c22ce35606d449d046e07b6a"
+      "eventId": "evt_c22ce35606d449d046e07b6a",
+      "providerEventId": "espn:401887622"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146082,7 +146138,8 @@
       "homeTeamId": "20605",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_71fd6a27cf94759efc830cca"
+      "eventId": "evt_71fd6a27cf94759efc830cca",
+      "providerEventId": "espn:401898777"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146100,7 +146157,8 @@
       "homeTeamId": "20402",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4e3199f4f83ba4a10e739465"
+      "eventId": "evt_4e3199f4f83ba4a10e739465",
+      "providerEventId": "espn:401886828"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146118,7 +146176,8 @@
       "homeTeamId": "20322",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_3f45f291999ada91f7d8e287"
+      "eventId": "evt_3f45f291999ada91f7d8e287",
+      "providerEventId": "espn:401901470"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146136,7 +146195,8 @@
       "homeTeamId": "20345",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_6bac64ac341a77a8938d9905"
+      "eventId": "evt_6bac64ac341a77a8938d9905",
+      "providerEventId": "espn:401889961"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146154,7 +146214,8 @@
       "homeTeamId": "20578",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_dbf213c1df18afb8701ffea1"
+      "eventId": "evt_dbf213c1df18afb8701ffea1",
+      "providerEventId": "espn:401891385"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146172,7 +146233,8 @@
       "homeTeamId": "132484",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a220c90339464859c9d1914b"
+      "eventId": "evt_a220c90339464859c9d1914b",
+      "providerEventId": "espn:401900141"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146190,7 +146252,8 @@
       "homeTeamId": "131300",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_649e051878f6858878424fdc"
+      "eventId": "evt_649e051878f6858878424fdc",
+      "providerEventId": "espn:401914325"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146208,7 +146271,8 @@
       "homeTeamId": "20529",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0f6d50c7e7685c690d904713"
+      "eventId": "evt_0f6d50c7e7685c690d904713",
+      "providerEventId": "espn:401886272"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146226,7 +146290,8 @@
       "homeTeamId": "20348",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4200ccb07a53fe4de444593a"
+      "eventId": "evt_4200ccb07a53fe4de444593a",
+      "providerEventId": "espn:401900224"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146244,7 +146309,8 @@
       "homeTeamId": "20473",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_cba3f7878438c7203807bacf"
+      "eventId": "evt_cba3f7878438c7203807bacf",
+      "providerEventId": "espn:401886300"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146262,7 +146328,8 @@
       "homeTeamId": "20521",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_5447bd6b4adb763ba7f17c04"
+      "eventId": "evt_5447bd6b4adb763ba7f17c04",
+      "providerEventId": "espn:401900038"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146280,7 +146347,8 @@
       "homeTeamId": "20512",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_2e03d390fda2c4eeb02a30db"
+      "eventId": "evt_2e03d390fda2c4eeb02a30db",
+      "providerEventId": "espn:401887362"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146298,7 +146366,8 @@
       "homeTeamId": "20458",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_61e66f49d23ac25452415b2d"
+      "eventId": "evt_61e66f49d23ac25452415b2d",
+      "providerEventId": "espn:401887606"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146316,7 +146385,8 @@
       "homeTeamId": "20415",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_26f4d378b84e60365921c9b8"
+      "eventId": "evt_26f4d378b84e60365921c9b8",
+      "providerEventId": "espn:401901151"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146334,7 +146404,8 @@
       "homeTeamId": "20583",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a4dc01b87d2c63cb393c07f9"
+      "eventId": "evt_a4dc01b87d2c63cb393c07f9",
+      "providerEventId": "espn:401889658"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146352,7 +146423,8 @@
       "homeTeamId": "20616",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a71af9cc185324978a3a4f42"
+      "eventId": "evt_a71af9cc185324978a3a4f42",
+      "providerEventId": "espn:401886781"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146370,7 +146442,8 @@
       "homeTeamId": "20390",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_9c7cdb64ef9ca96ae5e020bc"
+      "eventId": "evt_9c7cdb64ef9ca96ae5e020bc",
+      "providerEventId": "espn:401887652"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146388,7 +146461,8 @@
       "homeTeamId": "20537",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_1d77fe627450a28f61e37f26"
+      "eventId": "evt_1d77fe627450a28f61e37f26",
+      "providerEventId": "espn:401891351"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146406,7 +146480,8 @@
       "homeTeamId": "20636",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_83baf6313995e270d96a7d3e"
+      "eventId": "evt_83baf6313995e270d96a7d3e",
+      "providerEventId": "espn:401897216"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146424,7 +146499,8 @@
       "homeTeamId": "20562",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f52a467d1d083441d72286e8"
+      "eventId": "evt_f52a467d1d083441d72286e8",
+      "providerEventId": "espn:401889575"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146442,7 +146518,8 @@
       "homeTeamId": "20362",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_753651840a39d6c2fa77f548"
+      "eventId": "evt_753651840a39d6c2fa77f548",
+      "providerEventId": "espn:401889718"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146460,7 +146537,8 @@
       "homeTeamId": "20482",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_1ee6160f78b60090b963d4a1"
+      "eventId": "evt_1ee6160f78b60090b963d4a1",
+      "providerEventId": "espn:401889614"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146478,7 +146556,8 @@
       "homeTeamId": "20358",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a773c3774598a9e2b627a44f"
+      "eventId": "evt_a773c3774598a9e2b627a44f",
+      "providerEventId": "espn:401886840"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146496,7 +146575,8 @@
       "homeTeamId": "20364",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0be7daea33dc874509d26cb6"
+      "eventId": "evt_0be7daea33dc874509d26cb6",
+      "providerEventId": "espn:401886580"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146514,7 +146594,8 @@
       "homeTeamId": "20499",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f61e10002a3741c7f5aacdb9"
+      "eventId": "evt_f61e10002a3741c7f5aacdb9",
+      "providerEventId": "espn:401885814"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146532,7 +146613,8 @@
       "homeTeamId": "20532",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_ef748ee0e5ffc80dfdcc9371"
+      "eventId": "evt_ef748ee0e5ffc80dfdcc9371",
+      "providerEventId": "espn:401885827"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146550,7 +146632,8 @@
       "homeTeamId": "20417",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8b079aa213ef91fcc6737966"
+      "eventId": "evt_8b079aa213ef91fcc6737966",
+      "providerEventId": "espn:401887281"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146568,7 +146651,8 @@
       "homeTeamId": "20596",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_820019dcf855b6da9e24b3a6"
+      "eventId": "evt_820019dcf855b6da9e24b3a6",
+      "providerEventId": "espn:401887595"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146586,7 +146670,8 @@
       "homeTeamId": "20600",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4d2e449da8a4eb031936447d"
+      "eventId": "evt_4d2e449da8a4eb031936447d",
+      "providerEventId": "espn:401887254"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146604,7 +146689,8 @@
       "homeTeamId": "20432",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d5cde82c712d26324bb01ace"
+      "eventId": "evt_d5cde82c712d26324bb01ace",
+      "providerEventId": "espn:401897574"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146622,7 +146708,8 @@
       "homeTeamId": "20430",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_fc8e2431b7771f58e2de578e"
+      "eventId": "evt_fc8e2431b7771f58e2de578e",
+      "providerEventId": "espn:401889736"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146640,7 +146727,8 @@
       "homeTeamId": "20419",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_867ce1fdc3a352f9bbf40d14"
+      "eventId": "evt_867ce1fdc3a352f9bbf40d14",
+      "providerEventId": "espn:401887392"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146658,7 +146746,8 @@
       "homeTeamId": "20601",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_1a5ddb3a077aecf21d095b2e"
+      "eventId": "evt_1a5ddb3a077aecf21d095b2e",
+      "providerEventId": "espn:401886754"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146676,7 +146765,8 @@
       "homeTeamId": "20373",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_10413932bddb3efeb6fdcc80"
+      "eventId": "evt_10413932bddb3efeb6fdcc80",
+      "providerEventId": "espn:401889605"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146694,7 +146784,8 @@
       "homeTeamId": "20353",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8a5942b7397c7880d9e091f4"
+      "eventId": "evt_8a5942b7397c7880d9e091f4",
+      "providerEventId": "espn:401897260"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146712,7 +146803,8 @@
       "homeTeamId": "20414",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_b5d5aac3db72ee7e34ca3658"
+      "eventId": "evt_b5d5aac3db72ee7e34ca3658",
+      "providerEventId": "espn:401889884"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146730,7 +146822,8 @@
       "homeTeamId": "20406",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_70451a16a8fa8405d9619d3c"
+      "eventId": "evt_70451a16a8fa8405d9619d3c",
+      "providerEventId": "espn:401901036"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146748,7 +146841,8 @@
       "homeTeamId": "20429",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0af9bab6317ff4a40efe3760"
+      "eventId": "evt_0af9bab6317ff4a40efe3760",
+      "providerEventId": "espn:401900231"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146766,7 +146860,8 @@
       "homeTeamId": "20463",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_45a102513300cbb36c5a9ac3"
+      "eventId": "evt_45a102513300cbb36c5a9ac3",
+      "providerEventId": "espn:401889516"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146784,7 +146879,8 @@
       "homeTeamId": "20443",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_6609e09b55632f9d061118f8"
+      "eventId": "evt_6609e09b55632f9d061118f8",
+      "providerEventId": "espn:401889501"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146802,7 +146898,8 @@
       "homeTeamId": "20311",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f5755bd1e5557cf8fe364811"
+      "eventId": "evt_f5755bd1e5557cf8fe364811",
+      "providerEventId": "espn:401900237"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146820,7 +146917,8 @@
       "homeTeamId": "20572",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_eaa8c872e8655477111b5475"
+      "eventId": "evt_eaa8c872e8655477111b5475",
+      "providerEventId": "espn:401889979"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146838,7 +146936,8 @@
       "homeTeamId": "20444",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_3d3e87c2ce28ed6c9ea56619"
+      "eventId": "evt_3d3e87c2ce28ed6c9ea56619",
+      "providerEventId": "espn:401885525"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146856,7 +146955,8 @@
       "homeTeamId": "20556",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d5730b3cf8e0cbddd084d215"
+      "eventId": "evt_d5730b3cf8e0cbddd084d215",
+      "providerEventId": "espn:401886795"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146874,7 +146974,8 @@
       "homeTeamId": "20489",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_876aaac9a69c815965e12e56"
+      "eventId": "evt_876aaac9a69c815965e12e56",
+      "providerEventId": "espn:401899732"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146892,7 +146993,8 @@
       "homeTeamId": "20617",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_190fce76897d6ec5f1791936"
+      "eventId": "evt_190fce76897d6ec5f1791936",
+      "providerEventId": "espn:401889692"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146910,7 +147012,8 @@
       "homeTeamId": "20438",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_3189142c6e24c8b24b56aa3f"
+      "eventId": "evt_3189142c6e24c8b24b56aa3f",
+      "providerEventId": "espn:401900021"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146928,7 +147031,8 @@
       "homeTeamId": "20566",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a5e3b4fef5b004c1c211bbbe"
+      "eventId": "evt_a5e3b4fef5b004c1c211bbbe",
+      "providerEventId": "espn:401891367"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146946,7 +147050,8 @@
       "homeTeamId": "20341",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4c0145c6de0a031ef7008e85"
+      "eventId": "evt_4c0145c6de0a031ef7008e85",
+      "providerEventId": "espn:401883733"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146964,7 +147069,8 @@
       "homeTeamId": "20502",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_e149d9bb3cd03f06d68933e0"
+      "eventId": "evt_e149d9bb3cd03f06d68933e0",
+      "providerEventId": "espn:401890291"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -146982,7 +147088,8 @@
       "homeTeamId": "20459",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_052437505744df2e73c14d33"
+      "eventId": "evt_052437505744df2e73c14d33",
+      "providerEventId": "espn:401883751"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147000,7 +147107,8 @@
       "homeTeamId": "19313",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_00cbf0b2d1fd9b4b27c92ac7"
+      "eventId": "evt_00cbf0b2d1fd9b4b27c92ac7",
+      "providerEventId": "espn:401884316"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147018,7 +147126,8 @@
       "homeTeamId": "20328",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d726abd4a093ac219cc99866"
+      "eventId": "evt_d726abd4a093ac219cc99866",
+      "providerEventId": "espn:401883766"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147036,7 +147145,8 @@
       "homeTeamId": "20477",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_630838df845dfe604499e54b"
+      "eventId": "evt_630838df845dfe604499e54b",
+      "providerEventId": "espn:401897352"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147054,7 +147164,8 @@
       "homeTeamId": "20633",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_53fa680e098ca61cb5cffc55"
+      "eventId": "evt_53fa680e098ca61cb5cffc55",
+      "providerEventId": "espn:401890233"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147072,7 +147183,8 @@
       "homeTeamId": "20372",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a08fd1df5401af4341a3dc55"
+      "eventId": "evt_a08fd1df5401af4341a3dc55",
+      "providerEventId": "espn:401887085"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147090,7 +147202,8 @@
       "homeTeamId": "20420",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f26b258c059b5f5ce2e521e5"
+      "eventId": "evt_f26b258c059b5f5ce2e521e5",
+      "providerEventId": "espn:401889971"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147108,7 +147221,8 @@
       "homeTeamId": "20453",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f186270c551ca9b2137fa561"
+      "eventId": "evt_f186270c551ca9b2137fa561",
+      "providerEventId": "espn:401887314"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147126,7 +147240,8 @@
       "homeTeamId": "20412",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_7f1a21cdf8293da2d152d89d"
+      "eventId": "evt_7f1a21cdf8293da2d152d89d",
+      "providerEventId": "espn:401887971"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147144,7 +147259,8 @@
       "homeTeamId": "20641",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8ebb3e56cfa6a133bb130b90"
+      "eventId": "evt_8ebb3e56cfa6a133bb130b90",
+      "providerEventId": "espn:401897555"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147162,7 +147278,8 @@
       "homeTeamId": "20336",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_dc21b6a7c91c95e95b3e965a"
+      "eventId": "evt_dc21b6a7c91c95e95b3e965a",
+      "providerEventId": "espn:401886473"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147180,7 +147297,8 @@
       "homeTeamId": "20642",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_ed7ef94f9411e95baea844b0"
+      "eventId": "evt_ed7ef94f9411e95baea844b0",
+      "providerEventId": "espn:401887267"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147216,7 +147334,8 @@
       "homeTeamId": "20465",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_7627d4f1df234d360de08339"
+      "eventId": "evt_7627d4f1df234d360de08339",
+      "providerEventId": "espn:401883643"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147234,7 +147353,8 @@
       "homeTeamId": "20361",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_fad2ada81f54170b517b90d4"
+      "eventId": "evt_fad2ada81f54170b517b90d4",
+      "providerEventId": "espn:401889479"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147252,7 +147372,8 @@
       "homeTeamId": "20574",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_5309d40e110eda258f89dcc9"
+      "eventId": "evt_5309d40e110eda258f89dcc9",
+      "providerEventId": "espn:401889534"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147270,7 +147391,8 @@
       "homeTeamId": "20435",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4fb53af039ad8e84e6525f4f"
+      "eventId": "evt_4fb53af039ad8e84e6525f4f",
+      "providerEventId": "espn:401886463"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147288,7 +147410,8 @@
       "homeTeamId": "20427",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_426c58d62f636f96fedf1ea5"
+      "eventId": "evt_426c58d62f636f96fedf1ea5",
+      "providerEventId": "espn:401885839"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147306,7 +147429,8 @@
       "homeTeamId": "20323",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_34795bde6fe7d4cd8c8315e8"
+      "eventId": "evt_34795bde6fe7d4cd8c8315e8",
+      "providerEventId": "espn:401883973"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147324,7 +147448,8 @@
       "homeTeamId": "20331",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_211f45ec591ab298a523a9eb"
+      "eventId": "evt_211f45ec591ab298a523a9eb",
+      "providerEventId": "espn:401883984"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147342,7 +147467,8 @@
       "homeTeamId": "20442",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_00c0e2f6f4647e40f9d1efd0"
+      "eventId": "evt_00c0e2f6f4647e40f9d1efd0",
+      "providerEventId": "espn:401897187"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147360,7 +147486,8 @@
       "homeTeamId": "20524",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a539566fa86d5f811cc832ce"
+      "eventId": "evt_a539566fa86d5f811cc832ce",
+      "providerEventId": "espn:401883585"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147378,7 +147505,8 @@
       "homeTeamId": "21654",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8f44b289d09e73adbf9a0b58"
+      "eventId": "evt_8f44b289d09e73adbf9a0b58",
+      "providerEventId": "espn:401889621"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147396,7 +147524,8 @@
       "homeTeamId": "122813",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_58aa8ff25f3e7974e1b076cd"
+      "eventId": "evt_58aa8ff25f3e7974e1b076cd",
+      "providerEventId": "espn:401889676"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147414,7 +147543,8 @@
       "homeTeamId": "20525",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0c00dd791ed74a1cdddd25ed"
+      "eventId": "evt_0c00dd791ed74a1cdddd25ed",
+      "providerEventId": "espn:401883699"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147432,7 +147562,8 @@
       "homeTeamId": "20535",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_2989cbd0ec92002fd9a88d7f"
+      "eventId": "evt_2989cbd0ec92002fd9a88d7f",
+      "providerEventId": "espn:401887040"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147450,7 +147581,8 @@
       "homeTeamId": "20494",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8b7d84be18e74f3e414bc0b5"
+      "eventId": "evt_8b7d84be18e74f3e414bc0b5",
+      "providerEventId": "espn:401887051"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147468,7 +147600,8 @@
       "homeTeamId": "20618",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d98fe473c8594d59325fef71"
+      "eventId": "evt_d98fe473c8594d59325fef71",
+      "providerEventId": "espn:401889708"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147486,7 +147619,8 @@
       "homeTeamId": "20536",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_ed2c72ab7310a422fa4e6746"
+      "eventId": "evt_ed2c72ab7310a422fa4e6746",
+      "providerEventId": "espn:401885855"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147504,7 +147638,8 @@
       "homeTeamId": "20394",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_00f65eba682eec4756311d02"
+      "eventId": "evt_00f65eba682eec4756311d02",
+      "providerEventId": "espn:401887026"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147522,7 +147657,8 @@
       "homeTeamId": "20563",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_664af2c93a18944985e074e8"
+      "eventId": "evt_664af2c93a18944985e074e8",
+      "providerEventId": "espn:401897622"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147540,7 +147676,8 @@
       "homeTeamId": "20546",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a38ab5cf3c2b45f323fd85c7"
+      "eventId": "evt_a38ab5cf3c2b45f323fd85c7",
+      "providerEventId": "espn:401885871"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147558,7 +147695,8 @@
       "homeTeamId": "20501",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_327104cb019faaa3bca43eb6"
+      "eventId": "evt_327104cb019faaa3bca43eb6",
+      "providerEventId": "espn:401887072"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147576,7 +147714,8 @@
       "homeTeamId": "20509",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_02d566c1d103d421673bc589"
+      "eventId": "evt_02d566c1d103d421673bc589",
+      "providerEventId": "espn:401885924"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147594,7 +147733,8 @@
       "homeTeamId": "20624",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_a893c7e4cc0b55a0fd99e0e6"
+      "eventId": "evt_a893c7e4cc0b55a0fd99e0e6",
+      "providerEventId": "espn:401890308"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147612,7 +147752,8 @@
       "homeTeamId": "20445",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_7cd654b0323b38c87e7bbb26"
+      "eventId": "evt_7cd654b0323b38c87e7bbb26",
+      "providerEventId": "espn:401887352"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147630,7 +147771,8 @@
       "homeTeamId": "20567",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_c7579c4c8e01f20b887b431d"
+      "eventId": "evt_c7579c4c8e01f20b887b431d",
+      "providerEventId": "espn:401900311"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147648,7 +147790,8 @@
       "homeTeamId": "20327",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_59054bf81a03bd598ac57648"
+      "eventId": "evt_59054bf81a03bd598ac57648",
+      "providerEventId": "espn:401889835"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147666,7 +147809,8 @@
       "homeTeamId": "20634",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_43c43af55cc0945b90263d42"
+      "eventId": "evt_43c43af55cc0945b90263d42",
+      "providerEventId": "espn:401900175"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147684,7 +147828,8 @@
       "homeTeamId": "20635",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d539940e72d492211277f973"
+      "eventId": "evt_d539940e72d492211277f973",
+      "providerEventId": "espn:401890180"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147702,7 +147847,8 @@
       "homeTeamId": "21101",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8d38c40ea6181785136ca3b4"
+      "eventId": "evt_8d38c40ea6181785136ca3b4",
+      "providerEventId": "espn:401900535"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147720,7 +147866,8 @@
       "homeTeamId": "126601",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_d7c93d277f811202be46e7bd"
+      "eventId": "evt_d7c93d277f811202be46e7bd",
+      "providerEventId": "espn:401890327"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147738,7 +147885,8 @@
       "homeTeamId": "20491",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4fe9739a2393a08b4b8118bc"
+      "eventId": "evt_4fe9739a2393a08b4b8118bc",
+      "providerEventId": "espn:401886491"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147756,7 +147904,8 @@
       "homeTeamId": "20319",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_369b93f10a32afb509a33163"
+      "eventId": "evt_369b93f10a32afb509a33163",
+      "providerEventId": "espn:401888016"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147774,7 +147923,8 @@
       "homeTeamId": "20395",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_2ad3dc592a7f396354e64365"
+      "eventId": "evt_2ad3dc592a7f396354e64365",
+      "providerEventId": "espn:401885785"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147792,7 +147942,8 @@
       "homeTeamId": "20589",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_09323d73e1379de31bd7a5c9"
+      "eventId": "evt_09323d73e1379de31bd7a5c9",
+      "providerEventId": "espn:401890190"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147810,7 +147961,8 @@
       "homeTeamId": "20638",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_c04657e158617eff43dc64ee"
+      "eventId": "evt_c04657e158617eff43dc64ee",
+      "providerEventId": "espn:401896616"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147828,7 +147980,8 @@
       "homeTeamId": "20370",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_37f9b08f765bf2764f36a004"
+      "eventId": "evt_37f9b08f765bf2764f36a004",
+      "providerEventId": "espn:401886506"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147846,7 +147999,8 @@
       "homeTeamId": "20644",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_8ad9a422a7106e82ffc4284e"
+      "eventId": "evt_8ad9a422a7106e82ffc4284e",
+      "providerEventId": "espn:401900349"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147864,7 +148018,8 @@
       "homeTeamId": "20531",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_7dd4993ddb0405e9044ad288"
+      "eventId": "evt_7dd4993ddb0405e9044ad288",
+      "providerEventId": "espn:401890382"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147882,7 +148037,8 @@
       "homeTeamId": "20340",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_256f553a28993b1d64373a7d"
+      "eventId": "evt_256f553a28993b1d64373a7d",
+      "providerEventId": "espn:401897455"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147900,7 +148056,8 @@
       "homeTeamId": "20528",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_53797e6c83ba1ec0ac0ad9a0"
+      "eventId": "evt_53797e6c83ba1ec0ac0ad9a0",
+      "providerEventId": "espn:401887018"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147918,7 +148075,8 @@
       "homeTeamId": "20585",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_84a568f10fbbf96a6aa90c98"
+      "eventId": "evt_84a568f10fbbf96a6aa90c98",
+      "providerEventId": "espn:401900033"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147936,7 +148094,8 @@
       "homeTeamId": "20538",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_f0021447885c6918427c6593"
+      "eventId": "evt_f0021447885c6918427c6593",
+      "providerEventId": "espn:401884069"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147954,7 +148113,8 @@
       "homeTeamId": "20547",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_19de17f3e4bec4dd1316ea46"
+      "eventId": "evt_19de17f3e4bec4dd1316ea46",
+      "providerEventId": "espn:401896582"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147972,7 +148132,8 @@
       "homeTeamId": "20516",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0a68c594480f2b96edf8c967"
+      "eventId": "evt_0a68c594480f2b96edf8c967",
+      "providerEventId": "espn:401890397"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -147990,7 +148151,8 @@
       "homeTeamId": "20558",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_505354269c40ec4dddf427d6"
+      "eventId": "evt_505354269c40ec4dddf427d6",
+      "providerEventId": "espn:401897246"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148008,7 +148170,8 @@
       "homeTeamId": "20503",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_b970302585e867cdb59727c7"
+      "eventId": "evt_b970302585e867cdb59727c7",
+      "providerEventId": "espn:401886944"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148026,7 +148189,8 @@
       "homeTeamId": "20586",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_010f3d3db572e63362cd8fd4"
+      "eventId": "evt_010f3d3db572e63362cd8fd4",
+      "providerEventId": "espn:401890273"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148044,7 +148208,8 @@
       "homeTeamId": "20388",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_4d8a8a52fe4743f2a1d51ad3"
+      "eventId": "evt_4d8a8a52fe4743f2a1d51ad3",
+      "providerEventId": "espn:401897468"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148062,7 +148227,8 @@
       "homeTeamId": "21551",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_b2967a72fa4594999d735675"
+      "eventId": "evt_b2967a72fa4594999d735675",
+      "providerEventId": "espn:401897480"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148080,7 +148246,8 @@
       "homeTeamId": "20515",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_578a83b73c7781ce40848cb6"
+      "eventId": "evt_578a83b73c7781ce40848cb6",
+      "providerEventId": "espn:401890413"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148098,7 +148265,8 @@
       "homeTeamId": "20530",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_723c7c4a65cbc399eb282c63"
+      "eventId": "evt_723c7c4a65cbc399eb282c63",
+      "providerEventId": "espn:401897641"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148116,7 +148284,8 @@
       "homeTeamId": "20534",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_0328eeee2470909604c94699"
+      "eventId": "evt_0328eeee2470909604c94699",
+      "providerEventId": "espn:401891474"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148134,7 +148303,8 @@
       "homeTeamId": "20387",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_2383fb2c4050eb36d44e2175"
+      "eventId": "evt_2383fb2c4050eb36d44e2175",
+      "providerEventId": "espn:401891424"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148152,7 +148322,8 @@
       "homeTeamId": "20500",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_2411e737ec8b669fc1fc5796"
+      "eventId": "evt_2411e737ec8b669fc1fc5796",
+      "providerEventId": "espn:401891440"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148170,7 +148341,8 @@
       "homeTeamId": "20396",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_cbb83b92575e5fa6766675c0"
+      "eventId": "evt_cbb83b92575e5fa6766675c0",
+      "providerEventId": "espn:401884151"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -148188,7 +148360,8 @@
       "homeTeamId": "20342",
       "leagueArt": "",
       "eventType": "team_game",
-      "eventId": "evt_1ec228e99422f8469c170be9"
+      "eventId": "evt_1ec228e99422f8469c170be9",
+      "providerEventId": "espn:401897550"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -277716,6 +277889,17 @@
       "awayLogo": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
       "homeLogo": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
       "eventId": "evt_d850e9f20227017d74bd6d82"
+    },
+    {
+      "league": "NCAA VB",
+      "title": "Incarnate Word @ UTSA",
+      "start": "2026-09-03T16:00:00Z",
+      "tag": "LIVE",
+      "icon": "•",
+      "source": "espn",
+      "sourceDetail": "ESPN live-status reconciliation",
+      "eventId": "evt_985e53606bf5c02715656b52",
+      "providerEventId": "espn:401887340"
     }
   ],
   "repairReport": {
@@ -277747,7 +277931,17 @@
     },
     "ncaaLogoAliasesApplied": 0,
     "finalDuplicateEventsRemoved": 0,
-    "adapterTimestampsNormalized": 0
+    "adapterTimestampsNormalized": 0,
+    "liveStatusReconciled": 4,
+    "liveEventsAdded": 1,
+    "liveProviderFailures": 5,
+    "liveFailedProviders": [
+      "NCAA SOFTBALL:2026-09-03",
+      "FIVB Men:2026-09-03",
+      "FIVB Women:2026-09-03",
+      "ICC T20:2026-09-03",
+      "IPL:2026-09-03"
+    ]
   },
   "officialApiAdapterReport": {
     "ncaa": {

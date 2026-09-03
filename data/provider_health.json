@@ -1,0 +1,333 @@
+{
+  "schema": 1,
+  "providers": {
+    "espn:AFL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 4,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:ATP": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 5,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:Bundesliga": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 27,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:CFL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:EPL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 30,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:F1": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 4,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:FIVB Men": {
+      "consecutiveFailures": 1,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "degraded",
+      "lastFailureAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:FIVB Women": {
+      "consecutiveFailures": 1,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "degraded",
+      "lastFailureAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:ICC T20": {
+      "consecutiveFailures": 1,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "degraded",
+      "lastFailureAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:IPL": {
+      "consecutiveFailures": 1,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 74,
+      "status": "degraded",
+      "lastFailureAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:IndyCar": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 1,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:LIV Golf": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:LPGA": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 3,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:LaLiga": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 40,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:Ligue 1": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 27,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:MLB": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 2840,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:MLS": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 76,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NASCAR Cup": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 4,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NBA": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 1270,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA BASEBALL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA BB": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA FB": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 1280,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA MEN HOCKEY": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA MEN LAX": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA Men Soccer": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA SOFTBALL": {
+      "consecutiveFailures": 1,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "degraded",
+      "lastFailureAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA VB": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 1,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA WBB": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA WOMEN HOCKEY": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA WOMEN LAX": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NCAA Women Soccer": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NFL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 17,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NHL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 99,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NLL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NRL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 8,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:NWSL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:PGA": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 3,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:PLL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 5,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:Serie A": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 30,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:UCL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 18,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:UEL": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 0,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:UFC": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 9,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:WNBA": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 30,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "espn:WTA": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 17,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    },
+    "mlb:stats-api": {
+      "consecutiveFailures": 0,
+      "checkedAt": "2026-09-03T16:22:03.749354Z",
+      "eventsInFeed": 2840,
+      "status": "healthy",
+      "lastSuccessAt": "2026-09-03T16:22:03.749354Z"
+    }
+  },
+  "updatedAt": "2026-09-03T16:22:03.749354Z",
+  "lastLiveReconciliation": {
+    "statusUpdates": 4,
+    "eventsAdded": 1,
+    "providerFailures": 5,
+    "failedProviders": [
+      "FIVB Men:2026-09-03",
+      "FIVB Women:2026-09-03",
+      "ICC T20:2026-09-03",
+      "IPL:2026-09-03",
+      "NCAA SOFTBALL:2026-09-03"
+    ]
+  }
+}
