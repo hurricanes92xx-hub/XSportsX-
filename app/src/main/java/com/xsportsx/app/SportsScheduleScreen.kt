@@ -25,38 +25,22 @@ import kotlinx.coroutines.launch
 @Composable
 fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEvent: (SportsEvent) -> Unit) {
     val scope = rememberCoroutineScope()
-    var events by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
+    val engineState by ScheduleEngine.state.collectAsState()
     var filter by remember { mutableStateOf("ALL") }
     var leagueFilter by remember { mutableStateOf(initialLeague ?: "ALL") }
 
-    fun refresh(force: Boolean = false) {
-        scope.launch {
-            loading = true
-            error = null
-            runCatching {
-                val upcoming = ScheduleSnapshotRepository.upcoming(if (leagueFilter == "ALL") null else leagueFilter, force)
-                val live = ScheduleSnapshotRepository.live(force)
-                (upcoming + live).distinctBy { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" }
-            }
-                .onSuccess { events = it }
-                .onFailure { error = it.message ?: "Unable to load schedules" }
-            loading = false
-        }
-    }
+    LaunchedEffect(Unit) { ScheduleEngine.start() }
+    LaunchedEffect(initialLeague) { leagueFilter = initialLeague ?: "ALL" }
 
-    LaunchedEffect(initialLeague) {
-        leagueFilter = initialLeague ?: "ALL"
-        refresh(false)
-    }
-
+    val events = engineState.events
     val statusVisible = when (filter) {
-        "LIVE" -> events.filter { it.isLive }
+        "LIVE" -> engineState.liveEvents
         "UPCOMING" -> events.filter { !it.isLive && (it.isUpcoming || it.isPregame()) }
         else -> events
     }
-    val visible = if (leagueFilter == "ALL") statusVisible else statusVisible.filter { SportsScheduleService.canonicalLeagueFor(it.league) == SportsScheduleService.canonicalLeagueFor(leagueFilter) }
+    val visible = if (leagueFilter == "ALL") statusVisible else statusVisible.filter {
+        SportsScheduleService.canonicalLeagueFor(it.league) == SportsScheduleService.canonicalLeagueFor(leagueFilter)
+    }
     val leagueChoices = listOf("ALL") + SportsScheduleService.uiLeagueChoices + listOf("WWE", "AEW", "TNA", "Monster Jam")
         .distinctBy { SportsScheduleService.canonicalLeagueFor(it) }
 
@@ -68,7 +52,7 @@ fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEv
                 Text(if (leagueFilter == "ALL") "LIVE + UPCOMING" else SportsScheduleService.canonicalLeagueFor(leagueFilter), color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Black)
                 Text(if (leagueFilter == "ALL") "Sports schedule • NEXT 3 DAYS" else "${SportsScheduleService.canonicalLeagueFor(leagueFilter)} • NEXT 3 DAYS", color = Color(0xFF858B98), fontSize = 12.sp)
             }
-            TextButton(onClick = { refresh(true) }) { Text("REFRESH") }
+            TextButton(enabled = !engineState.refreshing, onClick = { scope.launch { ScheduleEngine.refreshNow() } }) { Text("REFRESH") }
         }
         Row(Modifier.padding(horizontal = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf("ALL", "LIVE", "UPCOMING").forEach { value -> FilterChip(selected = filter == value, onClick = { filter = value }, label = { Text(value) }) }
@@ -81,14 +65,14 @@ fun SportsScheduleScreen(initialLeague: String? = null, onBack: () -> Unit, onEv
             items(leagueChoices) { league ->
                 FilterChip(
                     selected = leagueFilter.equals(league, true),
-                    onClick = { leagueFilter = league; refresh(false) },
+                    onClick = { leagueFilter = league },
                     label = { Text(league) }
                 )
             }
         }
         when {
-            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
-            error != null -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black); Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White); Spacer(Modifier.height(12.dp)); TextButton(onClick = { refresh(true) }) { Text("TRY AGAIN") } } }
+            engineState.loading && events.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
+            engineState.error != null && events.isEmpty() -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("SCHEDULE ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black); Spacer(Modifier.height(8.dp)); Text(engineState.error!!, color = Color.White); Spacer(Modifier.height(12.dp)); TextButton(onClick = { scope.launch { ScheduleEngine.refreshNow() } }) { Text("TRY AGAIN") } } }
             visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (filter == "LIVE") "Nothing live right now" else if (leagueFilter == "ALL") "No events found" else "No ${SportsScheduleService.canonicalLeagueFor(leagueFilter)} events found in the next 3 days", color = Color(0xFF858B98)) }
             else -> LazyColumn(contentPadding = PaddingValues(28.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) { items(visible, key = { it.id.ifBlank { "${it.league}|${it.home}|${it.away}|${it.startUtc}" } }) { event -> ScheduleEventCard(event) { onEvent(event) } } }
         }
