@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
-"""Free TheSportsDB schedule fallback.
-
-This adapter intentionally uses only the public V1 API and demo key ``123``.
-It is a low-pressure fallback after primary providers fail; it is not a live
-score authority and does not require a secret or Premium subscription.
-"""
+"""TheSportsDB schedule provider for leagues without a healthy primary API."""
 import json
 import urllib.request
 from datetime import datetime, timezone
 
 BASE_V1 = "https://www.thesportsdb.com/api/v1/json/123"
 
+# Only use this adapter for leagues where it is a deliberate alternate source.
 LEAGUE_MAP = {
     "EPL": 4328, "LaLiga": 4335, "Serie A": 4332, "Bundesliga": 4331,
     "Ligue 1": 4334, "MLS": 4346, "NBA": 4387, "NHL": 4380,
     "NFL": 4391, "MLB": 4424, "UFC": 4442,
+    "ATP": 4464,
+    "IPL": 4460,
+    "ICC T20": 5103,
+    "FIVB Men": 5083,
+    "FIVB Women": 5084,
 }
 SPORTDB_LEAGUES = set(LEAGUE_MAP)
 
 
 def _request(url, timeout=8):
-    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX-Schedule/2.2", "Accept": "application/json"})
+    req = urllib.request.Request(url, headers={"User-Agent": "XSportsX-Schedule/4.0", "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.read()
 
@@ -74,7 +75,6 @@ def _normalize_event(item, league):
 
 
 def fetch_league(league, season=None):
-    """Fetch the next available league events using only free V1."""
     if league not in SPORTDB_LEAGUES:
         return []
     try:
@@ -82,7 +82,7 @@ def fetch_league(league, season=None):
         root = json.loads(_request(f"{BASE_V1}/eventsnextleague.php?id={league_id}"))
         return [event for event in (_normalize_event(x, league) for x in (root.get("events") or [])) if event]
     except Exception as exc:
-        print(f"ERROR SportsDB free fallback {league}: {exc}")
+        print(f"ERROR SportsDB alternate {league}: {exc}")
         return []
 
 
