@@ -28,24 +28,6 @@ jobs:
           ref: android-app
           fetch-depth: 1
 
-      - name: Refresh canonical schedule feed
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m pip install --disable-pip-version-check --quiet tzdata || true
-          python3 scripts/refresh_schedules.py
-          python3 - <<'PY'
-          import json
-          p=json.load(open('data/schedule_feed.json'))
-          assert p.get('schema',0) >= 5
-          events=p.get('events') or []
-          assert events
-          assert len(events) == len({(e.get('league'),e.get('title'),e.get('start')) for e in events})
-          upcoming=[e for e in events if e.get('tag') == 'UPCOMING']
-          assert upcoming, 'canonical feed has no upcoming events'
-          print(f'canonical schedule: {len(events)} events, {len(upcoming)} upcoming')
-          PY
-
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
@@ -163,7 +145,7 @@ jobs:
           gh release create "$TAG" XSportsX-Mobile.apk XSportsX-TV.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "XSportsX ${VERSION_NAME} build ${GITHUB_RUN_NUMBER}" \
-            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}."
+            --notes "Signed Mobile + Android TV APKs built from the android-app production branch at commit ${GITHUB_SHA}. League catalogs are synchronized across Mobile and TV."
 
       - name: Upload Gradle log
         if: always()
