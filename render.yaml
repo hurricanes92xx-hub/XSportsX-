@@ -15,8 +15,6 @@ services:
         sync: false
       - key: XTREAM_PASSWORD
         sync: false
-      - key: NCAA_API_BASE_URL
-        value: "https://ncaa-api.henrygd.me"
       - key: SCHEDULE_TTL_SECONDS
         value: "60"
       - key: XTREAM_TTL_SECONDS
