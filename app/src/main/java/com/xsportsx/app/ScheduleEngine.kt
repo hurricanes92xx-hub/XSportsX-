@@ -34,6 +34,9 @@ object ScheduleEngine {
     private val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
 
+    /** Canonical O(1)-style event lookup rebuilt atomically with engine state. */
+    val eventIndex = EventIndex()
+
     @Volatile private var started = false
     private var scheduleJob: Job? = null
     private var liveJob: Job? = null
@@ -78,17 +81,7 @@ object ScheduleEngine {
         )
 
         runCatching { ScheduleSnapshotRepository.all(force) }
-            .onSuccess { events ->
-                val current = mutableState.value
-                val merged = mergeLive(events, current.liveEvents)
-                mutableState.value = current.copy(
-                    events = merged,
-                    loading = false,
-                    refreshing = false,
-                    lastUpdatedMs = System.currentTimeMillis(),
-                    error = null
-                )
-            }
+            .onSuccess { events -> publish(events, mutableState.value.liveEvents) }
             .onFailure { failure ->
                 val current = mutableState.value
                 mutableState.value = current.copy(
@@ -101,15 +94,7 @@ object ScheduleEngine {
 
     private suspend fun refreshLive(force: Boolean) {
         runCatching { ScheduleSnapshotRepository.live(force) }
-            .onSuccess { live ->
-                val current = mutableState.value
-                mutableState.value = current.copy(
-                    events = mergeLive(current.events, live),
-                    liveEvents = live,
-                    lastUpdatedMs = System.currentTimeMillis(),
-                    error = if (current.events.isEmpty() && live.isEmpty()) current.error else null
-                )
-            }
+            .onSuccess { live -> publish(mutableState.value.events, live) }
             .onFailure { failure ->
                 val current = mutableState.value
                 if (current.liveEvents.isEmpty()) {
@@ -118,35 +103,44 @@ object ScheduleEngine {
             }
     }
 
+    /** Publish one canonical event collection and rebuild its identity index together. */
+    private fun publish(base: List<SportsEvent>, live: List<SportsEvent>) {
+        val merged = mergeLive(base, live)
+            .map { it.copy(id = EventIdentity.id(it)) }
+        val canonicalLive = merged.filter { it.isLive }
+        eventIndex.rebuild(merged)
+        val current = mutableState.value
+        mutableState.value = current.copy(
+            events = merged,
+            liveEvents = canonicalLive,
+            loading = false,
+            refreshing = false,
+            lastUpdatedMs = System.currentTimeMillis(),
+            error = null
+        )
+    }
+
     /** Overlay the hot live feed onto the warm schedule without duplicating events. */
     private fun mergeLive(base: List<SportsEvent>, live: List<SportsEvent>): List<SportsEvent> {
         if (live.isEmpty()) return base
         val liveById = live.filter { it.id.isNotBlank() }.associateBy { it.id }
-        val liveByFallback = live.associateBy { fallbackKey(it) }
+        val liveByKey = live.associateBy(EventIdentity::key)
         val seenLive = HashSet<String>()
 
         val merged = base.map { event ->
-            val replacement = liveById[event.id]?.also { seenLive.add(it.id) }
-                ?: liveByFallback[fallbackKey(event)]?.also { seenLive.add(it.id) }
+            val replacement = liveById[event.id]?.also { seenLive.add(EventIdentity.id(it)) }
+                ?: liveByKey[EventIdentity.key(event)]?.also { seenLive.add(EventIdentity.id(it)) }
             replacement ?: event
         }.toMutableList()
 
         live.forEach { event ->
-            val key = if (event.id.isNotBlank()) "id:${event.id}" else "key:${fallbackKey(event)}"
             val alreadyPresent = merged.any {
                 if (event.id.isNotBlank() && it.id.isNotBlank()) it.id == event.id
-                else fallbackKey(it) == fallbackKey(event)
+                else EventIdentity.key(it) == EventIdentity.key(event)
             }
-            if (!alreadyPresent && seenLive.add(key)) merged.add(event)
+            if (!alreadyPresent && seenLive.add(EventIdentity.id(event))) merged.add(event)
         }
 
         return merged.sortedWith(compareByDescending<SportsEvent> { it.isLive }.thenBy { it.startUtc })
     }
-
-    private fun fallbackKey(event: SportsEvent): String = listOf(
-        event.league.trim().uppercase(),
-        event.home.trim().uppercase(),
-        event.away.trim().uppercase(),
-        event.startUtc.take(16)
-    ).joinToString("|")
 }
