@@ -12,12 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-/**
- * Single runtime schedule engine shared by Mobile and TV.
- *
- * Schedule data is warm state; live state is hot state. UI code consumes this
- * engine instead of creating one-shot schedule requests of its own.
- */
+/** Single runtime schedule engine shared by Mobile and TV. */
 object ScheduleEngine {
     private const val LIVE_REFRESH_MS = 10_000L
     private const val SCHEDULE_REFRESH_MS = 5 * 60_000L
@@ -34,16 +29,12 @@ object ScheduleEngine {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
-
-    /** Canonical O(1)-style event lookup rebuilt atomically with engine state. */
     val eventIndex = EventIndex()
-
     @Volatile private var started = false
     private var scheduleJob: Job? = null
     private var liveJob: Job? = null
     @Volatile private var appContext: Context? = null
 
-    /** Start the shared schedule engine and enable background stream prewarming. */
     fun start(context: Context? = null) {
         context?.let { appContext = it.applicationContext }
         if (started) return
@@ -61,38 +52,23 @@ object ScheduleEngine {
     }
 
     private suspend fun scheduleLoop() {
-        refreshSchedule(force = false)
-        while (scope.isActive) {
-            delay(SCHEDULE_REFRESH_MS)
-            refreshSchedule(force = true)
-        }
+        refreshSchedule(false)
+        while (scope.isActive) { delay(SCHEDULE_REFRESH_MS); refreshSchedule(true) }
     }
 
     private suspend fun liveLoop() {
-        refreshLive(force = true)
-        while (scope.isActive) {
-            delay(LIVE_REFRESH_MS)
-            refreshLive(force = true)
-        }
+        refreshLive(true)
+        while (scope.isActive) { delay(LIVE_REFRESH_MS); refreshLive(true) }
     }
 
     private suspend fun refreshSchedule(force: Boolean) {
         val before = mutableState.value
-        mutableState.value = before.copy(
-            loading = before.events.isEmpty(),
-            refreshing = before.events.isNotEmpty(),
-            error = null
-        )
-
+        mutableState.value = before.copy(loading = before.events.isEmpty(), refreshing = before.events.isNotEmpty(), error = null)
         runCatching { ScheduleSnapshotRepository.all(force) }
             .onSuccess { events -> publish(events, mutableState.value.liveEvents) }
             .onFailure { failure ->
                 val current = mutableState.value
-                mutableState.value = current.copy(
-                    loading = false,
-                    refreshing = false,
-                    error = if (current.events.isEmpty()) failure.message ?: "Schedule unavailable" else null
-                )
+                mutableState.value = current.copy(loading = false, refreshing = false, error = if (current.events.isEmpty()) failure.message ?: "Schedule unavailable" else null)
             }
     }
 
@@ -101,16 +77,14 @@ object ScheduleEngine {
             .onSuccess { live -> publish(mutableState.value.events, live) }
             .onFailure { failure ->
                 val current = mutableState.value
-                if (current.liveEvents.isEmpty()) {
-                    mutableState.value = current.copy(error = failure.message ?: "Live feed unavailable")
-                }
+                if (current.liveEvents.isEmpty()) mutableState.value = current.copy(error = failure.message ?: "Live feed unavailable")
             }
     }
 
-    /** Publish one canonical event collection and rebuild its identity index together. */
     private fun publish(base: List<SportsEvent>, live: List<SportsEvent>) {
         val merged = mergeLive(base, live)
             .map { it.copy(id = EventIdentity.id(it)) }
+            .distinctBy(EventIdentity::key)
         val canonicalLive = merged.filter { it.isLive }
         eventIndex.rebuild(merged)
         val current = mutableState.value
@@ -122,32 +96,40 @@ object ScheduleEngine {
             lastUpdatedMs = System.currentTimeMillis(),
             error = null
         )
-
-        // Fire-and-forget: schedule refreshes never wait on stream discovery.
         appContext?.let { StreamPrewarmCoordinator.onSchedulePublished(it, merged) }
     }
 
-    /** Overlay the hot live feed onto the warm schedule without duplicating events. */
+    /** Overlay hot live data while enforcing one canonical event per matchup/time bucket. */
     private fun mergeLive(base: List<SportsEvent>, live: List<SportsEvent>): List<SportsEvent> {
-        if (live.isEmpty()) return base
-        val liveById = live.filter { it.id.isNotBlank() }.associateBy { it.id }
-        val liveByKey = live.associateBy(EventIdentity::key)
-        val seenLive = HashSet<String>()
-
-        val merged = base.map { event ->
-            val replacement = liveById[event.id]?.also { seenLive.add(EventIdentity.id(it)) }
-                ?: liveByKey[EventIdentity.key(event)]?.also { seenLive.add(EventIdentity.id(it)) }
-            replacement ?: event
-        }.toMutableList()
-
-        live.forEach { event ->
-            val alreadyPresent = merged.any {
-                if (event.id.isNotBlank() && it.id.isNotBlank()) it.id == event.id
-                else EventIdentity.key(it) == EventIdentity.key(event)
-            }
-            if (!alreadyPresent && seenLive.add(EventIdentity.id(event))) merged.add(event)
+        val merged = LinkedHashMap<String, SportsEvent>()
+        base.forEach { event ->
+            val key = EventIdentity.key(event)
+            val current = merged[key]
+            if (current == null || prefer(event, current)) merged[key] = event
         }
+        live.forEach { event ->
+            val key = EventIdentity.key(event)
+            val current = merged[key]
+            if (current == null || prefer(event, current)) merged[key] = event
+        }
+        return merged.values.sortedWith(compareByDescending<SportsEvent> { it.isLive }.thenBy { it.startUtc })
+    }
 
-        return merged.sortedWith(compareByDescending<SportsEvent> { it.isLive }.thenBy { it.startUtc })
+    private fun prefer(candidate: SportsEvent, current: SportsEvent): Boolean {
+        val candidateRank = lifecycleRank(candidate.lifecycle)
+        val currentRank = lifecycleRank(current.lifecycle)
+        if (candidateRank != currentRank) return candidateRank > currentRank
+        val candidateData = listOf(candidate.home, candidate.away, candidate.broadcast, candidate.artUrl).count { it.isNotBlank() }
+        val currentData = listOf(current.home, current.away, current.broadcast, current.artUrl).count { it.isNotBlank() }
+        return candidateData > currentData
+    }
+
+    private fun lifecycleRank(lifecycle: EventLifecycle): Int = when (lifecycle) {
+        EventLifecycle.LIVE_CONFIRMED -> 6
+        EventLifecycle.LIVE_INFERRED -> 5
+        EventLifecycle.PREGAME -> 4
+        EventLifecycle.SCHEDULED -> 3
+        EventLifecycle.FINAL -> 2
+        EventLifecycle.STALE_UNKNOWN -> 1
     }
 }
