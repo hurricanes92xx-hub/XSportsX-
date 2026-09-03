@@ -51,10 +51,19 @@ class StreamResolver(context: Context) {
             val fresh = cache.get(key)
             if (!force && fresh != null && System.currentTimeMillis() - fresh.loadedAt < CACHE_TTL_MS) fresh.streams
             else {
-                val privateStreams = if (config.isConfigured()) { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) } else emptyList()
-                val publicStreams = runCatching { publicResolver.load(force) }.getOrDefault(emptyList()).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
-                val merged = dedupe(privateStreams + publicStreams)
-                cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
+                coroutineScope {
+                    val privateDeferred = async(Dispatchers.IO) {
+                        if (config.isConfigured()) {
+                            runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList())
+                        } else emptyList()
+                    }
+                    val publicDeferred = async(Dispatchers.IO) {
+                        runCatching { publicResolver.load(force) }.getOrDefault(emptyList())
+                            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+                    }
+                    val merged = dedupe(privateDeferred.await() + publicDeferred.await())
+                    cache.put(key, StreamCacheEntry(merged, System.currentTimeMillis())); merged
+                }
             }
         }
         channelIndex.rebuild(streams)
@@ -99,12 +108,20 @@ class StreamResolver(context: Context) {
 
     private suspend fun resolveEventStreams(config: SourceConfig, eventKey: String, event: SportsEvent, force: Boolean): List<ResolvedStream> {
         if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.streams?.let { return it }
-        val privateMatches = if (config.isConfigured()) {
-            val private = if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config)
-            val indexedCandidates = channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24)
-            matchEventAgainstStreams(event, dedupe(private + indexedCandidates))
-        } else matchEventAgainstStreams(event, channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24))
-        val indexed = publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 8).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+        val (privateMatches, indexed) = coroutineScope {
+            val privateDeferred = async(Dispatchers.IO) {
+                if (config.isConfigured()) {
+                    val private = runCatching { if (config.type == "M3U") loadM3u(config.m3uUrl) else loadXtream(config) }.getOrDefault(emptyList())
+                    val indexedCandidates = channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24)
+                    matchEventAgainstStreams(event, dedupe(private + indexedCandidates))
+                } else matchEventAgainstStreams(event, channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 24))
+            }
+            val publicIndexDeferred = async(Dispatchers.IO) {
+                publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 8)
+                    .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
+            }
+            privateDeferred.await() to publicIndexDeferred.await()
+        }
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
         val publicMatches = indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
@@ -150,7 +167,7 @@ class StreamResolver(context: Context) {
         return result
     }
     private fun http(target: String): String {
-        val c = (URL(target).openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 5000; readTimeout = 15000; instanceFollowRedirects = true; useCaches = true; setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json, text/plain, */*"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive") }
+        val c = (URL(target).openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 3500; readTimeout = 8000; instanceFollowRedirects = true; useCaches = true; setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json, text/plain, */*"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive") }
         return try { val code = c.responseCode; if (code !in 200..299) error("Source returned HTTP $code"); val raw: InputStream = BufferedInputStream(c.inputStream); val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw; input.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { c.disconnect() }
     }
     private fun enc(value: String): String = URLEncoder.encode(value, "UTF-8")
