@@ -127,30 +127,19 @@ fun ScheduleLoader(
     modifier: Modifier = Modifier,
     content: @Composable (List<SportsEvent>) -> Unit
 ) {
-    var events by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        loading = true
-        error = null
-        runCatching { SportsScheduleService.load() }
-            .onSuccess { events = it }
-            .onFailure { error = it.message ?: "Unable to load the sports schedule" }
-        loading = false
-    }
+    val state by ScheduleEngine.state.collectAsState()
 
     Box(modifier.fillMaxSize()) {
         when {
-            loading && events.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            state.loading && state.events.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color(0xFFFF1744))
             }
-            error != null && events.isEmpty() -> Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            state.error != null && state.events.isEmpty() -> Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text("SCHEDULE UNAVAILABLE", color = Color(0xFFFF536C), fontWeight = FontWeight.Black)
                 Spacer(Modifier.height(8.dp))
-                Text(error!!, color = Color(0xFF858B98), fontSize = 12.sp)
+                Text(state.error!!, color = Color(0xFF858B98), fontSize = 12.sp)
             }
-            else -> content(events)
+            else -> content(state.events)
         }
     }
 }
@@ -266,11 +255,17 @@ private fun sportEmoji(name: String): String = when {
 
 @Composable
 fun LiveScreen(onEvent: (SportsEvent) -> Unit) {
-    ScheduleLoader { events ->
-        val live = events.filter { it.isLive }.sortedBy { it.startUtc }
-        Column(Modifier.fillMaxSize()) {
-            Header("LIVE NOW", "Real-time event state from the canonical sports schedule")
-            if (live.isEmpty()) EmptyState("Nothing live right now") else LazyColumn(contentPadding = PaddingValues(34.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    val state by ScheduleEngine.state.collectAsState()
+    val live = state.liveEvents.sortedBy { it.startUtc }
+    Column(Modifier.fillMaxSize()) {
+        Header("LIVE NOW", "Real-time event state from the canonical sports schedule")
+        when {
+            state.loading && live.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFFFF1744))
+            }
+            state.error != null && live.isEmpty() -> EmptyState("Live feed unavailable")
+            live.isEmpty() -> EmptyState("Nothing live right now")
+            else -> LazyColumn(contentPadding = PaddingValues(34.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 items(live, key = { it.id }) { event -> LiveRow(event, onEvent) }
             }
         }
@@ -346,53 +341,12 @@ fun SourcesScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text("XTREAM CODES", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.5.sp)
-                OutlinedTextField(
-                    value = host,
-                    onValueChange = { host = it; saved = false; error = null },
-                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_server" },
-                    label = { Text("Server URL") },
-                    placeholder = { Text("https://provider.example") },
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = user,
-                    onValueChange = { user = it; saved = false; error = null },
-                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_username" },
-                    label = { Text("Username") },
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = pass,
-                    onValueChange = { pass = it; saved = false; error = null },
-                    modifier = Modifier.fillMaxWidth().semantics { testTag = "source_password" },
-                    label = { Text("Password") },
-                    singleLine = true
-                )
-                Button(
-                    onClick = {
-                        error = null
-                        runCatching { store.save(SourceConfig(type = "XTREAM", server = host, username = user, password = pass)) }
-                            .onSuccess { saved = true }
-                            .onFailure { saved = false; error = it.message ?: "Could not save source" }
-                    },
-                    modifier = Modifier.fillMaxWidth().height(52.dp).semantics { testTag = "source_connect" },
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text(if (saved) "SOURCE CONNECTED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black)
-                }
+                OutlinedTextField(value = host, onValueChange = { host = it; saved = false; error = null }, modifier = Modifier.fillMaxWidth().semantics { testTag = "source_server" }, label = { Text("Server URL") }, placeholder = { Text("https://provider.example") }, singleLine = true)
+                OutlinedTextField(value = user, onValueChange = { user = it; saved = false; error = null }, modifier = Modifier.fillMaxWidth().semantics { testTag = "source_username" }, label = { Text("Username") }, singleLine = true)
+                OutlinedTextField(value = pass, onValueChange = { pass = it; saved = false; error = null }, modifier = Modifier.fillMaxWidth().semantics { testTag = "source_password" }, label = { Text("Password") }, singleLine = true)
+                Button(onClick = { error = null; runCatching { store.save(SourceConfig(type = "XTREAM", server = host, username = user, password = pass)) }.onSuccess { saved = true }.onFailure { saved = false; error = it.message ?: "Could not save source" } }, modifier = Modifier.fillMaxWidth().height(52.dp).semantics { testTag = "source_connect" }, shape = RoundedCornerShape(14.dp)) { Text(if (saved) "SOURCE CONNECTED ✓" else "CONNECT SOURCE", fontWeight = FontWeight.Black) }
                 if (saved) {
-                    OutlinedButton(
-                        onClick = {
-                            store.clear()
-                            host = ""
-                            user = ""
-                            pass = ""
-                            saved = false
-                            error = null
-                        },
-                        modifier = Modifier.fillMaxWidth().height(48.dp).semantics { testTag = "source_disconnect" },
-                        shape = RoundedCornerShape(14.dp)
-                    ) { Text("DISCONNECT / LOG OUT", fontWeight = FontWeight.Black) }
+                    OutlinedButton(onClick = { store.clear(); host = ""; user = ""; pass = ""; saved = false; error = null }, modifier = Modifier.fillMaxWidth().height(48.dp).semantics { testTag = "source_disconnect" }, shape = RoundedCornerShape(14.dp)) { Text("DISCONNECT / LOG OUT", fontWeight = FontWeight.Black) }
                 }
                 error?.let { Text(it, color = Color(0xFFFF536C), fontSize = 12.sp) }
                 Text("Credentials are kept on-device in the production build. Stream discovery only uses the source you connect.", color = Color(0xFF737A87), fontSize = 12.sp)
@@ -448,7 +402,6 @@ fun EventSheet(event: SportsEvent, onClose: () -> Unit, onPlay: (ResolvedStream)
             Text("SOURCE MATCHING", color = Color(0xFFFF536C), fontWeight = FontWeight.Black, letterSpacing = 1.2.sp)
             Text("Exact event matching uses the canonical schedule first, then your authorized Xtream/M3U source and approved public/official fallbacks.", color = Color(0xFF9AA1AE), fontSize = 13.sp)
             Spacer(Modifier.height(16.dp))
-
             when {
                 loading -> Box(Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
                 error != null -> Text(error!!, color = Color(0xFFFF536C), fontSize = 12.sp)
