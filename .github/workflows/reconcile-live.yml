@@ -26,6 +26,8 @@ jobs:
           python-version: '3.12'
       - name: Reconcile live and final status
         run: python scripts/reconcile_live_status.py
+      - name: Record provider health and freshness
+        run: python scripts/provider_health.py
       - name: Validate live feed integrity
         run: python scripts/validate_schedule_refresh.py
       - name: Publish live state safely
@@ -33,14 +35,14 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/schedule_feed.json
+          git add data/schedule_feed.json data/provider_health.json
           git diff --cached --quiet || git commit -m 'chore: refresh live schedule state'
           refresh_commit=$(git rev-parse HEAD)
           for attempt in 1 2 3; do
             git fetch origin android-app
             git reset --hard origin/android-app
-            git checkout "$refresh_commit" -- data/schedule_feed.json
-            git add data/schedule_feed.json
+            git checkout "$refresh_commit" -- data/schedule_feed.json data/provider_health.json
+            git add data/schedule_feed.json data/provider_health.json
             git diff --cached --quiet || git commit -m 'chore: refresh live schedule state'
             if git push origin HEAD:android-app; then exit 0; fi
             sleep $((attempt * 2))
