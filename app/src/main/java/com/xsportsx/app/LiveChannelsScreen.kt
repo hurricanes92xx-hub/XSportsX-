@@ -75,10 +75,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             onBack = { playerStream = null },
             onPlaybackSuccess = {
                 healthStore.recordSuccess(activeStream.url)
+                streams = ranked(streams)
             },
             onPlaybackFailure = {
                 healthStore.recordFailure(activeStream.url)
-                val next = streams.dropWhile { it.url != activeStream.url }.drop(1).firstOrNull()
+                // Immediately demote the failed candidate and continue with the best
+                // remaining known candidate. The health score persists across launches.
+                streams = ranked(streams)
+                val next = streams.firstOrNull { it.url != activeStream.url }
                 if (next != null) playerStream = next else playerStream = null
             }
         )
