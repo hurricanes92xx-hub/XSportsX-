@@ -23,6 +23,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
     val healthStore = remember { StreamHealthStore(context) }
+    val playbackHealth = remember { PlaybackHealthStore(context) }
     val engineState by ScheduleEngine.state.collectAsState()
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
@@ -34,10 +35,18 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     var showFavorites by remember { mutableStateOf(false) }
 
     val liveEvents = engineState.liveEvents
+    val playbackEventKey = selectedEvent?.let { EventIdentity.id(it) }.orEmpty()
 
+    // Step 13: rank the handoff using both source health and actual playback history.
+    // A stream that resolves quickly but repeatedly fails at the player should not win.
     fun ranked(list: List<ResolvedStream>): List<ResolvedStream> = list
         .distinctBy { it.url }
-        .sortedWith(compareByDescending<ResolvedStream> { healthStore.score(it.url) }.thenBy { it.name.lowercase() })
+        .sortedWith(
+            compareByDescending<ResolvedStream> { stream ->
+                healthStore.score(stream.url) + playbackHealth.score(playbackEventKey, stream) + playbackHealth.globalScore(stream)
+            }
+                .thenBy { it.name.lowercase() }
+        )
 
     fun reload(force: Boolean = false, background: Boolean = false) {
         scope.launch {
