@@ -63,7 +63,14 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     LaunchedEffect(filter, selectedEvent?.id) { reload(false) }
 
     if (playerStream != null) {
-        NativePlayerScreen(playerStream!!.url, playerStream!!.name) { playerStream = null }
+        val activeStream = playerStream!!
+        NativePlayerScreen(
+            activeStream.url,
+            activeStream.name,
+            onBack = { playerStream = null },
+            onPlaybackSuccess = { },
+            onPlaybackFailure = { }
+        )
         return
     }
 
