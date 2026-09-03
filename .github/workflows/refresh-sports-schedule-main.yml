@@ -6,6 +6,8 @@ name: Refresh XSportsX Production Schedule
 # android-app and publishes the resulting feed back to android-app.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   schedule:
     - cron: '*/15 * * * *'
 
