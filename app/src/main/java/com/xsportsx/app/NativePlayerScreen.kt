@@ -33,9 +33,12 @@ fun NativePlayerScreen(
     }
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    val playbackHealth = remember(context) { PlaybackHealthStore(context) }
     var error by remember(streamUrl) { mutableStateOf<String?>(null) }
     var activeUrl by remember(streamUrl) { mutableStateOf(streamUrl) }
     var fallbackUsed by remember(streamUrl) { mutableStateOf(false) }
+    var attemptStartedAt by remember(streamUrl) { mutableLongStateOf(System.currentTimeMillis()) }
+    var successRecorded by remember(streamUrl) { mutableStateOf(false) }
 
     val player = remember(streamUrl) {
         val httpFactory = DefaultHttpDataSource.Factory()
@@ -55,6 +58,8 @@ fun NativePlayerScreen(
             lower.contains(".ts") -> MimeTypes.VIDEO_MP2T
             else -> null
         }
+        attemptStartedAt = System.currentTimeMillis()
+        successRecorded = false
         val item = MediaItem.Builder().setUri(url).apply {
             if (mime != null) setMimeType(mime)
         }.build()
@@ -66,18 +71,26 @@ fun NativePlayerScreen(
     DisposableEffect(player) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == Player.STATE_READY) onPlaybackSuccess()
+                if (playbackState == Player.STATE_READY && !successRecorded) {
+                    successRecorded = true
+                    val latency = (System.currentTimeMillis() - attemptStartedAt).coerceAtLeast(0L)
+                    val stream = ResolvedStream(title, "PLAYBACK", activeUrl)
+                    playbackHealth.recordSuccess(title.ifBlank { "unknown-event" }, stream, latency)
+                    onPlaybackSuccess()
+                }
             }
 
             override fun onPlayerError(exception: PlaybackException) {
+                val failedUrl = activeUrl
+                playbackHealth.recordFailure(title.ifBlank { "unknown-event" }, ResolvedStream(title, "PLAYBACK", failedUrl))
                 onPlaybackFailure()
-                val lower = activeUrl.lowercase()
+                val lower = failedUrl.lowercase()
                 val alternate = when {
-                    !fallbackUsed && lower.contains(".m3u8") -> activeUrl.replace(Regex("\\.m3u8(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".ts")
-                    !fallbackUsed && lower.contains(".ts") -> activeUrl.replace(Regex("\\.ts(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".m3u8")
+                    !fallbackUsed && lower.contains(".m3u8") -> failedUrl.replace(Regex("\\.m3u8(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".ts")
+                    !fallbackUsed && lower.contains(".ts") -> failedUrl.replace(Regex("\\.ts(?:\\?.*)?$", RegexOption.IGNORE_CASE), ".m3u8")
                     else -> null
                 }
-                if (alternate != null && alternate != activeUrl) {
+                if (alternate != null && alternate != failedUrl) {
                     fallbackUsed = true
                     activeUrl = alternate
                     error = null
