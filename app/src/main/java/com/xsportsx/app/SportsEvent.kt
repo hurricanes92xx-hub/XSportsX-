@@ -26,7 +26,11 @@ data class SportsEvent(
     private val terminal: Boolean
         get() = status.contains("final", true) || status.contains("finished", true) || status.contains("cancel", true) || status.contains("postpon", true) || state.equals("post", true) || state.equals("final", true)
 
-    /** Promote scheduled/pre-game rows to LIVE from three minutes before kickoff through a short safety window after kickoff. */
+    /**
+     * Promote scheduled/pre-game rows to LIVE from three minutes before kickoff
+     * through a generous six-hour safety window. Feeds sometimes lag their LIVE
+     * state update, and long games must not disappear after 30 minutes.
+     */
     val isLive: Boolean
         get() {
             if (providerLive) return true
@@ -35,7 +39,7 @@ data class SportsEvent(
             val now = System.currentTimeMillis()
             if (start <= 0L) return false
             val scheduled = state.isBlank() || state.equals("pre", true) || state.equals("scheduled", true) || status.contains("upcoming", true) || status.contains("scheduled", true)
-            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 30L * 60L * 1000L
+            return scheduled && now >= start - 3L * 60L * 1000L && now < start + 6L * 60L * 60L * 1000L
         }
 
     fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
@@ -43,7 +47,6 @@ data class SportsEvent(
         return start > nowMillis && start <= nowMillis + 30L * 60L * 1000L && !isLive
     }
 
-    /** Explicit UPCOMING/SCHEDULED feed rows remain visible on game day even when only a date was supplied. */
     val isUpcoming: Boolean
         get() {
             if (isLive) return false
