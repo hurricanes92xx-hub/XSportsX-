@@ -12,6 +12,7 @@ from sports_evidence import correlate
 from sports_knowledge_graph import observe_feed
 SCHEMA=4
 ALLOWED_ACTIONS={"refresh_live_evidence","probe_live_state_and_source","discover_schedule_provider","discover_event_source_metadata","warm_source","reconcile_or_archive","refresh_schedule_and_preflight","defer","no_action"}
+OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/events"}
 def now_iso():return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
 @dataclass
 class Evidence:
@@ -70,6 +71,8 @@ class ToolRegistry:
             url=result.get('url','');body,ctype,_=discovery._get(url,timeout=5)
             if body:recovered.extend(discovery._extract_events(body,ctype,e.league))
             recovered.extend(_recover_html_schedule(e.league,url))
+        if e.league.upper() in OFFICIAL_RECOVERY_URLS:
+            recovered.extend(_recover_html_schedule(e.league,OFFICIAL_RECOVERY_URLS[e.league.upper()]))
         return {'status':'completed','league':e.league,'candidates':len(candidates),'promoted':len(promoted),'eventsFound':len(events),'googleResearch':research,'validatedRecoveredEvents':recovered[:100],'endpoints':[c.get('endpoint') for c in candidates[:8]]}
     def discover_event_source_metadata(self,e):
         if not e.league:return {'status':'skipped','reason':'missing-league'}
@@ -94,7 +97,7 @@ def deterministic_plan(e):
     return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
 def _model_configs():
     out=[]
-    for env,urlenv,modelenv,keyenv,label in [('primary','SPORTS_AGENT_MODEL_URL','SPORTS_AGENT_MODEL','SPORTS_AGENT_MODEL_API_KEY','primary'),('gemini','SPORTS_AGENT_GEMINI_MODEL_URL','SPORTS_AGENT_GEMINI_MODEL','SPORTS_AGENT_GEMINI_API_KEY','gemini')]:
+    for urlenv,modelenv,keyenv,label in [('SPORTS_AGENT_MODEL_URL','SPORTS_AGENT_MODEL','SPORTS_AGENT_MODEL_API_KEY','primary'),('SPORTS_AGENT_GEMINI_MODEL_URL','SPORTS_AGENT_GEMINI_MODEL','SPORTS_AGENT_GEMINI_API_KEY','gemini')]:
         u=os.getenv(urlenv,'').strip();m=os.getenv(modelenv,'').strip().rstrip(' .');k=os.getenv(keyenv,'').strip()
         if u and m and k:out.append((u,m,k,label))
     return out
@@ -106,7 +109,7 @@ def _call_model(endpoint,model,key,e):
     prompt={'task':'Act as a strict sports-data recovery agent. A missing, stale, or contradictory schedule is a failure condition. Choose the safest next action. NEVER invent an event, time, status, source, broadcast, or provider. OFFICIAL league/promotional evidence outranks secondary evidence. If an active league has no events, choose discover_schedule_provider. If LIVE/PREGAME has no source, choose discover_event_source_metadata. If evidence conflicts, choose refresh_live_evidence. FINAL/POSTPONED is terminal unless stronger explicit evidence proves a change. Do not choose no_action when a required recovery condition exists.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
     body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'STRICT XSportsX SPORTS INTELLIGENCE POLICY. Return JSON only. Never fabricate. Never suppress a known schedule gap. Never turn an unsupported search result into canonical truth. Follow the action policy exactly.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json','Authorization':f'Bearer {key}','User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json'};request=urllib.request.Request(endpoint,data=body,headers=headers,method='POST')
     with urllib.request.urlopen(request,timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
-    plan=json.loads(data.get('choices',[{}])[0].get('message',{}).get('content',''))
+    plan=json.loads(data.get('choices',[{}])[0].get('message','{}').get('content',''))
     if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
     plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
 def model_plan(e):
@@ -136,16 +139,16 @@ def _mandatory_schedule_gaps(feed):
     return sorted(x for x in expected if x and counts.get(x,0)==0)
 def _recover_gap(league):
     recovered=[];research=web_research.research_schedule(league,limit=10)
-    for result in research:
-        if float(result.get('score',0))<0.70:continue
-        url=result.get('url','');body,ctype,_=discovery._get(url,timeout=5)
-        if body:recovered.extend(discovery._extract_events(body,ctype,league))
-        recovered.extend(_recover_html_schedule(league,url))
+    urls=[str(r.get('url','')) for r in research if float(r.get('score',0))>=0.70]
+    if league.upper() in OFFICIAL_RECOVERY_URLS:urls.insert(0,OFFICIAL_RECOVERY_URLS[league.upper()])
+    for url in dict.fromkeys(urls):
+        body,ctype,_=discovery._get(url,timeout=5)
+        if body:recovered.extend(discovery._extract_events(body,ctype,league));recovered.extend(_recover_html_schedule(league,url))
     valid=[];now=datetime.now(timezone.utc)
     for e in recovered:
         start=_parse_date(e.get('startUtc') or e.get('start'))
         if not e.get('title') or not start or start<now-timedelta(hours=12):continue
-        e['league']=league;e['source']='ai-web-recovery';e['discoveryConfidence']=0.70;valid.append(e)
+        e['league']=league;e['source']='ai-web-recovery';e['discoveryConfidence']=max(0.70,float(e.get('discoveryConfidence',0.70)));valid.append(e)
     return valid[:100],research
 def dedupe_events(events):
     from event_identity import identity_match,merge_event_records,event_identity
