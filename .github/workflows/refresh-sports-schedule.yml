@@ -54,6 +54,8 @@ jobs:
         run: python3 scripts/test_sports_evidence.py
       - name: Test autonomous Google sports research
         run: python3 scripts/test_sports_web_research.py
+      - name: Test sports broadcast bridge
+        run: python3 scripts/test_sports_broadcast_bridge.py
       - name: Snapshot previous feed
         run: |
           if [ -f data/schedule_feed.json ]; then cp data/schedule_feed.json /tmp/schedule_feed.previous.json; else echo '{}' > /tmp/schedule_feed.previous.json; fi
@@ -128,6 +130,11 @@ jobs:
           SPORTS_AGENT_GEMINI_MODEL: ${{ vars.SPORTS_AGENT_GEMINI_MODEL }}
           SPORTS_AGENT_GEMINI_API_KEY: ${{ secrets.SPORTS_AGENT_GEMINI_API_KEY }}
         run: python3 scripts/sports_agent.py data/schedule_feed.json --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
+      - name: Build authoritative broadcast intelligence
+        env:
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
+        run: python3 scripts/sports_broadcast_bridge.py data/schedule_feed.json
       - name: Validate AI intelligence contracts
         run: |
           python3 - <<'PY'
@@ -137,16 +144,18 @@ jobs:
           brain=feed.get('sportsBrain') or {}
           agent=feed.get('sportsAgent') or {}
           prediction=feed.get('sportsPredictions') or {}
+          broadcast=feed.get('sportsBroadcastIntelligence') or {}
           graph=json.loads(Path('data/sports_knowledge_graph.json').read_text(encoding='utf-8'))
           if brain.get('schema') != 1: raise SystemExit('ERROR: sports brain contract missing')
           if agent.get('schema') != 3: raise SystemExit('ERROR: sports agent contract missing')
           if prediction.get('schema') != 2: raise SystemExit('ERROR: sports prediction contract missing')
+          if broadcast.get('schema') != 1: raise SystemExit('ERROR: sports broadcast intelligence contract missing')
           if not isinstance(graph.get('nodes'), dict) or not isinstance(graph.get('edges'), list): raise SystemExit('ERROR: knowledge graph contract invalid')
           for event in feed.get('events') or []:
               action=event.get('intelligenceAction','')
               if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}:
                   raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
-          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; modelDecisions={agent.get('modelDecisions',0)}; modelProviders={agent.get('modelProviders',{})}; fallbackDecisions={agent.get('fallbackDecisions',0)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
+          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; modelDecisions={agent.get('modelDecisions',0)}; modelProviders={agent.get('modelProviders',{})}; fallbackDecisions={agent.get('fallbackDecisions',0)}; Broadcast events: {broadcast.get('eventsAnalyzed',0)}; live candidates={broadcast.get('liveCandidates',0)}; schedule candidates={broadcast.get('scheduleCandidates',0)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
           PY
       - name: Publish canonical data and learned intelligence
         shell: bash
