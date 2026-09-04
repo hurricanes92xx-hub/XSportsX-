@@ -13,11 +13,7 @@ import org.json.JSONArray
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
-/**
- * Event resolver fast path. It never downloads the entire Xtream catalog on an event click.
- * Cached channels win immediately; otherwise only the best sports categories are queried in
- * parallel and the operation is hard-bounded. Playback validation remains the final authority.
- */
+/** Cached-first, bounded Xtream event resolver. */
 class FastXtreamEventResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
     private val index = XtreamSourceIndex(context.applicationContext)
@@ -43,30 +39,61 @@ class FastXtreamEventResolver(context: Context) {
             val cached = index.getCachedAll(config)
             match(event, cached.map { toStream(config, it) }).takeIf { it.isNotEmpty() }?.let { return@withTimeoutOrNull it }
 
-            val categories = runCatching { index.fastResolve(config, event, MAX_CATEGORIES) }.getOrDefault(emptyList())
-            val direct = categories.map { toStream(config, it) }
-            match(event, direct).takeIf { it.isNotEmpty() }?.let { return@withTimeoutOrNull it }
+            // Cold-cache path: fetch only category metadata, rank likely sports categories,
+            // then query those categories concurrently. Never hydrate the entire provider here.
+            val categoryIds = fetchCategories(config)
+                .map { it.first to categoryScore(it.second, event) }
+                .filter { it.second > 0 }
+                .sortedByDescending { it.second }
+                .take(MAX_CATEGORIES)
+                .map { it.first }
 
-            // The index normally supplies the channels above. If it was cold, make one bounded
-            // direct category pass; this avoids the old sequential 12-category stall.
-            val categoryNames = categories.map { it.categoryId }.distinct().take(MAX_CATEGORIES)
             val channels = coroutineScope {
-                categoryNames.map { categoryId ->
-                    async(Dispatchers.IO) { fetchCategory(config, categoryId) }
-                }.awaitAll().flatten()
+                categoryIds.map { id -> async(Dispatchers.IO) { fetchCategory(config, id) } }
+                    .awaitAll().flatten()
             }
             match(event, channels).take(MAX_MATCHES)
         }.orEmpty()
     }
 
-    private fun fetchCategory(config: SourceConfig, categoryId: String): List<ResolvedStream> = runCatching {
-        val query = "username=${enc(config.username)}&password=${enc(config.password)}&action=get_live_streams&category_id=${enc(categoryId)}"
+    private fun fetchCategories(config: SourceConfig): List<Pair<String, String>> = runCatching {
+        val query = "username=${enc(config.username)}&password=${enc(config.password)}&action=get_live_categories"
         val request = Request.Builder()
             .url("${config.server.trim().removeSuffix("/")}/player_api.php?$query")
-            .get()
-            .header("User-Agent", "XSportsX/4.0")
-            .header("Accept", "application/json")
-            .build()
+            .get().header("User-Agent", "XSportsX/4.0").header("Accept", "application/json").build()
+        HTTP.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) return@use emptyList()
+            val body = response.body ?: return@use emptyList()
+            val array = JSONArray(body.string())
+            buildList {
+                for (i in 0 until array.length()) {
+                    val o = array.optJSONObject(i) ?: continue
+                    val id = o.optString("category_id").trim()
+                    val name = o.optString("category_name").trim()
+                    if (id.isNotBlank() && name.isNotBlank()) add(id to name)
+                }
+            }
+        }
+    }.getOrDefault(emptyList())
+
+    private fun categoryScore(name: String, event: SportsEvent): Int {
+        val n = norm(name)
+        var score = 0
+        val sport = norm(event.sport)
+        val league = norm(event.league)
+        val broadcast = norm(event.broadcast)
+        if (sport.length >= 3 && n.contains(sport)) score += 60
+        if (league.length >= 3 && n.contains(league)) score += 70
+        if (broadcast.length >= 3 && n.contains(broadcast)) score += 55
+        listOf("sport", "sports", "espn", "fox", "cbs", "nbc", "sec", "acc", "big ten", "college", "ncaa", "wwe", "ufc", "boxing", "soccer", "football", "basketball", "baseball", "hockey", "volleyball", "tennis", "golf", "racing").forEach { if (n.contains(norm(it))) score += 8 }
+        if (event.league.contains("NCAA", true) && (n.contains("college") || n.contains("ncaa") || n.contains("espn") || n.contains("sec") || n.contains("acc") || n.contains("big ten"))) score += 35
+        return score
+    }
+
+    private fun fetchCategory(config: SourceConfig, categoryId: String): List<ResolvedStream> = runCatching {
+        val query = "username=${enc(config.username)}&password=${enc(config.password)}&action=get_live_streams&category_id=${enc(categoryId)}"
+        val request = Request.Builder().url("${config.server.trim().removeSuffix("/")}/player_api.php?$query")
+            .get().header("User-Agent", "XSportsX/4.0").header("Accept", "application/json").build()
         HTTP.newCall(request).execute().use { response ->
             if (!response.isSuccessful) return@use emptyList()
             val body = response.body ?: return@use emptyList()
@@ -77,24 +104,19 @@ class FastXtreamEventResolver(context: Context) {
                     val id = o.optString("stream_id").trim()
                     val name = o.optString("name").trim()
                     if (id.isBlank() || name.isBlank()) continue
-                    add(ResolvedStream(
-                        name = name,
-                        group = o.optString("category_name").ifBlank { categoryId },
-                        url = "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/$id.m3u8",
-                        iconUrl = o.optString("stream_icon")
-                    ))
+                    add(ResolvedStream(name, o.optString("category_name").ifBlank { categoryId },
+                        "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/$id.m3u8",
+                        o.optString("stream_icon")))
                 }
             }
         }
     }.getOrDefault(emptyList())
 
-    private fun toStream(config: SourceConfig, channel: XtreamSourceIndex.Channel) =
-        ResolvedStream(
-            channel.name,
-            channel.group,
-            "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${channel.id}.m3u8",
-            channel.icon
-        )
+    private fun toStream(config: SourceConfig, channel: XtreamSourceIndex.Channel) = ResolvedStream(
+        channel.name, channel.group,
+        "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${channel.id}.m3u8",
+        channel.icon
+    )
 
     private fun match(event: SportsEvent, streams: List<ResolvedStream>): List<ResolvedStream> {
         if (streams.isEmpty()) return emptyList()
@@ -115,8 +137,7 @@ class FastXtreamEventResolver(context: Context) {
 
     private fun terms(value: String) = norm(value).split(' ').filter { it.length >= 3 && it !in STOP }.distinct()
     private fun aliases(value: String): List<String> {
-        val n = norm(value)
-        if (n.isBlank()) return emptyList()
+        val n = norm(value); if (n.isBlank()) return emptyList()
         val out = linkedSetOf(n)
         if (n.contains("espn plus")) out += listOf("espn", "espn plus", "espn+")
         if (n.contains("espn2")) out += listOf("espn2", "espn 2", "espn")
