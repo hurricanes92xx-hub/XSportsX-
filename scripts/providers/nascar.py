@@ -5,7 +5,7 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 BASE = "https://cf.nascar.com/cacher"
-HEADERS = {"User-Agent": "XSportsX-Schedule/4.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "XSportsX-Schedule/4.2", "Accept": "application/json"}
 ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/racing/nascar-premier/scoreboard"
 SERIES = {"NASCAR Cup": 1, "NASCAR Xfinity": 2, "NASCAR Truck": 3}
 
@@ -71,25 +71,41 @@ def _race_sessions(race):
 
 
 def _espn_cup(horizon_days):
+    """Recover Cup events from ESPN in bounded windows.
+
+    ESPN documents the NASCAR Cup slug as ``nascar-premier``. Large date
+    ranges can return HTTP 400, so query 30-day windows instead of one
+    370-day request. A failed window does not discard other successful
+    windows.
+    """
     now = datetime.now(timezone.utc)
     cutoff = now + timedelta(days=horizon_days)
-    start = now.date(); end = cutoff.date()
-    url = f"{ESPN_URL}?dates={start:%Y%m%d}-{end:%Y%m%d}&limit=1000"
-    try:
-        root = _get(url, timeout=8)
-    except Exception as exc:
-        print(f"ERROR NASCAR Cup ESPN recovery: {exc}")
-        return []
+    cursor = now.date()
+    end = cutoff.date()
     out = []
-    for event in root.get("events") or []:
-        dt = _parse(event.get("date"))
-        if not dt or dt < now - timedelta(hours=12) or dt > cutoff:
+    seen = set()
+    while cursor <= end:
+        window_end = min(cursor + timedelta(days=29), end)
+        url = f"{ESPN_URL}?dates={cursor:%Y%m%d}-{window_end:%Y%m%d}&limit=100"
+        try:
+            root = _get(url, timeout=8)
+        except Exception as exc:
+            print(f"WARN NASCAR Cup ESPN recovery window {cursor}..{window_end}: {exc}")
+            cursor = window_end + timedelta(days=1)
             continue
-        comp = (event.get("competitions") or [{}])[0]
-        status = str(((comp.get("status") or {}).get("type") or {}).get("state") or "pre").lower()
-        name = str(event.get("name") or event.get("shortName") or "NASCAR Cup").strip()
-        event_row = {"league":"NASCAR Cup","title":name,"start":dt.isoformat().replace("+00:00","Z"),"tag":"LIVE" if status=="in" else "FINAL" if status=="post" else "UPCOMING","icon":"🏎️","source":"espn-nascar","providerEventId":f"espn:{event['id']}" if event.get("id") else f"espn:{name}-{dt.isoformat()}"}
-        out.append(event_row)
+        for event in root.get("events") or []:
+            dt = _parse(event.get("date"))
+            if not dt or dt < now - timedelta(hours=12) or dt > cutoff:
+                continue
+            comp = (event.get("competitions") or [{}])[0]
+            status = str(((comp.get("status") or {}).get("type") or {}).get("state") or "pre").lower()
+            name = str(event.get("name") or event.get("shortName") or "NASCAR Cup").strip()
+            provider_id = f"espn:{event['id']}" if event.get("id") else f"espn:{name}-{dt.isoformat()}"
+            if provider_id in seen:
+                continue
+            seen.add(provider_id)
+            out.append({"league":"NASCAR Cup","title":name,"start":dt.isoformat().replace("+00:00","Z"),"tag":"LIVE" if status=="in" else "FINAL" if status=="post" else "UPCOMING","icon":"🏎️","source":"espn-nascar","providerEventId":provider_id})
+        cursor = window_end + timedelta(days=1)
     return out
 
 
