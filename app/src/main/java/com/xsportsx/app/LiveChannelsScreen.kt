@@ -58,20 +58,27 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 when {
                     selectedEvent != null -> {
                         val target = selectedEvent!!
-                        val fast = withTimeoutOrNull(2_800L) { fastXtream.resolve(target) }.orEmpty()
-                        if (fast.isNotEmpty()) return@runCatching fast
                         val config = SourceStore(context).load()
                         val authorized = when {
                             config.type == "XTREAM" && config.isConfigured() -> listOf(AuthorizedSource("user-xtream", AuthorizedSource.Type.XTREAM, config.server, config.username, config.password))
                             config.type == "M3U" && config.isConfigured() -> listOf(AuthorizedSource("user-m3u", AuthorizedSource.Type.M3U, config.m3uUrl))
                             else -> emptyList()
                         }
-                        val targeted = withTimeoutOrNull(2_200L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
-                            .map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
-                        if (targeted.isNotEmpty()) return@runCatching targeted
+                        // Cold source discovery is bounded and parallel: Xtream and public candidates
+                        // are queried together instead of serially consuming the foreground deadline.
+                        val (fast, targeted) = coroutineScope {
+                            val xtream = async(Dispatchers.IO) { withTimeoutOrNull(2_800L) { fastXtream.resolve(target) }.orEmpty() }
+                            val public = async(Dispatchers.IO) {
+                                withTimeoutOrNull(2_200L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
+                                    .map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
+                            }
+                            xtream.await() to public.await()
+                        }
+                        val immediate = ranked(fast + targeted)
+                        if (immediate.isNotEmpty()) return@runCatching immediate
                         withTimeoutOrNull(1_500L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
                     }
-                    !requestFilter.isNullOrBlank() -> withTimeoutOrNull(8_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
+                    !requestFilter.isNullOrBlank() -> withTimeoutOrNull(5_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
                     else -> {
                         if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
                         emptyList<ResolvedStream>()
