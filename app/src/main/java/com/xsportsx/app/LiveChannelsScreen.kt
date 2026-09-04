@@ -58,7 +58,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 when {
                     selectedEvent != null -> {
                         val target = selectedEvent!!
-                        val fast = withTimeoutOrNull(5_000L) { fastXtream.resolve(target) }.orEmpty()
+                        val fast = withTimeoutOrNull(2_800L) { fastXtream.resolve(target) }.orEmpty()
                         if (fast.isNotEmpty()) return@runCatching fast
                         val config = SourceStore(context).load()
                         val authorized = when {
@@ -66,10 +66,10 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                             config.type == "M3U" && config.isConfigured() -> listOf(AuthorizedSource("user-m3u", AuthorizedSource.Type.M3U, config.m3uUrl))
                             else -> emptyList()
                         }
-                        val targeted = withTimeoutOrNull(4_000L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
+                        val targeted = withTimeoutOrNull(2_200L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
                             .map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
                         if (targeted.isNotEmpty()) return@runCatching targeted
-                        withTimeoutOrNull(12_000L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
+                        withTimeoutOrNull(1_500L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
                     }
                     !requestFilter.isNullOrBlank() -> withTimeoutOrNull(8_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
                     else -> {

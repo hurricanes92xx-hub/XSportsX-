@@ -59,7 +59,7 @@ private val xNetworks = listOf(
 
 private data class SportVisual(val name: String, val icon: String, val logoUrl: String)
 private val sports = listOf(
-    SportVisual("NFL", "NFL", "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png"),
+    SportVisual("NFL", "NFL", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/National_Football_League_logo.svg/256px-National_Football_League_logo.svg.png"),
     SportVisual("NBA", "NBA", "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"),
     SportVisual("NCAA FB", "NCAA", "https://commons.wikimedia.org/wiki/Special:FilePath/NCAA_logo.svg?width=256"),
     SportVisual("NCAA BB", "NCAA", "https://commons.wikimedia.org/wiki/Special:FilePath/NCAA_logo.svg?width=256"),

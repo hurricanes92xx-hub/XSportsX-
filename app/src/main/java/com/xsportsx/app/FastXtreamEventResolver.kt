@@ -19,11 +19,11 @@ class FastXtreamEventResolver(context: Context) {
     private val index = XtreamSourceIndex(context.applicationContext)
 
     companion object {
-        private const val MAX_CATEGORIES = 8
+        private const val MAX_CATEGORIES = 6
         private const val MAX_MATCHES = 12
-        private const val RESOLVE_BUDGET_MS = 4500L
-        private const val CONNECT_MS = 1200L
-        private const val READ_MS = 2500L
+        private const val RESOLVE_BUDGET_MS = 2600L
+        private const val CONNECT_MS = 700L
+        private const val READ_MS = 1600L
         private val HTTP = OkHttpClient.Builder()
             .connectTimeout(CONNECT_MS, TimeUnit.MILLISECONDS)
             .readTimeout(READ_MS, TimeUnit.MILLISECONDS)

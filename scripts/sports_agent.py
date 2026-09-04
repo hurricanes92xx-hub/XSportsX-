@@ -7,12 +7,13 @@ from datetime import datetime,timedelta,timezone
 from pathlib import Path
 from typing import Any
 import provider_discovery as discovery
+import refresh_schedules_legacy as schedule_legacy
 import sports_web_research as web_research
 from sports_evidence import correlate
 from sports_knowledge_graph import observe_feed
 SCHEMA=4
 ALLOWED_ACTIONS={"refresh_live_evidence","probe_live_state_and_source","discover_schedule_provider","discover_event_source_metadata","warm_source","reconcile_or_archive","refresh_schedule_and_preflight","defer","no_action"}
-OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/events"}
+OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/event/ufc-fight-night-september-05-2026"}
 def now_iso():return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
 @dataclass
 class Evidence:
@@ -39,6 +40,10 @@ def _parse_date(value):
     except Exception:return None
 def _recover_html_schedule(league,url):
     if league.upper()!='UFC':return []
+    for obj in schedule_legacy.jsonld_objects(text):
+        kind=obj.get('@type'); start=_parse_date(obj.get('startDate')); title=str(obj.get('name') or '').strip()
+        if (kind=='Event' or (isinstance(kind,list) and 'Event' in kind)) and title and start and start>=datetime.now(timezone.utc)-timedelta(hours=12):
+            events.append({'sport':'MMA','league':league,'title':title,'startUtc':start.isoformat().replace('+00:00','Z'),'start':start.isoformat().replace('+00:00','Z'),'status':'scheduled','state':'','source':'official-jsonld','discoveryUrl':url})
     body,ctype,_=discovery._get(url,timeout=6)
     if not body:return []
     text=body.decode('utf-8','replace');events=[]
@@ -137,6 +142,22 @@ def _mandatory_schedule_gaps(feed):
     for e in events:counts[str(e.get('league') or '')]=counts.get(str(e.get('league') or ''),0)+1
     expected=set(str(x) for x in (feed.get('leagueProviderMatrix') or {}).keys())|set(str(x) for x in (feed.get('eventCounts') or {}).keys())
     return sorted(x for x in expected if x and counts.get(x,0)==0)
+def _recover_wrestling_expectations(feed):
+    current=[e for e in (feed.get('events') or []) if isinstance(e,dict)]
+    raw=[]
+    try: schedule_legacy.add_wrestling(raw)
+    except Exception: return [], {'checked':True,'recovered':0,'error':'wrestling-source-failure'}
+    now=datetime.now(timezone.utc); horizon=now+timedelta(days=14); recovered=[]
+    wanted={'smackdown','monday night raw','sunday night\'s main event'}
+    for e in raw:
+        if str(e.get('league') or '')!='WWE': continue
+        title=str(e.get('title') or '').strip(); low=title.lower(); start=_parse_date(e.get('startUtc') or e.get('start'))
+        if not title or not start or not now-timedelta(hours=12)<=start<=horizon: continue
+        if not any(x in low for x in wanted): continue
+        if not any(str(x.get('league') or '')=='WWE' and str(x.get('title') or '').strip().lower()==low and _parse_date(x.get('startUtc') or x.get('start'))==start for x in current):
+            candidate=dict(e); candidate['source']='ai-official-wrestling-recovery'; candidate['aiRecovered']=True; recovered.append(candidate)
+    return recovered, {'checked':True,'recovered':len(recovered)}
+
 def _recover_gap(league):
     recovered=[];research=web_research.research_schedule(league,limit=10)
     urls=[str(r.get('url','')) for r in research if float(r.get('score',0))>=0.70]
@@ -161,6 +182,10 @@ def dedupe_events(events):
     return canonical,merges,{}
 def run(feed_path,memory_path,graph_path,mode='full'):
     feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];gap_reports=[]
+    wrestling_recovered,wrestling_report=_recover_wrestling_expectations(feed)
+    if wrestling_recovered:
+        events,merges,_=dedupe_events(events+wrestling_recovered);feed['identityMergeCount']=int(feed.get('identityMergeCount',0))+merges
+    gap_reports.append({'league':'WRESTLING_EXPECTATIONS',**wrestling_report})
     if mode=='full':
         for league in _mandatory_schedule_gaps(feed):
             recovered,research=_recover_gap(league);gap_reports.append({'league':league,'researchResults':len(research),'recoveredEvents':len(recovered)})
