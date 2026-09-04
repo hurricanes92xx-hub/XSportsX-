@@ -16,7 +16,12 @@ data class SportsEvent(
     val broadcast: String = "",
     val artUrl: String = "",
     val sourceUrl: String = "",
-    val youtubeVideoId: String = ""
+    val youtubeVideoId: String = "",
+    /** Advisory deterministic server-side evidence; never overrides strong local evidence. */
+    val intelligencePhase: String = "",
+    val intelligenceConfidence: Double = 0.0,
+    val intelligenceAction: String = "",
+    val intelligenceReasons: List<String> = emptyList()
 ) {
     val lifecycle: EventLifecycle
         get() = EventLifecycleResolver.resolve(this)
