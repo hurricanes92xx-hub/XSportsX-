@@ -1,20 +1,20 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-04T05:43:06.062912+00:00",
+  "generatedAt": "2026-09-04T09:59:15.720998+00:00",
   "refreshHours": 6,
   "eventCounts": {
+    "F1": 28,
     "IPL": 74,
     "ATP": 5,
     "WTA": 18,
+    "Bundesliga": 334,
     "MLB": 354,
     "NRL": 7,
     "AFL": 3,
-    "F1": 4,
     "NASCAR Xfinity": 17,
     "NCAA Women's Volleyball": 500,
     "NCAA Women's Field Hockey": 76,
     "Ligue 1": 26,
-    "Bundesliga": 28,
     "Serie A": 30,
     "EPL": 31,
     "LaLiga": 40,
@@ -112,7 +112,10 @@
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
+    "openligadb": 306,
     "sportsdb": 10,
+    "jolpica-f1": 23,
+    "openf1": 1,
     "cache": 74,
     "mlb-official": 349,
     "nascar": 51,
@@ -121,7 +124,10 @@
   "shadowProviderRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
+    "openligadb": 306,
     "sportsdb": 10,
+    "jolpica-f1": 23,
+    "openf1": 1,
     "cache": 74,
     "mlb-official": 349,
     "nascar": 51,
@@ -130,6 +136,7 @@
   "providerOverlapLeagues": [
     "Bundesliga",
     "EPL",
+    "F1",
     "LaLiga",
     "Ligue 1",
     "MLB",
@@ -139,7 +146,7 @@
     "NHL",
     "Serie A"
   ],
-  "providerOverlapRecordCount": 350,
+  "providerOverlapRecordCount": 382,
   "leagueProviderMatrix": {
     "AAA Wrestling": {
       "configured": [
@@ -186,36 +193,44 @@
     },
     "ATP": {
       "configured": [
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
+        "sportscore",
         "espn",
         "sportsdb"
       ],
-      "primary": "espn",
-      "secondary": "sportsdb",
-      "tertiary": "cache",
+      "primary": "sportscore",
+      "secondary": "espn",
+      "tertiary": "sportsdb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ]
+      ],
+      "promotedFrom": "sportscore",
+      "promotedTo": "espn"
     },
     "Bundesliga": {
       "configured": [
         "official",
+        "sportscore",
+        "openligadb",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
+        "openligadb",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "openligadb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -223,7 +238,7 @@
         "sportmonks"
       ],
       "promotedFrom": "official",
-      "promotedTo": "espn"
+      "promotedTo": "openligadb"
     },
     "CFL": {
       "configured": [
@@ -246,17 +261,19 @@
     "EPL": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -280,15 +297,19 @@
     "F1": {
       "configured": [
         "official",
+        "jolpica-f1",
+        "openf1",
         "espn"
       ],
       "activeOrder": [
         "official",
+        "jolpica-f1",
+        "openf1",
         "espn"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "cache",
+      "secondary": "jolpica-f1",
+      "tertiary": "openf1",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -296,7 +317,7 @@
         "sportmonks"
       ],
       "promotedFrom": "official",
-      "promotedTo": "espn"
+      "promotedTo": "jolpica-f1"
     },
     "FIVB Men": {
       "configured": [
@@ -348,17 +369,19 @@
     "ICC T20": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportmonks"
@@ -380,17 +403,19 @@
     "IPL": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportmonks"
@@ -459,17 +484,19 @@
     "LaLiga": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -482,17 +509,19 @@
     "Ligue 1": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -525,17 +554,19 @@
     "MLS": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -635,17 +666,19 @@
     "NBA": {
       "configured": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -970,13 +1003,15 @@
     },
     "NWSL": {
       "configured": [
-        "official"
+        "official",
+        "sportscore"
       ],
       "activeOrder": [
-        "official"
+        "official",
+        "sportscore"
       ],
       "primary": "official",
-      "secondary": "cache",
+      "secondary": "sportscore",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -1040,22 +1075,26 @@
     },
     "Serie A": {
       "configured": [
+        "sportscore",
         "espn",
         "sportsdb"
       ],
       "activeOrder": [
+        "sportscore",
         "espn",
         "sportsdb"
       ],
-      "primary": "espn",
-      "secondary": "sportsdb",
-      "tertiary": "cache",
+      "primary": "sportscore",
+      "secondary": "espn",
+      "tertiary": "sportsdb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ]
+      ],
+      "promotedFrom": "sportscore",
+      "promotedTo": "espn"
     },
     "Six Nations": {
       "configured": [
@@ -1088,15 +1127,17 @@
     "UCL": {
       "configured": [
         "official",
+        "sportscore",
         "espn"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "cache",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -1108,13 +1149,15 @@
     },
     "UEL": {
       "configured": [
-        "official"
+        "official",
+        "sportscore"
       ],
       "activeOrder": [
-        "official"
+        "official",
+        "sportscore"
       ],
       "primary": "official",
-      "secondary": "cache",
+      "secondary": "sportscore",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -1161,15 +1204,17 @@
     "WNBA": {
       "configured": [
         "official",
+        "sportscore",
         "espn"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "cache",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -1194,15 +1239,17 @@
     "WTA": {
       "configured": [
         "official",
+        "sportscore",
         "espn"
       ],
       "activeOrder": [
         "official",
+        "sportscore",
         "espn"
       ],
       "primary": "official",
-      "secondary": "espn",
-      "tertiary": "cache",
+      "secondary": "sportscore",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -1231,14 +1278,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 742.2,
+        "latencyMs": 1168.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.7,
+        "latencyMs": 8.7,
         "error": "cache"
       }
     ],
@@ -1247,7 +1294,7 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 379.4,
+        "latencyMs": 1105.8,
         "error": ""
       }
     ],
@@ -1256,30 +1303,37 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 706.9,
+        "latencyMs": 547.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 63.2,
+        "latencyMs": 334.4,
         "error": ""
       }
     ],
     "ATP": [
       {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 766.4,
+        "error": ""
+      },
+      {
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 61.4,
+        "latencyMs": 521.0,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 114.7,
+        "latencyMs": 258.1,
         "error": ""
       }
     ],
@@ -1288,21 +1342,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 82.2,
+        "latencyMs": 366.1,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 443.8,
+        "error": ""
+      },
+      {
+        "provider": "openligadb",
+        "ok": true,
+        "events": 306,
+        "latencyMs": 987.8,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 27,
-        "latencyMs": 122.6,
+        "latencyMs": 283.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 98.7,
+        "latencyMs": 152.4,
         "error": ""
       }
     ],
@@ -1311,21 +1379,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 237.9,
+        "latencyMs": 406.6,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 123.4,
+        "latencyMs": 162.4,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.3,
+        "latencyMs": 7.4,
         "error": "cache"
       }
     ],
@@ -1334,21 +1402,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 732.8,
+        "latencyMs": 393.6,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 641.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 61.2,
+        "latencyMs": 344.4,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 101.0,
+        "latencyMs": 134.8,
         "error": ""
       }
     ],
@@ -1357,7 +1432,7 @@
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.3,
+        "latencyMs": 7.6,
         "error": "cache"
       }
     ],
@@ -1366,14 +1441,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 395.4,
+        "latencyMs": 397.4,
+        "error": ""
+      },
+      {
+        "provider": "jolpica-f1",
+        "ok": true,
+        "events": 23,
+        "latencyMs": 435.4,
+        "error": ""
+      },
+      {
+        "provider": "openf1",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 541.5,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 48.7,
+        "latencyMs": 246.6,
         "error": ""
       }
     ],
@@ -1382,28 +1471,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 4160.9,
+        "latencyMs": 4695.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 95.5,
+        "latencyMs": 454.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 95.7,
+        "latencyMs": 146.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.4,
+        "latencyMs": 8.3,
         "error": "cache"
       }
     ],
@@ -1412,28 +1501,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 4191.9,
+        "latencyMs": 4284.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 72.9,
+        "latencyMs": 278.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 94.7,
+        "latencyMs": 151.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.5,
+        "latencyMs": 8.3,
         "error": "cache"
       }
     ],
@@ -1442,14 +1531,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 718.8,
+        "latencyMs": 278.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.4,
+        "latencyMs": 8.3,
         "error": "cache"
       }
     ],
@@ -1458,28 +1547,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 111.4,
+        "latencyMs": 505.0,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 145.8,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 59.9,
+        "latencyMs": 314.8,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 97.1,
+        "latencyMs": 142.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.3,
+        "latencyMs": 8.3,
         "error": "cache"
       }
     ],
@@ -1488,14 +1584,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 137.0,
+        "latencyMs": 122.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.3,
+        "latencyMs": 7.5,
         "error": "cache"
       }
     ],
@@ -1504,28 +1600,35 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 886.3,
+        "latencyMs": 558.4,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 752.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 189.2,
+        "latencyMs": 445.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 118.2,
+        "latencyMs": 136.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": true,
         "events": 74,
-        "latencyMs": 9.7,
+        "latencyMs": 7.3,
         "error": "cache"
       }
     ],
@@ -1534,14 +1637,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 332.5,
+        "latencyMs": 280.6,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 1,
-        "latencyMs": 19.2,
+        "latencyMs": 142.2,
         "error": ""
       }
     ],
@@ -1550,21 +1653,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 197.7,
+        "latencyMs": 339.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 17.2,
+        "latencyMs": 146.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.3,
+        "latencyMs": 8.1,
         "error": "cache"
       }
     ],
@@ -1573,14 +1676,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 168.1,
+        "latencyMs": 197.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 17.1,
+        "latencyMs": 154.2,
         "error": ""
       }
     ],
@@ -1589,21 +1692,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 875.8,
+        "latencyMs": 271.3,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 143.6,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 39,
-        "latencyMs": 35.9,
+        "latencyMs": 310.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 96.1,
+        "latencyMs": 146.0,
         "error": ""
       }
     ],
@@ -1612,21 +1722,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 904.6,
+        "latencyMs": 1150.0,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 522.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 26,
-        "latencyMs": 27.6,
+        "latencyMs": 361.2,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 97.7,
+        "latencyMs": 134.0,
         "error": ""
       }
     ],
@@ -1635,21 +1752,21 @@
         "provider": "mlb-official",
         "ok": true,
         "events": 349,
-        "latencyMs": 228.4,
+        "latencyMs": 278.5,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 340,
-        "latencyMs": 135.5,
+        "latencyMs": 603.8,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 97.7,
+        "latencyMs": 137.2,
         "error": ""
       }
     ],
@@ -1658,21 +1775,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 364.0,
+        "latencyMs": 388.2,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 161.7,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 76,
-        "latencyMs": 64.2,
+        "latencyMs": 409.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 94.6,
+        "latencyMs": 139.9,
         "error": ""
       }
     ],
@@ -1681,14 +1805,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 120.6,
+        "latencyMs": 338.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.4,
+        "latencyMs": 8.4,
         "error": "cache"
       }
     ],
@@ -1697,14 +1821,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 578.7,
+        "latencyMs": 755.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.2,
+        "latencyMs": 7.5,
         "error": "cache"
       }
     ],
@@ -1713,14 +1837,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 678.3,
+        "latencyMs": 426.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.2,
+        "latencyMs": 7.5,
         "error": "cache"
       }
     ],
@@ -1729,14 +1853,14 @@
         "provider": "nascar",
         "ok": true,
         "events": 0,
-        "latencyMs": 128.8,
+        "latencyMs": 297.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.4,
+        "latencyMs": 8.4,
         "error": "cache"
       }
     ],
@@ -1745,7 +1869,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 21,
-        "latencyMs": 29.9,
+        "latencyMs": 314.5,
         "error": ""
       }
     ],
@@ -1754,7 +1878,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 30,
-        "latencyMs": 54.8,
+        "latencyMs": 117.1,
         "error": ""
       }
     ],
@@ -1763,21 +1887,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 70.6,
+        "latencyMs": 386.3,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 739.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 48.5,
+        "latencyMs": 146.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 98.3,
+        "latencyMs": 143.3,
         "error": ""
       }
     ],
@@ -1786,14 +1917,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1693.8,
+        "latencyMs": 2555.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.3,
+        "latencyMs": 8.4,
         "error": "cache"
       }
     ],
@@ -1802,14 +1933,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1954.1,
+        "latencyMs": 2180.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.1,
+        "latencyMs": 8.6,
         "error": "cache"
       }
     ],
@@ -1818,14 +1949,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1913.1,
+        "latencyMs": 2291.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.5,
+        "latencyMs": 9.4,
         "error": "cache"
       }
     ],
@@ -1834,7 +1965,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 38,
-        "latencyMs": 1656.5,
+        "latencyMs": 2198.5,
         "error": ""
       }
     ],
@@ -1843,14 +1974,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1749.1,
+        "latencyMs": 2306.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.9,
+        "latencyMs": 9.6,
         "error": "cache"
       }
     ],
@@ -1859,14 +1990,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1471.3,
+        "latencyMs": 2292.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.8,
+        "latencyMs": 9.7,
         "error": "cache"
       }
     ],
@@ -1875,7 +2006,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 161,
-        "latencyMs": 1933.9,
+        "latencyMs": 2490.9,
         "error": ""
       }
     ],
@@ -1884,14 +2015,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1840.1,
+        "latencyMs": 2268.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.1,
+        "latencyMs": 9.9,
         "error": "cache"
       }
     ],
@@ -1900,183 +2031,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1977.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 14.9,
-        "error": "cache"
-      }
-    ],
-    "NCAA Softball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1790.9,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 11.8,
-        "error": "cache"
-      }
-    ],
-    "NCAA WBB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1923.8,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 11.6,
-        "error": "cache"
-      }
-    ],
-    "NCAA Women's Field Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 76,
-        "latencyMs": 1668.8,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1807.0,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 743,
-        "latencyMs": 82.5,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Lacrosse": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1659.6,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 13.2,
-        "error": "cache"
-      }
-    ],
-    "NCAA Women's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 255,
-        "latencyMs": 1878.8,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 500,
-        "latencyMs": 2121.3,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Water Polo": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1762.3,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 13.5,
-        "error": "cache"
-      }
-    ],
-    "NFL": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 32.4,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 17,
-        "latencyMs": 42.8,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 94.7,
-        "error": ""
-      }
-    ],
-    "NHL": [
-      {
-        "provider": "nhl-official",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 100.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 104,
-        "latencyMs": 56.5,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 95.4,
-        "error": ""
-      }
-    ],
-    "NLL": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 749.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 51.0,
+        "latencyMs": 2314.1,
         "error": ""
       },
       {
@@ -2087,28 +2042,103 @@
         "error": "cache"
       }
     ],
-    "NRL": [
+    "NCAA Softball": [
       {
-        "provider": "official",
+        "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 933.0,
+        "latencyMs": 4367.9,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 8.9,
+        "error": "cache"
+      }
+    ],
+    "NCAA WBB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2259.7,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 8.6,
+        "error": "cache"
+      }
+    ],
+    "NCAA Women's Field Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 76,
+        "latencyMs": 2100.8,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2235.6,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
-        "events": 7,
-        "latencyMs": 49.6,
+        "events": 743,
+        "latencyMs": 460.4,
         "error": ""
       }
     ],
-    "NWSL": [
+    "NCAA Women's Lacrosse": [
       {
-        "provider": "official",
+        "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 181.8,
+        "latencyMs": 2295.9,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 9.9,
+        "error": "cache"
+      }
+    ],
+    "NCAA Women's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 255,
+        "latencyMs": 2589.7,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 500,
+        "latencyMs": 2784.0,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Water Polo": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2367.1,
         "error": ""
       },
       {
@@ -2119,19 +2149,127 @@
         "error": "cache"
       }
     ],
+    "NFL": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 249.3,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 17,
+        "latencyMs": 282.7,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 142.8,
+        "error": ""
+      }
+    ],
+    "NHL": [
+      {
+        "provider": "nhl-official",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 235.0,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 104,
+        "latencyMs": 423.7,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 148.7,
+        "error": ""
+      }
+    ],
+    "NLL": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 6401.1,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 149.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 7.3,
+        "error": "cache"
+      }
+    ],
+    "NRL": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1268.4,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 7,
+        "latencyMs": 179.2,
+        "error": ""
+      }
+    ],
+    "NWSL": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 500.8,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 343.6,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 7.5,
+        "error": "cache"
+      }
+    ],
     "PGA": [
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1441.1,
+        "latencyMs": 820.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 17.7,
+        "latencyMs": 164.5,
         "error": ""
       }
     ],
@@ -2140,14 +2278,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 157.8,
+        "latencyMs": 287.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 19.8,
+        "latencyMs": 146.8,
         "error": ""
       }
     ],
@@ -2156,37 +2294,44 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 705.2,
+        "latencyMs": 387.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 24.6,
+        "latencyMs": 314.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.4,
+        "latencyMs": 9.2,
         "error": "cache"
       }
     ],
     "Serie A": [
       {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 152.6,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      },
+      {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 74.8,
+        "latencyMs": 322.2,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 102.7,
+        "latencyMs": 138.3,
         "error": ""
       }
     ],
@@ -2195,21 +2340,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 209.6,
+        "latencyMs": 311.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 24.8,
+        "latencyMs": 182.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 11.6,
+        "latencyMs": 8.5,
         "error": "cache"
       }
     ],
@@ -2227,14 +2372,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 118.1,
+        "latencyMs": 215.7,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 166.7,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 30.0,
+        "latencyMs": 247.2,
         "error": ""
       }
     ],
@@ -2243,14 +2395,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 98.2,
+        "latencyMs": 348.3,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 163.2,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.3,
+        "latencyMs": 7.3,
         "error": "cache"
       }
     ],
@@ -2259,21 +2418,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 116.2,
+        "latencyMs": 215.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 36.8,
+        "latencyMs": 243.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 99.0,
+        "latencyMs": 138.9,
         "error": ""
       }
     ],
@@ -2282,14 +2441,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1312.7,
+        "latencyMs": 702.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.2,
+        "latencyMs": 7.4,
         "error": "cache"
       }
     ],
@@ -2298,14 +2457,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 259.9,
+        "latencyMs": 345.8,
         "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 155.2,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 39.0,
+        "latencyMs": 312.1,
         "error": ""
       }
     ],
@@ -2314,14 +2480,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 205.8,
+        "latencyMs": 214.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.3,
+        "latencyMs": 7.4,
         "error": "cache"
       }
     ],
@@ -2330,14 +2496,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 196.0,
+        "latencyMs": 290.8,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 483.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 133.4,
+        "latencyMs": 605.4,
         "error": ""
       }
     ],
@@ -2353,9 +2526,10 @@
   },
   "providerPromotions": {
     "AFL": "espn",
-    "Bundesliga": "espn",
+    "ATP": "espn",
+    "Bundesliga": "openligadb",
     "EPL": "espn",
-    "F1": "espn",
+    "F1": "jolpica-f1",
     "IPL": "cache",
     "IndyCar": "espn",
     "LPGA": "espn",
@@ -2369,6 +2543,7 @@
     "NRL": "espn",
     "PGA": "espn",
     "PLL": "espn",
+    "Serie A": "espn",
     "UCL": "espn",
     "UFC": "espn",
     "WNBA": "espn",
@@ -2378,6 +2553,30 @@
     "IPL"
   ],
   "events": [
+    {
+      "league": "F1",
+      "title": "Australian Grand Prix",
+      "start": "2026-03-08T04:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:1",
+      "id": "evt_31bfc1838ecd09628af99c52",
+      "startUtc": "2026-03-08T04:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Chinese Grand Prix",
+      "start": "2026-03-15T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:2",
+      "id": "evt_82dff2322da50d2c32c44c06",
+      "startUtc": "2026-03-15T07:00:00Z",
+      "sport": "racing"
+    },
     {
       "league": "IPL",
       "title": "Sunrisers Hyderabad @ Royal Challengers Bengaluru",
@@ -2395,6 +2594,18 @@
       "startUtc": "2026-03-28T14:00:00Z",
       "sport": "other",
       "source": "cache"
+    },
+    {
+      "league": "F1",
+      "title": "Japanese Grand Prix",
+      "start": "2026-03-29T05:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:3",
+      "id": "evt_19d29608becd29ce274e7f61",
+      "startUtc": "2026-03-29T05:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "IPL",
@@ -3207,6 +3418,18 @@
       "source": "cache"
     },
     {
+      "league": "F1",
+      "title": "Miami Grand Prix",
+      "start": "2026-05-03T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:4",
+      "id": "evt_df9a2851f2d32471be67f1b6",
+      "startUtc": "2026-05-03T20:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "IPL",
       "title": "Lucknow Super Giants @ Mumbai Indians",
       "start": "2026-05-04T14:00:00Z",
@@ -3639,6 +3862,18 @@
       "source": "cache"
     },
     {
+      "league": "F1",
+      "title": "Canadian Grand Prix",
+      "start": "2026-05-24T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:5",
+      "id": "evt_2518c06ba9d058d4b9591c53",
+      "startUtc": "2026-05-24T20:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "IPL",
       "title": "Gujarat Titans @ Royal Challengers Bengaluru",
       "start": "2026-05-26T14:00:00Z",
@@ -3711,6 +3946,102 @@
       "source": "cache"
     },
     {
+      "league": "F1",
+      "title": "Monaco Grand Prix",
+      "start": "2026-06-07T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:6",
+      "id": "evt_daefb2b03bc22a4474d7828e",
+      "startUtc": "2026-06-07T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Barcelona Grand Prix",
+      "start": "2026-06-14T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:7",
+      "id": "evt_9e97410068f034ae71a95558",
+      "startUtc": "2026-06-14T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Austrian Grand Prix",
+      "start": "2026-06-28T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:8",
+      "id": "evt_5a16cc7ebf8fb39d2ee0c24d",
+      "startUtc": "2026-06-28T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "British Grand Prix",
+      "start": "2026-07-05T14:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:9",
+      "id": "evt_ae06c702103500757b0682a7",
+      "startUtc": "2026-07-05T14:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Belgian Grand Prix",
+      "start": "2026-07-19T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:10",
+      "id": "evt_a6e86a314de3633ff831fe17",
+      "startUtc": "2026-07-19T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Hungarian Grand Prix",
+      "start": "2026-07-26T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:11",
+      "id": "evt_430f3de6cb3cb9824b6bb352",
+      "startUtc": "2026-07-26T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Dutch Grand Prix",
+      "start": "2026-08-23T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:12",
+      "id": "evt_30c51fd4004482ae6cf46227",
+      "startUtc": "2026-08-23T13:00:00Z",
+      "sport": "racing"
+    },
+    {
+      "league": "F1",
+      "title": "Race",
+      "start": "2026-08-23T13:00:00Z",
+      "tag": "FINAL",
+      "icon": "🏎️",
+      "source": "openf1",
+      "providerEventId": "openf1:11353",
+      "id": "evt_0f18b53c8e8e7931e383d47c",
+      "startUtc": "2026-08-23T13:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
@@ -3733,6 +4064,132 @@
       "id": "evt_bd9d9b74834f83560df811a6",
       "startUtc": "2026-08-24T04:00Z",
       "sport": "tennis"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ FC Bayern München",
+      "start": "2026-08-28T18:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83156",
+      "id": "evt_6d0904514cf119b9225edc9d",
+      "startUtc": "2026-08-28T18:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ RB Leipzig",
+      "start": "2026-08-29T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83158",
+      "id": "evt_2f835569658b87213b2c81d5",
+      "startUtc": "2026-08-29T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ 1. FSV Mainz 05",
+      "start": "2026-08-29T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83161",
+      "id": "evt_b529a83e51790f76f7903e0e",
+      "startUtc": "2026-08-29T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ 1. FC Union Berlin",
+      "start": "2026-08-29T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83162",
+      "id": "evt_f64639d0c0c4e495b9d8aff8",
+      "startUtc": "2026-08-29T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ 1. FC Köln",
+      "start": "2026-08-29T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83163",
+      "id": "evt_f8586cf70cbbcbb9d1b92d08",
+      "startUtc": "2026-08-29T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ SV 07 Elversberg",
+      "start": "2026-08-29T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83164",
+      "id": "evt_f9bb05ccbff13ed62d11d653",
+      "startUtc": "2026-08-29T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ Borussia Dortmund",
+      "start": "2026-08-29T16:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83157",
+      "id": "evt_332c3480765cbba69e56d170",
+      "startUtc": "2026-08-29T16:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ SC Freiburg",
+      "start": "2026-08-30T13:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83159",
+      "id": "evt_d971ed6a624a92e90db67a54",
+      "startUtc": "2026-08-30T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ FC Augsburg",
+      "start": "2026-08-30T15:30:00Z",
+      "tag": "FINAL",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83160",
+      "id": "evt_0a6078018f628fc94f70505e",
+      "startUtc": "2026-08-30T15:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -4643,6 +5100,20 @@
       "id": "evt_120a543c3e74acf0bad6bc13",
       "startUtc": "2026-09-04T18:10:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ VfB Stuttgart",
+      "start": "2026-09-04T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83165",
+      "id": "evt_4736fc3fca601156e868d05c",
+      "startUtc": "2026-09-04T18:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "Bundesliga",
@@ -8076,6 +8547,76 @@
     },
     {
       "league": "Bundesliga",
+      "title": "Borussia Dortmund @ TSG Hoffenheim",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83166",
+      "id": "evt_bab5b86f5951f61548835b00",
+      "startUtc": "2026-09-05T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ Bayer 04 Leverkusen",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83167",
+      "id": "evt_6a4fa05d2789766c0d2ca1cd",
+      "startUtc": "2026-09-05T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ Borussia Mönchengladbach",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83169",
+      "id": "evt_df184c8c4d667c501ecc5afd",
+      "startUtc": "2026-09-05T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ SV Werder Bremen",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83171",
+      "id": "evt_991b0263d4ce18d00cb2c39f",
+      "startUtc": "2026-09-05T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ SC Paderborn 07",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83173",
+      "id": "evt_8574dd0025bbeb82c5868203",
+      "startUtc": "2026-09-05T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Union Berlin @ Leverkusen",
       "start": "2026-09-05T13:30Z",
       "tag": "UPCOMING",
@@ -8907,6 +9448,20 @@
       "id": "evt_27eef5e143ba479116f74240",
       "startUtc": "2026-09-05T16:00Z",
       "sport": "mma"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ FC Schalke 04",
+      "start": "2026-09-05T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83172",
+      "id": "evt_a3a3bc1e7140bc512b949f85",
+      "startUtc": "2026-09-05T16:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA FB",
@@ -12199,6 +12754,18 @@
       "sport": "rugby-league"
     },
     {
+      "league": "F1",
+      "title": "Italian Grand Prix",
+      "start": "2026-09-06T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:13",
+      "id": "evt_8516ce8209ac56e3a9f3c6aa",
+      "startUtc": "2026-09-06T13:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "EPL",
       "title": "Man United @ Everton",
       "start": "2026-09-06T13:00Z",
@@ -12260,6 +12827,20 @@
       "awayTeamId": "4007",
       "id": "evt_2c42861994a39b98a10a2351",
       "startUtc": "2026-09-06T13:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ Hamburger SV",
+      "start": "2026-09-06T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83170",
+      "id": "evt_6d95e08f39922be53bfab2b0",
+      "startUtc": "2026-09-06T13:30:00Z",
       "sport": "soccer"
     },
     {
@@ -12378,6 +12959,20 @@
       "awayTeamId": "169",
       "id": "evt_61cc8c02a77313069bc297cc",
       "startUtc": "2026-09-06T15:15Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ Eintracht Frankfurt",
+      "start": "2026-09-06T15:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83168",
+      "id": "evt_c6981305bb3972c6b67c99e0",
+      "startUtc": "2026-09-06T15:30:00Z",
       "sport": "soccer"
     },
     {
@@ -21796,6 +22391,20 @@
     },
     {
       "league": "Bundesliga",
+      "title": "FC Schalke 04 @ 1. FC Union Berlin",
+      "start": "2026-09-11T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83180",
+      "id": "evt_2a10b432e007498f1fd138ac",
+      "startUtc": "2026-09-11T18:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Schalke @ Union Berlin",
       "start": "2026-09-11T18:30Z",
       "tag": "UPCOMING",
@@ -22128,6 +22737,76 @@
     },
     {
       "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ Borussia Dortmund",
+      "start": "2026-09-12T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83174",
+      "id": "evt_b111fc4bb90e83303df76215",
+      "startUtc": "2026-09-12T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ TSG Hoffenheim",
+      "start": "2026-09-12T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83176",
+      "id": "evt_8de52c27aeaf85311f62d1fe",
+      "startUtc": "2026-09-12T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ SC Freiburg",
+      "start": "2026-09-12T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83177",
+      "id": "evt_915ec4655ae857be42a653fd",
+      "startUtc": "2026-09-12T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ FC Augsburg",
+      "start": "2026-09-12T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83178",
+      "id": "evt_702e8990f8dbe67944005f63",
+      "startUtc": "2026-09-12T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ 1. FSV Mainz 05",
+      "start": "2026-09-12T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83179",
+      "id": "evt_299a6c12f306bc45953b3b87",
+      "startUtc": "2026-09-12T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Paderborn @ Dortmund",
       "start": "2026-09-12T13:30Z",
       "tag": "UPCOMING",
@@ -22344,6 +23023,20 @@
       "awayTeamId": "103",
       "id": "evt_d178aa070256ef5d317d7c7e",
       "startUtc": "2026-09-12T16:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ 1. FC Köln",
+      "start": "2026-09-12T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83181",
+      "id": "evt_d6b8044c6e9866b7e0c8ad91",
+      "startUtc": "2026-09-12T16:30:00Z",
       "sport": "soccer"
     },
     {
@@ -23015,6 +23708,18 @@
       "sport": "soccer"
     },
     {
+      "league": "F1",
+      "title": "Spanish Grand Prix",
+      "start": "2026-09-13T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:14",
+      "id": "evt_8b716caa7b39e9991ed098f4",
+      "startUtc": "2026-09-13T13:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "EPL",
       "title": "Brighton @ Coventry",
       "start": "2026-09-13T13:00Z",
@@ -23064,6 +23769,20 @@
     },
     {
       "league": "Bundesliga",
+      "title": "Hamburger SV @ RB Leipzig",
+      "start": "2026-09-13T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83175",
+      "id": "evt_f79a50e7878f61c79090d493",
+      "startUtc": "2026-09-13T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Hamburg @ RB Leipzig",
       "start": "2026-09-13T13:30Z",
       "tag": "UPCOMING",
@@ -23108,6 +23827,20 @@
       "awayTeamId": "175",
       "id": "evt_00360696f9bc9150e314a656",
       "startUtc": "2026-09-13T15:15Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ SV 07 Elversberg",
+      "start": "2026-09-13T15:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83182",
+      "id": "evt_28bb397fe984019ce9a65c82",
+      "startUtc": "2026-09-13T15:30:00Z",
       "sport": "soccer"
     },
     {
@@ -25019,6 +25752,20 @@
     },
     {
       "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ FC Bayern München",
+      "start": "2026-09-18T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83183",
+      "id": "evt_572c33c05b689bd2a76c7df8",
+      "startUtc": "2026-09-18T18:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Union Berlin @ Bayern",
       "start": "2026-09-18T18:30Z",
       "tag": "UPCOMING",
@@ -25523,6 +26270,62 @@
     },
     {
       "league": "Bundesliga",
+      "title": "SC Freiburg @ Eintracht Frankfurt",
+      "start": "2026-09-19T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83186",
+      "id": "evt_8279b773fc6b7edf2b713cad",
+      "startUtc": "2026-09-19T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ Borussia Mönchengladbach",
+      "start": "2026-09-19T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83187",
+      "id": "evt_f11faeb4bf34c70b04ef26fb",
+      "startUtc": "2026-09-19T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ Hamburger SV",
+      "start": "2026-09-19T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83188",
+      "id": "evt_d74faf9496727e1f92d7cdfd",
+      "startUtc": "2026-09-19T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ SV Werder Bremen",
+      "start": "2026-09-19T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83189",
+      "id": "evt_5990a149c4b790c7fae52d5e",
+      "startUtc": "2026-09-19T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "Mainz @ Gladbach",
       "start": "2026-09-19T13:30Z",
       "tag": "UPCOMING",
@@ -25695,6 +26498,20 @@
       "awayTeamId": "110",
       "id": "evt_5ad8e1061d2d6b7f7380646f",
       "startUtc": "2026-09-19T16:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ VfB Stuttgart",
+      "start": "2026-09-19T16:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83184",
+      "id": "evt_810904f01cc6dfadfe3902cb",
+      "startUtc": "2026-09-19T16:30:00Z",
       "sport": "soccer"
     },
     {
@@ -26624,6 +27441,20 @@
     },
     {
       "league": "Bundesliga",
+      "title": "RB Leipzig @ Bayer 04 Leverkusen",
+      "start": "2026-09-20T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83185",
+      "id": "evt_5638829f8ab1bedf6cbae3d7",
+      "startUtc": "2026-09-20T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
       "title": "RB Leipzig @ Leverkusen",
       "start": "2026-09-20T13:30Z",
       "tag": "UPCOMING",
@@ -26668,6 +27499,20 @@
       "awayTeamId": "166",
       "id": "evt_574c1e5e22da14048f85d6e9",
       "startUtc": "2026-09-20T15:15Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ FC Schalke 04",
+      "start": "2026-09-20T15:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83190",
+      "id": "evt_45c9d49d0682c09fe691436b",
+      "startUtc": "2026-09-20T15:30:00Z",
       "sport": "soccer"
     },
     {
@@ -26797,6 +27642,20 @@
       "id": "evt_e06dd012a17e2532697e89e4",
       "startUtc": "2026-09-20T17:10:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ SC Paderborn 07",
+      "start": "2026-09-20T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83191",
+      "id": "evt_3929416625acc67a1080273c",
+      "startUtc": "2026-09-20T17:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "Bundesliga",
@@ -29566,6 +30425,18 @@
       "sport": "hockey"
     },
     {
+      "league": "F1",
+      "title": "Azerbaijan Grand Prix",
+      "start": "2026-09-26T11:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:15",
+      "id": "evt_c5843263c7bf81af09aca281",
+      "startUtc": "2026-09-26T11:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "NASCAR Truck",
       "title": "Race to Stop Suicide 200 — Race @ Kansas Speedway",
       "start": "2026-09-26T14:00:00Z",
@@ -32283,6 +33154,18 @@
       "sport": "tennis"
     },
     {
+      "league": "F1",
+      "title": "Bahrain Grand Prix in Malaysia",
+      "start": "2026-10-04T07:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:16",
+      "id": "evt_c4f28da9d546cb920a775ce2",
+      "startUtc": "2026-10-04T07:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "MLB",
       "title": "NL 3/6 Winner @ NL #2 Seed",
       "start": "2026-10-04T07:33:00Z",
@@ -32798,6 +33681,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ Borussia Dortmund",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83192",
+      "id": "evt_54d4e9250726fcde2e62b37c",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ RB Leipzig",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83193",
+      "id": "evt_a35b4a25ec0d175db9cc78d5",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ TSG Hoffenheim",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83194",
+      "id": "evt_afa7c496aeb8685ac5ffe4ac",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ SC Freiburg",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83195",
+      "id": "evt_b84d323b5d2f8e5c14b7633d",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ FC Augsburg",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83196",
+      "id": "evt_a2720c94d5b642d4f79ddb7a",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ 1. FSV Mainz 05",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83197",
+      "id": "evt_c09ff1328ab555aadd5c5c80",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ 1. FC Union Berlin",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83198",
+      "id": "evt_0ffc1ad7a5fe2baceeb92f47",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ 1. FC Köln",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83199",
+      "id": "evt_0db5caec86bf0425a0743372",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ SC Paderborn 07",
+      "start": "2026-10-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83200",
+      "id": "evt_0ae595a226f737147c2817ec",
+      "startUtc": "2026-10-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Post University @ Long Island University",
       "start": "2026-10-10T18:00Z",
@@ -33015,6 +34024,18 @@
       "id": "evt_f02d0c6a8845bc6ddfebd071",
       "startUtc": "2026-10-11T04:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "Singapore Grand Prix",
+      "start": "2026-10-11T12:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:17",
+      "id": "evt_a7fd7fec0fb0bae1584f8b4e",
+      "startUtc": "2026-10-11T12:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -33453,6 +34474,132 @@
       "id": "evt_47dfa8b394e5f130743598be",
       "startUtc": "2026-10-17T04:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ FC Bayern München",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83201",
+      "id": "evt_9101b23432851f1795851fee",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ Bayer 04 Leverkusen",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83202",
+      "id": "evt_759370e795dd51483bb5ad72",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ Eintracht Frankfurt",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83203",
+      "id": "evt_8d7133a96d86912af68c35f9",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ 1. FC Union Berlin",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83204",
+      "id": "evt_5baaba98d4663441760ee77b",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ Borussia Mönchengladbach",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83205",
+      "id": "evt_9f098e64939423fe6c300317",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ Hamburger SV",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83206",
+      "id": "evt_86ffd911778f419dc2eddf41",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ SV Werder Bremen",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83207",
+      "id": "evt_957893f919c5f9064fdabb0b",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ FC Schalke 04",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83208",
+      "id": "evt_ae3fa8b390a40779e3604ab3",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ SV 07 Elversberg",
+      "start": "2026-10-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83209",
+      "id": "evt_efc01d81546164e814e04bd3",
+      "startUtc": "2026-10-17T13:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -34053,6 +35200,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ Borussia Dortmund",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83210",
+      "id": "evt_3055e54b02e305a81c5d4aee",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ RB Leipzig",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83211",
+      "id": "evt_e597461121849d32f6ff5a9e",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ VfB Stuttgart",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83212",
+      "id": "evt_d144a6ce5b2ea5feedf9912f",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ TSG Hoffenheim",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83213",
+      "id": "evt_0a54e45178a2513d45755a12",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ SC Freiburg",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83214",
+      "id": "evt_1f108ad7b936d95046ff6524",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ FC Augsburg",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83215",
+      "id": "evt_577a80f45b6fe238f05b8a73",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ 1. FSV Mainz 05",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83216",
+      "id": "evt_e273bad66a00da7dc58a91b2",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ 1. FC Köln",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83217",
+      "id": "evt_bfd7a4243df5e3f3e7033f6f",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ SC Paderborn 07",
+      "start": "2026-10-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83218",
+      "id": "evt_a874f7dc86b4b77750f448fc",
+      "startUtc": "2026-10-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Mercyhurst @ UConn",
       "start": "2026-10-24T17:00Z",
@@ -34243,6 +35516,18 @@
       "id": "evt_28cc803092affcc71fa2ada9",
       "startUtc": "2026-10-24T23:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "United States Grand Prix",
+      "start": "2026-10-25T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:18",
+      "id": "evt_5553e9e3632da56706320b50",
+      "startUtc": "2026-10-25T20:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "WWE",
@@ -34736,6 +36021,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ FC Bayern München",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83219",
+      "id": "evt_0f0981d403b7513ef16716dc",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ Bayer 04 Leverkusen",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83220",
+      "id": "evt_e124b3e87338483dbbefeff4",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ Eintracht Frankfurt",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83221",
+      "id": "evt_c2afb5036012a7ce33961b4d",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ FC Augsburg",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83222",
+      "id": "evt_33ac4c130edfe0fa2928648a",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ 1. FC Union Berlin",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83223",
+      "id": "evt_fe8a4fb54a554ca71350cf7b",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ Borussia Mönchengladbach",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83224",
+      "id": "evt_eb1b29ca429f0fa2c66fa470",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ SV Werder Bremen",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83225",
+      "id": "evt_c181b85e6f2e6d47759987a3",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ FC Schalke 04",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83226",
+      "id": "evt_1a1f06fa6124cdb67039b6cd",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ SV 07 Elversberg",
+      "start": "2026-10-31T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83227",
+      "id": "evt_5ff30f58b23ef341522ded51",
+      "startUtc": "2026-10-31T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Bemidji State @ Ohio State",
       "start": "2026-10-31T17:00Z",
@@ -34974,6 +36385,18 @@
       "id": "evt_f7dd004cfa1cda87c7a1ec12",
       "startUtc": "2026-10-31T22:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "Mexico City Grand Prix",
+      "start": "2026-11-01T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:19",
+      "id": "evt_db8bc1ac8d0f97bc85c1c517",
+      "startUtc": "2026-11-01T20:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "WWE",
@@ -35339,6 +36762,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ Borussia Dortmund",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83228",
+      "id": "evt_7f6ed9dc17a42bbd389bfe11",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ RB Leipzig",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83229",
+      "id": "evt_0808c737426282c0f5c29dcb",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ VfB Stuttgart",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83230",
+      "id": "evt_d3e54a8fc4b1b4d3fa866af9",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ TSG Hoffenheim",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83231",
+      "id": "evt_a2c9986430b9902371a2e2ea",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ SC Freiburg",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83232",
+      "id": "evt_5e11b0c4c4cc1da47b692409",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ 1. FSV Mainz 05",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83233",
+      "id": "evt_7cdd64eb0c427d3cf954a578",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ Hamburger SV",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83234",
+      "id": "evt_e1f4e43acb12e388ba11dfd5",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ 1. FC Köln",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83235",
+      "id": "evt_7c823eab775cf846957036df",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ SC Paderborn 07",
+      "start": "2026-11-07T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83236",
+      "id": "evt_2a32d97dec9d5616a9128595",
+      "startUtc": "2026-11-07T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Sacred Heart @ Stonehill",
       "start": "2026-11-07T19:00Z",
@@ -35577,6 +37126,18 @@
       "id": "evt_2d7fb17ba5b642595e043a64",
       "startUtc": "2026-11-07T23:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "Brazilian Grand Prix",
+      "start": "2026-11-08T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:20",
+      "id": "evt_d4ddfdc23ec73b9dc6a57d14",
+      "startUtc": "2026-11-08T17:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -36662,6 +38223,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ FC Bayern München",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83237",
+      "id": "evt_900b89199aaa5719a4639285",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ Bayer 04 Leverkusen",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83238",
+      "id": "evt_8668a067a6dbf2dbed058ef2",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ Eintracht Frankfurt",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83239",
+      "id": "evt_441e0e10902ae43462081df2",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ FC Augsburg",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83240",
+      "id": "evt_891a4219aa3442c7aba6dcbd",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ 1. FC Union Berlin",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83241",
+      "id": "evt_bc37a55574a40cb6d01e351b",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ Borussia Mönchengladbach",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83242",
+      "id": "evt_14ff7436fd5e53fe5b175feb",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ SV Werder Bremen",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83243",
+      "id": "evt_25d7a513bc1ef253860f37b1",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ FC Schalke 04",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83244",
+      "id": "evt_7ea9cf2642dc42da41d5384c",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ SV 07 Elversberg",
+      "start": "2026-11-21T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83245",
+      "id": "evt_1506d9d766fc5c5e38b21aa5",
+      "startUtc": "2026-11-21T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Post University @ St. Anselm",
       "start": "2026-11-21T18:00Z",
@@ -36900,6 +38587,18 @@
       "id": "evt_ca17e5dae0a8f6e63639499d",
       "startUtc": "2026-11-21T21:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "Las Vegas Grand Prix",
+      "start": "2026-11-22T04:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:21",
+      "id": "evt_d5daf1a01e87f31d028d1277",
+      "startUtc": "2026-11-22T04:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -37222,6 +38921,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ Borussia Dortmund",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83246",
+      "id": "evt_c51fdc0633776ffe5cad1093",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ VfB Stuttgart",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83247",
+      "id": "evt_088a7e260c0dafd7eac8d7d1",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ TSG Hoffenheim",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83248",
+      "id": "evt_fd6f0c0a22593307c23794bb",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ SC Freiburg",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83249",
+      "id": "evt_6439a9a0475dccde551f4a61",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ 1. FSV Mainz 05",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83250",
+      "id": "evt_7c4ecc427ae2156f578a1196",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ Hamburger SV",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83251",
+      "id": "evt_3a372a2879ddaa8e8176534b",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ 1. FC Köln",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83252",
+      "id": "evt_9f63e28f523fbc153d53549b",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ SV Werder Bremen",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83253",
+      "id": "evt_f22f695f8abd995d05e91d27",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ SC Paderborn 07",
+      "start": "2026-11-28T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83254",
+      "id": "evt_0a6e8c9b4d094c6ead865676",
+      "startUtc": "2026-11-28T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "RIT @ Mercyhurst",
       "start": "2026-11-28T18:00Z",
@@ -37407,6 +39232,18 @@
       "id": "evt_63b298a89a797e8ca73c97f2",
       "startUtc": "2026-11-29T05:00Z",
       "sport": "other"
+    },
+    {
+      "league": "F1",
+      "title": "Qatar Grand Prix",
+      "start": "2026-11-29T16:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:22",
+      "id": "evt_2d7eb5143b5997085bb86aa1",
+      "startUtc": "2026-11-29T16:00:00Z",
+      "sport": "racing"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -37873,6 +39710,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ FC Bayern München",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83255",
+      "id": "evt_9bdaf6c3f2da5d1eaf27ba10",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ RB Leipzig",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83256",
+      "id": "evt_fb1a5499e794598e67016a89",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ Bayer 04 Leverkusen",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83257",
+      "id": "evt_2d8ee91df6b0225287b7da81",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ SC Freiburg",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83258",
+      "id": "evt_28d6edfaf8b9b8a1bb34982b",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ Eintracht Frankfurt",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83259",
+      "id": "evt_c14af7fc0211f0888516505b",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ FC Augsburg",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83260",
+      "id": "evt_76383716505ee69d4a97bd82",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ 1. FC Union Berlin",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83261",
+      "id": "evt_3dbe09d396230449edb142ee",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ FC Schalke 04",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83262",
+      "id": "evt_dbdb1c7fb58a5d99548999bc",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ SV 07 Elversberg",
+      "start": "2026-12-05T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83263",
+      "id": "evt_c67bd911e13e794fc1754cf7",
+      "startUtc": "2026-12-05T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Minnesota St @ Ohio State",
       "start": "2026-12-05T18:00Z",
@@ -38145,6 +40108,18 @@
       "sport": "other"
     },
     {
+      "league": "F1",
+      "title": "Abu Dhabi Grand Prix",
+      "start": "2026-12-06T13:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏎️",
+      "source": "jolpica-f1",
+      "providerEventId": "jolpica:23",
+      "id": "evt_7c9dfb5db20fa926c38070a3",
+      "startUtc": "2026-12-06T13:00:00Z",
+      "sport": "racing"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Brown @ Boston University",
       "start": "2026-12-09T23:00Z",
@@ -38273,6 +40248,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ Borussia Dortmund",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83264",
+      "id": "evt_8c31e95b49b56a2eeeb81fee",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ VfB Stuttgart",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83265",
+      "id": "evt_43983f30facb4077d1f56847",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ TSG Hoffenheim",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83266",
+      "id": "evt_40ad39e3683c4e12f4cdab2c",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ 1. FSV Mainz 05",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83267",
+      "id": "evt_6c5caddf3b454ef1e1ad2031",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ Borussia Mönchengladbach",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83268",
+      "id": "evt_58b13b7428f6e0dba6bbebb9",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ Hamburger SV",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83269",
+      "id": "evt_878b9cce73b8d1cf0788f289",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ 1. FC Köln",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83270",
+      "id": "evt_2b0d3966cc7bc196f6705fdb",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ SV Werder Bremen",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83271",
+      "id": "evt_530ffc94f6ce5acc5cdbf38b",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ SC Paderborn 07",
+      "start": "2026-12-12T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83272",
+      "id": "evt_2f97edf7e0b97ba845a6d27a",
+      "startUtc": "2026-12-12T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Minnesota @ Minnesota St",
       "start": "2026-12-12T21:00Z",
@@ -38287,6 +40388,132 @@
       "id": "evt_0c6730a2bfaa4b73d419963b",
       "startUtc": "2026-12-12T21:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ FC Bayern München",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83273",
+      "id": "evt_d83e676ecc769a024fa248a6",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ RB Leipzig",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83274",
+      "id": "evt_7dffffaa695768379af904ff",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ Bayer 04 Leverkusen",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83275",
+      "id": "evt_7213886f571f532cd16ecc75",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ SC Freiburg",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83276",
+      "id": "evt_8bf4cdee408a72cf68357d4e",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ FC Augsburg",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83277",
+      "id": "evt_3ae1b09e812545be30b7c582",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ 1. FSV Mainz 05",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83278",
+      "id": "evt_4c861bb03f3044add79c79eb",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ 1. FC Union Berlin",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83279",
+      "id": "evt_4c73aeee710fe163fb1b08fb",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ FC Schalke 04",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83280",
+      "id": "evt_de17d27729fdf7dee264c2ac",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ SV 07 Elversberg",
+      "start": "2026-12-19T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83281",
+      "id": "evt_42e517426dfa63d1cd6cb451",
+      "startUtc": "2026-12-19T14:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -39153,6 +41380,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ Borussia Dortmund",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83282",
+      "id": "evt_cb0422c722f6326e0ff4ad1a",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ VfB Stuttgart",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83283",
+      "id": "evt_6a36ca3a7a0d50be5d714215",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ TSG Hoffenheim",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83284",
+      "id": "evt_5620eff3ec3afd3f00614d1b",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ Eintracht Frankfurt",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83285",
+      "id": "evt_f380b460cdf8c056d21e863f",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ Borussia Mönchengladbach",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83286",
+      "id": "evt_4c7965d5cbd1356a8d391d75",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ Hamburger SV",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83287",
+      "id": "evt_fd40bfda9d90995f4c4a3756",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ 1. FC Köln",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83288",
+      "id": "evt_b41e6c112496d012d29860e0",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ SV Werder Bremen",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83289",
+      "id": "evt_3f5cb296d33b9db96d7ad1fe",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ SC Paderborn 07",
+      "start": "2027-01-09T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83290",
+      "id": "evt_8808bbf2a0ae2df0ad474308",
+      "startUtc": "2027-01-09T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Delaware @ Lindenwood",
       "start": "2027-01-09T17:00Z",
@@ -39455,6 +41808,132 @@
       "id": "evt_2bca1c19f2aa7494d0a4b942",
       "startUtc": "2027-01-12T05:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ FC Bayern München",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83291",
+      "id": "evt_71091f7d1da48ff725b9804c",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ RB Leipzig",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83292",
+      "id": "evt_ac810824172702dc985830ec",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ SC Freiburg",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83293",
+      "id": "evt_0ea92e66474484da578c3cf9",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ FC Augsburg",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83294",
+      "id": "evt_ae133f1f07f74ebe615e2326",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ 1. FSV Mainz 05",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83295",
+      "id": "evt_f557385fbc263ed62f353019",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ 1. FC Union Berlin",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83296",
+      "id": "evt_b6253894029d38a8eeda0045",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ 1. FC Köln",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83297",
+      "id": "evt_232e3a2ee0776fd5059d935e",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ FC Schalke 04",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83298",
+      "id": "evt_ee8328881cef12bcf090173c",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ SV 07 Elversberg",
+      "start": "2027-01-12T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83299",
+      "id": "evt_1b56e53e65e683ce240e7c51",
+      "startUtc": "2027-01-12T19:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -39887,6 +42366,132 @@
       "id": "evt_0bab15c0e8331203c5cb54bd",
       "startUtc": "2027-01-16T05:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ Borussia Dortmund",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83300",
+      "id": "evt_af6794304ec28daa66ffc2f2",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ VfB Stuttgart",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83301",
+      "id": "evt_b7c1869d1b7e95e6c7ad3ca9",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ TSG Hoffenheim",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83302",
+      "id": "evt_eb7e4bb0b1cf93ac130c39c9",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ Bayer 04 Leverkusen",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83303",
+      "id": "evt_cb09606283e12afd114eb55c",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ Eintracht Frankfurt",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83304",
+      "id": "evt_f5df0348ab94cc9d86e4b2bc",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ Borussia Mönchengladbach",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83305",
+      "id": "evt_c333d3c861df3f7882f1a58b",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ Hamburger SV",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83306",
+      "id": "evt_64a4f524392dea54c9ad7325",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ SV Werder Bremen",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83307",
+      "id": "evt_42d52b8d990ef0560be03a07",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ SC Paderborn 07",
+      "start": "2027-01-16T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83308",
+      "id": "evt_8f935bb4b5d4c48f24b223a0",
+      "startUtc": "2027-01-16T14:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -40575,6 +43180,132 @@
       "id": "evt_382bb2fa77b382e5f74f58f9",
       "startUtc": "2027-01-23T05:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ VfB Stuttgart",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83309",
+      "id": "evt_0d8f0e5d86daec4f3bfaf225",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ TSG Hoffenheim",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83310",
+      "id": "evt_67314759acb39efafe2d996c",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ Bayer 04 Leverkusen",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83311",
+      "id": "evt_e0496cf32dfe0528a2ce9ec7",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ Eintracht Frankfurt",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83312",
+      "id": "evt_fb22ac2941d88536e3ee98c1",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ Borussia Mönchengladbach",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83313",
+      "id": "evt_ef8b2c9f9c6ac1f8573d7961",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ Hamburger SV",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83314",
+      "id": "evt_9495eca2beb9021f2837f37d",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ SV Werder Bremen",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83315",
+      "id": "evt_2082a1ab0b29622d12bac9e2",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ FC Schalke 04",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83316",
+      "id": "evt_0bdcea087bd64960ed359a17",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ SC Paderborn 07",
+      "start": "2027-01-23T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83317",
+      "id": "evt_30d1a70874236b2b502aab37",
+      "startUtc": "2027-01-23T14:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -41281,6 +44012,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ FC Bayern München",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83318",
+      "id": "evt_c1fda483bc16fd9be0f8e511",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ Borussia Dortmund",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83319",
+      "id": "evt_83e1d15a399f2161957aef7f",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ RB Leipzig",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83320",
+      "id": "evt_befaf87e3b19bcabc89573d1",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ SC Freiburg",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83321",
+      "id": "evt_6763902421efc5ed2e17d45a",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ FC Augsburg",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83322",
+      "id": "evt_3a037f491c6964f0676aa780",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ 1. FSV Mainz 05",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83323",
+      "id": "evt_6ef857c90a1342ca8a599120",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ 1. FC Union Berlin",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83324",
+      "id": "evt_d187ccf49e218c274a11b69a",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ 1. FC Köln",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83325",
+      "id": "evt_1b959e204f78e4526415173b",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ SV 07 Elversberg",
+      "start": "2027-01-30T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83326",
+      "id": "evt_20f9f0434c3865eecdf68758",
+      "startUtc": "2027-01-30T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Wisconsin @ Bemidji State",
       "start": "2027-01-30T18:00Z",
@@ -41951,6 +44808,132 @@
       "id": "evt_6bcf6c0380c56ccd0b2b179e",
       "startUtc": "2027-02-06T05:00Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ FC Bayern München",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83327",
+      "id": "evt_c68e626d2187e8008035902c",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ VfB Stuttgart",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83328",
+      "id": "evt_40035e926dc92af4aad6ec9a",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ Bayer 04 Leverkusen",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83329",
+      "id": "evt_1d6c70d3d4871d283279a4ab",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ Eintracht Frankfurt",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83330",
+      "id": "evt_9d8aee9bee24cea156da3218",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ Borussia Mönchengladbach",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83331",
+      "id": "evt_9329c6ab0ca9a38884401385",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ Hamburger SV",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83332",
+      "id": "evt_44612e0e141b16a0d9926f40",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ SV Werder Bremen",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83333",
+      "id": "evt_5b8b86deecc3a2dd1deafa40",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ FC Schalke 04",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83334",
+      "id": "evt_23f8a422ba8dc63e16d3a714",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ SC Paderborn 07",
+      "start": "2027-02-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83335",
+      "id": "evt_581937f06e7bff1064fa26fb",
+      "startUtc": "2027-02-06T14:30:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -42705,6 +45688,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ Borussia Dortmund",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83336",
+      "id": "evt_cccb8c1bf5fe0fe5c04f5ded",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ RB Leipzig",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83337",
+      "id": "evt_d1f2285e8a083cda6ce2b3f0",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ TSG Hoffenheim",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83338",
+      "id": "evt_482b4e5ecb48d12c82e44f23",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ SC Freiburg",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83339",
+      "id": "evt_143b79791d479f0629904570",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ FC Augsburg",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83340",
+      "id": "evt_b42e59a32ae97bc7df0e9100",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ 1. FSV Mainz 05",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83341",
+      "id": "evt_74d958d8e618ea870b772c8e",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ 1. FC Union Berlin",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83342",
+      "id": "evt_a165be805201a7c9e6b8c6df",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ 1. FC Köln",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83343",
+      "id": "evt_41a32e833f33b8193bb55421",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ SV 07 Elversberg",
+      "start": "2027-02-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83344",
+      "id": "evt_91603331079fba7f232ff176",
+      "startUtc": "2027-02-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "St. Thomas-Minnesota @ Ohio State",
       "start": "2027-02-13T18:00Z",
@@ -43233,6 +46342,132 @@
       "sport": "other"
     },
     {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ FC Bayern München",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83345",
+      "id": "evt_add57984c14d5e839dee61b9",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ VfB Stuttgart",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83346",
+      "id": "evt_cc643ea65b904b06578eb5dd",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ Bayer 04 Leverkusen",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83347",
+      "id": "evt_e9a417f8383a25423e556036",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ Eintracht Frankfurt",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83348",
+      "id": "evt_5d1b68162b19d0b9bdead48b",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ Borussia Mönchengladbach",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83349",
+      "id": "evt_79244d9f76dc22fbc5aa3769",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ Hamburger SV",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83350",
+      "id": "evt_ab5da4db23e8bb06663fb5b1",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ SV Werder Bremen",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83351",
+      "id": "evt_08a2888e43c78c672ec7afdf",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ FC Schalke 04",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83352",
+      "id": "evt_fb57091117a7526b21951987",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ SV 07 Elversberg",
+      "start": "2027-02-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83353",
+      "id": "evt_61e71efae70120abd50b8221",
+      "startUtc": "2027-02-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Franklin Pierce @ Stonehill",
       "start": "2027-02-20T19:00Z",
@@ -43359,6 +46594,1518 @@
       "id": "evt_162ec8ca0d8a9c8e3612d6f9",
       "startUtc": "2027-02-20T21:30Z",
       "sport": "other"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ Borussia Dortmund",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83354",
+      "id": "evt_42361c69dc63fafd4a218556",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ RB Leipzig",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83355",
+      "id": "evt_26a4d44dbda8d4c5b6729c61",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ VfB Stuttgart",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83356",
+      "id": "evt_489b813fed1ee9e9f55ae940",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ TSG Hoffenheim",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83357",
+      "id": "evt_9663947c62d83e3c041f4aae",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ SC Freiburg",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83358",
+      "id": "evt_d463861fdfa8f0817957a9c3",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ FC Augsburg",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83359",
+      "id": "evt_e440e53e0bfe03aa1130cb32",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ 1. FSV Mainz 05",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83360",
+      "id": "evt_3bb1f04ff68ef3b9b1ad05d9",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ 1. FC Köln",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83361",
+      "id": "evt_e10556c2b708c474ea4f2e1a",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ SC Paderborn 07",
+      "start": "2027-02-27T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83362",
+      "id": "evt_54d6455f71908dffd5b3d492",
+      "startUtc": "2027-02-27T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ FC Bayern München",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83363",
+      "id": "evt_abb0561d13ed263c4b22211e",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ Bayer 04 Leverkusen",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83364",
+      "id": "evt_68a3407e5b908aed0b313716",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ Eintracht Frankfurt",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83365",
+      "id": "evt_90171707134b96167f862863",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ 1. FC Union Berlin",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83366",
+      "id": "evt_cfdcb1576f5a4c1e8e63840a",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ Borussia Mönchengladbach",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83367",
+      "id": "evt_9c343dea528321536441e83c",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ Hamburger SV",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83368",
+      "id": "evt_761161c7102c2e63bfa72870",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ SV Werder Bremen",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83369",
+      "id": "evt_b2fb95a9a47a777baecf0a46",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ FC Schalke 04",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83370",
+      "id": "evt_649e391f70c1390594398e47",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ SV 07 Elversberg",
+      "start": "2027-03-02T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83371",
+      "id": "evt_6eab4a9b4940690a5db27228",
+      "startUtc": "2027-03-02T19:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ Borussia Dortmund",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83372",
+      "id": "evt_b249c5970e9ba0be765539e9",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ RB Leipzig",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83373",
+      "id": "evt_1cde31ae6b78800ab8119252",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ VfB Stuttgart",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83374",
+      "id": "evt_192f77440e649ba5cfbda571",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ TSG Hoffenheim",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83375",
+      "id": "evt_c0343d0097b604edc90566b7",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ SC Freiburg",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83376",
+      "id": "evt_636ed0302159b0979d170400",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ 1. FSV Mainz 05",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83377",
+      "id": "evt_e798b3fb9f01363ac5a9d98f",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ Hamburger SV",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83378",
+      "id": "evt_c9f5de9e9a64414db043012a",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ 1. FC Köln",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83379",
+      "id": "evt_4308e26eca342bbec5f2bfa4",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ SC Paderborn 07",
+      "start": "2027-03-06T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83380",
+      "id": "evt_8185946e94e3b697cd136a4f",
+      "startUtc": "2027-03-06T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ FC Bayern München",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83381",
+      "id": "evt_ae82653e2138cc6001b06edb",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ Bayer 04 Leverkusen",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83382",
+      "id": "evt_166795c8be84aab373eb6c63",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ Eintracht Frankfurt",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83383",
+      "id": "evt_01011c26eda3a91db061c4b8",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ FC Augsburg",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83384",
+      "id": "evt_e6d83aa9ab6743e3703e7ee0",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ 1. FC Union Berlin",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83385",
+      "id": "evt_0308ebb027d38d7dde687b89",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ Borussia Mönchengladbach",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83386",
+      "id": "evt_76a0a79a6bfda062a9891d23",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ SV Werder Bremen",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83387",
+      "id": "evt_882efc0010e322d43d1171ff",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ FC Schalke 04",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83388",
+      "id": "evt_c796db3920b6b8d3f16dcc85",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ SV 07 Elversberg",
+      "start": "2027-03-13T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83389",
+      "id": "evt_0b5bed94f506d3e7e1a95279",
+      "startUtc": "2027-03-13T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ Borussia Dortmund",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83390",
+      "id": "evt_cf2d6a57b5c955479e67619b",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ RB Leipzig",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83391",
+      "id": "evt_4b7c617f4e5469c34d74e294",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ VfB Stuttgart",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83392",
+      "id": "evt_4eb58627130aa522400bc783",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ TSG Hoffenheim",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83393",
+      "id": "evt_dea8f46ebfb6cbd4b0082ca3",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ SC Freiburg",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83394",
+      "id": "evt_fea91744ffcf7512317a8215",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ 1. FSV Mainz 05",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83395",
+      "id": "evt_f88e94e268a2d6de4ed1e1c2",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ Hamburger SV",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83396",
+      "id": "evt_1bb851812c112dadf208aeef",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ 1. FC Köln",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83397",
+      "id": "evt_6a474e6dcbd2966a6d6bdce0",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ SC Paderborn 07",
+      "start": "2027-03-20T14:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83398",
+      "id": "evt_e885b171228341e56f7b0178",
+      "startUtc": "2027-03-20T14:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ FC Bayern München",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83399",
+      "id": "evt_27f13e01a4c05b9a187fadce",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ RB Leipzig",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83400",
+      "id": "evt_ace689e7742364734ce9a61f",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ Bayer 04 Leverkusen",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83401",
+      "id": "evt_e5ede58ecac0ffd82e518f3c",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ Eintracht Frankfurt",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83402",
+      "id": "evt_92dd11c5ec670212beccd847",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ FC Augsburg",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83403",
+      "id": "evt_dc23cdd2972aa0b9a76320b0",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ 1. FC Union Berlin",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83404",
+      "id": "evt_9e3b29b57df85858f3234a84",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ Borussia Mönchengladbach",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83405",
+      "id": "evt_b8dc2f55ba8a8849cd030e38",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ FC Schalke 04",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83406",
+      "id": "evt_e31c5f9b5ecc912f565a0a7b",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ SV 07 Elversberg",
+      "start": "2027-04-03T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83407",
+      "id": "evt_6b28b8a5155f01020eba8129",
+      "startUtc": "2027-04-03T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ Borussia Dortmund",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83408",
+      "id": "evt_917e2a743ae27c21fa4400aa",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ VfB Stuttgart",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83409",
+      "id": "evt_71f48f4048a66a132c1cd922",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ TSG Hoffenheim",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83410",
+      "id": "evt_a80e4b18c7c3c9f80645ed59",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ 1. FSV Mainz 05",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83411",
+      "id": "evt_0392cfa7cce453e03096bff8",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ Borussia Mönchengladbach",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83412",
+      "id": "evt_6568948079746b9d37e75758",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ Hamburger SV",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83413",
+      "id": "evt_dd341ebf19d48e52e0582103",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ 1. FC Köln",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83414",
+      "id": "evt_8a59fc02415298fdb87919c8",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ SV Werder Bremen",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83415",
+      "id": "evt_b68760d4436fcd4663b1dd60",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ SC Paderborn 07",
+      "start": "2027-04-10T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83416",
+      "id": "evt_dccc201ea6b722012b99621c",
+      "startUtc": "2027-04-10T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ FC Bayern München",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83417",
+      "id": "evt_ad314f45e4a87f398f8cc794",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ RB Leipzig",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83418",
+      "id": "evt_ec53e0e5a286c74baad455a1",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ Bayer 04 Leverkusen",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83419",
+      "id": "evt_fbe91092129bf32fba592d45",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ SC Freiburg",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83420",
+      "id": "evt_547c476c978e0baa889f87a8",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ Eintracht Frankfurt",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83421",
+      "id": "evt_abf5408f8e17f9daa1d0a519",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ FC Augsburg",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83422",
+      "id": "evt_8eeec3fa8dbf5583251b5348",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ 1. FC Union Berlin",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83423",
+      "id": "evt_250b4133203a13b861cb2f82",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ FC Schalke 04",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83424",
+      "id": "evt_cb284c8b72e89e89cade5fb7",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ SV 07 Elversberg",
+      "start": "2027-04-17T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83425",
+      "id": "evt_3dcd0061179fdb7ea00e5611",
+      "startUtc": "2027-04-17T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ Borussia Dortmund",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83426",
+      "id": "evt_39585ab049f8e0e7dcef0252",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ VfB Stuttgart",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83427",
+      "id": "evt_36579fcb4bcff0a85f941fcc",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ TSG Hoffenheim",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83428",
+      "id": "evt_18149364e5b2f54aafcff38c",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ Eintracht Frankfurt",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83429",
+      "id": "evt_686f2ec58f949377d3d4d8cb",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ Borussia Mönchengladbach",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83430",
+      "id": "evt_a5cb1cd658afff26e8f918c1",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ Hamburger SV",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83431",
+      "id": "evt_178136ae0dac3b80cd066a47",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ 1. FC Köln",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83432",
+      "id": "evt_58e721ffd57f2a3a8067d293",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ SV Werder Bremen",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83433",
+      "id": "evt_d65f8e9a089dffc246e5bbc0",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ SC Paderborn 07",
+      "start": "2027-04-24T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83434",
+      "id": "evt_e415392301ab9a1048b9d2e1",
+      "startUtc": "2027-04-24T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ FC Bayern München",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83435",
+      "id": "evt_31342375d2003590c0952f11",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ RB Leipzig",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83436",
+      "id": "evt_8f0bd1e4bb35d3ca3fb08eec",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ Bayer 04 Leverkusen",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83437",
+      "id": "evt_ed7a43e26fd97ec882553a98",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ SC Freiburg",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83438",
+      "id": "evt_46bf6b42abb9841a9adc5c5e",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ FC Augsburg",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83439",
+      "id": "evt_f4104fd1239031325a444c32",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ 1. FSV Mainz 05",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83440",
+      "id": "evt_d8cb6ed4d8e44af1fac63b2e",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ 1. FC Union Berlin",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83441",
+      "id": "evt_4bd989134d9dff9b430faec1",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ FC Schalke 04",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83442",
+      "id": "evt_d1cb68545b3e188c5661e998",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ SV 07 Elversberg",
+      "start": "2027-05-08T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83443",
+      "id": "evt_6ccb7a5bd87e1a49f613c170",
+      "startUtc": "2027-05-08T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ Borussia Dortmund",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Dortmund",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83444",
+      "id": "evt_a668b838dd0195fbdaba90ab",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "RB Leipzig @ VfB Stuttgart",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "RB Leipzig",
+      "providerEventId": "openligadb:83445",
+      "id": "evt_928a668fdc9c8c917520b523",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FSV Mainz 05 @ TSG Hoffenheim",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "TSG Hoffenheim",
+      "away": "1. FSV Mainz 05",
+      "providerEventId": "openligadb:83446",
+      "id": "evt_9749441e3ef7533519822807",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Bayern München @ Bayer 04 Leverkusen",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Bayer 04 Leverkusen",
+      "away": "FC Bayern München",
+      "providerEventId": "openligadb:83447",
+      "id": "evt_172e0cc5b0ce537a56be078c",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV 07 Elversberg @ Eintracht Frankfurt",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Eintracht Frankfurt",
+      "away": "SV 07 Elversberg",
+      "providerEventId": "openligadb:83448",
+      "id": "evt_0e13cf7de7ba9091b2f4442b",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Augsburg @ Borussia Mönchengladbach",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Borussia Mönchengladbach",
+      "away": "FC Augsburg",
+      "providerEventId": "openligadb:83449",
+      "id": "evt_81003f665806f3dfd2ed56a4",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Freiburg @ Hamburger SV",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "Hamburger SV",
+      "away": "SC Freiburg",
+      "providerEventId": "openligadb:83450",
+      "id": "evt_3400827a94858cf928c31ce1",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "FC Schalke 04 @ SV Werder Bremen",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV Werder Bremen",
+      "away": "FC Schalke 04",
+      "providerEventId": "openligadb:83451",
+      "id": "evt_392423d59b8f3c77dc004e0c",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Union Berlin @ SC Paderborn 07",
+      "start": "2027-05-15T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Paderborn 07",
+      "away": "1. FC Union Berlin",
+      "providerEventId": "openligadb:83452",
+      "id": "evt_d65f9230db85600ea50a7a33",
+      "startUtc": "2027-05-15T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Eintracht Frankfurt @ FC Bayern München",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Bayern München",
+      "away": "Eintracht Frankfurt",
+      "providerEventId": "openligadb:83453",
+      "id": "evt_21414b32a7f4fdf61c090818",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "TSG Hoffenheim @ RB Leipzig",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "RB Leipzig",
+      "away": "TSG Hoffenheim",
+      "providerEventId": "openligadb:83454",
+      "id": "evt_4888ea88ea3b18b8845ef8fa",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Dortmund @ SC Freiburg",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SC Freiburg",
+      "away": "Borussia Dortmund",
+      "providerEventId": "openligadb:83455",
+      "id": "evt_76ecf900b76c902341ecb23d",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Hamburger SV @ FC Augsburg",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Augsburg",
+      "away": "Hamburger SV",
+      "providerEventId": "openligadb:83456",
+      "id": "evt_c2a1614470b126c7945f757f",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "VfB Stuttgart @ 1. FSV Mainz 05",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FSV Mainz 05",
+      "away": "VfB Stuttgart",
+      "providerEventId": "openligadb:83457",
+      "id": "evt_e92299d234b4ae3e602b8370",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Borussia Mönchengladbach @ 1. FC Union Berlin",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Union Berlin",
+      "away": "Borussia Mönchengladbach",
+      "providerEventId": "openligadb:83458",
+      "id": "evt_6cda9d272063a7fb6f12518b",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SC Paderborn 07 @ 1. FC Köln",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "1. FC Köln",
+      "away": "SC Paderborn 07",
+      "providerEventId": "openligadb:83459",
+      "id": "evt_d6201b6573a08d078f94d465",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Bayer 04 Leverkusen @ FC Schalke 04",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "FC Schalke 04",
+      "away": "Bayer 04 Leverkusen",
+      "providerEventId": "openligadb:83460",
+      "id": "evt_8ec53da5412b261797674433",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "SV Werder Bremen @ SV 07 Elversberg",
+      "start": "2027-05-22T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "SV 07 Elversberg",
+      "away": "SV Werder Bremen",
+      "providerEventId": "openligadb:83461",
+      "id": "evt_d2914d4591ba19aa189fd4f4",
+      "startUtc": "2027-05-22T13:30:00Z",
+      "sport": "soccer"
     }
   ]
 }
