@@ -70,10 +70,9 @@ def deterministic_plan(e):
     elif not e.source_present and e.league:action='discover_schedule_provider'
     return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
 def _model_configs():
-    """Ordered model providers; first successful decision wins."""
     configs=[]
     primary=(os.getenv('SPORTS_AGENT_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_MODEL','').strip().rstrip(' .'),os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip(),'primary')
-    gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip().rstrip(' .'),' '.join([]) if False else os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
+    gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip().rstrip(' .'),os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
     for cfg in (primary,gemini):
         if cfg[0] and cfg[1] and cfg[2]:configs.append(cfg)
     return configs
@@ -107,18 +106,30 @@ def load_memory(path):
     try:
         d=json.loads(path.read_text(encoding='utf-8'));return d if isinstance(d,dict) else {}
     except Exception:return {}
-def run(feed_path,memory_path,graph_path):
-    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});agent.setdefault('actions',{});agent.setdefault('modelDecisions',0);agent.setdefault('fallbackDecisions',0);agent.setdefault('modelProviders',{});registry=ToolRegistry();plans=[]
+def _selected_events(events,mode):
+    if mode!='live':return events
+    now=datetime.now(timezone.utc)
+    selected=[]
+    for event in events:
+        phase=str(event.get('intelligencePhase','')).upper(); start=str(event.get('startUtc') or event.get('start') or '')
+        urgent=phase in {'LIVE','PREGAME'}
+        if not urgent and start:
+            try:
+                dt=datetime.fromisoformat(start.replace('Z','+00:00')); urgent=0 <= (dt-now).total_seconds() <= 30*60
+            except Exception:pass
+        if urgent:selected.append(event)
+    return selected
+def run(feed_path,memory_path,graph_path,mode='full'):
+    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];events=_selected_events(events,mode);memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});agent.setdefault('actions',{});agent.setdefault('modelDecisions',0);agent.setdefault('fallbackDecisions',0);agent.setdefault('modelProviders',{});registry=ToolRegistry();plans=[]
     for event in events:
         e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''));e.correlated=correlate(event)
         if e.correlated.get('verdict') in {'FINAL','POSTPONED'} and e.correlated.get('confidence',0)>=0.82:e.action='reconcile_or_archive';e.phase='FINAL'
         plan=model_plan(e) if should_use_model(e) else None
-        if plan is None:
-            plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
+        if plan is None:plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
         else:
             agent['modelDecisions']=int(agent.get('modelDecisions',0))+1;provider=str(plan.pop('_modelProvider','primary'));agent.setdefault('modelProviders',{});agent['modelProviders'][provider]=int(agent['modelProviders'].get(provider,0))+1
         result=registry.execute(str(plan.get('action','no_action')),e);action=str(plan.get('action','no_action'));agent['actions'][action]=int(agent['actions'].get(action,0))+1;plans.append({'eventId':e.event_id,'phase':e.phase,'correlation':e.correlated,'plan':plan,'execution':result})
-    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastPlans']=plans[:500];memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
+    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastMode']=mode;agent['lastPlans']=plans[:500];memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'mode':mode,'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
 def main():
-    p=argparse.ArgumentParser();p.add_argument('feed');p.add_argument('--memory',default='data/sports_brain_memory.json');p.add_argument('--graph',default='data/sports_knowledge_graph.json');a=p.parse_args();print(json.dumps(run(Path(a.feed),Path(a.memory),Path(a.graph)),indent=2))
+    p=argparse.ArgumentParser();p.add_argument('feed');p.add_argument('--memory',default='data/sports_brain_memory.json');p.add_argument('--graph',default='data/sports_knowledge_graph.json');p.add_argument('--mode',choices=['full','live'],default='full');a=p.parse_args();print(json.dumps(run(Path(a.feed),Path(a.memory),Path(a.graph),a.mode),indent=2))
 if __name__=='__main__':main()
