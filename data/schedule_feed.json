@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-04T17:29:41.561767+00:00",
+  "generatedAt": "2026-09-04T17:41:25.005702+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "F1": 28,
@@ -14,7 +14,7 @@
     "AFL": 3,
     "FIVB Women": 29,
     "NASCAR Xfinity": 17,
-    "NCAA Women's Volleyball": 534,
+    "NCAA Women's Volleyball": 538,
     "NCAA Women's Field Hockey": 81,
     "Ligue 1": 27,
     "Serie A": 30,
@@ -43,8 +43,12 @@
     "NBA": 3,
     "TNA": 1
   },
-  "failedSources": [],
-  "providerFailures": [],
+  "failedSources": [
+    "WRC"
+  ],
+  "providerFailures": [
+    "WRC"
+  ],
   "noEventLeagues": [
     "AAA Wrestling",
     "CFL",
@@ -69,8 +73,7 @@
     "NLL",
     "Rugby World Cup",
     "Six Nations",
-    "WEC",
-    "WRC"
+    "WEC"
   ],
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
@@ -79,8 +82,8 @@
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
-    "openligadb": 306,
     "sportsdb": 10,
+    "openligadb": 306,
     "jolpica-f1": 23,
     "openf1": 1,
     "fivb-vis": 119,
@@ -88,13 +91,13 @@
     "mlb-official": 349,
     "espn-shadow": 136,
     "nascar": 100,
-    "espn-ncaa": 1068
+    "espn-ncaa": 1072
   },
   "shadowProviderRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
-    "openligadb": 306,
     "sportsdb": 10,
+    "openligadb": 306,
     "jolpica-f1": 23,
     "openf1": 1,
     "fivb-vis": 119,
@@ -102,7 +105,7 @@
     "mlb-official": 349,
     "espn-shadow": 136,
     "nascar": 100,
-    "espn-ncaa": 1068
+    "espn-ncaa": 1072
   },
   "providerOverlapLeagues": [
     "Bundesliga",
@@ -117,7 +120,7 @@
     "NHL",
     "Serie A"
   ],
-  "providerOverlapRecordCount": 458,
+  "providerOverlapRecordCount": 1446,
   "leagueProviderMatrix": {
     "AAA Wrestling": {
       "configured": [
@@ -151,16 +154,14 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
-      "standbyProviders": [],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      "standbyProviders": []
     },
     "ATP": {
       "configured": [
@@ -169,20 +170,18 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportscore",
         "espn",
+        "sportscore",
         "sportsdb"
       ],
-      "primary": "sportscore",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportscore",
       "tertiary": "sportsdb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "sportscore",
-      "promotedTo": "espn"
+      ]
     },
     "Bundesliga": {
       "configured": [
@@ -193,23 +192,21 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
-        "openligadb",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "openligadb",
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
+      "primary": "sportsdb",
+      "secondary": "espn",
       "tertiary": "openligadb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "openligadb"
+      ]
     },
     "CFL": {
       "configured": [
@@ -217,11 +214,11 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -237,22 +234,20 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
-      "tertiary": "espn",
+      "primary": "sportsdb",
+      "secondary": "espn",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "F1": {
       "configured": [
@@ -262,12 +257,12 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
+        "espn",
         "jolpica-f1",
         "openf1",
-        "espn"
+        "official"
       ],
-      "primary": "official",
+      "primary": "espn",
       "secondary": "jolpica-f1",
       "tertiary": "openf1",
       "cachedRecovery": "cache",
@@ -275,9 +270,7 @@
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "jolpica-f1"
+      ]
     },
     "FIVB Men": {
       "configured": [
@@ -360,19 +353,19 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
         "sportscore",
+        "official",
         "espn",
         "sportsdb"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
+      "primary": "sportscore",
+      "secondary": "official",
       "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportmonks"
       ],
-      "promotedFrom": "official",
+      "promotedFrom": "sportscore",
       "promotedTo": "cache"
     },
     "IndyCar": {
@@ -381,19 +374,17 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "LIV Golf": {
       "configured": [
@@ -401,11 +392,11 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -419,19 +410,17 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "LaLiga": {
       "configured": [
@@ -441,22 +430,20 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
-      "tertiary": "espn",
+      "primary": "sportsdb",
+      "secondary": "espn",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "Ligue 1": {
       "configured": [
@@ -466,22 +453,20 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
-      "tertiary": "espn",
+      "primary": "sportsdb",
+      "secondary": "espn",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "MLB": {
       "configured": [
@@ -490,13 +475,13 @@
         "sportsdb"
       ],
       "activeOrder": [
+        "sportsdb",
         "mlb-official",
-        "espn",
-        "sportsdb"
+        "espn"
       ],
-      "primary": "mlb-official",
-      "secondary": "espn",
-      "tertiary": "sportsdb",
+      "primary": "sportsdb",
+      "secondary": "mlb-official",
+      "tertiary": "espn",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -511,22 +496,20 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
-      "tertiary": "espn",
+      "primary": "sportsdb",
+      "secondary": "espn",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "sportscore"
+      ]
     },
     "MONSTER JAM": {
       "configured": [
@@ -623,21 +606,19 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
-      "tertiary": "espn",
+      "primary": "sportsdb",
+      "secondary": "espn",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "NCAA BB": {
       "configured": [
@@ -811,16 +792,14 @@
         "espn"
       ],
       "activeOrder": [
-        "ncaa",
-        "espn"
+        "espn",
+        "ncaa"
       ],
-      "primary": "ncaa",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "ncaa",
       "tertiary": "cache",
       "cachedRecovery": "cache",
-      "standbyProviders": [],
-      "promotedFrom": "ncaa",
-      "promotedTo": "espn"
+      "standbyProviders": []
     },
     "NCAA Women's Lacrosse": {
       "configured": [
@@ -881,20 +860,18 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "official"
       ],
-      "primary": "official",
+      "primary": "sportsdb",
       "secondary": "espn",
-      "tertiary": "sportsdb",
+      "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "NHL": {
       "configured": [
@@ -903,20 +880,18 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "nhl-official",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "nhl-official"
       ],
-      "primary": "nhl-official",
+      "primary": "sportsdb",
       "secondary": "espn",
-      "tertiary": "sportsdb",
+      "tertiary": "nhl-official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "nhl-official",
-      "promotedTo": "espn"
+      ]
     },
     "NLL": {
       "configured": [
@@ -924,11 +899,11 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -942,16 +917,14 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
-      "standbyProviders": [],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      "standbyProviders": []
     },
     "NWSL": {
       "configured": [
@@ -959,18 +932,16 @@
         "sportscore"
       ],
       "activeOrder": [
-        "official",
-        "sportscore"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
+      "primary": "sportscore",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "sportscore"
+      ]
     },
     "PGA": {
       "configured": [
@@ -978,19 +949,17 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "PLL": {
       "configured": [
@@ -998,19 +967,17 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "Rugby World Cup": {
       "configured": [
@@ -1018,11 +985,11 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": []
@@ -1034,21 +1001,19 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportscore",
+        "sportsdb",
         "espn",
-        "sportsdb"
+        "sportscore"
       ],
-      "primary": "sportscore",
+      "primary": "sportsdb",
       "secondary": "espn",
-      "tertiary": "sportsdb",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "sportscore",
-      "promotedTo": "espn"
+      ]
     },
     "Six Nations": {
       "configured": [
@@ -1056,11 +1021,11 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
-        "espn"
+        "espn",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": []
@@ -1085,21 +1050,19 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
+        "espn",
         "sportscore",
-        "espn"
+        "official"
       ],
-      "primary": "official",
+      "primary": "espn",
       "secondary": "sportscore",
-      "tertiary": "espn",
+      "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "UEL": {
       "configured": [
@@ -1107,20 +1070,18 @@
         "sportscore"
       ],
       "activeOrder": [
-        "official",
-        "sportscore"
+        "sportscore",
+        "official"
       ],
-      "primary": "official",
-      "secondary": "sportscore",
+      "primary": "sportscore",
+      "secondary": "official",
       "tertiary": "cache",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "sportscore"
+      ]
     },
     "UFC": {
       "configured": [
@@ -1129,20 +1090,18 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "official",
         "espn",
+        "official",
         "sportsdb"
       ],
-      "primary": "official",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "official",
       "tertiary": "sportsdb",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "WEC": {
       "configured": [
@@ -1164,20 +1123,18 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
+        "espn",
         "sportscore",
-        "espn"
+        "official"
       ],
-      "primary": "official",
+      "primary": "espn",
       "secondary": "sportscore",
-      "tertiary": "espn",
+      "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "WRC": {
       "configured": [
@@ -1199,20 +1156,18 @@
         "espn"
       ],
       "activeOrder": [
-        "official",
+        "espn",
         "sportscore",
-        "espn"
+        "official"
       ],
-      "primary": "official",
+      "primary": "espn",
       "secondary": "sportscore",
-      "tertiary": "espn",
+      "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ],
-      "promotedFrom": "official",
-      "promotedTo": "espn"
+      ]
     },
     "WWE": {
       "configured": [
@@ -1234,14 +1189,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1130.4,
+        "latencyMs": 849.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.1,
+        "latencyMs": 18.0,
         "error": "cache"
       }
     ],
@@ -1250,99 +1205,99 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 867.4,
+        "latencyMs": 838.3,
         "error": ""
       }
     ],
     "AFL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 898.3,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 284.6,
+        "latencyMs": 152.4,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 218.8,
         "error": ""
       }
     ],
     "ATP": [
       {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 234.0,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 653.9,
+        "latencyMs": 320.3,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 260.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 241.4,
+        "latencyMs": 260.4,
         "error": ""
       }
     ],
     "Bundesliga": [
       {
-        "provider": "official",
+        "provider": "sportsdb",
         "ok": true,
-        "events": 0,
-        "latencyMs": 349.1,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 209.3,
-        "error": ""
-      },
-      {
-        "provider": "openligadb",
-        "ok": true,
-        "events": 306,
-        "latencyMs": 1109.9,
+        "events": 1,
+        "latencyMs": 163.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 27,
-        "latencyMs": 348.8,
+        "latencyMs": 179.3,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "openligadb",
         "ok": true,
-        "events": 1,
-        "latencyMs": 178.0,
+        "events": 306,
+        "latencyMs": 1494.9,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 281.2,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 55.8,
         "error": ""
       }
     ],
     "CFL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 332.9,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 165.2,
+        "latencyMs": 87.4,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 294.0,
         "error": ""
       },
       {
@@ -1355,61 +1310,61 @@
     ],
     "EPL": [
       {
-        "provider": "official",
+        "provider": "sportsdb",
         "ok": true,
-        "events": 0,
-        "latencyMs": 209.5,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 161.0,
+        "events": 1,
+        "latencyMs": 166.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 407.2,
+        "latencyMs": 185.8,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "sportscore",
         "ok": true,
-        "events": 1,
-        "latencyMs": 202.8,
+        "events": 0,
+        "latencyMs": 380.2,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 920.8,
         "error": ""
       }
     ],
     "F1": [
       {
-        "provider": "official",
+        "provider": "espn",
         "ok": true,
-        "events": 0,
-        "latencyMs": 235.2,
+        "events": 4,
+        "latencyMs": 112.2,
         "error": ""
       },
       {
         "provider": "jolpica-f1",
         "ok": true,
         "events": 23,
-        "latencyMs": 385.7,
+        "latencyMs": 63.1,
         "error": ""
       },
       {
         "provider": "openf1",
         "ok": true,
         "events": 1,
-        "latencyMs": 590.0,
+        "latencyMs": 804.7,
         "error": ""
       },
       {
-        "provider": "espn",
+        "provider": "official",
         "ok": true,
-        "events": 4,
-        "latencyMs": 147.3,
+        "events": 0,
+        "latencyMs": 489.2,
         "error": ""
       }
     ],
@@ -1418,7 +1373,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 90,
-        "latencyMs": 563.4,
+        "latencyMs": 559.2,
         "error": ""
       }
     ],
@@ -1427,7 +1382,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 29,
-        "latencyMs": 434.3,
+        "latencyMs": 232.4,
         "error": ""
       }
     ],
@@ -1436,14 +1391,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 202.2,
+        "latencyMs": 968.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.0,
+        "latencyMs": 17.2,
         "error": "cache"
       }
     ],
@@ -1452,35 +1407,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 425.0,
+        "latencyMs": 190.7,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 658.0,
+        "latencyMs": 356.9,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 278.7,
+        "latencyMs": 174.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 168.9,
+        "latencyMs": 153.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.1,
+        "latencyMs": 17.2,
         "error": "cache"
       }
     ],
@@ -1489,219 +1444,219 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 427.0,
+        "latencyMs": 504.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.7,
+        "latencyMs": 15.5,
         "error": "cache"
       }
     ],
     "IPL": [
       {
-        "provider": "official",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 254.8,
-        "error": ""
-      },
-      {
         "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 526.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 379.9,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 145.5,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": true,
-        "events": 74,
-        "latencyMs": 15.2,
-        "error": "cache"
-      }
-    ],
-    "IndyCar": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 190.6,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 180.6,
-        "error": ""
-      }
-    ],
-    "LIV Golf": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 213.0,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 186.3,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.9,
-        "error": "cache"
-      }
-    ],
-    "LPGA": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 218.6,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 3,
-        "latencyMs": 107.0,
-        "error": ""
-      }
-    ],
-    "LaLiga": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 183.6,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 142.9,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 39,
-        "latencyMs": 354.3,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 175.9,
-        "error": ""
-      }
-    ],
-    "Ligue 1": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1156.0,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 285.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 26,
-        "latencyMs": 329.4,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 168.6,
-        "error": ""
-      }
-    ],
-    "MLB": [
-      {
-        "provider": "mlb-official",
-        "ok": true,
-        "events": 349,
-        "latencyMs": 457.5,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 340,
-        "latencyMs": 595.8,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 167.1,
-        "error": ""
-      }
-    ],
-    "MLS": [
-      {
-        "provider": "official",
         "ok": true,
         "events": 0,
         "latencyMs": 198.8,
         "error": ""
       },
       {
+        "provider": "official",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 362.0,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 157.3,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 156.1,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": true,
+        "events": 74,
+        "latencyMs": 15.6,
+        "error": "cache"
+      }
+    ],
+    "IndyCar": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 87.5,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 508.2,
+        "error": ""
+      }
+    ],
+    "LIV Golf": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 87.5,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 137.3,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 17.2,
+        "error": "cache"
+      }
+    ],
+    "LPGA": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 3,
+        "latencyMs": 91.1,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1554.3,
+        "error": ""
+      }
+    ],
+    "LaLiga": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 152.9,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 39,
+        "latencyMs": 190.1,
+        "error": ""
+      },
+      {
         "provider": "sportscore",
         "ok": true,
-        "events": 76,
-        "latencyMs": 670.6,
+        "events": 0,
+        "latencyMs": 522.2,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1394.2,
+        "error": ""
+      }
+    ],
+    "Ligue 1": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 176.7,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 26,
+        "latencyMs": 172.0,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 167.0,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1562.2,
+        "error": ""
+      }
+    ],
+    "MLB": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 159.7,
+        "error": ""
+      },
+      {
+        "provider": "mlb-official",
+        "ok": true,
+        "events": 349,
+        "latencyMs": 380.2,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 340,
+        "latencyMs": 371.4,
+        "error": ""
+      }
+    ],
+    "MLS": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 156.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 76,
-        "latencyMs": 454.7,
+        "latencyMs": 239.4,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "sportscore",
         "ok": true,
-        "events": 1,
-        "latencyMs": 147.2,
+        "events": 76,
+        "latencyMs": 270.8,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 163.7,
         "error": ""
       }
     ],
@@ -1710,14 +1665,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 298.5,
+        "latencyMs": 103.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 16.9,
+        "latencyMs": 17.4,
         "error": "cache"
       }
     ],
@@ -1726,14 +1681,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 681.5,
+        "latencyMs": 929.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.4,
+        "latencyMs": 15.5,
         "error": "cache"
       }
     ],
@@ -1742,14 +1697,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 214.1,
+        "latencyMs": 791.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.8,
+        "latencyMs": 15.9,
         "error": "cache"
       }
     ],
@@ -1758,7 +1713,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 49,
-        "latencyMs": 263.3,
+        "latencyMs": 367.2,
         "error": ""
       }
     ],
@@ -1767,7 +1722,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 21,
-        "latencyMs": 167.2,
+        "latencyMs": 21.2,
         "error": ""
       }
     ],
@@ -1776,37 +1731,37 @@
         "provider": "nascar",
         "ok": true,
         "events": 30,
-        "latencyMs": 145.0,
+        "latencyMs": 30.7,
         "error": ""
       }
     ],
     "NBA": [
       {
-        "provider": "official",
+        "provider": "sportsdb",
         "ok": true,
-        "events": 0,
-        "latencyMs": 283.3,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 186.9,
+        "events": 1,
+        "latencyMs": 168.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 182.1,
+        "latencyMs": 87.2,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "sportscore",
         "ok": true,
-        "events": 1,
-        "latencyMs": 139.3,
+        "events": 0,
+        "latencyMs": 177.6,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 106.7,
         "error": ""
       }
     ],
@@ -1815,7 +1770,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2328.7,
+        "latencyMs": 2102.6,
         "error": ""
       },
       {
@@ -1831,7 +1786,121 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2363.3,
+        "latencyMs": 1875.7,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 17.7,
+        "error": "cache"
+      }
+    ],
+    "NCAA Beach Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1903.1,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.1,
+        "error": "cache"
+      }
+    ],
+    "NCAA FB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 38,
+        "latencyMs": 1679.9,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1927.4,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.3,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Lacrosse": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1826.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.4,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 161,
+        "latencyMs": 2088.6,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1813.9,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.7,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Water Polo": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1966.7,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 20.3,
+        "error": "cache"
+      }
+    ],
+    "NCAA Softball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1841.1,
         "error": ""
       },
       {
@@ -1842,126 +1911,12 @@
         "error": "cache"
       }
     ],
-    "NCAA Beach Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2243.5,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.7,
-        "error": "cache"
-      }
-    ],
-    "NCAA FB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 38,
-        "latencyMs": 2120.2,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2067.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.7,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Lacrosse": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2336.2,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.6,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 161,
-        "latencyMs": 2461.8,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2120.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.6,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Water Polo": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2285.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 20.7,
-        "error": "cache"
-      }
-    ],
-    "NCAA Softball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2230.8,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.5,
-        "error": "cache"
-      }
-    ],
     "NCAA WBB": [
       {
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2143.3,
+        "latencyMs": 1762.5,
         "error": ""
       },
       {
@@ -1977,23 +1932,23 @@
         "provider": "ncaa",
         "ok": true,
         "events": 81,
-        "latencyMs": 2073.5,
+        "latencyMs": 1709.9,
         "error": ""
       }
     ],
     "NCAA Women's Hockey": [
       {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2346.1,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 743,
-        "latencyMs": 544.8,
+        "latencyMs": 291.9,
+        "error": ""
+      },
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1916.4,
         "error": ""
       }
     ],
@@ -2002,14 +1957,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2496.4,
+        "latencyMs": 1846.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 19.5,
+        "latencyMs": 19.8,
         "error": "cache"
       }
     ],
@@ -2018,7 +1973,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 254,
-        "latencyMs": 2299.4,
+        "latencyMs": 2206.7,
         "error": ""
       }
     ],
@@ -2026,8 +1981,8 @@
       {
         "provider": "ncaa",
         "ok": true,
-        "events": 534,
-        "latencyMs": 3037.3,
+        "events": 538,
+        "latencyMs": 2309.5,
         "error": ""
       }
     ],
@@ -2036,216 +1991,216 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2353.2,
+        "latencyMs": 1865.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 21.8,
+        "latencyMs": 20.8,
         "error": "cache"
       }
     ],
     "NFL": [
       {
-        "provider": "official",
+        "provider": "sportsdb",
         "ok": true,
-        "events": 0,
-        "latencyMs": 179.6,
+        "events": 1,
+        "latencyMs": 158.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 17,
-        "latencyMs": 281.5,
+        "latencyMs": 171.4,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "official",
         "ok": true,
-        "events": 1,
-        "latencyMs": 155.3,
+        "events": 0,
+        "latencyMs": 173.0,
         "error": ""
       }
     ],
     "NHL": [
       {
-        "provider": "nhl-official",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 123.5,
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 154.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 104,
-        "latencyMs": 395.3,
+        "latencyMs": 260.3,
         "error": ""
       },
       {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 141.5,
+        "provider": "nhl-official",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 95.0,
         "error": ""
       }
     ],
     "NLL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 6143.4,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 239.4,
+        "latencyMs": 93.9,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1546.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.4,
+        "latencyMs": 15.6,
         "error": "cache"
       }
     ],
     "NRL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1103.9,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 7,
-        "latencyMs": 258.1,
+        "latencyMs": 133.6,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 800.3,
         "error": ""
       }
     ],
     "NWSL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 542.3,
-        "error": ""
-      },
-      {
         "provider": "sportscore",
         "ok": true,
         "events": 42,
-        "latencyMs": 514.4,
+        "latencyMs": 248.4,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 284.2,
         "error": ""
       }
     ],
     "PGA": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 179.3,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 178.9,
+        "latencyMs": 89.2,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 357.5,
         "error": ""
       }
     ],
     "PLL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 306.3,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 176.0,
+        "latencyMs": 96.2,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 220.3,
         "error": ""
       }
     ],
     "Rugby World Cup": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 393.6,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 155.7,
+        "latencyMs": 88.5,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1666.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.4,
+        "latencyMs": 18.6,
         "error": "cache"
       }
     ],
     "Serie A": [
       {
-        "provider": "sportscore",
+        "provider": "sportsdb",
         "ok": true,
-        "events": 0,
-        "latencyMs": 153.7,
+        "events": 1,
+        "latencyMs": 164.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 271.0,
+        "latencyMs": 185.5,
         "error": ""
       },
       {
-        "provider": "sportsdb",
+        "provider": "sportscore",
         "ok": true,
-        "events": 1,
-        "latencyMs": 150.6,
+        "events": 0,
+        "latencyMs": 676.4,
         "error": ""
       }
     ],
     "Six Nations": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 246.8,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 217.8,
+        "latencyMs": 86.6,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 115.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.5,
+        "latencyMs": 17.0,
         "error": "cache"
       }
     ],
@@ -2260,63 +2215,63 @@
     ],
     "UCL": [
       {
-        "provider": "official",
+        "provider": "espn",
         "ok": true,
-        "events": 0,
-        "latencyMs": 257.7,
+        "events": 18,
+        "latencyMs": 150.9,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 236.7,
+        "latencyMs": 261.3,
         "error": ""
       },
       {
-        "provider": "espn",
+        "provider": "official",
         "ok": true,
-        "events": 18,
-        "latencyMs": 290.2,
+        "events": 0,
+        "latencyMs": 309.0,
         "error": ""
       }
     ],
     "UEL": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 297.4,
-        "error": ""
-      },
-      {
         "provider": "sportscore",
         "ok": true,
         "events": 18,
-        "latencyMs": 442.4,
+        "latencyMs": 281.5,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 189.1,
         "error": ""
       }
     ],
     "UFC": [
       {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 192.0,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 211.5,
+        "latencyMs": 129.8,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 187.2,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 170.4,
+        "latencyMs": 164.2,
         "error": ""
       }
     ],
@@ -2325,76 +2280,76 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 443.0,
+        "latencyMs": 553.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.0,
+        "latencyMs": 15.1,
         "error": "cache"
       }
     ],
     "WNBA": [
       {
-        "provider": "official",
+        "provider": "espn",
         "ok": true,
-        "events": 0,
-        "latencyMs": 187.9,
+        "events": 30,
+        "latencyMs": 193.8,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 165.6,
+        "latencyMs": 166.1,
         "error": ""
       },
       {
-        "provider": "espn",
+        "provider": "official",
         "ok": true,
-        "events": 30,
-        "latencyMs": 304.0,
+        "events": 0,
+        "latencyMs": 192.5,
         "error": ""
       }
     ],
     "WRC": [
       {
         "provider": "official",
-        "ok": true,
+        "ok": false,
         "events": 0,
-        "latencyMs": 253.0,
+        "latencyMs": 759.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.0,
+        "latencyMs": 15.2,
         "error": "cache"
       }
     ],
     "WTA": [
       {
-        "provider": "official",
+        "provider": "espn",
         "ok": true,
-        "events": 0,
-        "latencyMs": 309.6,
+        "events": 18,
+        "latencyMs": 302.0,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 281.1,
+        "latencyMs": 188.3,
         "error": ""
       },
       {
-        "provider": "espn",
+        "provider": "official",
         "ok": true,
-        "events": 18,
-        "latencyMs": 551.0,
+        "events": 0,
+        "latencyMs": 579.1,
         "error": ""
       }
     ],
@@ -2409,31 +2364,7 @@
     ]
   },
   "providerPromotions": {
-    "AFL": "espn",
-    "ATP": "espn",
-    "Bundesliga": "openligadb",
-    "EPL": "espn",
-    "F1": "jolpica-f1",
-    "IPL": "cache",
-    "IndyCar": "espn",
-    "LPGA": "espn",
-    "LaLiga": "espn",
-    "Ligue 1": "espn",
-    "MLS": "sportscore",
-    "NBA": "espn",
-    "NCAA Women's Hockey": "espn",
-    "NFL": "espn",
-    "NHL": "espn",
-    "NRL": "espn",
-    "NWSL": "sportscore",
-    "PGA": "espn",
-    "PLL": "espn",
-    "Serie A": "espn",
-    "UCL": "espn",
-    "UEL": "sportscore",
-    "UFC": "espn",
-    "WNBA": "espn",
-    "WTA": "espn"
+    "IPL": "cache"
   },
   "cacheRecoveryLeagues": [
     "IPL"
@@ -4929,7 +4860,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Bradley @ N Arizona",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Bradley",
@@ -4943,7 +4874,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Indiana St @ N'Western St",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Indiana St",
@@ -5041,7 +4972,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Louisville @ Saint Louis",
       "start": "2026-09-04T15:30:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Louisville",
@@ -5097,7 +5028,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "West Florida @ Alabama St",
       "start": "2026-09-04T16:00:00Z",
-      "tag": "FINAL",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "West Florida",
@@ -5125,7 +5056,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "UConn @ Brown",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "UConn",
@@ -5139,7 +5070,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Stonehill @ Maine",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Stonehill",
@@ -5497,29 +5428,15 @@
       "home": "Cleveland Guardians",
       "away": "Detroit Tigers",
       "providerEventId": "mlb:824424",
-      "homeTeamId": "5",
-      "awayTeamId": "6",
       "sportsDbEventId": "2387945",
       "sportsDbHomeTeamId": "135254",
       "sportsDbAwayTeamId": "135255",
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/nno1is1785918636.jpg",
+      "homeTeamId": "5",
+      "awayTeamId": "6",
       "id": "evt_120a543c3e74acf0bad6bc13",
       "startUtc": "2026-09-04T18:10:00Z",
       "sport": "baseball"
-    },
-    {
-      "league": "Bundesliga",
-      "title": "1. FC Köln @ VfB Stuttgart",
-      "start": "2026-09-04T18:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "openligadb",
-      "home": "VfB Stuttgart",
-      "away": "1. FC Köln",
-      "providerEventId": "openligadb:83165",
-      "id": "evt_4736fc3fca601156e868d05c",
-      "startUtc": "2026-09-04T18:30:00Z",
-      "sport": "soccer"
     },
     {
       "league": "Bundesliga",
@@ -5535,6 +5452,20 @@
       "away": "Köln",
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/ylpz1s1783076735.jpg",
       "id": "evt_d734f6066ec9aba3e7fb2ef5",
+      "startUtc": "2026-09-04T18:30:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "1. FC Köln @ VfB Stuttgart",
+      "start": "2026-09-04T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "openligadb",
+      "home": "VfB Stuttgart",
+      "away": "1. FC Köln",
+      "providerEventId": "openligadb:83165",
+      "id": "evt_4736fc3fca601156e868d05c",
       "startUtc": "2026-09-04T18:30:00Z",
       "sport": "soccer"
     },
@@ -24358,6 +24289,62 @@
       "providerEventId": "espn:401902500",
       "id": "evt_e59dc00bc89ae822a7125447",
       "startUtc": "2026-09-11T17:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "VCU @ Toledo",
+      "start": "2026-09-11T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "VCU",
+      "home": "Toledo",
+      "providerEventId": "espn:401887950",
+      "id": "evt_44f124b4966f9387dfed30b6",
+      "startUtc": "2026-09-11T17:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Georgia St @ MTSU",
+      "start": "2026-09-11T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Georgia St",
+      "home": "MTSU",
+      "providerEventId": "espn:401897379",
+      "id": "evt_3770b904d29ff743ddaad4c5",
+      "startUtc": "2026-09-11T17:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Miami OH @ Nicholls",
+      "start": "2026-09-11T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Miami OH",
+      "home": "Nicholls",
+      "providerEventId": "espn:401898666",
+      "id": "evt_786035b413aedd24dab610ba",
+      "startUtc": "2026-09-11T17:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "AR-Pine Bluff @ SIUE",
+      "start": "2026-09-11T17:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "AR-Pine Bluff",
+      "home": "SIUE",
+      "providerEventId": "espn:401901595",
+      "id": "evt_ea7c01f8b1866bc11aba3fdc",
+      "startUtc": "2026-09-11T17:30:00Z",
       "sport": "other"
     },
     {
@@ -52468,32 +52455,13 @@
       ],
       "observedUpcoming": 0,
       "observedRecent": 0
-    },
-    "WRC": {
-      "league": "WRC",
-      "active": true,
-      "class": "active",
-      "probeHours": 1,
-      "reason": "season_window",
-      "configuredSeason": [
-        [
-          1,
-          1
-        ],
-        [
-          12,
-          31
-        ]
-      ],
-      "observedUpcoming": 0,
-      "observedRecent": 0
     }
   },
   "providerDiscovery": {
     "enabled": true,
     "discoveredCandidates": 0,
     "promotedProviders": 0,
-    "fallbackAttempts": 14,
+    "fallbackAttempts": 13,
     "googleResearchRecovered": 0,
     "googleResearchByLeague": {
       "AAA Wrestling": 0,
@@ -52508,8 +52476,7 @@
       "NCAA Men's Water Polo": 0,
       "NCAA Women's Water Polo": 0,
       "Rugby World Cup": 0,
-      "WEC": 0,
-      "WRC": 0
+      "WEC": 0
     },
     "leagueStatus": {
       "AAA Wrestling": {
@@ -52817,11 +52784,6 @@
         "promoted": 0,
         "endpoints": []
       },
-      "WRC": {
-        "discovered": 0,
-        "promoted": 0,
-        "endpoints": []
-      },
       "WTA": {
         "discovered": 0,
         "promoted": 0,
@@ -52838,9 +52800,9 @@
   "discoveredProviders": 0,
   "promotedProviders": 0,
   "scheduleGapResolution": {
-    "activeGaps": 14,
+    "activeGaps": 13,
     "offSeasonGaps": 11,
-    "searchedActiveGaps": 14,
-    "unresolvedAfterDiscovery": 25
+    "searchedActiveGaps": 13,
+    "unresolvedAfterDiscovery": 24
   }
 }
