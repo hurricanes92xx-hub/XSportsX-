@@ -10,32 +10,24 @@ from provider_health import build_matrix,provider_order,record
 from providers.ncaa import ESPN_FALLBACK as NCAA_ESPN
 from providers.expanded import fetch as fetch_expanded
 from providers.free import fetch as fetch_free
-
+from providers.fivb import fetch as fetch_fivb
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data"/"schedule_feed.json"
 _WRESTLING_CACHE=None
-
 def official_map():
     out={}
     for source in engine.load_official_registry():
         league=str(source.get("league") or "").strip()
         if league: out.setdefault(league,[]).append(source)
     return out
-
 def icon_map():
     out={x[0]:x[3] for x in engine.ESPN_LEAGUES}
     out.update({x[0]:x[3] for x in engine.NCAA_LEAGUES})
     out.update({x:"🏎️" for x in engine.NASCAR_SERIES})
     out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","WEC":"🏎️","IMSA":"🏎️","FIVB Men":"🏐","FIVB Women":"🏐"})
     return out
-
 def source_priority(source):
-    return {"mlb-official":0,"nhl-official":0,"official":0,
-            "ncaa":1,"nascar":1,"wrestling":1,"sportradar":1,
-            "sportsdataio":1,"sportmonks":1,"cfbd":1,"pandascore":1,
-            "espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"openwec":2,"fivb-vis":2,"sportscore":2,
-            "sportsdb":3,"fallback":4,"cache":5}.get(source,9)
-
+    return {"mlb-official":0,"nhl-official":0,"official":0,"ncaa":1,"nascar":1,"wrestling":1,"sportradar":1,"sportsdataio":1,"sportmonks":1,"cfbd":1,"pandascore":1,"espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"openwec":2,"fivb-vis":2,"sportscore":2,"sportsdb":3,"fallback":4,"cache":5}.get(source,9)
 def dedupe(events):
     canonical=[]; merges=0; counts={}
     for raw in events:
@@ -46,17 +38,14 @@ def dedupe(events):
         if source_priority(source)<source_priority(existing_source):
             winner=merge_event_records(candidate,existing); winner["source"]=source; canonical[match]=winner
         else: canonical[match]=merge_event_records(existing,candidate)
-    for event in canonical:
-        event["id"]=event_identity(event.get("league"),event.get("title"),event.get("start"),event.get("home"),event.get("away"))
+    for event in canonical:event["id"]=event_identity(event.get("league"),event.get("title"),event.get("start"),event.get("home"),event.get("away"))
     return canonical,merges,counts
-
 def fetch(provider,league,meta,official,previous):
     global _WRESTLING_CACHE
     try:
-        if provider in {"sportradar","sportsdataio","sportmonks","cfbd","mlb-official","nhl-official","pandascore"}:
-            return fetch_expanded(provider,league,meta["icon"])
-        if provider in {"sportscore","jolpica-f1","openf1","openligadb","openwec","fivb"}:
-            return fetch_free(provider,league,meta["icon"])
+        if provider in {"sportradar","sportsdataio","sportmonks","cfbd","mlb-official","nhl-official","pandascore"}: return fetch_expanded(provider,league,meta["icon"])
+        if provider in {"sportscore","jolpica-f1","openf1","openligadb","openwec","fivb"}: return fetch_free(provider,league,meta["icon"])
+        if provider=="fivb-get": return fetch_fivb(league,meta["icon"])
         if provider=="official":
             events=[]; ok=False
             for source in official.get(league,[]):
@@ -85,8 +74,7 @@ def fetch(provider,league,meta,official,previous):
             for event in events:event.setdefault("source","nascar")
             return True,events,""
         if provider=="wrestling":
-            if _WRESTLING_CACHE is None:
-                _WRESTLING_CACHE=[]; engine.add_wrestling(_WRESTLING_CACHE)
+            if _WRESTLING_CACHE is None:_WRESTLING_CACHE=[]; engine.add_wrestling(_WRESTLING_CACHE)
             events=[dict(event,source="wrestling") for event in _WRESTLING_CACHE if event.get("league")==league]
             return True,events,""
         if provider=="sportsdb":
@@ -97,9 +85,7 @@ def fetch(provider,league,meta,official,previous):
             events=[dict(event,source="cache") for event in previous if normalize_league(event.get("league"))==normalize_league(league)]
             return bool(events),events,"cache"
         return False,[],"unknown provider"
-    except Exception as exc:
-        return False,[],f"{type(exc).__name__}: {exc}"[:300]
-
+    except Exception as exc:return False,[],f"{type(exc).__name__}: {exc}"[:300]
 def main():
     previous={}
     if OUT.exists():
@@ -113,34 +99,20 @@ def main():
     dedicated={name:("ncaa" if name in ncaa else "nascar" if name in engine.NASCAR_SERIES else "wrestling") for name in dedicated_names}
     matrix=build_matrix(all_leagues,official_names,dedicated,set(espn),sportsdb_names)
     for league in ("WEC","IMSA"):
-        matrix.setdefault(league,{})["configured"]=["openwec"]
-        matrix[league]["activeOrder"]=["openwec"]
-        matrix[league]["primary"]="openwec"
-        matrix[league]["secondary"]="cache"
-        matrix[league]["tertiary"]="cache"
-        matrix[league]["cachedRecovery"]="cache"
-        matrix[league]["standbyProviders"]=[]
+        matrix.setdefault(league,{})["configured"]=["openwec"]; matrix[league]["activeOrder"]=["openwec"]; matrix[league]["primary"]="openwec"; matrix[league]["secondary"]="cache"; matrix[league]["tertiary"]="cache"; matrix[league]["cachedRecovery"]="cache"; matrix[league]["standbyProviders"]=[]
     for league in ("FIVB Men","FIVB Women"):
-        matrix.setdefault(league,{})["configured"]=["fivb"]
-        matrix[league]["activeOrder"]=["fivb"]
-        matrix[league]["primary"]="fivb"
-        matrix[league]["secondary"]="cache"
-        matrix[league]["tertiary"]="cache"
-        matrix[league]["cachedRecovery"]="cache"
-        matrix[league]["standbyProviders"]=[]
+        matrix.setdefault(league,{})["configured"]=["fivb-get"]; matrix[league]["activeOrder"]=["fivb-get"]; matrix[league]["primary"]="fivb-get"; matrix[league]["secondary"]="cache"; matrix[league]["tertiary"]="cache"; matrix[league]["cachedRecovery"]="cache"; matrix[league]["standbyProviders"]=[]
     events=[]; failures=[]; no_event_leagues=[]; attempts={}; promotions={}; cache_recovery=[]; overlap_leagues=[]; overlap_records=0
     for league in sorted(all_leagues):
         ordered=provider_order(league,matrix[league]["configured"]); matrix[league]["activeOrder"]=ordered; attempts[league]=[]
         meta={"icon":icons.get(league,"🏆"),"espn":espn.get(league),"ncaa":ncaa.get(league)}; successful=[]; provider_ok=False
         for provider in ordered:
             started=time.monotonic(); ok,got,error=fetch(provider,league,meta,officials,previous_events); latency=round((time.monotonic()-started)*1000,1)
-            attempts[league].append({"provider":provider,"ok":ok,"events":len(got),"latencyMs":latency,"error":error}); record(league,provider,ok,len(got),latency,error)
-            provider_ok = provider_ok or ok
+            attempts[league].append({"provider":provider,"ok":ok,"events":len(got),"latencyMs":latency,"error":error}); record(league,provider,ok,len(got),latency,error); provider_ok=provider_ok or ok
             if ok and got: successful.append((provider,got))
         if not successful:
             started=time.monotonic(); cache_ok,cache_events,cache_error=fetch("cache",league,meta,officials,previous_events); latency=round((time.monotonic()-started)*1000,1)
-            attempts[league].append({"provider":"cache","ok":cache_ok,"events":len(cache_events),"latencyMs":latency,"error":cache_error}); record(league,"cache",cache_ok,len(cache_events),latency,cache_error)
-            provider_ok = provider_ok or cache_ok
+            attempts[league].append({"provider":"cache","ok":cache_ok,"events":len(cache_events),"latencyMs":latency,"error":cache_error}); record(league,"cache",cache_ok,len(cache_events),latency,cache_error); provider_ok=provider_ok or cache_ok
             if cache_ok and cache_events: successful=[("cache",cache_events)]; cache_recovery.append(league)
         if not successful:
             if provider_ok:no_event_leagues.append(league)
@@ -159,5 +131,4 @@ def main():
     payload={"schema":13,"generatedAt":datetime.now(timezone.utc).isoformat(),"refreshHours":6,"eventCounts":per,"failedSources":failures,"providerFailures":failures,"noEventLeagues":no_event_leagues,"sportsDbFallbackSources":[],"officialSourceFailures":[],"officialSourceCounts":{},"identityMergeCount":merges,"sourceRecordCounts":source_counts,"shadowProviderRecordCounts":source_counts,"providerOverlapLeagues":overlap_leagues,"providerOverlapRecordCount":overlap_records,"leagueProviderMatrix":matrix,"providerAttempts":attempts,"providerPromotions":promotions,"cacheRecoveryLeagues":cache_recovery,"events":events}
     tmp=OUT.with_suffix(".tmp"); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8"); tmp.replace(OUT)
     print(f"wrote {len(events)} canonical events across {len(per)} leagues; failures={len(failures)}; no_events={len(no_event_leagues)}; promotions={len(promotions)}; cache={len(cache_recovery)}; identity_merges={merges}; overlap_leagues={len(overlap_leagues)}")
-
 if __name__=="__main__": main()
