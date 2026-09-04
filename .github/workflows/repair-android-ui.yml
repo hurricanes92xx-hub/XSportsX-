@@ -1,0 +1,65 @@
+name: Repair Android UI Contracts
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/repair_android_ui_contract.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-ui-repair
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout android-app
+        uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Apply Android UI contracts
+        run: python3 scripts/repair_android_ui_contract.py
+      - name: Commit repaired Android sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX UI Bot'
+          git config user.email 'xsportsx-ui-bot@users.noreply.github.com'
+          git add app/src/main/java/com/xsportsx/app/SportsLogos.kt \
+            app/src/main/java/com/xsportsx/app/LeagueScheduleScreen.kt \
+            app/src/main/java/com/xsportsx/app/ScheduleSnapshotRepository.kt \
+            app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt \
+            app/src/main/java/com/xsportsx/app/MainActivityFuture.kt
+          if git diff --cached --quiet; then
+            echo 'Android UI contracts already satisfied.'
+            exit 0
+          fi
+          git commit -m 'fix: repair schedule layout logos stream fallback and ticker placement'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app && git push origin HEAD:android-app; then
+              echo "UI repair published on attempt ${attempt}."
+              exit 0
+            fi
+            git rebase --abort || true
+            git reset --mixed origin/android-app
+            git add app/src/main/java/com/xsportsx/app/SportsLogos.kt \
+              app/src/main/java/com/xsportsx/app/LeagueScheduleScreen.kt \
+              app/src/main/java/com/xsportsx/app/ScheduleSnapshotRepository.kt \
+              app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt \
+              app/src/main/java/com/xsportsx/app/MainActivityFuture.kt
+            if ! git diff --cached --quiet; then git commit -m 'fix: republish Android UI repair'; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
