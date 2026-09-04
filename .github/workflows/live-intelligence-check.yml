@@ -1,0 +1,60 @@
+name: XSportsX 30-Minute Live Intelligence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-live-check
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  live-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout canonical feed
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run lightweight live intelligence
+        env:
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
+        run: python3 scripts/live_intelligence_check.py
+      - name: Publish live intelligence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Live Intelligence Bot'
+          git config user.email 'xsportsx-live-bot@users.noreply.github.com'
+          git add data/schedule_feed.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'chore: refresh live intelligence'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase origin/android-app && git push origin HEAD:android-app; then
+              echo "Live intelligence published on attempt ${attempt}."
+              exit 0
+            fi
+            git rebase --abort || true
+            git reset --mixed origin/android-app
+            git add data/schedule_feed.json
+            git commit -m 'chore: refresh live intelligence' || true
+            sleep $((attempt * 2))
+          done
+          exit 1
