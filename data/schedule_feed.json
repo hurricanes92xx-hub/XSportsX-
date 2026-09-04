@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-04T17:41:25.005702+00:00",
+  "generatedAt": "2026-09-04T19:58:07.904809+00:00",
   "refreshHours": 6,
   "eventCounts": {
     "F1": 28,
@@ -14,13 +14,13 @@
     "AFL": 3,
     "FIVB Women": 29,
     "NASCAR Xfinity": 17,
-    "NCAA Women's Volleyball": 538,
-    "NCAA Women's Field Hockey": 81,
-    "Ligue 1": 27,
+    "NCAA Women's Volleyball": 557,
+    "NCAA Women's Field Hockey": 94,
+    "Ligue 1": 26,
     "Serie A": 30,
-    "EPL": 31,
+    "NCAA Men's Soccer": 162,
+    "EPL": 30,
     "LaLiga": 40,
-    "NCAA Men's Soccer": 161,
     "NASCAR Cup": 26,
     "NCAA Women's Soccer": 254,
     "NCAA FB": 38,
@@ -43,12 +43,8 @@
     "NBA": 3,
     "TNA": 1
   },
-  "failedSources": [
-    "WRC"
-  ],
-  "providerFailures": [
-    "WRC"
-  ],
+  "failedSources": [],
+  "providerFailures": [],
   "noEventLeagues": [
     "AAA Wrestling",
     "CFL",
@@ -73,12 +69,13 @@
     "NLL",
     "Rugby World Cup",
     "Six Nations",
-    "WEC"
+    "WEC",
+    "WRC"
   ],
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 461,
+  "identityMergeCount": 463,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
@@ -91,7 +88,7 @@
     "mlb-official": 349,
     "espn-shadow": 136,
     "nascar": 100,
-    "espn-ncaa": 1072
+    "espn-ncaa": 1105
   },
   "shadowProviderRecordCounts": {
     "wrestling": 18,
@@ -105,7 +102,7 @@
     "mlb-official": 349,
     "espn-shadow": 136,
     "nascar": 100,
-    "espn-ncaa": 1072
+    "espn-ncaa": 1105
   },
   "providerOverlapLeagues": [
     "Bundesliga",
@@ -1189,14 +1186,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 849.1,
+        "latencyMs": 911.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.0,
+        "latencyMs": 19.2,
         "error": "cache"
       }
     ],
@@ -1205,7 +1202,7 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 838.3,
+        "latencyMs": 795.4,
         "error": ""
       }
     ],
@@ -1214,14 +1211,14 @@
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 152.4,
+        "latencyMs": 152.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 218.8,
+        "latencyMs": 533.8,
         "error": ""
       }
     ],
@@ -1230,21 +1227,21 @@
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 320.3,
+        "latencyMs": 344.3,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 260.7,
+        "latencyMs": 386.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 260.4,
+        "latencyMs": 220.8,
         "error": ""
       }
     ],
@@ -1253,35 +1250,35 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 163.3,
+        "latencyMs": 159.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 27,
-        "latencyMs": 179.3,
+        "latencyMs": 175.6,
         "error": ""
       },
       {
         "provider": "openligadb",
         "ok": true,
         "events": 306,
-        "latencyMs": 1494.9,
+        "latencyMs": 1587.1,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 281.2,
+        "latencyMs": 173.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 55.8,
+        "latencyMs": 124.2,
         "error": ""
       }
     ],
@@ -1290,21 +1287,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 87.4,
+        "latencyMs": 88.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 294.0,
+        "latencyMs": 249.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.3,
+        "latencyMs": 15.8,
         "error": "cache"
       }
     ],
@@ -1313,28 +1310,28 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 166.0,
+        "latencyMs": 165.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 185.8,
+        "latencyMs": 205.8,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 380.2,
+        "latencyMs": 178.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 920.8,
+        "latencyMs": 928.6,
         "error": ""
       }
     ],
@@ -1343,28 +1340,28 @@
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 112.2,
+        "latencyMs": 121.3,
         "error": ""
       },
       {
         "provider": "jolpica-f1",
         "ok": true,
         "events": 23,
-        "latencyMs": 63.1,
+        "latencyMs": 56.9,
         "error": ""
       },
       {
         "provider": "openf1",
         "ok": true,
         "events": 1,
-        "latencyMs": 804.7,
+        "latencyMs": 480.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 489.2,
+        "latencyMs": 119.8,
         "error": ""
       }
     ],
@@ -1373,7 +1370,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 90,
-        "latencyMs": 559.2,
+        "latencyMs": 719.9,
         "error": ""
       }
     ],
@@ -1382,7 +1379,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 29,
-        "latencyMs": 232.4,
+        "latencyMs": 226.0,
         "error": ""
       }
     ],
@@ -1391,14 +1388,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 968.3,
+        "latencyMs": 64.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.2,
+        "latencyMs": 16.8,
         "error": "cache"
       }
     ],
@@ -1407,28 +1404,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 190.7,
+        "latencyMs": 282.9,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 356.9,
+        "latencyMs": 304.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 174.1,
+        "latencyMs": 157.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 153.1,
+        "latencyMs": 158.7,
         "error": ""
       },
       {
@@ -1444,14 +1441,14 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 504.2,
+        "latencyMs": 513.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.5,
+        "latencyMs": 15.8,
         "error": "cache"
       }
     ],
@@ -1460,35 +1457,35 @@
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 198.8,
+        "latencyMs": 232.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 362.0,
+        "latencyMs": 117.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 157.3,
+        "latencyMs": 152.9,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 156.1,
+        "latencyMs": 162.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": true,
         "events": 74,
-        "latencyMs": 15.6,
+        "latencyMs": 15.5,
         "error": "cache"
       }
     ],
@@ -1497,14 +1494,14 @@
         "provider": "espn",
         "ok": true,
         "events": 1,
-        "latencyMs": 87.5,
+        "latencyMs": 91.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 508.2,
+        "latencyMs": 421.0,
         "error": ""
       }
     ],
@@ -1513,21 +1510,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 87.5,
+        "latencyMs": 86.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 137.3,
+        "latencyMs": 237.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.2,
+        "latencyMs": 17.5,
         "error": "cache"
       }
     ],
@@ -1536,14 +1533,14 @@
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 91.1,
+        "latencyMs": 88.2,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1554.3,
+        "latencyMs": 171.3,
         "error": ""
       }
     ],
@@ -1552,28 +1549,28 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 152.9,
+        "latencyMs": 166.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 39,
-        "latencyMs": 190.1,
+        "latencyMs": 197.4,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 522.2,
+        "latencyMs": 672.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1394.2,
+        "latencyMs": 1819.1,
         "error": ""
       }
     ],
@@ -1582,28 +1579,28 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 176.7,
+        "latencyMs": 167.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 26,
-        "latencyMs": 172.0,
+        "latencyMs": 168.2,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 167.0,
+        "latencyMs": 177.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1562.2,
+        "latencyMs": 1407.7,
         "error": ""
       }
     ],
@@ -1612,21 +1609,21 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 159.7,
+        "latencyMs": 174.4,
         "error": ""
       },
       {
         "provider": "mlb-official",
         "ok": true,
         "events": 349,
-        "latencyMs": 380.2,
+        "latencyMs": 91.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 340,
-        "latencyMs": 371.4,
+        "latencyMs": 423.0,
         "error": ""
       }
     ],
@@ -1635,28 +1632,28 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 156.4,
+        "latencyMs": 155.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 76,
-        "latencyMs": 239.4,
+        "latencyMs": 214.6,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 76,
-        "latencyMs": 270.8,
+        "latencyMs": 277.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 163.7,
+        "latencyMs": 494.2,
         "error": ""
       }
     ],
@@ -1665,7 +1662,23 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 103.8,
+        "latencyMs": 63.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 17.6,
+        "error": "cache"
+      }
+    ],
+    "MXGP": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 921.2,
         "error": ""
       },
       {
@@ -1676,35 +1689,19 @@
         "error": "cache"
       }
     ],
-    "MXGP": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 929.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 15.5,
-        "error": "cache"
-      }
-    ],
     "MotoGP": [
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 791.9,
+        "latencyMs": 128.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.9,
+        "latencyMs": 15.8,
         "error": "cache"
       }
     ],
@@ -1713,7 +1710,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 49,
-        "latencyMs": 367.2,
+        "latencyMs": 359.5,
         "error": ""
       }
     ],
@@ -1722,7 +1719,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 21,
-        "latencyMs": 21.2,
+        "latencyMs": 96.2,
         "error": ""
       }
     ],
@@ -1731,7 +1728,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 30,
-        "latencyMs": 30.7,
+        "latencyMs": 95.1,
         "error": ""
       }
     ],
@@ -1740,28 +1737,28 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 168.2,
+        "latencyMs": 160.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 87.2,
+        "latencyMs": 93.8,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 177.6,
+        "latencyMs": 492.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 106.7,
+        "latencyMs": 165.6,
         "error": ""
       }
     ],
@@ -1770,153 +1767,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2102.6,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.1,
-        "error": "cache"
-      }
-    ],
-    "NCAA Baseball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1875.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.7,
-        "error": "cache"
-      }
-    ],
-    "NCAA Beach Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1903.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.1,
-        "error": "cache"
-      }
-    ],
-    "NCAA FB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 38,
-        "latencyMs": 1679.9,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1927.4,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.3,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Lacrosse": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1826.5,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.4,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 161,
-        "latencyMs": 2088.6,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1813.9,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 19.7,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Water Polo": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1966.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 20.3,
-        "error": "cache"
-      }
-    ],
-    "NCAA Softball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1841.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.8,
-        "error": "cache"
-      }
-    ],
-    "NCAA WBB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1762.5,
+        "latencyMs": 1941.7,
         "error": ""
       },
       {
@@ -1927,12 +1778,158 @@
         "error": "cache"
       }
     ],
+    "NCAA Baseball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1841.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 17.8,
+        "error": "cache"
+      }
+    ],
+    "NCAA Beach Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1880.1,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.6,
+        "error": "cache"
+      }
+    ],
+    "NCAA FB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 38,
+        "latencyMs": 1654.3,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1801.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.4,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Lacrosse": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1967.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 19.6,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 162,
+        "latencyMs": 2158.5,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1886.2,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 20.1,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Water Polo": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2110.7,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 20.7,
+        "error": "cache"
+      }
+    ],
+    "NCAA Softball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1840.1,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 18.0,
+        "error": "cache"
+      }
+    ],
+    "NCAA WBB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1785.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 17.5,
+        "error": "cache"
+      }
+    ],
     "NCAA Women's Field Hockey": [
       {
         "provider": "ncaa",
         "ok": true,
-        "events": 81,
-        "latencyMs": 1709.9,
+        "events": 94,
+        "latencyMs": 1751.4,
         "error": ""
       }
     ],
@@ -1941,14 +1938,14 @@
         "provider": "espn",
         "ok": true,
         "events": 743,
-        "latencyMs": 291.9,
+        "latencyMs": 284.0,
         "error": ""
       },
       {
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1916.4,
+        "latencyMs": 1814.7,
         "error": ""
       }
     ],
@@ -1957,14 +1954,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1846.9,
+        "latencyMs": 1958.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 19.8,
+        "latencyMs": 20.0,
         "error": "cache"
       }
     ],
@@ -1973,7 +1970,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 254,
-        "latencyMs": 2206.7,
+        "latencyMs": 2358.9,
         "error": ""
       }
     ],
@@ -1981,8 +1978,8 @@
       {
         "provider": "ncaa",
         "ok": true,
-        "events": 538,
-        "latencyMs": 2309.5,
+        "events": 557,
+        "latencyMs": 2196.1,
         "error": ""
       }
     ],
@@ -1991,14 +1988,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1865.6,
+        "latencyMs": 1866.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 20.8,
+        "latencyMs": 22.0,
         "error": "cache"
       }
     ],
@@ -2007,21 +2004,21 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 158.7,
+        "latencyMs": 163.8,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 17,
-        "latencyMs": 171.4,
+        "latencyMs": 166.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 173.0,
+        "latencyMs": 115.4,
         "error": ""
       }
     ],
@@ -2030,21 +2027,21 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 154.4,
+        "latencyMs": 165.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 104,
-        "latencyMs": 260.3,
+        "latencyMs": 215.9,
         "error": ""
       },
       {
         "provider": "nhl-official",
         "ok": false,
         "events": 0,
-        "latencyMs": 95.0,
+        "latencyMs": 90.5,
         "error": ""
       }
     ],
@@ -2053,14 +2050,14 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 93.9,
+        "latencyMs": 88.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1546.7,
+        "latencyMs": 131.8,
         "error": ""
       },
       {
@@ -2076,14 +2073,14 @@
         "provider": "espn",
         "ok": true,
         "events": 7,
-        "latencyMs": 133.6,
+        "latencyMs": 137.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 800.3,
+        "latencyMs": 1001.2,
         "error": ""
       }
     ],
@@ -2092,14 +2089,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 42,
-        "latencyMs": 248.4,
+        "latencyMs": 239.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 284.2,
+        "latencyMs": 206.6,
         "error": ""
       }
     ],
@@ -2108,14 +2105,14 @@
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 89.2,
+        "latencyMs": 87.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 357.5,
+        "latencyMs": 54.1,
         "error": ""
       }
     ],
@@ -2124,14 +2121,14 @@
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 96.2,
+        "latencyMs": 88.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 220.3,
+        "latencyMs": 238.5,
         "error": ""
       }
     ],
@@ -2140,21 +2137,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 88.5,
+        "latencyMs": 88.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1666.7,
+        "latencyMs": 1167.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.6,
+        "latencyMs": 19.0,
         "error": "cache"
       }
     ],
@@ -2163,21 +2160,21 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 164.0,
+        "latencyMs": 159.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 185.5,
+        "latencyMs": 172.1,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 676.4,
+        "latencyMs": 219.8,
         "error": ""
       }
     ],
@@ -2186,21 +2183,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 86.6,
+        "latencyMs": 89.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 115.9,
+        "latencyMs": 160.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.0,
+        "latencyMs": 17.6,
         "error": "cache"
       }
     ],
@@ -2218,21 +2215,21 @@
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 150.9,
+        "latencyMs": 149.0,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 261.3,
+        "latencyMs": 452.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 309.0,
+        "latencyMs": 71.0,
         "error": ""
       }
     ],
@@ -2241,14 +2238,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 18,
-        "latencyMs": 281.5,
+        "latencyMs": 480.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 189.1,
+        "latencyMs": 31.8,
         "error": ""
       }
     ],
@@ -2257,21 +2254,21 @@
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 129.8,
+        "latencyMs": 161.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 187.2,
+        "latencyMs": 168.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 164.2,
+        "latencyMs": 153.9,
         "error": ""
       }
     ],
@@ -2280,14 +2277,14 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 553.7,
+        "latencyMs": 461.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.1,
+        "latencyMs": 15.9,
         "error": "cache"
       }
     ],
@@ -2296,37 +2293,37 @@
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 193.8,
+        "latencyMs": 187.2,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 166.1,
+        "latencyMs": 793.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 192.5,
+        "latencyMs": 204.0,
         "error": ""
       }
     ],
     "WRC": [
       {
         "provider": "official",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 759.7,
+        "latencyMs": 2082.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.2,
+        "latencyMs": 15.5,
         "error": "cache"
       }
     ],
@@ -2335,21 +2332,21 @@
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 302.0,
+        "latencyMs": 374.9,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 188.3,
+        "latencyMs": 172.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 579.1,
+        "latencyMs": 101.5,
         "error": ""
       }
     ],
@@ -4788,7 +4785,7 @@
       "league": "FIVB Women",
       "title": "Egypt @ Kenya",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "fivb-vis",
       "home": "Kenya",
@@ -4846,7 +4843,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "UConn @ Coastal",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "UConn",
@@ -4860,7 +4857,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Bradley @ N Arizona",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Bradley",
@@ -4874,7 +4871,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Indiana St @ N'Western St",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Indiana St",
@@ -4930,7 +4927,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Austin Peay @ Tennessee Tech",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Austin Peay",
@@ -4944,7 +4941,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "West Georgia @ Alabama A&M",
       "start": "2026-09-04T15:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "West Georgia",
@@ -4972,7 +4969,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Louisville @ Saint Louis",
       "start": "2026-09-04T15:30:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Louisville",
@@ -4986,7 +4983,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Virginia @ Rutgers",
       "start": "2026-09-04T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Virginia",
@@ -5000,7 +4997,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Villanova @ Princeton",
       "start": "2026-09-04T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Villanova",
@@ -5014,7 +5011,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Murray St @ N Illinois",
       "start": "2026-09-04T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Murray St",
@@ -5028,7 +5025,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "West Florida @ Alabama St",
       "start": "2026-09-04T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "West Florida",
@@ -5056,27 +5053,13 @@
       "league": "NCAA Women's Field Hockey",
       "title": "UConn @ Brown",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "UConn",
       "home": "Brown",
       "providerEventId": "espn:401884302",
       "id": "evt_bf6852aa1b98f092d202858d",
-      "startUtc": "2026-09-04T17:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Stonehill @ Maine",
-      "start": "2026-09-04T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Stonehill",
-      "home": "Maine",
-      "providerEventId": "espn:401897321",
-      "id": "evt_fea9fb308f567baa00ed609c",
       "startUtc": "2026-09-04T17:00:00Z",
       "sport": "other"
     },
@@ -5095,10 +5078,24 @@
       "sport": "other"
     },
     {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill @ Maine",
+      "start": "2026-09-04T17:00:00Z",
+      "tag": "FINAL",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Stonehill",
+      "home": "Maine",
+      "providerEventId": "espn:401897321",
+      "id": "evt_fea9fb308f567baa00ed609c",
+      "startUtc": "2026-09-04T17:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "NCAA Women's Volleyball",
       "title": "Fordham @ New Haven",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Fordham",
@@ -5112,7 +5109,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Xavier @ Campbell",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Xavier",
@@ -5126,7 +5123,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Rider @ St John's",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Rider",
@@ -5140,7 +5137,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "SE Missouri @ S Illinois",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "SE Missouri",
@@ -5154,7 +5151,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "West Virginia @ FAU",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "West Virginia",
@@ -5168,7 +5165,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Bellarmine @ UNC Asheville",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Bellarmine",
@@ -5182,7 +5179,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Milwaukee @ Montana St",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Milwaukee",
@@ -5196,7 +5193,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Youngstown St @ Ohio",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Youngstown St",
@@ -5210,7 +5207,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Arkansas St @ Bowling Green",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Arkansas St",
@@ -5224,7 +5221,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Abilene Chrstn @ Hou Christian",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Abilene Chrstn",
@@ -5238,7 +5235,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Morehead St @ Mercyhurst",
       "start": "2026-09-04T17:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Morehead St",
@@ -5252,7 +5249,7 @@
       "league": "Ligue 1",
       "title": "Auxerre @ Lyon",
       "start": "2026-09-04T17:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚽",
       "source": "espn",
       "home": "Lyon",
@@ -5268,7 +5265,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "W Illinois @ S Dakota St",
       "start": "2026-09-04T17:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "W Illinois",
@@ -5282,7 +5279,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Tennessee St @ Green Bay",
       "start": "2026-09-04T17:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Tennessee St",
@@ -5296,7 +5293,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Lafayette @ Iona",
       "start": "2026-09-04T17:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Lafayette",
@@ -5310,7 +5307,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Georgetown @ Towson",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Georgetown",
@@ -5324,7 +5321,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "East Carolina @ App State",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "East Carolina",
@@ -5338,7 +5335,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Virginia @ William & Mary",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Virginia",
@@ -5352,7 +5349,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "FIU @ Tulane",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "FIU",
@@ -5366,7 +5363,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Jackson St @ North Alabama",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Jackson St",
@@ -5380,7 +5377,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Alabama A&M @ Georgia St",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Alabama A&M",
@@ -5394,7 +5391,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Ut Tyler @ AR-Pine Bluff",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Ut Tyler",
@@ -5408,7 +5405,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Charlotte @ Wofford",
       "start": "2026-09-04T18:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Charlotte",
@@ -5428,32 +5425,11 @@
       "home": "Cleveland Guardians",
       "away": "Detroit Tigers",
       "providerEventId": "mlb:824424",
-      "sportsDbEventId": "2387945",
-      "sportsDbHomeTeamId": "135254",
-      "sportsDbAwayTeamId": "135255",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/nno1is1785918636.jpg",
       "homeTeamId": "5",
       "awayTeamId": "6",
       "id": "evt_120a543c3e74acf0bad6bc13",
       "startUtc": "2026-09-04T18:10:00Z",
       "sport": "baseball"
-    },
-    {
-      "league": "Bundesliga",
-      "title": "Stuttgart vs Köln",
-      "start": "2026-09-04T18:30:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "sportsdb",
-      "sportsDbEventId": "2508347",
-      "sportsDbHomeTeamId": "133660",
-      "sportsDbAwayTeamId": "133654",
-      "home": "Stuttgart",
-      "away": "Köln",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/ylpz1s1783076735.jpg",
-      "id": "evt_d734f6066ec9aba3e7fb2ef5",
-      "startUtc": "2026-09-04T18:30:00Z",
-      "sport": "soccer"
     },
     {
       "league": "Bundesliga",
@@ -5473,7 +5449,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Kansas City @ Purdue FW",
       "start": "2026-09-04T18:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Kansas City",
@@ -5487,7 +5463,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "E Kentucky @ Radford",
       "start": "2026-09-04T18:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "E Kentucky",
@@ -5501,7 +5477,7 @@
       "league": "Bundesliga",
       "title": "Cologne @ Stuttgart",
       "start": "2026-09-04T18:30Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn",
       "home": "Stuttgart",
@@ -5517,7 +5493,7 @@
       "league": "Serie A",
       "title": "Como @ Genoa",
       "start": "2026-09-04T18:45Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn",
       "home": "Genoa",
@@ -5525,53 +5501,15 @@
       "providerEventId": "espn:401874744",
       "homeTeamId": "3263",
       "awayTeamId": "2572",
-      "sportsDbEventId": "2482160",
-      "sportsDbHomeTeamId": "133675",
-      "sportsDbAwayTeamId": "134243",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/he0biw1755935007.jpg",
       "id": "evt_1e46771af43dfad1eab25509",
       "startUtc": "2026-09-04T18:45Z",
-      "sport": "soccer"
-    },
-    {
-      "league": "EPL",
-      "title": "Ipswich Town vs Liverpool",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "sportsdb",
-      "sportsDbEventId": "2494027",
-      "sportsDbHomeTeamId": "133622",
-      "sportsDbAwayTeamId": "133602",
-      "home": "Ipswich Town",
-      "away": "Liverpool",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/hb9lsl1784549307.jpg",
-      "id": "evt_df3ad56b5dfef9bfee336369",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "soccer"
-    },
-    {
-      "league": "LaLiga",
-      "title": "Real Betis vs Real Madrid",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "sportsdb",
-      "sportsDbEventId": "2506205",
-      "sportsDbHomeTeamId": "133722",
-      "sportsDbAwayTeamId": "133738",
-      "home": "Real Betis",
-      "away": "Real Madrid",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/nd0kuf1784904454.jpg",
-      "id": "evt_c39eb1d7caaf79fb4c7c42ca",
-      "startUtc": "2026-09-04T19:00:00Z",
       "sport": "soccer"
     },
     {
       "league": "NCAA Men's Soccer",
       "title": "Santa Clara @ Loyola Chicago",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn-ncaa",
       "away": "Santa Clara",
@@ -5583,99 +5521,15 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "Richmond @ American",
+      "title": "Merrimack @ Bryant",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
-      "away": "Richmond",
-      "home": "American",
-      "providerEventId": "espn:401883850",
-      "id": "evt_63ed19ea5fb78a0614a476eb",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Liberty @ Saint Joseph's",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Liberty",
-      "home": "Saint Joseph's",
-      "providerEventId": "espn:401883864",
-      "id": "evt_cbf1f9db79884cf81433b5d8",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Northwestern @ Duke",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Northwestern",
-      "home": "Duke",
-      "providerEventId": "espn:401885715",
-      "id": "evt_8a89b05c28541eb858c398b0",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Hofstra @ Wagner",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Hofstra",
-      "home": "Wagner",
-      "providerEventId": "espn:401897074",
-      "id": "evt_39f7dd2b09e3c896cf99476e",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Old Dominion @ Princeton",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Old Dominion",
-      "home": "Princeton",
-      "providerEventId": "espn:401884124",
-      "id": "evt_dda8db1809080b54e6366f79",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Bellarmine @ Stanford",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Bellarmine",
-      "home": "Stanford",
-      "providerEventId": "espn:401884040",
-      "id": "evt_f5815c1902edfb12479eba78",
-      "startUtc": "2026-09-04T19:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Villanova @ Penn State",
-      "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Villanova",
-      "home": "Penn State",
-      "providerEventId": "espn:401890146",
-      "id": "evt_70eac0b6c0ecb6daef0ec8be",
+      "away": "Merrimack",
+      "home": "Bryant",
+      "providerEventId": "espn:401883336",
+      "id": "evt_07423e1a2e327d865f040173",
       "startUtc": "2026-09-04T19:00:00Z",
       "sport": "other"
     },
@@ -5683,7 +5537,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "New Haven @ Providence",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "New Haven",
@@ -5695,15 +5549,85 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "Ohio State @ Syracuse",
+      "title": "Liberty @ Saint Joseph's",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
-      "away": "Ohio State",
-      "home": "Syracuse",
+      "away": "Liberty",
+      "home": "Saint Joseph's",
+      "providerEventId": "espn:401883864",
+      "id": "evt_cbf1f9db79884cf81433b5d8",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra @ Wagner",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Hofstra",
+      "home": "Wagner",
+      "providerEventId": "espn:401897074",
+      "id": "evt_39f7dd2b09e3c896cf99476e",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Richmond @ American",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Richmond",
+      "home": "American",
+      "providerEventId": "espn:401883850",
+      "id": "evt_63ed19ea5fb78a0614a476eb",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Villanova @ Penn State",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Villanova",
+      "home": "Penn State",
+      "providerEventId": "espn:401890146",
+      "id": "evt_70eac0b6c0ecb6daef0ec8be",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northwestern @ Duke",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Northwestern",
+      "home": "Duke",
+      "providerEventId": "espn:401885715",
+      "id": "evt_8a89b05c28541eb858c398b0",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Syracuse @ Ohio State",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Syracuse",
+      "home": "Ohio State",
       "providerEventId": "espn:401887842",
-      "id": "evt_81d9ab80959a357e86504674",
+      "id": "evt_e9b49d45ad85baa70ce4ac2e",
       "startUtc": "2026-09-04T19:00:00Z",
       "sport": "other"
     },
@@ -5711,7 +5635,7 @@
       "league": "NCAA Women's Field Hockey",
       "title": "Columbia @ UC Davis",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "Columbia",
@@ -5723,9 +5647,23 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
+      "title": "Princeton @ Old Dominion",
+      "start": "2026-09-04T19:00:00Z",
+      "tag": "LIVE",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Princeton",
+      "home": "Old Dominion",
+      "providerEventId": "espn:401884124",
+      "id": "evt_9b3ada67acb2f6e76c37331e",
+      "startUtc": "2026-09-04T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
       "title": "New Hampshire @ Indiana",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
       "away": "New Hampshire",
@@ -5737,15 +5675,15 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "Merrimack @ Bryant",
+      "title": "Bellarmine @ Stanford",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏑",
       "source": "espn-ncaa",
-      "away": "Merrimack",
-      "home": "Bryant",
-      "providerEventId": "espn:401883336",
-      "id": "evt_07423e1a2e327d865f040173",
+      "away": "Bellarmine",
+      "home": "Stanford",
+      "providerEventId": "espn:401884040",
+      "id": "evt_f5815c1902edfb12479eba78",
       "startUtc": "2026-09-04T19:00:00Z",
       "sport": "other"
     },
@@ -5753,7 +5691,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Iowa @ Alabama",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Iowa",
@@ -5767,7 +5705,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Washington @ Oklahoma",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Washington",
@@ -5781,7 +5719,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Binghamton @ C Connecticut",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Binghamton",
@@ -5795,7 +5733,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Memphis @ SE Louisiana",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Memphis",
@@ -5809,7 +5747,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Dayton @ Ball State",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Dayton",
@@ -5823,7 +5761,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Santa Clara @ Manhattan",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Santa Clara",
@@ -5837,7 +5775,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Charleston So @ Charleston",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Charleston So",
@@ -5851,7 +5789,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Penn @ Stony Brook",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Penn",
@@ -5865,7 +5803,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Presbyterian @ NC A&T",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Presbyterian",
@@ -5879,7 +5817,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Kent State @ Army",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Kent State",
@@ -5893,7 +5831,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "MTSU @ Samford",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "MTSU",
@@ -5907,7 +5845,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Chicago St @ W Michigan",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Chicago St",
@@ -5921,7 +5859,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "UAlbany @ Syracuse",
       "start": "2026-09-04T19:00:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "UAlbany",
@@ -5935,7 +5873,7 @@
       "league": "EPL",
       "title": "Liverpool @ Ipswich",
       "start": "2026-09-04T19:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn",
       "home": "Ipswich",
@@ -5951,7 +5889,7 @@
       "league": "LaLiga",
       "title": "Real Madrid @ Betis",
       "start": "2026-09-04T19:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn",
       "home": "Betis",
@@ -5965,26 +5903,9 @@
     },
     {
       "league": "Ligue 1",
-      "title": "Paris Saint-Germain vs Monaco",
-      "start": "2026-09-04T19:05:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "sportsdb",
-      "sportsDbEventId": "2489484",
-      "sportsDbHomeTeamId": "133714",
-      "sportsDbAwayTeamId": "133823",
-      "home": "Paris Saint-Germain",
-      "away": "Monaco",
-      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/sdiank1781249124.jpg",
-      "id": "evt_8ad4f729a444cc7e6bf4a981",
-      "startUtc": "2026-09-04T19:05:00Z",
-      "sport": "soccer"
-    },
-    {
-      "league": "Ligue 1",
       "title": "Monaco @ PSG",
       "start": "2026-09-04T19:05Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "⚽",
       "source": "espn",
       "home": "PSG",
@@ -6014,7 +5935,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Portland St @ Lindenwood",
       "start": "2026-09-04T19:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Portland St",
@@ -6028,7 +5949,7 @@
       "league": "NCAA Women's Volleyball",
       "title": "Georgetown @ UCF",
       "start": "2026-09-04T19:30:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Georgetown",
@@ -6036,20 +5957,6 @@
       "providerEventId": "espn:401891486",
       "id": "evt_f9fc7d31ed959a6bb28a4631",
       "startUtc": "2026-09-04T19:30:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Boston University @ Massachusetts",
-      "start": "2026-09-04T20:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Boston University",
-      "home": "Massachusetts",
-      "providerEventId": "espn:401887737",
-      "id": "evt_dc92a6b0afb7700cc2131543",
-      "startUtc": "2026-09-04T20:00:00Z",
       "sport": "other"
     },
     {
@@ -6068,15 +5975,15 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "UMass Lowell @ Harvard",
+      "title": "Boston University @ Massachusetts",
       "start": "2026-09-04T20:00:00Z",
       "tag": "UPCOMING",
       "icon": "🏑",
       "source": "espn-ncaa",
-      "away": "UMass Lowell",
-      "home": "Harvard",
-      "providerEventId": "espn:401883625",
-      "id": "evt_ae25cd175db52bb016a8688f",
+      "away": "Boston University",
+      "home": "Massachusetts",
+      "providerEventId": "espn:401887737",
+      "id": "evt_dc92a6b0afb7700cc2131543",
       "startUtc": "2026-09-04T20:00:00Z",
       "sport": "other"
     },
@@ -6091,6 +5998,20 @@
       "home": "Drexel",
       "providerEventId": "espn:401890215",
       "id": "evt_03b4bbcee915720e8fc85da7",
+      "startUtc": "2026-09-04T20:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UMass Lowell @ Harvard",
+      "start": "2026-09-04T20:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "UMass Lowell",
+      "home": "Harvard",
+      "providerEventId": "espn:401883625",
+      "id": "evt_ae25cd175db52bb016a8688f",
       "startUtc": "2026-09-04T20:00:00Z",
       "sport": "other"
     },
@@ -6402,20 +6323,6 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "Quinnipiac @ Bucknell",
-      "start": "2026-09-04T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Quinnipiac",
-      "home": "Bucknell",
-      "providerEventId": "espn:401887713",
-      "id": "evt_fa05606b36732310831a8398",
-      "startUtc": "2026-09-04T21:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
       "title": "UAlbany @ Colgate",
       "start": "2026-09-04T21:00:00Z",
       "tag": "UPCOMING",
@@ -6430,20 +6337,6 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
-      "title": "Longwood @ William & Mary",
-      "start": "2026-09-04T21:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Longwood",
-      "home": "William & Mary",
-      "providerEventId": "espn:401890433",
-      "id": "evt_9e2d732bab3406be5cd5d3a3",
-      "startUtc": "2026-09-04T21:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
       "title": "Kent State @ Michigan",
       "start": "2026-09-04T21:00:00Z",
       "tag": "UPCOMING",
@@ -6453,6 +6346,34 @@
       "home": "Michigan",
       "providerEventId": "espn:401884380",
       "id": "evt_1e0054b6fb9ce32a39534d4c",
+      "startUtc": "2026-09-04T21:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Quinnipiac @ Bucknell",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Quinnipiac",
+      "home": "Bucknell",
+      "providerEventId": "espn:401887713",
+      "id": "evt_fa05606b36732310831a8398",
+      "startUtc": "2026-09-04T21:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Longwood @ William & Mary",
+      "start": "2026-09-04T21:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Longwood",
+      "home": "William & Mary",
+      "providerEventId": "espn:401890433",
+      "id": "evt_9e2d732bab3406be5cd5d3a3",
       "startUtc": "2026-09-04T21:00:00Z",
       "sport": "other"
     },
@@ -6710,6 +6631,48 @@
     },
     {
       "league": "NCAA Women's Field Hockey",
+      "title": "Sacred Heart @ Yale",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Sacred Heart",
+      "home": "Yale",
+      "providerEventId": "espn:401891907",
+      "id": "evt_1f8a2d6664dc1c264e6f9e4c",
+      "startUtc": "2026-09-04T22:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Northeastern @ Holy Cross",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Northeastern",
+      "home": "Holy Cross",
+      "providerEventId": "espn:401890371",
+      "id": "evt_e4de698b06a27bddb8e7eea5",
+      "startUtc": "2026-09-04T22:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Ohio @ Queens University",
+      "start": "2026-09-04T22:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Ohio",
+      "home": "Queens University",
+      "providerEventId": "espn:401890512",
+      "id": "evt_c2e44600e906f382e48bf366",
+      "startUtc": "2026-09-04T22:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
       "title": "Maryland @ Boston College",
       "start": "2026-09-04T22:00:00Z",
       "tag": "UPCOMING",
@@ -6747,48 +6710,6 @@
       "home": "Lafayette",
       "providerEventId": "espn:401884288",
       "id": "evt_7380d03e99345099c3be9398",
-      "startUtc": "2026-09-04T22:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Ohio @ Queens University",
-      "start": "2026-09-04T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Ohio",
-      "home": "Queens University",
-      "providerEventId": "espn:401890512",
-      "id": "evt_c2e44600e906f382e48bf366",
-      "startUtc": "2026-09-04T22:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Sacred Heart @ Yale",
-      "start": "2026-09-04T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Sacred Heart",
-      "home": "Yale",
-      "providerEventId": "espn:401891907",
-      "id": "evt_1f8a2d6664dc1c264e6f9e4c",
-      "startUtc": "2026-09-04T22:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Field Hockey",
-      "title": "Northeastern @ Holy Cross",
-      "start": "2026-09-04T22:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏑",
-      "source": "espn-ncaa",
-      "away": "Northeastern",
-      "home": "Holy Cross",
-      "providerEventId": "espn:401890371",
-      "id": "evt_e4de698b06a27bddb8e7eea5",
       "startUtc": "2026-09-04T22:00:00Z",
       "sport": "other"
     },
@@ -7278,6 +7199,10 @@
       "home": "Cincinnati Reds",
       "away": "Milwaukee Brewers",
       "providerEventId": "mlb:824471",
+      "sportsDbEventId": "2458157",
+      "sportsDbHomeTeamId": "135270",
+      "sportsDbAwayTeamId": "135274",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/dgyvqf1785919025.jpg",
       "homeTeamId": "17",
       "awayTeamId": "8",
       "id": "evt_1b2025ee8862a11861f23376",
@@ -9001,6 +8926,10 @@
       "providerEventId": "espn:401879286",
       "homeTeamId": "361",
       "awayTeamId": "349",
+      "sportsDbEventId": "2494020",
+      "sportsDbHomeTeamId": "134777",
+      "sportsDbAwayTeamId": "134301",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/5oihbe1784549302.jpg",
       "id": "evt_cd16f899cd4a1e1af0c75263",
       "startUtc": "2026-09-05T11:30Z",
       "sport": "soccer"
@@ -9063,8 +8992,29 @@
       "providerEventId": "espn:401874939",
       "homeTeamId": "109",
       "awayTeamId": "239",
+      "sportsDbEventId": "2482164",
+      "sportsDbHomeTeamId": "133674",
+      "sportsDbAwayTeamId": "133687",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/dapyhe1755934645.jpg",
       "id": "evt_c020adcda4ad44bf20ddd26a",
       "startUtc": "2026-09-05T13:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "Bundesliga",
+      "title": "Werder Bremen vs RB Leipzig",
+      "start": "2026-09-05T13:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "sportsdb",
+      "sportsDbEventId": "2508342",
+      "sportsDbHomeTeamId": "133662",
+      "sportsDbAwayTeamId": "134695",
+      "home": "Werder Bremen",
+      "away": "RB Leipzig",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/z53v0m1754041805.jpg",
+      "id": "evt_da87eae719f37964651e3043",
+      "startUtc": "2026-09-05T13:30:00Z",
       "sport": "soccer"
     },
     {
@@ -9341,6 +9291,23 @@
     },
     {
       "league": "LaLiga",
+      "title": "Athletic Bilbao vs Atlético Madrid",
+      "start": "2026-09-05T14:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "sportsdb",
+      "sportsDbEventId": "2506199",
+      "sportsDbHomeTeamId": "133727",
+      "sportsDbAwayTeamId": "133729",
+      "home": "Athletic Bilbao",
+      "away": "Atlético Madrid",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/xwlfac1784904446.jpg",
+      "id": "evt_72845245fee63d6dda8baed0",
+      "startUtc": "2026-09-05T14:15:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "LaLiga",
       "title": "Atlético @ Athletic",
       "start": "2026-09-05T14:15Z",
       "tag": "UPCOMING",
@@ -9535,6 +9502,10 @@
       "providerEventId": "espn:401876473",
       "homeTeamId": "175",
       "awayTeamId": "273",
+      "sportsDbEventId": "2489488",
+      "sportsDbHomeTeamId": "133822",
+      "sportsDbAwayTeamId": "133715",
+      "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/4hf8lz1754727104.jpg",
       "id": "evt_2c2df2b21671b3ff1684d802",
       "startUtc": "2026-09-05T15:15Z",
       "sport": "soccer"
@@ -24348,6 +24319,104 @@
       "sport": "other"
     },
     {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Michigan State @ Kent State",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Michigan State",
+      "home": "Kent State",
+      "providerEventId": "espn:401884472",
+      "id": "evt_c3c077f11b0b93a99b2cf83f",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "S Dakota St @ Kansas",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "S Dakota St",
+      "home": "Kansas",
+      "providerEventId": "espn:401888881",
+      "id": "evt_2401e41a9dd3849152dc8983",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Portland St @ Texas Tech",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Portland St",
+      "home": "Texas Tech",
+      "providerEventId": "espn:401890112",
+      "id": "evt_e6e5d4b98eeddec5e9d0d889",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Idaho @ North Dakota",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Idaho",
+      "home": "North Dakota",
+      "providerEventId": "espn:401891148",
+      "id": "evt_f0d07b95f501cc95bec78fd8",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Gardner-Webb @ West Georgia",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Gardner-Webb",
+      "home": "West Georgia",
+      "providerEventId": "espn:401896498",
+      "id": "evt_57737bffcb1fe5a4867d28b7",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "NJIT @ Iona",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "NJIT",
+      "home": "Iona",
+      "providerEventId": "espn:401898284",
+      "id": "evt_867ad9a45bcbb957f81de2e3",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Hou Christian @ Jackson St",
+      "start": "2026-09-11T18:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Hou Christian",
+      "home": "Jackson St",
+      "providerEventId": "espn:401902287",
+      "id": "evt_9f51373afffa2ad555636422",
+      "startUtc": "2026-09-11T18:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Pittsburgh Pirates @ Chicago Cubs",
       "start": "2026-09-11T18:20:00Z",
@@ -24376,6 +24445,34 @@
       "id": "evt_2a10b432e007498f1fd138ac",
       "startUtc": "2026-09-11T18:30:00Z",
       "sport": "soccer"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Drake @ Utah Valley",
+      "start": "2026-09-11T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Drake",
+      "home": "Utah Valley",
+      "providerEventId": "espn:401890501",
+      "id": "evt_a091865dbfc371a5594f8f06",
+      "startUtc": "2026-09-11T18:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Howard @ Robert Morris",
+      "start": "2026-09-11T18:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Howard",
+      "home": "Robert Morris",
+      "providerEventId": "espn:401897943",
+      "id": "evt_b27c8851105790b4ff005085",
+      "startUtc": "2026-09-11T18:30:00Z",
+      "sport": "other"
     },
     {
       "league": "Bundesliga",
@@ -24442,6 +24539,314 @@
       "sport": "other"
     },
     {
+      "league": "NCAA Men's Soccer",
+      "title": "UCF @ VCU",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn-ncaa",
+      "away": "UCF",
+      "home": "VCU",
+      "providerEventId": "espn:401902138",
+      "id": "evt_cb054a0b3fcd6f9ebc5c8baf",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "UAlbany @ Columbia",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "UAlbany",
+      "home": "Columbia",
+      "providerEventId": "espn:401889446",
+      "id": "evt_d7a5644b17731e45106a7001",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Merrimack @ Dartmouth",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Merrimack",
+      "home": "Dartmouth",
+      "providerEventId": "espn:401891968",
+      "id": "evt_fff52519c5666e1be036ea29",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "William & Mary @ American",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "William & Mary",
+      "home": "American",
+      "providerEventId": "espn:401887764",
+      "id": "evt_a8ca605b8951647f63bf5ab8",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Queens University @ Villanova",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Queens University",
+      "home": "Villanova",
+      "providerEventId": "espn:401890514",
+      "id": "evt_d7e90fa74aa3ea685aff3893",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Long Island @ Vermont",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Long Island",
+      "home": "Vermont",
+      "providerEventId": "espn:401897070",
+      "id": "evt_66374a1f1c61aa65873e692c",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "La Salle @ Pennsylvania",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "La Salle",
+      "home": "Pennsylvania",
+      "providerEventId": "espn:401883716",
+      "id": "evt_424ac0fe526452eb5595d6f7",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Hofstra @ Quinnipiac",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Hofstra",
+      "home": "Quinnipiac",
+      "providerEventId": "espn:401897075",
+      "id": "evt_d3f874061eb8df23c4e71f10",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Stonehill @ Bryant",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Stonehill",
+      "home": "Bryant",
+      "providerEventId": "espn:401883338",
+      "id": "evt_6969c910ef315bd29b8b5a4a",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Miami (Oh) @ Iowa",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Miami (Oh)",
+      "home": "Iowa",
+      "providerEventId": "espn:401884359",
+      "id": "evt_32494ba11f6f2f9a0b0fb914",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Louisville @ Northwestern",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Louisville",
+      "home": "Northwestern",
+      "providerEventId": "espn:401884028",
+      "id": "evt_97123c9b6818448f0cc6b41c",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Boston University @ Brown",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Boston University",
+      "home": "Brown",
+      "providerEventId": "espn:401887739",
+      "id": "evt_03a36e82058cdefea1666658",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Tulane @ Georgia",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Tulane",
+      "home": "Georgia",
+      "providerEventId": "espn:401883376",
+      "id": "evt_53ab54242538d8789d38c05e",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "William & Mary @ App State",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "William & Mary",
+      "home": "App State",
+      "providerEventId": "espn:401891653",
+      "id": "evt_58f77725e87ca2261b6dee88",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Stony Brook @ Rider",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Stony Brook",
+      "home": "Rider",
+      "providerEventId": "espn:401892413",
+      "id": "evt_172b240c1407f3cf6950da89",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Bucknell @ Le Moyne",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Bucknell",
+      "home": "Le Moyne",
+      "providerEventId": "espn:401897033",
+      "id": "evt_8bfd41639af7aa389fa6779a",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Sam Houston @ Texas A&M-CC",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Sam Houston",
+      "home": "Texas A&M-CC",
+      "providerEventId": "espn:401897705",
+      "id": "evt_bbe8a48d19f940e951410e9f",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Purdue FW @ Lindenwood",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Purdue FW",
+      "home": "Lindenwood",
+      "providerEventId": "espn:401897921",
+      "id": "evt_5de9575aaafb63e8ee01bc16",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Youngstown St @ S Indiana",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Youngstown St",
+      "home": "S Indiana",
+      "providerEventId": "espn:401898143",
+      "id": "evt_fe917aeed286cd40d049ffd8",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Bowling Green @ Austin Peay",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Bowling Green",
+      "home": "Austin Peay",
+      "providerEventId": "espn:401898610",
+      "id": "evt_359ae62abbb35ae6a2fd4352",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "New Haven @ Temple",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "New Haven",
+      "home": "Temple",
+      "providerEventId": "espn:401900984",
+      "id": "evt_72cc734a4e769778bc70cf5c",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "Furman @ Stetson",
+      "start": "2026-09-11T19:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "Furman",
+      "home": "Stetson",
+      "providerEventId": "espn:401902186",
+      "id": "evt_2ebd4e46b839f9a562c01e72",
+      "startUtc": "2026-09-11T19:00:00Z",
+      "sport": "other"
+    },
+    {
       "league": "LaLiga",
       "title": "Valencia @ Sevilla",
       "start": "2026-09-11T19:00Z",
@@ -24470,6 +24875,34 @@
       "tournament": "NORCECA Men Continental Championship 2026",
       "tournamentCode": "MNORCC26",
       "id": "evt_3093d0425569b3805c3f0cf6",
+      "startUtc": "2026-09-11T19:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Field Hockey",
+      "title": "Massachusetts @ Harvard",
+      "start": "2026-09-11T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏑",
+      "source": "espn-ncaa",
+      "away": "Massachusetts",
+      "home": "Harvard",
+      "providerEventId": "espn:401891954",
+      "id": "evt_c4c5f27cdd0b6330950ea62b",
+      "startUtc": "2026-09-11T19:30:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Volleyball",
+      "title": "GA Southern @ ETSU",
+      "start": "2026-09-11T19:30:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏐",
+      "source": "espn-ncaa",
+      "away": "GA Southern",
+      "home": "ETSU",
+      "providerEventId": "espn:401900509",
+      "id": "evt_661945931462cd9317c946ac",
       "startUtc": "2026-09-11T19:30:00Z",
       "sport": "other"
     },
@@ -52455,13 +52888,32 @@
       ],
       "observedUpcoming": 0,
       "observedRecent": 0
+    },
+    "WRC": {
+      "league": "WRC",
+      "active": true,
+      "class": "active",
+      "probeHours": 1,
+      "reason": "season_window",
+      "configuredSeason": [
+        [
+          1,
+          1
+        ],
+        [
+          12,
+          31
+        ]
+      ],
+      "observedUpcoming": 0,
+      "observedRecent": 0
     }
   },
   "providerDiscovery": {
     "enabled": true,
     "discoveredCandidates": 0,
     "promotedProviders": 0,
-    "fallbackAttempts": 13,
+    "fallbackAttempts": 14,
     "googleResearchRecovered": 0,
     "googleResearchByLeague": {
       "AAA Wrestling": 0,
@@ -52476,7 +52928,8 @@
       "NCAA Men's Water Polo": 0,
       "NCAA Women's Water Polo": 0,
       "Rugby World Cup": 0,
-      "WEC": 0
+      "WEC": 0,
+      "WRC": 0
     },
     "leagueStatus": {
       "AAA Wrestling": {
@@ -52784,6 +53237,11 @@
         "promoted": 0,
         "endpoints": []
       },
+      "WRC": {
+        "discovered": 0,
+        "promoted": 0,
+        "endpoints": []
+      },
       "WTA": {
         "discovered": 0,
         "promoted": 0,
@@ -52800,9 +53258,36 @@
   "discoveredProviders": 0,
   "promotedProviders": 0,
   "scheduleGapResolution": {
-    "activeGaps": 13,
+    "activeGaps": 14,
     "offSeasonGaps": 11,
-    "searchedActiveGaps": 13,
-    "unresolvedAfterDiscovery": 24
+    "searchedActiveGaps": 14,
+    "unresolvedAfterDiscovery": 25
+  },
+  "autonomousScheduleRepair": {
+    "enabled": true,
+    "leaguesChecked": 64,
+    "repairCandidates": 24,
+    "searchedLeagues": 24,
+    "researchResults": 240,
+    "eventsRecovered": 0,
+    "identityMerges": 0,
+    "unresolvedLeagues": [
+      "AAA Wrestling",
+      "CFL",
+      "FORMULA E",
+      "ICC T20",
+      "IMSA",
+      "LIV Golf",
+      "MONSTER JAM",
+      "MXGP",
+      "MotoGP",
+      "NCAA Men's Water Polo",
+      "NCAA Women's Water Polo",
+      "Rugby World Cup",
+      "WEC",
+      "WRC"
+    ],
+    "updatedAt": "2026-09-04T19:59:46Z",
+    "policy": "active configured league with no canonical event in the next 7 days triggers authoritative recovery before secondary research; search snippets are never canonical truth"
   }
 }
