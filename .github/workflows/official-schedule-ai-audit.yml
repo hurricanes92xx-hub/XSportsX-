@@ -1,0 +1,65 @@
+name: Official Schedule AI Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/official_schedule_ai_audit.py'
+      - 'data/official_schedule_sources.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-schedule-refresh
+  queue: max
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout canonical engine
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Run all-official schedule audit
+        run: python3 scripts/official_schedule_ai_audit.py
+      - name: Normalize and validate
+        run: |
+          python3 scripts/normalize_schedule_feed.py
+          python3 scripts/validate_schedule_integrity.py
+      - name: Publish authoritative schedule evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Schedule Bot'
+          git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
+          git add data/schedule_feed.json
+          if git diff --cached --quiet; then echo 'No authoritative schedule changes.'; exit 0; fi
+          git commit -m 'chore: publish authoritative schedule audit'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Authoritative audit published on attempt ${attempt}."; exit 0; fi
+            else
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add data/schedule_feed.json
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish authoritative schedule audit'; fi
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
