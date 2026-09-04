@@ -24,17 +24,13 @@ data class SportsEvent(
     val isLive: Boolean
         get() = EventLifecycleResolver.isLive(this)
 
-    fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean {
-        val start = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
-        return start > nowMillis && start <= nowMillis + 30L * 60L * 1000L &&
-            lifecycle == EventLifecycle.PREGAME
-    }
+    /** Confidence score (0-100) for the current LIVE/UPCOMING classification. */
+    val lifecycleConfidence: Int
+        get() = EventLifecycleResolver.confidence(this)
+
+    fun isPregame(nowMillis: Long = System.currentTimeMillis()): Boolean =
+        EventLifecycleResolver.isPregame(this, nowMillis)
 
     val isUpcoming: Boolean
-        get() {
-            val start = runCatching { java.time.Instant.parse(startUtc).toEpochMilli() }.getOrDefault(0L)
-            val now = System.currentTimeMillis()
-            return lifecycle in setOf(EventLifecycle.PREGAME, EventLifecycle.SCHEDULED) &&
-                start > now && start <= now + 3L * 24L * 60L * 60L * 1000L
-        }
+        get() = EventLifecycleResolver.isUpcoming(this)
 }
