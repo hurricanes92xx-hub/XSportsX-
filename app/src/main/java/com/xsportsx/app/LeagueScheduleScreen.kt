@@ -27,7 +27,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** League schedule UI backed only by the shared canonical schedule snapshot. */
 @Composable
 fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     val canonicalLeague = SportsScheduleService.canonicalLeagueFor(league)
@@ -35,37 +34,34 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     var loading by remember(canonicalLeague) { mutableStateOf(true) }
     var error by remember(canonicalLeague) { mutableStateOf<String?>(null) }
     var tab by remember(canonicalLeague) { mutableStateOf("UPCOMING") }
-    var streamFilter by remember { mutableStateOf<String?>(null) }
+    var selectedEvent by remember { mutableStateOf<SportsEvent?>(null) }
     var reloadToken by remember(canonicalLeague) { mutableIntStateOf(0) }
     var now by remember(canonicalLeague) { mutableStateOf(Instant.now()) }
 
-    LaunchedEffect(canonicalLeague) {
-        while (true) { now = Instant.now(); delay(30_000L) }
-    }
-
+    LaunchedEffect(canonicalLeague) { while (true) { now = Instant.now(); delay(30_000L) } }
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true; error = null
-        runCatching { ScheduleSnapshotRepository.all(reloadToken > 0).filter { it.league.let { value -> SportsScheduleService.scheduleLeaguesFor(canonicalLeague).contains(SportsScheduleService.canonicalLeagueFor(value)) } } }
-            .onSuccess { loaded -> allEvents = loaded }
-            .onFailure { error = it.message ?: "Schedule temporarily unavailable" }
+        runCatching { ScheduleSnapshotRepository.all(reloadToken > 0).filter { event -> SportsScheduleService.scheduleLeaguesFor(canonicalLeague).contains(SportsScheduleService.canonicalLeagueFor(event.league)) } }
+            .onSuccess { allEvents = it }.onFailure { error = it.message ?: "Schedule temporarily unavailable" }
         loading = false
     }
 
-    if (streamFilter != null) {
-        LiveChannelsScreen(filter = streamFilter, onBack = { streamFilter = null }); return
+    selectedEvent?.let { target ->
+        LiveChannelsScreen(event = target, onBack = { selectedEvent = null })
+        return
     }
 
     val zone = ZoneId.systemDefault()
     val today = now.atZone(zone).toLocalDate()
-    val threeDayCutoff = now.plus(3, ChronoUnit.DAYS)
-    val transitionGrace = now.minus(10, ChronoUnit.MINUTES)
+    val cutoff = now.plus(3, ChronoUnit.DAYS)
+    val grace = now.minus(10, ChronoUnit.MINUTES)
     val visible = allEvents.filter { event ->
         val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
         if (tab == "LIVE") event.isLive else {
-            val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
             val localDate = start.atZone(zone).toLocalDate()
+            val dateOnly = event.startUtc.matches(Regex(".*T00:00:00(?:\\.000)?Z$"))
             val dateOnlyInWindow = dateOnly && !localDate.isBefore(today) && localDate.isBefore(today.plusDays(3))
-            !event.isLive && (dateOnlyInWindow || (!start.isBefore(transitionGrace) && start.isBefore(threeDayCutoff)))
+            !event.isLive && (dateOnlyInWindow || (!start.isBefore(grace) && start.isBefore(cutoff)))
         }
     }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
@@ -92,9 +88,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
             else -> LazyColumn(contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, events) ->
                     item { Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp)) }
-                    items(events, key = { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }) { event ->
-                        LeagueEventCard(event) { streamFilter = "${event.league} ${event.away} ${event.home}" }
-                    }
+                    items(events, key = { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }) { event -> LeagueEventCard(event) { selectedEvent = event } }
                 }
             }
         }
@@ -111,10 +105,8 @@ private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                if (event.away.isNotBlank() && event.home.isNotBlank()) {
-                    TeamLine(event.away, event.awayLogo, "AWAY")
-                    TeamLine(event.home, event.homeLogo, "HOME")
-                } else Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (event.away.isNotBlank() && event.home.isNotBlank()) { TeamLine(event.away, event.awayLogo, "AWAY"); TeamLine(event.home, event.homeLogo, "HOME") }
+                else Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         }
         Spacer(Modifier.height(10.dp))
@@ -132,10 +124,7 @@ private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
 @Composable
 private fun TeamLine(name: String, logo: String, label: String) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        Box(Modifier.size(30.dp), contentAlignment = Alignment.Center) {
-            if (logo.isNotBlank()) AsyncImage(model = logo, contentDescription = name, modifier = Modifier.size(28.dp), contentScale = ContentScale.Fit)
-            else XSportsLeagueLogo(name, size = 26.dp)
-        }
+        Box(Modifier.size(30.dp), contentAlignment = Alignment.Center) { if (logo.isNotBlank()) AsyncImage(model = logo, contentDescription = name, modifier = Modifier.size(28.dp), contentScale = ContentScale.Fit) else XSportsLeagueLogo(name, size = 26.dp) }
         Spacer(Modifier.width(7.dp))
         Text(name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
         Spacer(Modifier.width(8.dp))
