@@ -23,6 +23,7 @@ class StreamResolver(context: Context) {
     private val publicHealthIndex = PublicSourceHealthIndex(appContext)
     private val publicResolver = PublicSourceResolver()
     private val publicEventMatcher = PublicEventMatcher(publicResolver)
+    private val targetedSourceResolver = TargetedSourceResolver()
     private val channelIndex = ChannelIndex()
     private val preResolvedCache = PreResolvedStreamCache(appContext)
     private val xtreamIndex = XtreamSourceIndex(appContext)
@@ -128,8 +129,22 @@ class StreamResolver(context: Context) {
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
         val publicMatches = matchEventAgainstStreams(event, indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }, strict = true)
+
+        // Last-resort autonomous recovery: search the user's authorized Xtream/M3U
+        // source and targeted public sources directly for this exact event. This is
+        // deliberately event-scoped so a broken channel never forces a full catalog
+        // download. Network/broadcast terms are valid evidence for a carried game.
+        val targetedFallback = if (publicMatches.isEmpty() && privateMatches.isEmpty()) {
+            val authorized = when {
+                config.type == "XTREAM" && config.isConfigured() -> listOf(AuthorizedSource("user-xtream", AuthorizedSource.Type.XTREAM, config.server, config.username, config.password))
+                config.type == "M3U" && config.isConfigured() -> listOf(AuthorizedSource("user-m3u", AuthorizedSource.Type.M3U, config.m3uUrl))
+                else -> emptyList()
+            }
+            runCatching { targetedSourceResolver.search(TargetQuery(event = event), authorized).filter { it.score >= 65 }.take(12) }.getOrDefault(emptyList())
+        } else emptyList()
+        val targetedStreams = targetedFallback.map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let { ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it") }
-        val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches)
+        val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches + targetedStreams)
         eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
         preResolvedCache.put(EventIdentity.id(event), resolved); return resolved
     }
@@ -141,7 +156,8 @@ class StreamResolver(context: Context) {
         val scored = streams.mapNotNull { stream ->
             val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }; val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }; val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }; val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
             val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1; val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2; val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0; val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
-            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork))
+            val networkOnlyAllowed = broadcastTerms.isNotEmpty() && networkHits > 0 && (eventIsLive || event.phase.equals("PREGAME", true) || event.phase.equals("UPCOMING", true))
+            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork) || networkOnlyAllowed)
             if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
