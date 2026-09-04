@@ -58,9 +58,6 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 when {
                     selectedEvent != null -> {
                         val target = selectedEvent!!
-                        // Progressive path: cached/authorized Xtream first, then targeted
-                        // public discovery, then the full resolver. Never show a timeout
-                        // just because one provider is slow.
                         val fast = withTimeoutOrNull(5_000L) { fastXtream.resolve(target) }.orEmpty()
                         if (fast.isNotEmpty()) return@runCatching fast
                         val config = SourceStore(context).load()
@@ -69,9 +66,8 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                             config.type == "M3U" && config.isConfigured() -> listOf(AuthorizedSource("user-m3u", AuthorizedSource.Type.M3U, config.m3uUrl))
                             else -> emptyList()
                         }
-                        val targeted = withTimeoutOrNull(4_000L) {
-                            fastPublic.candidates(target, authorized, 8)
-                        }.orEmpty().map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
+                        val targeted = withTimeoutOrNull(4_000L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
+                            .map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
                         if (targeted.isNotEmpty()) return@runCatching targeted
                         withTimeoutOrNull(12_000L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
                     }
@@ -111,7 +107,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     }
 
     val visibleStreams = remember(streams, favorites, showFavorites) { if (showFavorites) streams.filter { ChannelFavorites.isFavorite(context, it) } else streams }
-    Column(Modifier.fillMaxSize().background(Color(0xFF05060A)).navigationBarsPadding()) {
+    Column(Modifier.fillMaxSize().background(Color(0xFF05060A)).statusBarsPadding().navigationBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(22.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("‹", color = Color.White, fontSize = 36.sp, modifier = Modifier.clickable { if (selectedEvent != null && event == null) selectedEvent = null else onBack() })
             Spacer(Modifier.width(12.dp))
@@ -119,40 +115,19 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 Text(when { selectedEvent != null -> "GAME STREAMS"; filter.isNullOrBlank() -> "LIVE GAMES"; else -> "GAME STREAMS" }, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
                 Text(when { selectedEvent != null -> "${selectedEvent!!.title.ifBlank { "Live event" }} • ${selectedEvent!!.league} • ${streams.size} sources"; filter.isNullOrBlank() -> "Live events across all leagues • ${liveEvents.size} games"; showFavorites -> "MY FAVORITES • ${visibleStreams.size} channels"; else -> "Free public + authorized streams • ${streams.size} matches" }, color = Color(0xFF737B89), fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
+            if (selectedEvent == null && !requestFilter.isNullOrBlank()) { }
             if (selectedEvent == null && !filter.isNullOrBlank()) TextButton(onClick = { showFavorites = !showFavorites; favorites = ChannelFavorites.load(context) }) { Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744)) }
             TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
         }
         if (refreshing || engineState.refreshing) LinearProgressIndicator(Modifier.fillMaxWidth(), color = Color(0xFFFF1744))
         when {
             loading && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
-            error != null && (selectedEvent != null || streams.isEmpty() && liveEvents.isEmpty()) -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("STREAM ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black); Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White); Spacer(Modifier.height(12.dp)); TextButton(onClick = { reload(true) }) { Text("RETRY") } }
-            }
+            error != null && (selectedEvent != null || streams.isEmpty() && liveEvents.isEmpty()) -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("STREAM ERROR", color = Color(0xFFFF536C), fontWeight = FontWeight.Black); Spacer(Modifier.height(8.dp)); Text(error!!, color = Color.White); Spacer(Modifier.height(12.dp)); TextButton(onClick = { reload(true) }) { Text("RETRY") } } }
             selectedEvent == null && filter.isNullOrBlank() && liveEvents.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No live games right now", color = Color(0xFF858B98)) }
-            selectedEvent == null && filter.isNullOrBlank() -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(liveEvents, key = { EventIdentity.id(it) }) { game ->
-                    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { streams = emptyList(); loading = true; error = null; selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }
-                        Spacer(Modifier.width(14.dp))
-                        Column(Modifier.weight(1f)) { Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black); Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis); Text(if (game.isLive) "LIVE" else "UPCOMING", color = Color(0xFF777F8C), fontSize = 10.sp) }
-                        Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black)
-                    }
-                }
-            }
+            selectedEvent == null && filter.isNullOrBlank() -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) { items(liveEvents, key = { EventIdentity.id(it) }) { game -> Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).clickable { streams = emptyList(); loading = true; error = null; selectedEvent = game }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) { Box(Modifier.size(48.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { Text("LIVE", color = Color(0xFFFF1744), fontSize = 9.sp, fontWeight = FontWeight.Black) }; Spacer(Modifier.width(14.dp)); Column(Modifier.weight(1f)) { Text(game.league, color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black); Text("${game.away} @ ${game.home}", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis); Text(if (game.isLive) "LIVE" else "UPCOMING", color = Color(0xFF777F8C), fontSize = 10.sp) }; Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black) } } }
             streams.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { if (loading) CircularProgressIndicator(color = Color(0xFFFF1744)) else Text("No matching public or authorized game streams found", color = Color(0xFF858B98)) }
             showFavorites && visibleStreams.isEmpty() -> Box(Modifier.fillMaxSize().padding(30.dp), contentAlignment = Alignment.Center) { Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("★", color = Color(0xFFFF1744), fontSize = 42.sp); Spacer(Modifier.height(8.dp)); Text("NO FAVORITE CHANNELS YET", color = Color.White, fontWeight = FontWeight.Black); Spacer(Modifier.height(6.dp)); Text("Tap the star on any channel to save it here.", color = Color(0xFF858B98), fontSize = 12.sp) } }
-            else -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(visibleStreams, key = { it.url }) { stream ->
-                    val favorite = ChannelFavorites.isFavorite(context, stream)
-                    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Box(Modifier.size(44.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)).clickable { playerStream = stream }, contentAlignment = Alignment.Center) { Text("▶", color = Color(0xFFFF1744), fontWeight = FontWeight.Black) }
-                        Spacer(Modifier.width(14.dp))
-                        Column(Modifier.weight(1f).clickable { playerStream = stream }) { Text(stream.name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis); Text(stream.group, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                        TextButton(onClick = { ChannelFavorites.toggle(context, stream); favorites = ChannelFavorites.load(context) }) { Text(if (favorite) "★" else "☆", color = if (favorite) Color(0xFFFF1744) else Color(0xFF737B89), fontSize = 22.sp) }
-                        Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black, modifier = Modifier.clickable { playerStream = stream })
-                    }
-                }
-            }
+            else -> LazyColumn(contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) { items(visibleStreams, key = { it.url }) { stream -> val favorite = ChannelFavorites.isFavorite(context, stream); Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(16.dp), verticalAlignment = Alignment.CenterVertically) { Box(Modifier.size(44.dp).background(Color(0xFF1A202B), RoundedCornerShape(12.dp)).clickable { playerStream = stream }, contentAlignment = Alignment.Center) { Text("▶", color = Color(0xFFFF1744), fontWeight = FontWeight.Black) }; Spacer(Modifier.width(14.dp)); Column(Modifier.weight(1f).clickable { playerStream = stream }) { Text(stream.name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis); Text(stream.group, color = Color(0xFF777F8C), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) }; TextButton(onClick = { ChannelFavorites.toggle(context, stream); favorites = ChannelFavorites.load(context) }) { Text(if (favorite) "★" else "☆", color = if (favorite) Color(0xFFFF1744) else Color(0xFF737B89), fontSize = 22.sp) }; Text("WATCH", color = Color(0xFFFF1744), fontSize = 10.sp, fontWeight = FontWeight.Black, modifier = Modifier.clickable { playerStream = stream }) } } }
         }
     }
 }
