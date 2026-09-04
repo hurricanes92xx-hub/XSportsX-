@@ -42,6 +42,10 @@ jobs:
         run: python3 scripts/test_season_intelligence.py
       - name: Test sports prediction
         run: python3 scripts/test_sports_prediction.py
+      - name: Test sports agent
+        run: python3 scripts/test_sports_agent.py
+      - name: Test multi-source evidence reasoning
+        run: python3 scripts/test_sports_evidence.py
       - name: Snapshot previous feed
         run: |
           if [ -f data/schedule_feed.json ]; then cp data/schedule_feed.json /tmp/schedule_feed.previous.json; else echo '{}' > /tmp/schedule_feed.previous.json; fi
@@ -119,14 +123,14 @@ jobs:
           prediction=feed.get('sportsPredictions') or {}
           graph=json.loads(Path('data/sports_knowledge_graph.json').read_text(encoding='utf-8'))
           if brain.get('schema') != 1: raise SystemExit('ERROR: sports brain contract missing')
-          if agent.get('schema') != 2: raise SystemExit('ERROR: sports agent contract missing')
+          if agent.get('schema') != 3: raise SystemExit('ERROR: sports agent contract missing')
           if prediction.get('schema') != 1: raise SystemExit('ERROR: sports prediction contract missing')
           if not isinstance(graph.get('nodes'), dict) or not isinstance(graph.get('edges'), list): raise SystemExit('ERROR: knowledge graph contract invalid')
           for event in feed.get('events') or []:
               action=event.get('intelligenceAction','')
               if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}:
                   raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
-          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
+          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
           PY
       - name: Publish canonical data and learned intelligence
         shell: bash
