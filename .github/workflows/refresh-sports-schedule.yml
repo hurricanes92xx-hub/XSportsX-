@@ -74,6 +74,8 @@ jobs:
           GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
           GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
         run: python3 scripts/refresh_schedules.py
+      - name: Authoritative official-site audit
+        run: python3 scripts/official_schedule_ai_audit.py
       - name: Autonomous schedule repair — all configured leagues
         env:
           PYTHONUNBUFFERED: '1'
@@ -112,6 +114,8 @@ jobs:
           season=data.get('seasonIntelligence') or {}
           gap=data.get('scheduleGapResolution') or {}
           repair=data.get('autonomousScheduleRepair') or {}
+          official=data.get('officialScheduleAudit') or {}
+          print(f"Official audit: checked={official.get('sourcesChecked',0)} reachable={official.get('reachableSources',0)} recovered={official.get('eventsRecovered',0)}")
           print(f"Discovery candidates: {discovery.get('discoveredCandidates',0)}; promoted: {discovery.get('promotedProviders',0)}")
           print(f"Season gaps: active={gap.get('activeGaps',0)} off-season={gap.get('offSeasonGaps',0)} searched={gap.get('searchedActiveGaps',0)} unresolved={gap.get('unresolvedAfterDiscovery',0)}")
           print(f"Autonomous repair: candidates={repair.get('repairCandidates',0)} searched={repair.get('searchedLeagues',0)} recovered={repair.get('eventsRecovered',0)} unresolved={len(repair.get('unresolvedLeagues') or [])}")
@@ -173,7 +177,7 @@ jobs:
           brain=feed.get('sportsBrain') or {}; agent=feed.get('sportsAgent') or {}; prediction=feed.get('sportsPredictions') or {}; broadcast=feed.get('sportsBroadcastIntelligence') or {}
           graph=json.loads(Path('data/sports_knowledge_graph.json').read_text(encoding='utf-8'))
           if brain.get('schema') != 1: raise SystemExit('ERROR: sports brain contract missing')
-          if agent.get('schema') != 3: raise SystemExit('ERROR: sports agent contract missing')
+          if agent.get('schema') != 4: raise SystemExit('ERROR: sports agent contract missing')
           if prediction.get('schema') != 2: raise SystemExit('ERROR: sports prediction contract missing')
           if broadcast.get('schema') != 1: raise SystemExit('ERROR: sports broadcast intelligence contract missing')
           if not isinstance(graph.get('nodes'), dict) or not isinstance(graph.get('edges'), list): raise SystemExit('ERROR: knowledge graph contract invalid')
