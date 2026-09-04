@@ -1,0 +1,88 @@
+name: XSportsX Strict Sports AI Deep Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-schedule-refresh
+  queue: max
+  cancel-in-progress: false
+
+env:
+  SPORTS_AGENT_MODEL_URL: ${{ vars.SPORTS_AGENT_MODEL_URL }}
+  SPORTS_AGENT_MODEL: ${{ vars.SPORTS_AGENT_MODEL }}
+  SPORTS_AGENT_GEMINI_MODEL_URL: ${{ vars.SPORTS_AGENT_GEMINI_MODEL_URL }}
+  SPORTS_AGENT_GEMINI_MODEL: ${{ vars.SPORTS_AGENT_GEMINI_MODEL }}
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout canonical engine
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install provider dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Validate strict AI operating contract
+        run: python3 scripts/test_sports_ai_policy.py
+      - name: Verify canonical feed
+        run: test -s data/schedule_feed.json
+      - name: Run strict Observe-Reason-Act-Verify-Learn audit
+        env:
+          PYTHONUNBUFFERED: '1'
+          SPORTS_AGENT_MODEL_API_KEY: ${{ secrets.SPORTS_AGENT_MODEL_API_KEY }}
+          SPORTS_AGENT_GEMINI_API_KEY: ${{ secrets.SPORTS_AGENT_GEMINI_API_KEY }}
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
+        run: |
+          python3 scripts/sports_agent_strict_runner.py data/schedule_feed.json --mode full --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
+      - name: Validate AI contracts
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('data/schedule_feed.json').read_text())
+          a=d.get('sportsAgent') or {}
+          if a.get('schema') != 4: raise SystemExit('Sports Agent schema is not 4')
+          if not isinstance(d.get('events'),list) or not d['events']: raise SystemExit('Canonical feed unexpectedly empty')
+          print(f"Strict AI audit events: {len(d['events'])}")
+          print(f"Agent plans: {a.get('plans',0)}")
+          print(f"Model decisions: {a.get('modelDecisions',0)}")
+          print(f"Fallback decisions: {a.get('fallbackDecisions',0)}")
+          PY
+      - name: Persist strict intelligence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX AI Bot'
+          git config user.email 'xsportsx-ai-bot@users.noreply.github.com'
+          git add -A data/
+          if git diff --cached --quiet; then echo 'No strict AI changes.'; exit 0; fi
+          git commit -m 'chore: publish strict sports AI audit'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Strict AI audit publish succeeded on attempt ${attempt}."; exit 0; fi
+            else
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add -A data/
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish strict sports AI audit'; fi
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
