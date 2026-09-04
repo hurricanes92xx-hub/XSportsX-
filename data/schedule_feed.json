@@ -1,9 +1,9 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-04T09:59:15.720998+00:00",
+  "generatedAt": "2026-09-04T10:07:21.514797+00:00",
   "refreshHours": 6,
   "eventCounts": {
-    "F1": 28,
+    "F1": 27,
     "IPL": 74,
     "ATP": 5,
     "WTA": 18,
@@ -22,6 +22,7 @@
     "NCAA Women's Soccer": 255,
     "NCAA FB": 38,
     "MLS": 77,
+    "NWSL": 42,
     "UFC": 9,
     "IndyCar": 1,
     "WWE": 13,
@@ -29,6 +30,7 @@
     "UCL": 18,
     "NFL": 17,
     "LPGA": 3,
+    "UEL": 18,
     "NASCAR Truck": 10,
     "PGA": 3,
     "WNBA": 30,
@@ -64,10 +66,8 @@
     "NCAA Women's Lacrosse",
     "NCAA Women's Water Polo",
     "NLL",
-    "NWSL",
     "Rugby World Cup",
     "Six Nations",
-    "UEL",
     "WEC",
     "WRC"
   ],
@@ -97,10 +97,8 @@
     "NCAA Women's Lacrosse",
     "NCAA Women's Water Polo",
     "NLL",
-    "NWSL",
     "Rugby World Cup",
     "Six Nations",
-    "UEL",
     "WEC",
     "WRC"
   ],
@@ -108,16 +106,16 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 363,
+  "identityMergeCount": 439,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1537,
     "openligadb": 306,
     "sportsdb": 10,
     "jolpica-f1": 23,
-    "openf1": 1,
     "cache": 74,
     "mlb-official": 349,
+    "espn-shadow": 136,
     "nascar": 51,
     "espn-ncaa": 1030
   },
@@ -127,9 +125,9 @@
     "openligadb": 306,
     "sportsdb": 10,
     "jolpica-f1": 23,
-    "openf1": 1,
     "cache": 74,
     "mlb-official": 349,
+    "espn-shadow": 136,
     "nascar": 51,
     "espn-ncaa": 1030
   },
@@ -146,7 +144,7 @@
     "NHL",
     "Serie A"
   ],
-  "providerOverlapRecordCount": 382,
+  "providerOverlapRecordCount": 457,
   "leagueProviderMatrix": {
     "AAA Wrestling": {
       "configured": [
@@ -574,7 +572,7 @@
         "sportmonks"
       ],
       "promotedFrom": "official",
-      "promotedTo": "espn"
+      "promotedTo": "sportscore"
     },
     "MONSTER JAM": {
       "configured": [
@@ -1016,7 +1014,9 @@
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportmonks"
-      ]
+      ],
+      "promotedFrom": "official",
+      "promotedTo": "sportscore"
     },
     "PGA": {
       "configured": [
@@ -1164,7 +1164,9 @@
         "sportradar",
         "sportsdataio",
         "sportmonks"
-      ]
+      ],
+      "promotedFrom": "official",
+      "promotedTo": "sportscore"
     },
     "UFC": {
       "configured": [
@@ -1278,14 +1280,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1168.6,
+        "latencyMs": 677.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.7,
+        "latencyMs": 17.5,
         "error": "cache"
       }
     ],
@@ -1294,7 +1296,7 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 1105.8,
+        "latencyMs": 503.7,
         "error": ""
       }
     ],
@@ -1303,14 +1305,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 547.7,
+        "latencyMs": 814.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 334.4,
+        "latencyMs": 59.8,
         "error": ""
       }
     ],
@@ -1319,21 +1321,21 @@
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 766.4,
+        "latencyMs": 801.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 521.0,
+        "latencyMs": 74.0,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 258.1,
+        "latencyMs": 188.6,
         "error": ""
       }
     ],
@@ -1342,35 +1344,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 366.1,
+        "latencyMs": 163.6,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": true,
+        "ok": false,
         "events": 0,
-        "latencyMs": 443.8,
-        "error": ""
+        "latencyMs": 250.8,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "openligadb",
         "ok": true,
         "events": 306,
-        "latencyMs": 987.8,
+        "latencyMs": 935.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 27,
-        "latencyMs": 283.1,
+        "latencyMs": 34.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 152.4,
+        "latencyMs": 102.7,
         "error": ""
       }
     ],
@@ -1379,21 +1381,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 406.6,
+        "latencyMs": 198.9,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 162.4,
+        "latencyMs": 32.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.4,
+        "latencyMs": 14.4,
         "error": "cache"
       }
     ],
@@ -1402,28 +1404,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 393.6,
+        "latencyMs": 165.5,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 641.1,
+        "latencyMs": 949.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 344.4,
+        "latencyMs": 34.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 134.8,
+        "latencyMs": 104.2,
         "error": ""
       }
     ],
@@ -1432,7 +1434,7 @@
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.6,
+        "latencyMs": 14.2,
         "error": "cache"
       }
     ],
@@ -1441,28 +1443,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 397.4,
+        "latencyMs": 113.7,
         "error": ""
       },
       {
         "provider": "jolpica-f1",
         "ok": true,
         "events": 23,
-        "latencyMs": 435.4,
+        "latencyMs": 46.7,
         "error": ""
       },
       {
         "provider": "openf1",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 541.5,
-        "error": ""
+        "ok": false,
+        "events": 0,
+        "latencyMs": 390.9,
+        "error": "HTTPError: HTTP Error 401: Unauthorized"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 246.6,
+        "latencyMs": 20.4,
         "error": ""
       }
     ],
@@ -1471,28 +1473,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 4695.7,
+        "latencyMs": 142.6,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 454.6,
+        "latencyMs": 97.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 146.0,
+        "latencyMs": 126.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.3,
+        "latencyMs": 16.1,
         "error": "cache"
       }
     ],
@@ -1501,28 +1503,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 4284.3,
+        "latencyMs": 357.8,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 278.3,
+        "latencyMs": 51.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 151.5,
+        "latencyMs": 106.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.3,
+        "latencyMs": 16.0,
         "error": "cache"
       }
     ],
@@ -1531,14 +1533,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 278.6,
+        "latencyMs": 145.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.3,
+        "latencyMs": 15.6,
         "error": "cache"
       }
     ],
@@ -1547,35 +1549,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 505.0,
+        "latencyMs": 289.9,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 145.8,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 820.1,
+        "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 314.8,
+        "latencyMs": 57.5,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 142.1,
+        "latencyMs": 99.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.3,
+        "latencyMs": 15.9,
         "error": "cache"
       }
     ],
@@ -1584,14 +1586,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 122.9,
+        "latencyMs": 142.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.5,
+        "latencyMs": 14.5,
         "error": "cache"
       }
     ],
@@ -1600,35 +1602,35 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 558.4,
+        "latencyMs": 181.7,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": true,
+        "ok": false,
         "events": 0,
-        "latencyMs": 752.3,
-        "error": ""
+        "latencyMs": 88.6,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 445.3,
+        "latencyMs": 54.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 136.2,
+        "latencyMs": 98.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": true,
         "events": 74,
-        "latencyMs": 7.3,
+        "latencyMs": 14.4,
         "error": "cache"
       }
     ],
@@ -1637,14 +1639,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 280.6,
+        "latencyMs": 280.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 1,
-        "latencyMs": 142.2,
+        "latencyMs": 19.3,
         "error": ""
       }
     ],
@@ -1653,21 +1655,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 339.0,
+        "latencyMs": 174.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 146.9,
+        "latencyMs": 17.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.1,
+        "latencyMs": 15.5,
         "error": "cache"
       }
     ],
@@ -1676,14 +1678,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 197.1,
+        "latencyMs": 956.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 154.2,
+        "latencyMs": 16.5,
         "error": ""
       }
     ],
@@ -1692,28 +1694,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 271.3,
+        "latencyMs": 127.0,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 143.6,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 424.5,
+        "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 39,
-        "latencyMs": 310.7,
+        "latencyMs": 69.5,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 146.0,
+        "latencyMs": 96.4,
         "error": ""
       }
     ],
@@ -1722,28 +1724,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1150.0,
+        "latencyMs": 1027.4,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 522.2,
+        "latencyMs": 518.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 26,
-        "latencyMs": 361.2,
+        "latencyMs": 31.9,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 134.0,
+        "latencyMs": 100.1,
         "error": ""
       }
     ],
@@ -1752,21 +1754,21 @@
         "provider": "mlb-official",
         "ok": true,
         "events": 349,
-        "latencyMs": 278.5,
+        "latencyMs": 193.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 340,
-        "latencyMs": 603.8,
+        "latencyMs": 136.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 137.2,
+        "latencyMs": 117.5,
         "error": ""
       }
     ],
@@ -1775,28 +1777,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 388.2,
+        "latencyMs": 322.7,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 161.7,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "ok": true,
+        "events": 76,
+        "latencyMs": 725.6,
+        "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 76,
-        "latencyMs": 409.7,
+        "latencyMs": 56.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 139.9,
+        "latencyMs": 99.1,
         "error": ""
       }
     ],
@@ -1805,14 +1807,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 338.8,
+        "latencyMs": 83.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.4,
+        "latencyMs": 16.2,
         "error": "cache"
       }
     ],
@@ -1821,14 +1823,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 755.0,
+        "latencyMs": 520.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.5,
+        "latencyMs": 14.5,
         "error": "cache"
       }
     ],
@@ -1837,14 +1839,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 426.0,
+        "latencyMs": 236.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.5,
+        "latencyMs": 14.6,
         "error": "cache"
       }
     ],
@@ -1853,14 +1855,14 @@
         "provider": "nascar",
         "ok": true,
         "events": 0,
-        "latencyMs": 297.2,
+        "latencyMs": 256.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.4,
+        "latencyMs": 16.0,
         "error": "cache"
       }
     ],
@@ -1869,7 +1871,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 21,
-        "latencyMs": 314.5,
+        "latencyMs": 96.2,
         "error": ""
       }
     ],
@@ -1878,7 +1880,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 30,
-        "latencyMs": 117.1,
+        "latencyMs": 29.2,
         "error": ""
       }
     ],
@@ -1887,28 +1889,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 386.3,
+        "latencyMs": 353.2,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": true,
+        "ok": false,
         "events": 0,
-        "latencyMs": 739.3,
-        "error": ""
+        "latencyMs": 93.2,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 146.1,
+        "latencyMs": 15.4,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 143.3,
+        "latencyMs": 97.1,
         "error": ""
       }
     ],
@@ -1917,14 +1919,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2555.3,
+        "latencyMs": 1942.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.4,
+        "latencyMs": 16.0,
         "error": "cache"
       }
     ],
@@ -1933,14 +1935,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2180.9,
+        "latencyMs": 1712.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.6,
+        "latencyMs": 16.3,
         "error": "cache"
       }
     ],
@@ -1949,14 +1951,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2291.0,
+        "latencyMs": 1752.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.4,
+        "latencyMs": 17.8,
         "error": "cache"
       }
     ],
@@ -1965,7 +1967,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 38,
-        "latencyMs": 2198.5,
+        "latencyMs": 1602.7,
         "error": ""
       }
     ],
@@ -1974,14 +1976,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2306.5,
+        "latencyMs": 1731.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.6,
+        "latencyMs": 17.9,
         "error": "cache"
       }
     ],
@@ -1990,14 +1992,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2292.8,
+        "latencyMs": 1720.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.7,
+        "latencyMs": 18.1,
         "error": "cache"
       }
     ],
@@ -2006,7 +2008,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 161,
-        "latencyMs": 2490.9,
+        "latencyMs": 1911.3,
         "error": ""
       }
     ],
@@ -2015,14 +2017,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2268.8,
+        "latencyMs": 1698.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.9,
+        "latencyMs": 18.3,
         "error": "cache"
       }
     ],
@@ -2031,14 +2033,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2314.1,
+        "latencyMs": 1926.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.4,
+        "latencyMs": 18.8,
         "error": "cache"
       }
     ],
@@ -2047,14 +2049,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 4367.9,
+        "latencyMs": 1724.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.9,
+        "latencyMs": 16.4,
         "error": "cache"
       }
     ],
@@ -2063,14 +2065,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2259.7,
+        "latencyMs": 1740.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.6,
+        "latencyMs": 16.1,
         "error": "cache"
       }
     ],
@@ -2079,7 +2081,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 76,
-        "latencyMs": 2100.8,
+        "latencyMs": 1652.9,
         "error": ""
       }
     ],
@@ -2088,14 +2090,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2235.6,
+        "latencyMs": 1905.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 743,
-        "latencyMs": 460.4,
+        "latencyMs": 97.1,
         "error": ""
       }
     ],
@@ -2104,14 +2106,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2295.9,
+        "latencyMs": 1673.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.9,
+        "latencyMs": 18.1,
         "error": "cache"
       }
     ],
@@ -2120,7 +2122,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 255,
-        "latencyMs": 2589.7,
+        "latencyMs": 1887.7,
         "error": ""
       }
     ],
@@ -2129,7 +2131,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 500,
-        "latencyMs": 2784.0,
+        "latencyMs": 2112.8,
         "error": ""
       }
     ],
@@ -2138,14 +2140,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2367.1,
+        "latencyMs": 1718.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 10.2,
+        "latencyMs": 19.1,
         "error": "cache"
       }
     ],
@@ -2154,21 +2156,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 249.3,
+        "latencyMs": 45.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 17,
-        "latencyMs": 282.7,
+        "latencyMs": 37.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 142.8,
+        "latencyMs": 101.9,
         "error": ""
       }
     ],
@@ -2177,21 +2179,21 @@
         "provider": "nhl-official",
         "ok": false,
         "events": 0,
-        "latencyMs": 235.0,
+        "latencyMs": 26.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 104,
-        "latencyMs": 423.7,
+        "latencyMs": 51.9,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 148.7,
+        "latencyMs": 97.7,
         "error": ""
       }
     ],
@@ -2200,21 +2202,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 6401.1,
+        "latencyMs": 114.6,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 149.8,
+        "latencyMs": 17.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.3,
+        "latencyMs": 14.1,
         "error": "cache"
       }
     ],
@@ -2223,14 +2225,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1268.4,
+        "latencyMs": 807.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 7,
-        "latencyMs": 179.2,
+        "latencyMs": 22.9,
         "error": ""
       }
     ],
@@ -2239,22 +2241,15 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 500.8,
+        "latencyMs": 151.5,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 343.6,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 7.5,
-        "error": "cache"
+        "ok": true,
+        "events": 42,
+        "latencyMs": 159.9,
+        "error": ""
       }
     ],
     "PGA": [
@@ -2262,14 +2257,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 820.2,
+        "latencyMs": 172.9,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 164.5,
+        "latencyMs": 19.5,
         "error": ""
       }
     ],
@@ -2278,14 +2273,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 287.0,
+        "latencyMs": 140.8,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 146.8,
+        "latencyMs": 17.8,
         "error": ""
       }
     ],
@@ -2294,44 +2289,44 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 387.3,
+        "latencyMs": 209.1,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 314.3,
+        "latencyMs": 18.4,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 9.2,
+        "latencyMs": 17.2,
         "error": "cache"
       }
     ],
     "Serie A": [
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 152.6,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 456.5,
+        "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 322.2,
+        "latencyMs": 29.8,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 138.3,
+        "latencyMs": 100.3,
         "error": ""
       }
     ],
@@ -2340,21 +2335,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 311.7,
+        "latencyMs": 98.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 182.0,
+        "latencyMs": 18.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 8.5,
+        "latencyMs": 16.3,
         "error": "cache"
       }
     ],
@@ -2372,21 +2367,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 215.7,
+        "latencyMs": 143.6,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": false,
         "events": 0,
-        "latencyMs": 166.7,
+        "latencyMs": 93.9,
         "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 247.2,
+        "latencyMs": 32.0,
         "error": ""
       }
     ],
@@ -2395,22 +2390,15 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 348.3,
+        "latencyMs": 257.7,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 163.2,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 7.3,
-        "error": "cache"
+        "ok": true,
+        "events": 18,
+        "latencyMs": 807.9,
+        "error": ""
       }
     ],
     "UFC": [
@@ -2418,21 +2406,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 215.4,
+        "latencyMs": 47.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 243.7,
+        "latencyMs": 25.2,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 138.9,
+        "latencyMs": 98.6,
         "error": ""
       }
     ],
@@ -2441,14 +2429,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 702.7,
+        "latencyMs": 1352.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.4,
+        "latencyMs": 14.3,
         "error": "cache"
       }
     ],
@@ -2457,21 +2445,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 345.8,
+        "latencyMs": 155.8,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 155.2,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 501.7,
+        "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 312.1,
+        "latencyMs": 44.0,
         "error": ""
       }
     ],
@@ -2480,14 +2468,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 214.2,
+        "latencyMs": 1405.2,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 7.4,
+        "latencyMs": 14.6,
         "error": "cache"
       }
     ],
@@ -2496,21 +2484,21 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 290.8,
+        "latencyMs": 131.1,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": true,
+        "ok": false,
         "events": 0,
-        "latencyMs": 483.1,
-        "error": ""
+        "latencyMs": 90.4,
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 605.4,
+        "latencyMs": 77.2,
         "error": ""
       }
     ],
@@ -2535,16 +2523,18 @@
     "LPGA": "espn",
     "LaLiga": "espn",
     "Ligue 1": "espn",
-    "MLS": "espn",
+    "MLS": "sportscore",
     "NBA": "espn",
     "NCAA Women's Hockey": "espn",
     "NFL": "espn",
     "NHL": "espn",
     "NRL": "espn",
+    "NWSL": "sportscore",
     "PGA": "espn",
     "PLL": "espn",
     "Serie A": "espn",
     "UCL": "espn",
+    "UEL": "sportscore",
     "UFC": "espn",
     "WNBA": "espn",
     "WTA": "espn"
@@ -4030,18 +4020,6 @@
       "sport": "racing"
     },
     {
-      "league": "F1",
-      "title": "Race",
-      "start": "2026-08-23T13:00:00Z",
-      "tag": "FINAL",
-      "icon": "🏎️",
-      "source": "openf1",
-      "providerEventId": "openf1:11353",
-      "id": "evt_0f18b53c8e8e7931e383d47c",
-      "startUtc": "2026-08-23T13:00:00Z",
-      "sport": "racing"
-    },
-    {
       "league": "ATP",
       "title": "US Open",
       "start": "2026-08-24T04:00Z",
@@ -4321,7 +4299,7 @@
       "league": "NRL",
       "title": "Dolphins @ Titans",
       "start": "2026-09-04T08:00Z",
-      "tag": "UPCOMING",
+      "tag": "FINAL",
       "icon": "🏉",
       "source": "espn",
       "home": "Titans",
@@ -4337,7 +4315,7 @@
       "league": "AFL",
       "title": "Carlton @ Geelong Cats",
       "start": "2026-09-04T09:40Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏉",
       "source": "espn",
       "home": "Geelong Cats",
@@ -4353,7 +4331,7 @@
       "league": "NRL",
       "title": "Roosters @ Rabbitohs",
       "start": "2026-09-04T10:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏉",
       "source": "espn",
       "home": "Rabbitohs",
@@ -8232,6 +8210,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Boston @ Utah",
+      "start": "2026-09-05T01:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Utah",
+      "away": "Boston",
+      "providerEventId": "espn:401854080",
+      "id": "evt_1ae63f030d393d1c862d024f",
+      "startUtc": "2026-09-05T01:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "New York Yankees @ San Diego Padres",
       "start": "2026-09-05T01:40:00Z",
@@ -8372,6 +8364,20 @@
       "id": "evt_ab6176994c65abc86c68f676",
       "startUtc": "2026-09-05T02:00:00Z",
       "sport": "other"
+    },
+    {
+      "league": "NWSL",
+      "title": "Kansas City @ Bay",
+      "start": "2026-09-05T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Bay",
+      "away": "Kansas City",
+      "providerEventId": "espn:401853990",
+      "id": "evt_edf309af5bc607cb452c9ccf",
+      "startUtc": "2026-09-05T02:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -11820,6 +11826,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Angel City @ Louisville",
+      "start": "2026-09-05T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Louisville",
+      "away": "Angel City",
+      "providerEventId": "espn:401853991",
+      "id": "evt_40e30ddeb7da19b2b6c1d91f",
+      "startUtc": "2026-09-05T22:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Los Angeles Angels @ Pittsburgh Pirates",
       "start": "2026-09-05T22:40:00Z",
@@ -15170,6 +15190,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Gotham @ Denver",
+      "start": "2026-09-06T18:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Denver",
+      "away": "Gotham",
+      "providerEventId": "espn:401854081",
+      "id": "evt_fc9e27ac756f70b848a6afd2",
+      "startUtc": "2026-09-06T18:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Arizona Diamondbacks @ Houston Astros",
       "start": "2026-09-06T18:10:00Z",
@@ -15770,6 +15804,34 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "North Carolina @ Chicago",
+      "start": "2026-09-06T20:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Chicago",
+      "away": "North Carolina",
+      "providerEventId": "espn:401853992",
+      "id": "evt_05a839e599d64afd1425c582",
+      "startUtc": "2026-09-06T20:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "NWSL",
+      "title": "Washington @ Portland",
+      "start": "2026-09-06T20:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Portland",
+      "away": "Washington",
+      "providerEventId": "espn:401853993",
+      "id": "evt_06eb138a8d52df28bd193777",
+      "startUtc": "2026-09-06T20:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Athletics @ Seattle Mariners",
       "start": "2026-09-06T20:10:00Z",
@@ -16252,6 +16314,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Houston @ Orlando",
+      "start": "2026-09-06T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Orlando",
+      "away": "Houston",
+      "providerEventId": "espn:401853994",
+      "id": "evt_7ccb235ce5d6e0b9f3ccd5c9",
+      "startUtc": "2026-09-06T23:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Men's Soccer",
       "title": "VCU @ Marshall",
       "start": "2026-09-06T23:10:00Z",
@@ -16412,6 +16488,20 @@
       "id": "evt_83fe9f68355f42e3318ff723",
       "startUtc": "2026-09-07T01:00:00Z",
       "sport": "other"
+    },
+    {
+      "league": "NWSL",
+      "title": "San Diego @ Seattle",
+      "start": "2026-09-07T01:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Seattle",
+      "away": "San Diego",
+      "providerEventId": "espn:401853995",
+      "id": "evt_53f0a2c94027295926723306",
+      "startUtc": "2026-09-07T01:00Z",
+      "sport": "soccer"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -22480,6 +22570,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Gotham @ Louisville",
+      "start": "2026-09-11T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Louisville",
+      "away": "Gotham",
+      "providerEventId": "espn:401853996",
+      "id": "evt_56ae8f1629743a7bba82e80b",
+      "startUtc": "2026-09-11T22:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Colorado Rockies @ Detroit Tigers",
       "start": "2026-09-11T22:40:00Z",
@@ -22624,6 +22728,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Orlando @ Kansas City",
+      "start": "2026-09-12T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Kansas City",
+      "away": "Orlando",
+      "providerEventId": "espn:401853997",
+      "id": "evt_39688bd235588e289efb4d59",
+      "startUtc": "2026-09-12T00:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Cleveland Guardians @ Minnesota Twins",
       "start": "2026-09-12T00:10:00Z",
@@ -22686,6 +22804,20 @@
       "id": "evt_57baaf7a15cbcac57a67f417",
       "startUtc": "2026-09-12T01:40:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Denver @ Angel City",
+      "start": "2026-09-12T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Angel City",
+      "away": "Denver",
+      "providerEventId": "espn:401854082",
+      "id": "evt_dec59096554a6191513102ef",
+      "startUtc": "2026-09-12T02:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -23396,6 +23528,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "North Carolina @ San Diego",
+      "start": "2026-09-12T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "San Diego",
+      "away": "North Carolina",
+      "providerEventId": "espn:401853999",
+      "id": "evt_88e8fd3041430f90b39a1b25",
+      "startUtc": "2026-09-12T22:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NASCAR Xfinity",
       "title": "Nu Way 225 Powered by Bobcat and Sauced by Blues Hog — Race @ World Wide Technology Raceway",
       "start": "2026-09-12T22:50:00Z",
@@ -23536,6 +23682,20 @@
       "sport": "soccer"
     },
     {
+      "league": "NWSL",
+      "title": "Bay @ Seattle",
+      "start": "2026-09-13T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Seattle",
+      "away": "Bay",
+      "providerEventId": "espn:401853998",
+      "id": "evt_4dc902add8d0ebae409ea8e9",
+      "startUtc": "2026-09-13T00:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Texas Rangers @ Arizona Diamondbacks",
       "start": "2026-09-13T00:10:00Z",
@@ -23597,6 +23757,20 @@
       "awayTeamId": "17362",
       "id": "evt_68a289f5c97bba959a61e28a",
       "startUtc": "2026-09-13T00:30Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "NWSL",
+      "title": "Utah @ Houston",
+      "start": "2026-09-13T00:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Houston",
+      "away": "Utah",
+      "providerEventId": "espn:401854000",
+      "id": "evt_9203fbb6499fe75aadcee0e8",
+      "startUtc": "2026-09-13T00:45Z",
       "sport": "soccer"
     },
     {
@@ -24052,6 +24226,20 @@
       "sport": "football"
     },
     {
+      "league": "NWSL",
+      "title": "Boston @ Washington",
+      "start": "2026-09-13T17:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Washington",
+      "away": "Boston",
+      "providerEventId": "espn:401854083",
+      "id": "evt_3c25d00f9475cef32c30fd31",
+      "startUtc": "2026-09-13T17:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Kansas City Royals @ Boston Red Sox",
       "start": "2026-09-13T17:35:00Z",
@@ -24401,6 +24589,20 @@
       "awayTeamId": "20906",
       "id": "evt_998c6b5eb6b2a59159e2a874",
       "startUtc": "2026-09-13T22:30Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "NWSL",
+      "title": "Chicago @ Portland",
+      "start": "2026-09-13T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Portland",
+      "away": "Chicago",
+      "providerEventId": "espn:401854001",
+      "id": "evt_367c255665e8304dbf81d6e4",
+      "startUtc": "2026-09-13T23:00Z",
       "sport": "soccer"
     },
     {
@@ -25067,6 +25269,34 @@
       "sport": "baseball"
     },
     {
+      "league": "UEL",
+      "title": "Sparta @ Ararat",
+      "start": "2026-09-16T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Ararat",
+      "away": "Sparta",
+      "providerEventId": "espn:401915594",
+      "id": "evt_d67c2ec01eba238c1b7923b6",
+      "startUtc": "2026-09-16T16:45Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Celta Vigo @ Omonia",
+      "start": "2026-09-16T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Omonia",
+      "away": "Celta Vigo",
+      "providerEventId": "espn:401915611",
+      "id": "evt_e84c0f7a45cd5db7d89a98f3",
+      "startUtc": "2026-09-16T16:45Z",
+      "sport": "soccer"
+    },
+    {
       "league": "LaLiga",
       "title": "Osasuna @ Atlético",
       "start": "2026-09-16T17:00Z",
@@ -25145,6 +25375,104 @@
       "id": "evt_c62068ed89faba0732ad7821",
       "startUtc": "2026-09-16T17:40:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "UEL",
+      "title": "Benfica @ Milan",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Milan",
+      "away": "Benfica",
+      "providerEventId": "espn:401915586",
+      "id": "evt_5aa568b3972f95f70811ea12",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Lyon @ Anderlecht",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Anderlecht",
+      "away": "Lyon",
+      "providerEventId": "espn:401915590",
+      "id": "evt_fa3c2d96da06646886dcb307",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "NK Celje @ Leverkusen",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Leverkusen",
+      "away": "NK Celje",
+      "providerEventId": "espn:401915587",
+      "id": "evt_33e37e246b5e949c974c3394",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Dinamo Zagreb @ Hapoel Be'er",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Hapoel Be'er",
+      "away": "Dinamo Zagreb",
+      "providerEventId": "espn:401915589",
+      "id": "evt_cc91178e0399d7d70f3bd885",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Jagiellonia  @ Olympiacos",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Olympiacos",
+      "away": "Jagiellonia ",
+      "providerEventId": "espn:401915588",
+      "id": "evt_a63395d2bbc89da110fc4be4",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Rennes @ Sturm Graz",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Sturm Graz",
+      "away": "Rennes",
+      "providerEventId": "espn:401915593",
+      "id": "evt_3a24a7fd0b2a6a6439a83a88",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "AZ Alkmaar @ Sunderland",
+      "start": "2026-09-16T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Sunderland",
+      "away": "AZ Alkmaar",
+      "providerEventId": "espn:401915592",
+      "id": "evt_635db9f64dddb7c3d96defb3",
+      "startUtc": "2026-09-16T19:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -25363,6 +25691,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Bay @ Denver",
+      "start": "2026-09-17T01:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Denver",
+      "away": "Bay",
+      "providerEventId": "espn:401854084",
+      "id": "evt_761f3a25e01878822f046fde",
+      "startUtc": "2026-09-17T01:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Seattle Mariners @ Los Angeles Angels",
       "start": "2026-09-17T01:38:00Z",
@@ -25393,6 +25735,20 @@
       "id": "evt_dd7090fb81c899cacf8acd43",
       "startUtc": "2026-09-17T01:40:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Seattle @ Angel City",
+      "start": "2026-09-17T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Angel City",
+      "away": "Seattle",
+      "providerEventId": "espn:401854002",
+      "id": "evt_5163d3645d31edce100957ea",
+      "startUtc": "2026-09-17T02:00Z",
+      "sport": "soccer"
     },
     {
       "league": "PGA",
@@ -25451,6 +25807,34 @@
       "sport": "baseball"
     },
     {
+      "league": "UEL",
+      "title": "RB Salzburg @ Levski Sofia",
+      "start": "2026-09-17T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Levski Sofia",
+      "away": "RB Salzburg",
+      "providerEventId": "espn:401915584",
+      "id": "evt_0af15cdd8b18ed7b75e5b7a5",
+      "startUtc": "2026-09-17T16:45Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Hoffenheim @ OFI Crete",
+      "start": "2026-09-17T16:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "OFI Crete",
+      "away": "Hoffenheim",
+      "providerEventId": "espn:401915585",
+      "id": "evt_bf7d076b25d327bf59e1b289",
+      "startUtc": "2026-09-17T16:45Z",
+      "sport": "soccer"
+    },
+    {
       "league": "LaLiga",
       "title": "Getafe @ Betis",
       "start": "2026-09-17T17:00Z",
@@ -25493,6 +25877,104 @@
       "id": "evt_8d9e2b3e55f4103517550baa",
       "startUtc": "2026-09-17T19:00:00Z",
       "sport": "other"
+    },
+    {
+      "league": "UEL",
+      "title": "Marseille @ Besiktas",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Besiktas",
+      "away": "Marseille",
+      "providerEventId": "espn:401915591",
+      "id": "evt_fb141e3b1ef4f6972371cf3c",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Ferencvaros @ Celtic",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Celtic",
+      "away": "Ferencvaros",
+      "providerEventId": "espn:401915581",
+      "id": "evt_341d1f7c490892103c1cf91d",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Lech Poznan @ C Palace",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "C Palace",
+      "away": "Lech Poznan",
+      "providerEventId": "espn:401915569",
+      "id": "evt_c5355868a4ed5a70ef91942a",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "NEC @ Juventus",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Juventus",
+      "away": "NEC",
+      "providerEventId": "espn:401915582",
+      "id": "evt_88da587db9e312b97dc9cc66",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Torreense @ Lillestrom",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Lillestrom",
+      "away": "Torreense",
+      "providerEventId": "espn:401915570",
+      "id": "evt_9844b11cacf95b0864856508",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Bournemouth @ Real Sociedad",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Real Sociedad",
+      "away": "Bournemouth",
+      "providerEventId": "espn:401915583",
+      "id": "evt_9b265d5e49106f517e053b80",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "UEL",
+      "title": "Union SG @ Viktoria Plzen",
+      "start": "2026-09-17T19:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Viktoria Plzen",
+      "away": "Union SG",
+      "providerEventId": "espn:401915580",
+      "id": "evt_797e5cffea965b2cb80ed14d",
+      "startUtc": "2026-09-17T19:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -26173,6 +26655,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Kansas City @ San Diego",
+      "start": "2026-09-19T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "San Diego",
+      "away": "Kansas City",
+      "providerEventId": "espn:401854003",
+      "id": "evt_19cd128376cef1f4c2053571",
+      "startUtc": "2026-09-19T02:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "WNBA",
       "title": "Fire @ Valkyries",
       "start": "2026-09-19T02:00Z",
@@ -26691,6 +27187,20 @@
       "sport": "soccer"
     },
     {
+      "league": "NWSL",
+      "title": "Portland @ Orlando",
+      "start": "2026-09-19T20:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Orlando",
+      "away": "Portland",
+      "providerEventId": "espn:401854004",
+      "id": "evt_2e2d2ab109f7916e40bd7a51",
+      "startUtc": "2026-09-19T20:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Milwaukee Brewers @ Baltimore Orioles",
       "start": "2026-09-19T20:05:00Z",
@@ -26765,6 +27275,20 @@
       "id": "evt_03c3f6fd6551d125727cc496",
       "startUtc": "2026-09-19T22:10:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Gotham @ North Carolina",
+      "start": "2026-09-19T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "North Carolina",
+      "away": "Gotham",
+      "providerEventId": "espn:401854005",
+      "id": "evt_4a3b504995acd2f4b0cf4151",
+      "startUtc": "2026-09-19T22:30Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -27166,6 +27690,20 @@
       "id": "evt_baf1d602751b14039d93ff4f",
       "startUtc": "2026-09-20T00:40:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Seattle @ Denver",
+      "start": "2026-09-20T00:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Denver",
+      "away": "Seattle",
+      "providerEventId": "espn:401854085",
+      "id": "evt_8979d85a58908253f4c22f9b",
+      "startUtc": "2026-09-20T00:45Z",
+      "sport": "soccer"
     },
     {
       "league": "NHL",
@@ -27738,6 +28276,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Houston @ Boston",
+      "start": "2026-09-20T18:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Boston",
+      "away": "Houston",
+      "providerEventId": "espn:401854086",
+      "id": "evt_1252545925c73bbdbcd496e9",
+      "startUtc": "2026-09-20T18:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Atlanta Braves @ Houston Astros",
       "start": "2026-09-20T18:10:00Z",
@@ -28010,6 +28562,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "Washington @ Chicago",
+      "start": "2026-09-20T21:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Chicago",
+      "away": "Washington",
+      "providerEventId": "espn:401854006",
+      "id": "evt_1ec157a67181c20bc267843d",
+      "startUtc": "2026-09-20T21:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLS",
       "title": "San Diego @ Miami",
       "start": "2026-09-20T23:00Z",
@@ -28056,6 +28622,34 @@
       "id": "evt_d99447ee60da3b9aa09f2415",
       "startUtc": "2026-09-20T23:00Z",
       "sport": "hockey"
+    },
+    {
+      "league": "NWSL",
+      "title": "Louisville @ Bay",
+      "start": "2026-09-20T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Bay",
+      "away": "Louisville",
+      "providerEventId": "espn:401854007",
+      "id": "evt_b0a8424b049bf8ed4036a447",
+      "startUtc": "2026-09-20T23:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "NWSL",
+      "title": "Angel City @ Utah",
+      "start": "2026-09-20T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Utah",
+      "away": "Angel City",
+      "providerEventId": "espn:401854008",
+      "id": "evt_880c93c96a70700fe25bbf3d",
+      "startUtc": "2026-09-20T23:00Z",
+      "sport": "soccer"
     },
     {
       "league": "WNBA",
@@ -30057,6 +30651,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "San Diego @ Louisville",
+      "start": "2026-09-25T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Louisville",
+      "away": "San Diego",
+      "providerEventId": "espn:401854009",
+      "id": "evt_eea033fec6bf949b47d383ff",
+      "startUtc": "2026-09-25T22:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Pittsburgh Pirates @ Detroit Tigers",
       "start": "2026-09-25T22:40:00Z",
@@ -30281,6 +30889,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "Chicago @ Gotham",
+      "start": "2026-09-26T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Gotham",
+      "away": "Chicago",
+      "providerEventId": "espn:401854010",
+      "id": "evt_9a65551f332610d90879d817",
+      "startUtc": "2026-09-26T00:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLB",
       "title": "Texas Rangers @ Minnesota Twins",
       "start": "2026-09-26T00:10:00Z",
@@ -30311,6 +30933,20 @@
       "id": "evt_9185ec0beae3d3dbdc32552b",
       "startUtc": "2026-09-26T00:30Z",
       "sport": "hockey"
+    },
+    {
+      "league": "NWSL",
+      "title": "Boston @ Seattle",
+      "start": "2026-09-26T00:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Seattle",
+      "away": "Boston",
+      "providerEventId": "espn:401854087",
+      "id": "evt_a41fec42b81e87dd1cacf1f3",
+      "startUtc": "2026-09-26T00:30Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -30447,6 +31083,20 @@
       "id": "evt_d43c4e4f43a755273ef9c59b",
       "startUtc": "2026-09-26T14:00:00Z",
       "sport": "other"
+    },
+    {
+      "league": "NWSL",
+      "title": "Denver @ Kansas City",
+      "start": "2026-09-26T16:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Kansas City",
+      "away": "Denver",
+      "providerEventId": "espn:401854088",
+      "id": "evt_03d1c4b207c259baddc1c046",
+      "startUtc": "2026-09-26T16:30Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -30877,6 +31527,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "Angel City @ Washington",
+      "start": "2026-09-26T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Washington",
+      "away": "Angel City",
+      "providerEventId": "espn:401854011",
+      "id": "evt_a2b1c815d78bfb1f0752a5a9",
+      "startUtc": "2026-09-26T22:30Z",
+      "sport": "soccer"
+    },
+    {
       "league": "AEW",
       "title": "All Out",
       "start": "2026-09-26T23:00:00Z",
@@ -31233,6 +31897,20 @@
       "id": "evt_626c13224397bcc9bb039375",
       "startUtc": "2026-09-27T00:40:00Z",
       "sport": "baseball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Houston @ Portland",
+      "start": "2026-09-27T00:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Portland",
+      "away": "Houston",
+      "providerEventId": "espn:401854012",
+      "id": "evt_0d60046063324470a3987fc8",
+      "startUtc": "2026-09-27T00:45Z",
+      "sport": "soccer"
     },
     {
       "league": "NHL",
@@ -31603,6 +32281,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Orlando @ Bay",
+      "start": "2026-09-27T21:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Bay",
+      "away": "Orlando",
+      "providerEventId": "espn:401854013",
+      "id": "evt_e1f5827d4cf892927aee1d0d",
+      "startUtc": "2026-09-27T21:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "MLS",
       "title": "Miami @ Columbus",
       "start": "2026-09-27T23:00Z",
@@ -31615,6 +32307,20 @@
       "homeTeamId": "183",
       "awayTeamId": "20232",
       "id": "evt_dd6a6a53e1c8d8a534dfc0dd",
+      "startUtc": "2026-09-27T23:00Z",
+      "sport": "soccer"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Utah",
+      "start": "2026-09-27T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Utah",
+      "away": "North Carolina",
+      "providerEventId": "espn:401854014",
+      "id": "evt_e2fc09ffe3c84668467268d8",
       "startUtc": "2026-09-27T23:00Z",
       "sport": "soccer"
     },
@@ -32562,6 +33268,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "San Diego @ Orlando",
+      "start": "2026-10-03T00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Orlando",
+      "away": "San Diego",
+      "providerEventId": "espn:401854015",
+      "id": "evt_35119a7005111bd4b2c548ce",
+      "startUtc": "2026-10-03T00:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NHL",
       "title": "Blues @ Stars",
       "start": "2026-10-03T01:00Z",
@@ -32592,6 +33312,20 @@
       "id": "evt_d6132193b8d54527b6dd12d3",
       "startUtc": "2026-10-03T02:00Z",
       "sport": "hockey"
+    },
+    {
+      "league": "NWSL",
+      "title": "North Carolina @ Seattle",
+      "start": "2026-10-03T02:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Seattle",
+      "away": "North Carolina",
+      "providerEventId": "espn:401854016",
+      "id": "evt_b8f417455bf33a1d7cc8c404",
+      "startUtc": "2026-10-03T02:00Z",
+      "sport": "soccer"
     },
     {
       "league": "MLB",
@@ -32858,6 +33592,20 @@
       "sport": "other"
     },
     {
+      "league": "NWSL",
+      "title": "Utah @ Louisville",
+      "start": "2026-10-03T20:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Louisville",
+      "away": "Utah",
+      "providerEventId": "espn:401854017",
+      "id": "evt_fbcff11546b158411ede1d8f",
+      "startUtc": "2026-10-03T20:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "UFC",
       "title": "UFC 332",
       "start": "2026-10-03T21:00Z",
@@ -32884,6 +33632,20 @@
       "id": "evt_1a12d511b1e6391cd4d95dc1",
       "startUtc": "2026-10-03T22:00Z",
       "sport": "other"
+    },
+    {
+      "league": "NWSL",
+      "title": "Bay @ Kansas City",
+      "start": "2026-10-03T22:30Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Kansas City",
+      "away": "Bay",
+      "providerEventId": "espn:401854018",
+      "id": "evt_5f6593ce30ee73c2a146a2bb",
+      "startUtc": "2026-10-03T22:30Z",
+      "sport": "soccer"
     },
     {
       "league": "NBA",
@@ -33078,6 +33840,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "Boston @ Portland",
+      "start": "2026-10-04T00:45Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Portland",
+      "away": "Boston",
+      "providerEventId": "espn:401854089",
+      "id": "evt_b0e03c13d292ed309ad4c4b8",
+      "startUtc": "2026-10-04T00:45Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NHL",
       "title": "Blues @ Avalanche",
       "start": "2026-10-04T01:00Z",
@@ -33194,6 +33970,20 @@
       "sport": "baseball"
     },
     {
+      "league": "NWSL",
+      "title": "Angel City @ Gotham",
+      "start": "2026-10-04T16:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Gotham",
+      "away": "Angel City",
+      "providerEventId": "espn:401854019",
+      "id": "evt_2e1e9ed3492b4f62849fff5b",
+      "startUtc": "2026-10-04T16:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NCAA Women's Hockey",
       "title": "Lindenwood @ Delaware",
       "start": "2026-10-04T17:00Z",
@@ -33226,6 +34016,20 @@
       "sport": "hockey"
     },
     {
+      "league": "NWSL",
+      "title": "Denver @ Chicago",
+      "start": "2026-10-04T20:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Chicago",
+      "away": "Denver",
+      "providerEventId": "espn:401854090",
+      "id": "evt_43b650397f933278875304f5",
+      "startUtc": "2026-10-04T20:00Z",
+      "sport": "soccer"
+    },
+    {
       "league": "NHL",
       "title": "Mammoth @ Rangers",
       "start": "2026-10-04T22:00Z",
@@ -33256,6 +34060,20 @@
       "id": "evt_2ce74c51c0c0b624a8b21154",
       "startUtc": "2026-10-04T23:00Z",
       "sport": "basketball"
+    },
+    {
+      "league": "NWSL",
+      "title": "Washington @ Houston",
+      "start": "2026-10-04T23:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏆",
+      "source": "espn-shadow",
+      "home": "Houston",
+      "away": "Washington",
+      "providerEventId": "espn:401854020",
+      "id": "evt_d42106a3c45bc00c2823d3f6",
+      "startUtc": "2026-10-04T23:00Z",
+      "sport": "soccer"
     },
     {
       "league": "WWE",
