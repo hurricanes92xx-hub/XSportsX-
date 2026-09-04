@@ -20,6 +20,10 @@ concurrency:
   queue: max
   cancel-in-progress: false
 
+env:
+  SPORTS_AGENT_MODEL_URL: ${{ vars.SPORTS_AGENT_MODEL_URL }}
+  SPORTS_AGENT_MODEL: ${{ vars.SPORTS_AGENT_MODEL }}
+
 jobs:
   refresh:
     runs-on: ubuntu-24.04
@@ -105,6 +109,10 @@ jobs:
         run: python3 scripts/sports_brain.py analyze data/schedule_feed.json --memory data/sports_brain_memory.json
       - name: Run predictive sports intelligence
         run: python3 scripts/sports_prediction.py data/schedule_feed.json --graph data/sports_knowledge_graph.json
+      - name: Smoke test configured sports AI model
+        env:
+          SPORTS_AGENT_MODEL_API_KEY: ${{ secrets.SPORTS_AGENT_MODEL_API_KEY }}
+        run: python3 scripts/test_sports_agent_model.py
       - name: Run sports agent observe-reason-act-verify-learn pass
         env:
           PYTHONUNBUFFERED: '1'
@@ -130,7 +138,7 @@ jobs:
               action=event.get('intelligenceAction','')
               if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}:
                   raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
-          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
+          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; modelDecisions={agent.get('modelDecisions',0)}; fallbackDecisions={agent.get('fallbackDecisions',0)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
           PY
       - name: Publish canonical data and learned intelligence
         shell: bash
