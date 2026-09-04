@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -28,6 +29,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     val healthStore = remember { StreamHealthStore(context) }
     val playbackHealth = remember { PlaybackHealthStore(context) }
     val fastXtream = remember { FastXtreamEventResolver(context) }
+    val fastPublic = remember { FastPublicSourceSelector(context) }
     val engineState by ScheduleEngine.state.collectAsState()
     var streams by remember { mutableStateOf<List<ResolvedStream>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
@@ -53,30 +55,32 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
             if (!background) error = null
             val result = runCatching {
                 ScheduleEngine.start(context)
-                withTimeoutOrNull(9_000L) {
-                    when {
-                        selectedEvent != null -> {
-                            // Run authorized Xtream and public/learned discovery concurrently.
-                            // A cold Xtream catalog must never serialize every other source.
-                            kotlinx.coroutines.coroutineScope {
-                                val xtreamJob = async(Dispatchers.IO) { fastXtream.resolve(selectedEvent!!) }
-                                val publicJob = async(Dispatchers.IO) { StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force) }
-                                val xtream = xtreamJob.await()
-                                if (xtream.isNotEmpty()) {
-                                    publicJob.cancel()
-                                    xtream
-                                } else {
-                                    publicJob.await()
-                                }
-                            }
+                when {
+                    selectedEvent != null -> {
+                        val target = selectedEvent!!
+                        // Progressive path: cached/authorized Xtream first, then targeted
+                        // public discovery, then the full resolver. Never show a timeout
+                        // just because one provider is slow.
+                        val fast = withTimeoutOrNull(5_000L) { fastXtream.resolve(target) }.orEmpty()
+                        if (fast.isNotEmpty()) return@runCatching fast
+                        val config = SourceStore(context).load()
+                        val authorized = when {
+                            config.type == "XTREAM" && config.isConfigured() -> listOf(AuthorizedSource("user-xtream", AuthorizedSource.Type.XTREAM, config.server, config.username, config.password))
+                            config.type == "M3U" && config.isConfigured() -> listOf(AuthorizedSource("user-m3u", AuthorizedSource.Type.M3U, config.m3uUrl))
+                            else -> emptyList()
                         }
-                        !requestFilter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(requestFilter, force)
-                        else -> {
-                            if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
-                            emptyList<ResolvedStream>()
-                        }
+                        val targeted = withTimeoutOrNull(4_000L) {
+                            fastPublic.candidates(target, authorized, 8)
+                        }.orEmpty().map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
+                        if (targeted.isNotEmpty()) return@runCatching targeted
+                        withTimeoutOrNull(12_000L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
                     }
-                } ?: throw IllegalStateException("Stream search timed out")
+                    !requestFilter.isNullOrBlank() -> withTimeoutOrNull(8_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
+                    else -> {
+                        if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
+                        emptyList<ResolvedStream>()
+                    }
+                }
             }
             if (selectedEvent?.let { EventIdentity.id(it) }.orEmpty() != requestEventId) return@launch
             result.onSuccess { resolved ->
@@ -107,7 +111,7 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
     }
 
     val visibleStreams = remember(streams, favorites, showFavorites) { if (showFavorites) streams.filter { ChannelFavorites.isFavorite(context, it) } else streams }
-    Column(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
+    Column(Modifier.fillMaxSize().background(Color(0xFF05060A)).navigationBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(22.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("‹", color = Color.White, fontSize = 36.sp, modifier = Modifier.clickable { if (selectedEvent != null && event == null) selectedEvent = null else onBack() })
             Spacer(Modifier.width(12.dp))
