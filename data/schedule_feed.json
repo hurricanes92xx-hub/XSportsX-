@@ -25,10 +25,11 @@
     "NCAA Women's Soccer": 255,
     "NCAA FB": 38,
     "MLS": 77,
+    "WWE": 14,
     "NWSL": 42,
-    "UFC": 17,
+    "UFC": 18,
+    "AAA Wrestling": 1,
     "IndyCar": 1,
-    "WWE": 13,
     "PLL": 2,
     "UCL": 18,
     "NFL": 17,
@@ -8412,6 +8413,19 @@
       "sport": "other"
     },
     {
+      "league": "WWE",
+      "title": "SmackDown",
+      "start": "2026-09-05T00:00:00Z",
+      "startUtc": "2026-09-05T00:00:00Z",
+      "tag": "UPCOMING",
+      "state": "",
+      "source": "official",
+      "officialScheduleUrl": "https://www.wwe.com/article/wwe-upcoming-events",
+      "officialVerifiedAt": "2026-09-04T23:24:01Z",
+      "id": "evt_aaf4d009d9361051be9024ec",
+      "sport": "other"
+    },
+    {
       "league": "MLB",
       "title": "Tampa Bay Rays @ Texas Rangers",
       "start": "2026-09-05T00:05:00Z",
@@ -11443,6 +11457,21 @@
       "id": "evt_64c8682c541b7586a74a340c"
     },
     {
+      "league": "UFC",
+      "title": "UFC Fight Night: Hooker vs Parnasse",
+      "start": "2026-09-05T19:00:00Z",
+      "startUtc": "2026-09-05T19:00:00Z",
+      "tag": "UPCOMING",
+      "state": "",
+      "source": "official",
+      "officialScheduleUrl": "https://www.ufc.com/event/ufc-fight-night-september-05-2026",
+      "officialVerifiedAt": "2026-09-04T23:24:01Z",
+      "id": "evt_d980f7dd64a65a0b0c68175d",
+      "sport": "mma",
+      "broadcast": "Paramount+",
+      "venue": "Accor Arena, Paris, France"
+    },
+    {
       "league": "LaLiga",
       "title": "Deportivo @ Villarreal",
       "start": "2026-09-05T19:00Z",
@@ -13416,6 +13445,19 @@
       "providerEventId": "espn:401898054",
       "id": "evt_a8f343abcdf828dd2d8d76ff",
       "startUtc": "2026-09-06T02:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "AAA Wrestling",
+      "title": "AAA Lucha Libre",
+      "start": "2026-09-06T02:00:00Z",
+      "startUtc": "2026-09-06T02:00:00Z",
+      "tag": "UPCOMING",
+      "state": "",
+      "source": "official",
+      "officialScheduleUrl": "https://www.wwe.com/article/wwe-upcoming-events",
+      "officialVerifiedAt": "2026-09-04T23:24:01Z",
+      "id": "evt_aff39a86c915e9a793fb6f07",
       "sport": "other"
     },
     {
@@ -17248,24 +17290,15 @@
     },
     {
       "league": "WWE",
-      "title": "Monday Night Raw",
-      "start": "2026-09-07T00:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🏆",
-      "source": "wrestling",
-      "id": "evt_899ee6f633b6177211df41f3",
-      "startUtc": "2026-09-07T00:00:00Z",
-      "sport": "other"
-    },
-    {
-      "league": "WWE",
       "title": "Sunday Night's Main Event",
       "start": "2026-09-07T00:00:00Z",
-      "tag": "SPECIAL",
-      "icon": "🏆",
-      "source": "wrestling",
-      "id": "evt_bcd8bb325947c69ecc2160c1",
       "startUtc": "2026-09-07T00:00:00Z",
+      "tag": "UPCOMING",
+      "state": "",
+      "source": "official",
+      "officialScheduleUrl": "https://www.wwe.com/article/wwe-upcoming-events",
+      "officialVerifiedAt": "2026-09-04T23:24:01Z",
+      "id": "evt_bcd8bb325947c69ecc2160c1",
       "sport": "other"
     },
     {
@@ -18210,6 +18243,19 @@
       "providerEventId": "espn:401898570",
       "id": "evt_509156820f351799e43afeb0",
       "startUtc": "2026-09-08T00:00:00Z",
+      "sport": "other"
+    },
+    {
+      "league": "WWE",
+      "title": "Monday Night Raw",
+      "start": "2026-09-08T00:00:00Z",
+      "startUtc": "2026-09-08T00:00:00Z",
+      "tag": "UPCOMING",
+      "state": "",
+      "source": "official-recurring",
+      "officialScheduleUrl": "https://www.wwe.com/article/wwe-upcoming-events",
+      "officialVerifiedAt": "2026-09-04T23:24:01Z",
+      "id": "evt_0d640c6270ea13fe5d760b37",
       "sport": "other"
     },
     {
@@ -55061,5 +55107,18 @@
         "parsed": 0
       }
     ]
+  },
+  "verifiedCurrentEventRepair": {
+    "updatedAt": "2026-09-04T23:24:01Z",
+    "wwe": [
+      "SmackDown",
+      "AAA Lucha Libre",
+      "Sunday Night's Main Event",
+      "Monday Night Raw"
+    ],
+    "ufc": [
+      "UFC Fight Night: Hooker vs Parnasse"
+    ],
+    "removedBadRawTimestamp": "2026-09-07T00:00:00Z"
   }
 }
