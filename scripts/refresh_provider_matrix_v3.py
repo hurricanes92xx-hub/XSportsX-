@@ -26,14 +26,14 @@ def icon_map():
     out={x[0]:x[3] for x in engine.ESPN_LEAGUES}
     out.update({x[0]:x[3] for x in engine.NCAA_LEAGUES})
     out.update({x:"🏎️" for x in engine.NASCAR_SERIES})
-    out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","Esports":"🎮","WEC":"🏎️","IMSA":"🏎️"})
+    out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","WEC":"🏎️","IMSA":"🏎️","FIVB Men":"🏐","FIVB Women":"🏐"})
     return out
 
 def source_priority(source):
     return {"mlb-official":0,"nhl-official":0,"official":0,
             "ncaa":1,"nascar":1,"wrestling":1,"sportradar":1,
             "sportsdataio":1,"sportmonks":1,"cfbd":1,"pandascore":1,
-            "espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"openwec":2,"sportscore":2,
+            "espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"openwec":2,"fivb-vis":2,"sportscore":2,
             "sportsdb":3,"fallback":4,"cache":5}.get(source,9)
 
 def dedupe(events):
@@ -55,7 +55,7 @@ def fetch(provider,league,meta,official,previous):
     try:
         if provider in {"sportradar","sportsdataio","sportmonks","cfbd","mlb-official","nhl-official","pandascore"}:
             return fetch_expanded(provider,league,meta["icon"])
-        if provider in {"sportscore","jolpica-f1","openf1","openligadb","openwec"}:
+        if provider in {"sportscore","jolpica-f1","openf1","openligadb","openwec","fivb"}:
             return fetch_free(provider,league,meta["icon"])
         if provider=="official":
             events=[]; ok=False
@@ -109,13 +109,21 @@ def main():
     officials=official_map(); icons=icon_map()
     espn={x[0]:x[1:] for x in engine.ESPN_LEAGUES}; ncaa={x[0]:x[1:] for x in engine.NCAA_LEAGUES}
     dedicated_names=set(ncaa)|set(engine.NASCAR_SERIES)|{"WWE","AEW","TNA"}; official_names=set(officials); sportsdb_names=set(engine.SPORTDB_LEAGUES)
-    all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"Esports","WEC","IMSA"}
+    all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"WEC","IMSA","FIVB Men","FIVB Women"}
     dedicated={name:("ncaa" if name in ncaa else "nascar" if name in engine.NASCAR_SERIES else "wrestling") for name in dedicated_names}
     matrix=build_matrix(all_leagues,official_names,dedicated,set(espn),sportsdb_names)
     for league in ("WEC","IMSA"):
         matrix.setdefault(league,{})["configured"]=["openwec"]
         matrix[league]["activeOrder"]=["openwec"]
         matrix[league]["primary"]="openwec"
+        matrix[league]["secondary"]="cache"
+        matrix[league]["tertiary"]="cache"
+        matrix[league]["cachedRecovery"]="cache"
+        matrix[league]["standbyProviders"]=[]
+    for league in ("FIVB Men","FIVB Women"):
+        matrix.setdefault(league,{})["configured"]=["fivb"]
+        matrix[league]["activeOrder"]=["fivb"]
+        matrix[league]["primary"]="fivb"
         matrix[league]["secondary"]="cache"
         matrix[league]["tertiary"]="cache"
         matrix[league]["cachedRecovery"]="cache"
