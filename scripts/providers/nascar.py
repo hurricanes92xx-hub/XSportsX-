@@ -53,9 +53,6 @@ def _normalize(item, league, fallback_race_id=None):
 def _series_items(root, series_id):
     if not isinstance(root, dict):
         return []
-    if series_id == 1:
-        value = root.get("races") or root.get("schedule") or root.get("series_1") or []
-        return value if isinstance(value, list) else []
     value = root.get(f"series_{series_id}") or []
     return value if isinstance(value, list) else []
 
@@ -71,13 +68,7 @@ def _race_sessions(race):
 
 
 def _espn_cup(horizon_days):
-    """Recover Cup events from ESPN in bounded windows.
-
-    ESPN documents the NASCAR Cup slug as ``nascar-premier``. Large date
-    ranges can return HTTP 400, so query 30-day windows instead of one
-    370-day request. A failed window does not discard other successful
-    windows.
-    """
+    """Recover Cup events from ESPN in bounded windows."""
     now = datetime.now(timezone.utc)
     cutoff = now + timedelta(days=horizon_days)
     cursor = now.date()
@@ -114,18 +105,15 @@ def fetch_league(league, season=None, horizon_days=370):
     if not series_id:
         return []
     year = int(season or datetime.now(timezone.utc).year)
-    urls = [f"{BASE}/{year}/{series_id}/race_list_basic.json" if series_id == 1 else f"{BASE}/{year}/race_list_basic.json"]
+    # NASCAR's public feed contains all three series in one season document.
+    url = f"{BASE}/{year}/race_list_basic.json"
     root = None
-    last_error = None
-    for url in urls:
-        try:
-            root = _get(url)
-            break
-        except Exception as exc:
-            last_error = exc
-    if root is None:
-        print(f"ERROR NASCAR {league}: {last_error}")
+    try:
+        root = _get(url)
+    except Exception as exc:
+        print(f"ERROR NASCAR {league}: {exc}")
         return _espn_cup(horizon_days) if league == "NASCAR Cup" else []
+
     now = datetime.now(timezone.utc) - timedelta(hours=12)
     cutoff = datetime.now(timezone.utc) + timedelta(days=horizon_days)
     events = []
