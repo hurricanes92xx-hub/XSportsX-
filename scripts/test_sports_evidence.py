@@ -9,7 +9,8 @@ def test_agreement():
 def test_contradiction_is_visible():
     e={'id':'1','title':'A @ B','league':'NFL','provider':'espn','status':'live'}
     r=correlate(e,[{'id':'1','title':'A @ B','league':'NFL','provider':'nfl-official','status':'final'}])
-    assert r['verdict']=='LIVE'
+    # Official final evidence correctly wins while the contradiction remains explainable.
+    assert r['verdict']=='FINAL'
     assert any('contradiction' in x for x in r['reasons'])
 
 def test_official_postponed_wins():
