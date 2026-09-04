@@ -3,15 +3,20 @@ package com.xsportsx.app
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * Fast click-path selector. Cached health results are only a fast head start;
- * they never prevent a fresh targeted search across public and user-connected
- * sources. This prevents the health index from masking newly discovered public feeds.
+ * Fast click-path selector. Known healthy event streams are returned immediately.
+ * A fresh discovery is only used when the index has no usable answer and is bounded
+ * so a slow public playlist can never block the player screen indefinitely.
  */
 class FastPublicSourceSelector(context: Context) {
     private val index = PublicSourceHealthIndex(context)
     private val resolver = TargetedSourceResolver()
+
+    companion object {
+        private const val DISCOVERY_BUDGET_MS = 3_500L
+    }
 
     suspend fun candidates(
         event: SportsEvent,
@@ -19,7 +24,6 @@ class FastPublicSourceSelector(context: Context) {
         limit: Int = 8
     ): List<TargetedStream> = withContext(Dispatchers.IO) {
         val known = index.rank(event.id, event.sport, event.league, event.broadcast, limit)
-        val knownUrls = known.map { normalizeUrl(it.url) }.toSet()
         val knownResults = known.map { h ->
             TargetedStream(
                 name = h.channel,
@@ -31,13 +35,19 @@ class FastPublicSourceSelector(context: Context) {
             )
         }
 
-        // Always perform a fresh targeted search. A stale/overconfident health
-        // index must never short-circuit public, M3U, or Xtream discovery.
-        val discovered = runCatching {
-            resolver.search(TargetQuery(event = event), authorizedSources)
-        }.getOrDefault(emptyList())
+        // Known-good answers are the zero-wait path. The old implementation always
+        // performed a network search even when it already had a usable source, which
+        // is exactly the kind of delay that produced "Stream search timed out".
+        if (knownResults.isNotEmpty()) return@withContext knownResults.take(limit)
 
-        (knownResults + discovered.filterNot { normalizeUrl(it.url) in knownUrls })
+        // No cached answer: perform one targeted discovery, but enforce a hard budget.
+        // This keeps a dead/slow public playlist from holding the UI hostage.
+        val discovered = withTimeoutOrNull(DISCOVERY_BUDGET_MS) {
+            runCatching { resolver.search(TargetQuery(event = event), authorizedSources) }
+                .getOrDefault(emptyList())
+        }.orEmpty()
+
+        discovered
             .distinctBy { normalizeUrl(it.url) }
             .sortedWith(compareByDescending<TargetedStream> { it.score }.thenBy { it.sourceType })
             .take(limit)
@@ -49,10 +59,11 @@ class FastPublicSourceSelector(context: Context) {
         authorizedSources: List<AuthorizedSource> = emptyList(),
         limit: Int = 8
     ): List<TargetedStream> = withContext(Dispatchers.IO) {
-        runCatching {
-            resolver.search(TargetQuery(event = event, network = network), authorizedSources)
-        }.getOrDefault(emptyList())
-            .take(limit)
+        withTimeoutOrNull(DISCOVERY_BUDGET_MS) {
+            runCatching {
+                resolver.search(TargetQuery(event = event, network = network), authorizedSources)
+            }.getOrDefault(emptyList())
+        }.orEmpty().take(limit)
     }
 
     fun record(stream: TargetedStream, event: SportsEvent, success: Boolean) {
