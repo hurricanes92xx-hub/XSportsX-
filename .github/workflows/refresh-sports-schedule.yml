@@ -10,7 +10,7 @@ on:
       - 'data/schedule_season_policy.json'
       - '.github/workflows/refresh-sports-schedule.yml'
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 3 * * *'
 
 permissions:
   contents: write
@@ -141,10 +141,7 @@ jobs:
           import json
           from pathlib import Path
           feed=json.loads(Path('data/schedule_feed.json').read_text(encoding='utf-8'))
-          brain=feed.get('sportsBrain') or {}
-          agent=feed.get('sportsAgent') or {}
-          prediction=feed.get('sportsPredictions') or {}
-          broadcast=feed.get('sportsBroadcastIntelligence') or {}
+          brain=feed.get('sportsBrain') or {}; agent=feed.get('sportsAgent') or {}; prediction=feed.get('sportsPredictions') or {}; broadcast=feed.get('sportsBroadcastIntelligence') or {}
           graph=json.loads(Path('data/sports_knowledge_graph.json').read_text(encoding='utf-8'))
           if brain.get('schema') != 1: raise SystemExit('ERROR: sports brain contract missing')
           if agent.get('schema') != 3: raise SystemExit('ERROR: sports agent contract missing')
@@ -153,9 +150,8 @@ jobs:
           if not isinstance(graph.get('nodes'), dict) or not isinstance(graph.get('edges'), list): raise SystemExit('ERROR: knowledge graph contract invalid')
           for event in feed.get('events') or []:
               action=event.get('intelligenceAction','')
-              if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}:
-                  raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
-          print(f"Brain: {brain.get('eventsAnalyzed',0)}; Predictions: {prediction.get('predictions',0)}; urgent={prediction.get('urgent',0)}; sourceRisk={prediction.get('sourceRisk',0)}; Agent plans: {agent.get('plans',0)}; modelEnabled={agent.get('modelEnabled',False)}; modelDecisions={agent.get('modelDecisions',0)}; modelProviders={agent.get('modelProviders',{})}; fallbackDecisions={agent.get('fallbackDecisions',0)}; Broadcast events: {broadcast.get('eventsAnalyzed',0)}; live candidates={broadcast.get('liveCandidates',0)}; schedule candidates={broadcast.get('scheduleCandidates',0)}; Graph nodes: {len(graph['nodes'])}; edges: {len(graph['edges'])}")
+              if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}: raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
+          print(f"Deep audit complete: {len(feed.get('events') or [])} events; Agent plans={agent.get('plans',0)}; Broadcast events={broadcast.get('eventsAnalyzed',0)}")
           PY
       - name: Publish canonical data and learned intelligence
         shell: bash
@@ -165,29 +161,17 @@ jobs:
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
           git add -A data/
           if git diff --cached --quiet; then echo 'No canonical, discovery, or AI knowledge changes.'; exit 0; fi
-          git commit -m 'chore: refresh canonical sports intelligence'
+          git commit -m 'chore: daily deep sports intelligence audit'
           for attempt in 1 2 3 4 5; do
-            if git status --porcelain | grep -q .; then
-              git add -A data/
-              git commit -m 'chore: capture late generated intelligence' || true
-            fi
             git fetch origin android-app
-            if git rebase origin/android-app; then
-              if git push origin HEAD:android-app; then
-                echo "Publish succeeded on attempt ${attempt}."
-                exit 0
-              fi
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Publish succeeded on attempt ${attempt}."; exit 0; fi
             else
-              echo 'Rebase conflict detected; aborting and rebuilding the publish commit.'
               git rebase --abort || true
               git reset --mixed origin/android-app
               git add -A data/
-              if ! git diff --cached --quiet; then
-                git commit -m 'chore: refresh canonical sports intelligence'
-              fi
+              if ! git diff --cached --quiet; then git commit -m 'chore: rebuild daily sports intelligence publish'; fi
             fi
-            echo "Remote advanced during publish; retrying (${attempt}/5)..."
             sleep $((attempt * 2))
           done
-          echo 'ERROR: unable to publish after five race-safe attempts'
           exit 1
