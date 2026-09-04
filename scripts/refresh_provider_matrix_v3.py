@@ -127,17 +127,23 @@ def main():
 
     for league in sorted(all_leagues):
         ordered=provider_order(league,matrix[league]["configured"]); matrix[league]["activeOrder"]=ordered; attempts[league]=[]
-        meta={"icon":icons.get(league,"🏆"),"espn":espn.get(league),"ncaa":ncaa.get(league)}; successful=[]
+        meta={"icon":icons.get(league,"🏆"),"espn":espn.get(league),"ncaa":ncaa.get(league)}; successful=[]; provider_ok=False
         for provider in ordered:
             started=time.monotonic(); ok,got,error=fetch(provider,league,meta,officials,previous_events); latency=round((time.monotonic()-started)*1000,1)
             attempts[league].append({"provider":provider,"ok":ok,"events":len(got),"latencyMs":latency,"error":error}); record(league,provider,ok,len(got),latency,error)
+            provider_ok = provider_ok or ok
             if ok and got: successful.append((provider,got))
         if not successful:
             started=time.monotonic(); cache_ok,cache_events,cache_error=fetch("cache",league,meta,officials,previous_events); latency=round((time.monotonic()-started)*1000,1)
             attempts[league].append({"provider":"cache","ok":cache_ok,"events":len(cache_events),"latencyMs":latency,"error":cache_error}); record(league,"cache",cache_ok,len(cache_events),latency,cache_error)
+            provider_ok = provider_ok or cache_ok
             if cache_ok and cache_events: successful=[("cache",cache_events)]; cache_recovery.append(league)
         if not successful:
-            failures.append(league); continue
+            if provider_ok:
+                no_event_leagues.append(league)
+            else:
+                failures.append(league)
+            continue
         selected=successful[0][0]
         if ordered and selected!=ordered[0]: matrix[league]["promotedFrom"]=ordered[0]; matrix[league]["promotedTo"]=selected; promotions[league]=selected
         if len(successful)>1: overlap_leagues.append(league); overlap_records += sum(len(records) for _,records in successful[1:])
@@ -149,7 +155,7 @@ def main():
     per={}
     for event in events:
         league=event.get("league","Unknown"); per[league]=per.get(league,0)+1
-    payload={"schema":12,"generatedAt":datetime.now(timezone.utc).isoformat(),"refreshHours":6,"eventCounts":per,"failedSources":failures,"providerFailures":failures,"noEventLeagues":no_event_leagues,"sportsDbFallbackSources":[],"officialSourceFailures":[],"officialSourceCounts":{},"identityMergeCount":merges,"sourceRecordCounts":source_counts,"shadowProviderRecordCounts":source_counts,"providerOverlapLeagues":overlap_leagues,"providerOverlapRecordCount":overlap_records,"leagueProviderMatrix":matrix,"providerAttempts":attempts,"providerPromotions":promotions,"cacheRecoveryLeagues":cache_recovery,"events":events}
+    payload={"schema":13,"generatedAt":datetime.now(timezone.utc).isoformat(),"refreshHours":6,"eventCounts":per,"failedSources":failures,"providerFailures":failures,"noEventLeagues":no_event_leagues,"sportsDbFallbackSources":[],"officialSourceFailures":[],"officialSourceCounts":{},"identityMergeCount":merges,"sourceRecordCounts":source_counts,"shadowProviderRecordCounts":source_counts,"providerOverlapLeagues":overlap_leagues,"providerOverlapRecordCount":overlap_records,"leagueProviderMatrix":matrix,"providerAttempts":attempts,"providerPromotions":promotions,"cacheRecoveryLeagues":cache_recovery,"events":events}
     tmp=OUT.with_suffix(".tmp"); tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8"); tmp.replace(OUT)
     print(f"wrote {len(events)} canonical events across {len(per)} leagues; failures={len(failures)}; no_events={len(no_event_leagues)}; promotions={len(promotions)}; cache={len(cache_recovery)}; identity_merges={merges}; overlap_leagues={len(overlap_leagues)}")
 
