@@ -27,7 +27,7 @@ def _probe(url):
     except urllib.error.HTTPError as exc:
         if exc.code==405:
             try:
-                q=urllib.request.Request(url,headers={'User-Agent':'XSportsX-SportsAgent/1.0','Range':'bytes=0-4095'},method='GET')
+                q=urllib.request.Request(url,headers={'User-Agent':'XSportsX-SportsAgent/1.0','Range':'bytes=0-4095','Accept':'application/json,text/plain,*/*'},method='GET')
                 with urllib.request.urlopen(q,timeout=4) as r:r.read(4096);return {'status':'reachable','httpStatus':int(r.status),'contentType':str(r.headers.get('Content-Type',''))[:120],'method':'GET'}
             except Exception as e:return {'status':'unreachable','reason':str(e)[:220]}
         return {'status':'http-error','httpStatus':exc.code}
@@ -81,8 +81,12 @@ def should_use_model(e):
     return False
 def _call_model(endpoint,model,key,e):
     prompt={'task':'Choose the safest useful next sports-intelligence action. Resolve contradictions conservatively.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
-    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'Return JSON only. Never invent sources. Only choose an allowed action. Do not override contradictory official evidence without explicit support.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json','Authorization':f'Bearer {key}'}
-    with urllib.request.urlopen(urllib.request.Request(endpoint,data=body,headers=headers,method='POST'),timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
+    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'Return JSON only. Never invent sources. Only choose an allowed action. Do not override contradictory official evidence without explicit support.'},{'role':'user','content':json.dumps(prompt)}]}).encode()
+    # Groq's Cloudflare edge has been observed rejecting Python's default urllib signature with 403/1010.
+    # Send an explicit application User-Agent and Accept header for compatible providers.
+    headers={'Content-Type':'application/json','Authorization':f'Bearer {key}','User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json'}
+    request=urllib.request.Request(endpoint,data=body,headers=headers,method='POST')
+    with urllib.request.urlopen(request,timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
     plan=json.loads(data.get('choices',[{}])[0].get('message',{}).get('content',''))
     if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
     plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
