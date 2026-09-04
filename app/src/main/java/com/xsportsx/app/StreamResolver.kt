@@ -5,13 +5,12 @@ import android.util.LruCache
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.io.BufferedInputStream
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
-import java.util.zip.GZIPInputStream
+import java.util.concurrent.TimeUnit
 
 data class ResolvedStream(val name: String, val group: String, val url: String, val iconUrl: String = "")
 private data class StreamCacheEntry(val streams: List<ResolvedStream>, val loadedAt: Long)
@@ -36,6 +35,7 @@ class StreamResolver(context: Context) {
         private val cache = LruCache<String, StreamCacheEntry>(2)
         private val eventCache = LruCache<String, EventStreamCacheEntry>(32)
         private val cacheMutex = Mutex(); private val eventCacheMutex = Mutex()
+        private val HTTP = OkHttpClient.Builder().connectTimeout(2, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS).callTimeout(8, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
         fun invalidateCache() { cache.evictAll(); eventCache.evictAll() }
     }
 
@@ -107,10 +107,6 @@ class StreamResolver(context: Context) {
         val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
         val publicMatches = matchEventAgainstStreams(event, indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }, strict = true)
-
-        // Autonomous last-resort source recovery: search the exact event across the
-        // user's authorized Xtream/M3U and targeted public sources without downloading
-        // every catalog. This runs only when normal matching returns zero streams.
         val targetedFallback = if (publicMatches.isEmpty() && privateMatches.isEmpty()) {
             val authorized = when {
                 config.type == "XTREAM" && config.isConfigured() -> listOf(AuthorizedSource("user-xtream", AuthorizedSource.Type.XTREAM, config.server, config.username, config.password))
@@ -133,16 +129,12 @@ class StreamResolver(context: Context) {
         val scored = streams.mapNotNull { stream ->
             val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }; val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }; val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }; val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
             val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1; val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2; val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0; val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
-            // A verified broadcast network is itself valid event evidence for an
-            // upcoming/live game (e.g. ESPN/BTN/SEC Network), even when the channel
-            // name does not contain both team names.
             val networkOnlyAllowed = broadcastTerms.isNotEmpty() && networkHits > 0
             val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork) || networkOnlyAllowed)
             if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
     }
-
     private fun splitTerms(value: String): List<String> = normalize(value).split(' ').filter { it.length >= 3 && it !in STOP_WORDS }.distinct()
     private val STOP_WORDS = setOf("the", "and", "with", "vs", "versus", "game", "live", "network", "sports")
     private fun broadcastAliases(value: String): List<String> {
@@ -161,8 +153,13 @@ class StreamResolver(context: Context) {
         return result
     }
     private fun http(target: String): String {
-        val c = (URL(target).openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 3500; readTimeout = 8000; instanceFollowRedirects = true; useCaches = true; setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json, text/plain, */*"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive") }
-        return try { val code = c.responseCode; if (code !in 200..299) error("Source returned HTTP $code"); val raw: InputStream = BufferedInputStream(c.inputStream); val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw; input.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { c.disconnect() }
+        val request = Request.Builder().url(target).get().header("User-Agent", "XSportsX/3.0").header("Accept", "application/json,application/vnd.apple.mpegurl,application/x-mpegURL,text/plain,*/*").build()
+        HTTP.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) error("Source returned HTTP ${response.code}")
+            val body = response.body ?: error("Empty source response")
+            val input: InputStream = body.byteStream()
+            input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        }
     }
     private fun attr(line: String, key: String): String { val regex = Regex("$key=\\\"([^\\\"]*)\\\"", RegexOption.IGNORE_CASE); return regex.find(line)?.groupValues?.getOrNull(1).orEmpty() }
 }
