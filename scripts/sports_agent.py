@@ -2,25 +2,29 @@
 """Safe autonomous controller for XSportsX sports intelligence.
 
 The controller is model-optional. With an OpenAI-compatible endpoint configured,
-it asks the model for a strict JSON plan. Without one, a deterministic policy
-keeps the system useful and testable. The agent can only choose allowlisted
-sports operations; it cannot execute arbitrary shell commands or discovered code.
+it asks the model for a strict JSON plan. Without one, deterministic policy keeps
+the system useful. Tool execution is real but bounded to schedule/source discovery,
+read-only probing, and safe cache/reconciliation operations; arbitrary code or URLs
+are never executed.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import subprocess
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
+import provider_discovery as discovery
 from sports_knowledge_graph import observe_feed
 
-SCHEMA = 1
+SCHEMA = 2
 ALLOWED_ACTIONS = {
     "refresh_live_evidence",
     "probe_live_state_and_source",
@@ -48,19 +52,53 @@ class Evidence:
     reasons: list[str]
     provider: str
     source_present: bool
+    source_url: str = ""
+    league: str = ""
+    start_utc: str = ""
+
+
+def _safe_http_url(url: str) -> bool:
+    try:
+        parsed = urllib.parse.urlparse(url)
+        return parsed.scheme in {"http", "https"} and (parsed.hostname or "").lower() not in {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
+    except Exception:
+        return False
+
+
+def _probe(url: str) -> dict[str, Any]:
+    if not _safe_http_url(url):
+        return {"status": "rejected", "reason": "unsafe-url"}
+    request = urllib.request.Request(url, headers={"User-Agent": "XSportsX-SportsAgent/1.0", "Accept": "application/json,text/plain,text/html;q=0.8,*/*;q=0.5"}, method="HEAD")
+    try:
+        with urllib.request.urlopen(request, timeout=4) as response:
+            return {"status": "reachable", "httpStatus": int(response.status), "contentType": str(response.headers.get("Content-Type", ""))[:120]}
+    except urllib.error.HTTPError as exc:
+        # A 405 means the site rejects HEAD, not that the source is dead. Fall
+        # back to a tiny GET while still enforcing a strict response cap.
+        if exc.code == 405:
+            try:
+                get_req = urllib.request.Request(url, headers={"User-Agent": "XSportsX-SportsAgent/1.0", "Range": "bytes=0-4095"}, method="GET")
+                with urllib.request.urlopen(get_req, timeout=4) as response:
+                    response.read(4096)
+                    return {"status": "reachable", "httpStatus": int(response.status), "contentType": str(response.headers.get("Content-Type", ""))[:120], "method": "GET"}
+            except Exception as get_exc:
+                return {"status": "unreachable", "reason": str(get_exc)[:220]}
+        return {"status": "http-error", "httpStatus": exc.code}
+    except Exception as exc:
+        return {"status": "unreachable", "reason": str(exc)[:220]}
 
 
 class ToolRegistry:
-    """Allowlist of operations the agent is permitted to request."""
+    """Allowlist of bounded, observable sports operations."""
     def __init__(self) -> None:
         self.tools: dict[str, Callable[[Evidence], dict[str, Any]]] = {
-            "refresh_live_evidence": lambda e: {"status": "queued", "reason": e.event_id},
-            "probe_live_state_and_source": lambda e: {"status": "queued", "reason": e.event_id},
-            "discover_schedule_provider": lambda e: {"status": "queued", "reason": e.title},
-            "discover_event_source_metadata": lambda e: {"status": "queued", "reason": e.title},
-            "warm_source": lambda e: {"status": "queued", "reason": e.event_id},
-            "reconcile_or_archive": lambda e: {"status": "queued", "reason": e.event_id},
-            "refresh_schedule_and_preflight": lambda e: {"status": "queued", "reason": e.title},
+            "refresh_live_evidence": self.refresh_live_evidence,
+            "probe_live_state_and_source": self.probe_live_state_and_source,
+            "discover_schedule_provider": self.discover_schedule_provider,
+            "discover_event_source_metadata": self.discover_event_source_metadata,
+            "warm_source": self.warm_source,
+            "reconcile_or_archive": self.reconcile_or_archive,
+            "refresh_schedule_and_preflight": self.refresh_schedule_and_preflight,
             "defer": lambda e: {"status": "deferred", "reason": e.event_id},
             "no_action": lambda e: {"status": "noop", "reason": e.event_id},
         }
@@ -70,17 +108,63 @@ class ToolRegistry:
             return {"status": "rejected", "reason": "action_not_allowlisted"}
         return self.tools[action](evidence)
 
+    def discover_schedule_provider(self, e: Evidence) -> dict[str, Any]:
+        if not e.league:
+            return {"status": "skipped", "reason": "missing-league"}
+        candidates = discovery.discover(e.league, max_queries=4)
+        promoted = discovery.promote_successful(e.league)
+        events = discovery.discovery_events(e.league)
+        return {"status": "completed", "league": e.league, "candidates": len(candidates), "promoted": len(promoted), "eventsFound": len(events), "endpoints": [c.get("endpoint") for c in candidates[:8]]}
+
+    def discover_event_source_metadata(self, e: Evidence) -> dict[str, Any]:
+        if not e.league:
+            return {"status": "skipped", "reason": "missing-league"}
+        event = {"title": e.title, "startUtc": e.start_utc}
+        candidates = discovery.discover(e.league, event=event, max_queries=3)
+        matches = []
+        for candidate in candidates:
+            for item in candidate.get("events", []) or []:
+                if str(item.get("title", "")).strip().lower() == e.title.strip().lower():
+                    matches.append({"endpoint": candidate.get("endpoint"), "title": item.get("title"), "startUtc": item.get("startUtc")})
+        return {"status": "completed", "league": e.league, "candidates": len(candidates), "eventMatches": matches[:8]}
+
+    def probe_live_state_and_source(self, e: Evidence) -> dict[str, Any]:
+        result: dict[str, Any] = {"status": "completed", "eventId": e.event_id, "source": _probe(e.source_url) if e.source_url else {"status": "missing"}}
+        if e.phase == "LIVE" and not e.source_url:
+            result["sourceDiscovery"] = self.discover_event_source_metadata(e)
+        return result
+
+    def refresh_live_evidence(self, e: Evidence) -> dict[str, Any]:
+        # Read-only refresh: re-run event-specific discovery when live evidence
+        # is weak, then probe any already-known source. No playback is started.
+        result = self.probe_live_state_and_source(e)
+        result["evidenceRefresh"] = True
+        return result
+
+    def warm_source(self, e: Evidence) -> dict[str, Any]:
+        # "Warm" is deliberately a connectivity preflight only. It never logs
+        # into, downloads, or persists credentials from an Xtream source.
+        if not e.source_url:
+            return {"status": "skipped", "reason": "missing-source"}
+        return {"status": "completed", "preflight": _probe(e.source_url)}
+
+    def reconcile_or_archive(self, e: Evidence) -> dict[str, Any]:
+        return {"status": "completed", "decision": "retain" if e.phase in {"LIVE", "UPCOMING", "PREGAME"} else "archive-candidate", "eventId": e.event_id}
+
+    def refresh_schedule_and_preflight(self, e: Evidence) -> dict[str, Any]:
+        # Do not recursively invoke the full CI publisher from inside the agent.
+        # Instead, perform the bounded pieces that are safe during an agent run.
+        discovery_result = self.discover_schedule_provider(e)
+        return {"status": "completed", "scheduleDiscovery": discovery_result, "preflight": self.probe_live_state_and_source(e)}
+
 
 def deterministic_plan(e: Evidence) -> dict[str, Any]:
     action = e.action if e.action in ALLOWED_ACTIONS else "no_action"
     if e.phase == "LIVE" and not e.source_present:
         action = "discover_event_source_metadata"
-    return {
-        "action": action,
-        "confidence": max(0.0, min(1.0, e.confidence)),
-        "reason": "; ".join(e.reasons[:4]) or "deterministic policy",
-        "evidenceIds": [e.event_id],
-    }
+    elif not e.source_present and e.league:
+        action = "discover_schedule_provider"
+    return {"action": action, "confidence": max(0.0, min(1.0, e.confidence)), "reason": "; ".join(e.reasons[:4]) or "deterministic policy", "evidenceIds": [e.event_id]}
 
 
 def model_plan(e: Evidence) -> dict[str, Any] | None:
@@ -89,12 +173,7 @@ def model_plan(e: Evidence) -> dict[str, Any] | None:
     api_key = os.getenv("SPORTS_AGENT_MODEL_API_KEY", "").strip()
     if not endpoint or not model:
         return None
-    prompt = {
-        "task": "Choose one safe next action for a sports event.",
-        "allowedActions": sorted(ALLOWED_ACTIONS),
-        "evidence": {"eventId": e.event_id, "title": e.title, "phase": e.phase, "confidence": e.confidence, "actionHint": e.action, "reasons": e.reasons, "provider": e.provider, "sourcePresent": e.source_present},
-        "outputSchema": {"action": "string", "confidence": "number", "reason": "string", "evidenceIds": "array"},
-    }
+    prompt = {"task": "Choose one safe next action for a sports event.", "allowedActions": sorted(ALLOWED_ACTIONS), "evidence": {"eventId": e.event_id, "title": e.title, "league": e.league, "startUtc": e.start_utc, "phase": e.phase, "confidence": e.confidence, "actionHint": e.action, "reasons": e.reasons, "provider": e.provider, "sourcePresent": e.source_present}, "outputSchema": {"action": "string", "confidence": "number", "reason": "string", "evidenceIds": "array"}}
     body = json.dumps({"model": model, "temperature": 0, "messages": [{"role": "system", "content": "Return JSON only. Never invent sources. Only choose an allowed action."}, {"role": "user", "content": json.dumps(prompt)}]}).encode()
     headers = {"Content-Type": "application/json"}
     if api_key:
@@ -147,6 +226,7 @@ def run(feed_path: Path, memory_path: Path, graph_path: Path) -> dict[str, Any]:
             action=str(event.get("intelligenceAction", "no_action")), reasons=list(event.get("intelligenceReasons") or []),
             provider=str(event.get("provider") or event.get("sourceProvider") or "unknown"),
             source_present=bool(event.get("sourceUrl") or event.get("youtubeVideoId")),
+            source_url=str(event.get("sourceUrl") or ""), league=str(event.get("league") or ""), start_utc=str(event.get("startUtc") or event.get("start") or ""),
         )
         if evidence.action == "defer" and evidence.phase == "UPCOMING":
             continue
