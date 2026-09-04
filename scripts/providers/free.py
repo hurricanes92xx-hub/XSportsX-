@@ -2,6 +2,7 @@
 """Keyless/free sports providers used as secondary evidence."""
 from __future__ import annotations
 import json, urllib.parse, urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 HEADERS={"User-Agent":"XSportsX-Schedule/1.0","Accept":"application/json"}
 
@@ -67,31 +68,48 @@ def _espn_cricket(league,icon):
         return True,out
     except Exception:return False,[]
 
+def _fivb(league,icon):
+    """Public FIVB VIS schedule feed; no authentication is required for public data."""
+    gender="M" if league=="FIVB Men" else "W" if league=="FIVB Women" else ""
+    if not gender:return True,[]
+    now=datetime.now(timezone.utc)-timedelta(hours=12); end=datetime.now(timezone.utc)+timedelta(days=30)
+    req=ET.Element("Request",{"Type":"GetVolleyMatchList","Fields":"No DateTimeUtc BeginDateTimeUtc EndDateTimeUtc TeamAName TeamBName Status TournamentName TournamentTitle"})
+    ET.SubElement(req,"Filter",{"FirstDate":now.date().isoformat(),"LastDate":end.date().isoformat(),"TournamentGenders":gender,"TournamentOrganizerType":"Fivb"})
+    body=ET.tostring(req,encoding="utf-8")
+    request=urllib.request.Request("https://www.fivb.org/Vis2009/XmlRequest.asmx",data=urllib.parse.urlencode({"Request":body.decode()}).encode(),headers={"User-Agent":"XSportsX-Schedule/1.0","Accept":"application/xml","Content-Type":"application/x-www-form-urlencoded"},method="POST")
+    try:
+        with urllib.request.urlopen(request,timeout=12) as response: root=ET.fromstring(response.read())
+        out=[]
+        for item in root.iter():
+            if item.tag.split("}")[-1] != "VolleyballMatch":continue
+            a=item.attrib; start=_iso(a.get("DateTimeUtc") or a.get("BeginDateTimeUtc")); home=str(a.get("TeamAName") or "").strip(); away=str(a.get("TeamBName") or "").strip()
+            if not start or not (home or away):continue
+            status=str(a.get("Status") or "").lower(); tag="LIVE" if status in {"5","7","9","11","13","15","17","19","21","23","inset1","inset2","inset3","inset4","inset5","inset6","inset7"} else "FINAL" if status in {"24","25","26","finished","officialresult","corrected","closed"} else "UPCOMING"
+            title=f"{away} @ {home}" if home and away else str(a.get("TournamentTitle") or a.get("TournamentName") or league)
+            out.append({"league":league,"title":title,"start":start,"tag":tag,"icon":icon,"source":"fivb-vis","home":home,"away":away,"providerEventId":f"fivb:{a.get('No') or start}"})
+        return True,out
+    except Exception as exc:return False,[]
+
 def _openwec(league,icon):
     """Public OpenWEC schedule/results; no key required for event discovery."""
-    series_map={"WEC":"WEC","IMSA":"IMSA"}
-    series=series_map.get(league)
+    series_map={"WEC":"WEC","IMSA":"IMSA"}; series=series_map.get(league)
     if not series:return True,[]
     year=datetime.now(timezone.utc).year
     try:
-        root=_get(f"https://api.openwec.com/api/v1/series/{urllib.parse.quote(series)}/seasons/{year}/events",timeout=8)
-        rows=root.get("items") if isinstance(root,dict) else root
+        root=_get(f"https://api.openwec.com/api/v1/series/{urllib.parse.quote(series)}/seasons/{year}/events",timeout=8); rows=root.get("items") if isinstance(root,dict) else root
         if rows is None and isinstance(root,dict):rows=root.get("events")
         out=[]
         for item in rows or []:
             if not isinstance(item,dict):continue
             start=_iso(item.get("start_time") or item.get("start") or item.get("date") or item.get("event_date"))
             if not start:continue
-            name=str(item.get("name") or item.get("event_name") or item.get("title") or league).strip()
-            venue=str(item.get("circuit") or item.get("track") or item.get("venue") or "").strip()
-            title=f"{name} @ {venue}" if venue else name
+            name=str(item.get("name") or item.get("event_name") or item.get("title") or league).strip(); venue=str(item.get("circuit") or item.get("track") or item.get("venue") or "").strip(); title=f"{name} @ {venue}" if venue else name
             out.append({"league":league,"title":title,"start":start,"tag":"UPCOMING","icon":icon,"source":"openwec","providerEventId":f"openwec:{item.get('id') or item.get('event_id') or _norm(name)+'-'+start}"})
         return True,out
     except Exception:return False,[]
 
 def sportscore(league,icon):
-    sport_by_league={"EPL":"football","UCL":"football","UEL":"football","LaLiga":"football","Serie A":"football","Bundesliga":"football","Ligue 1":"football","MLS":"football","NWSL":"football","NBA":"basketball","WNBA":"basketball","IPL":"cricket","ICC T20":"cricket","ATP":"tennis","WTA":"tennis"}
-    sport=sport_by_league.get(league)
+    sport_by_league={"EPL":"football","UCL":"football","UEL":"football","LaLiga":"football","Serie A":"football","Bundesliga":"football","Ligue 1":"football","MLS":"football","NWSL":"football","NBA":"basketball","WNBA":"basketball","IPL":"cricket","ICC T20":"cricket","ATP":"tennis","WTA":"tennis"}; sport=sport_by_league.get(league)
     if not sport:return True,[],"unsupported league for SportScore"
     if sport=="cricket":
         ok,shadow=_espn_cricket(league,icon)
@@ -131,9 +149,7 @@ def openf1(league,icon):
     try:
         rows=_get("https://api.openf1.org/v1/sessions?session_key=latest",timeout=8); rows=rows if isinstance(rows,list) else []; now=datetime.now(timezone.utc); out=[]
         for item in rows:
-            start_dt=datetime.fromisoformat(str(item.get("date_start") or "").replace("Z","+00:00")) if item.get("date_start") else None
-            end_dt=datetime.fromisoformat(str(item.get("date_end") or "").replace("Z","+00:00")) if item.get("date_end") else None
-            start=_iso(item.get("date_start") or item.get("date_end")); name=item.get("session_name") or item.get("meeting_name") or "Formula 1"
+            start_dt=datetime.fromisoformat(str(item.get("date_start") or "").replace("Z","+00:00")) if item.get("date_start") else None; end_dt=datetime.fromisoformat(str(item.get("date_end") or "").replace("Z","+00:00")) if item.get("date_end") else None; start=_iso(item.get("date_start") or item.get("date_end")); name=item.get("session_name") or item.get("meeting_name") or "Formula 1"
             if not start:continue
             tag="LIVE" if start_dt and (end_dt is None or start_dt<=now<=end_dt) else "FINAL" if end_dt and now>end_dt else "UPCOMING"
             out.append({"league":"F1","title":name,"start":start,"tag":tag,"icon":icon,"source":"openf1","providerEventId":f"openf1:{item.get('session_key') or start}"})
@@ -156,6 +172,7 @@ def fetch(provider,league,icon):
     if provider=="openf1":return openf1(league,icon)
     if provider=="openligadb":return openliga(league,icon)
     if provider=="openwec":
-        ok,rows=_openwec(league,icon)
-        return ok,rows,"" if ok else "OpenWEC unavailable"
+        ok,rows=_openwec(league,icon); return ok,rows,"" if ok else "OpenWEC unavailable"
+    if provider=="fivb":
+        ok,rows=_fivb(league,icon); return ok,rows,"" if ok else "FIVB VIS unavailable"
     return False,[],"unknown free provider"
