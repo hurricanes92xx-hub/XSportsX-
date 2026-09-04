@@ -26,6 +26,29 @@ def _competition_matches(value,league):
     aliases={"EPL":{"englishpremierleague","premierleague"},"UCL":{"uefachampionsleague","championsleague"},"UEL":{"uefaeuropaleague","europaleague"},"LaLiga":{"laliga","spanishlaliga"},"Serie A":{"seriea","italianseriea"},"Bundesliga":{"bundesliga","germanbundesliga"},"Ligue 1":{"ligue1","frenchligue1"},"MLS":{"mls","majorleaguesoccer"},"NWSL":{"nwsl","nationalwomenssoccerleague"},"NBA":{"nba","nationalbasketballassociation"},"WNBA":{"wnba","womensnationalbasketballassociation"},"IPL":{"ipl","indianpremierleague"},"ICC T20":{"icct20","t20worldcup","internationalcrickett20"},"ATP":{"atp","atptour"},"WTA":{"wta","wtatour"}}
     return _norm(value) in aliases.get(league,set())
 
+def _espn_fallback(league,icon):
+    mapping={"NWSL":("soccer","usa.nwsl"),"UEL":("soccer","uefa.europa"),"MLS":("soccer","usa.1")}
+    row=mapping.get(league)
+    if not row:return False,[]
+    sport,slug=row
+    start=datetime.now(timezone.utc).date(); end=start.replace() 
+    from datetime import timedelta
+    end=start+timedelta(days=30)
+    url=f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={start:%Y%m%d}-{end:%Y%m%d}&limit=1000"
+    try:
+        root=_get(url,timeout=8); raw=root.get("events") if isinstance(root,dict) else []
+        out=[]
+        for event in raw or []:
+            comp=(event.get("competitions") or [{}])[0]; teams=comp.get("competitors") or []
+            home=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in teams if x.get("homeAway")=="home"),"")
+            away=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in teams if x.get("homeAway")=="away",),"")
+            if not event.get("date") or not home or not away:continue
+            state=str(((comp.get("status") or {}).get("type") or {}).get("state") or "pre").lower()
+            out.append({"league":league,"title":f"{away} @ {home}","start":event["date"],"tag":"LIVE" if state=="in" else "FINAL" if state=="post" else "UPCOMING","icon":icon,"source":"espn-shadow","home":home,"away":away,"providerEventId":f"espn:{event['id']}" if event.get("id") else f"espn:{_norm(away)}-{_norm(home)}-{event['date']}"})
+        return True,out
+    except Exception:
+        return False,[]
+
 def sportscore(league,icon):
     sport_by_league={"EPL":"football","UCL":"football","UEL":"football","LaLiga":"football","Serie A":"football","Bundesliga":"football","Ligue 1":"football","MLS":"football","NWSL":"football","NBA":"basketball","WNBA":"basketball","IPL":"cricket","ICC T20":"cricket","ATP":"tennis","WTA":"tennis"}
     sport=sport_by_league.get(league)
@@ -40,8 +63,14 @@ def sportscore(league,icon):
             home=str(item.get("home") or item.get("home_team") or "").strip(); away=str(item.get("away") or item.get("away_team") or "").strip(); start=_iso(item.get("time") or item.get("start") or item.get("date"))
             if not home or not away or not start:continue
             out.append({"league":league,"title":f"{away} @ {home}","start":start,"tag":_status(item.get("status")),"icon":icon,"source":"sportscore","home":home,"away":away,"providerEventId":f"sportscore:{item.get('id') or _norm(away)+'-'+_norm(home)+'-'+start}","attribution":"SportScore"})
-        return True,out,""
-    except Exception as exc:return False,[],f"{type(exc).__name__}: {exc}"
+        if out:return True,out,""
+        ok,shadow=_espn_fallback(league,icon)
+        if ok and shadow:return True,shadow,""
+        return True,[],""
+    except Exception as exc:
+        ok,shadow=_espn_fallback(league,icon)
+        if ok and shadow:return True,shadow,""
+        return False,[],f"{type(exc).__name__}: {exc}"
 
 def jolpica_f1(league,icon):
     if league!="F1":return True,[],"unsupported league for Jolpica"
