@@ -7,14 +7,12 @@ on:
   push:
     branches: [android-app]
     paths:
-      - 'scripts/official_schedule_ai_audit.py'
+      - 'scripts/**'
       - 'data/official_schedule_sources.json'
 
 permissions:
   contents: write
 
-# This is an evidence-recovery lane. It must not sit behind the deep schedule
-# refresh, otherwise a broken league can remain broken for an entire queue.
 concurrency:
   group: xsportsx-official-audit
   cancel-in-progress: false
