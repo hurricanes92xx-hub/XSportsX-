@@ -7,6 +7,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 from typing import Any
 import provider_discovery as discovery
+import sports_web_research as web_research
 from sports_evidence import correlate
 from sports_knowledge_graph import observe_feed
 SCHEMA=3
@@ -41,19 +42,28 @@ class ToolRegistry:
     def discover_schedule_provider(self,e):
         if not e.league:return {'status':'skipped','reason':'missing-league'}
         candidates=discovery.discover(e.league,max_queries=4);promoted=discovery.promote_successful(e.league);events=discovery.discovery_events(e.league)
-        return {'status':'completed','league':e.league,'candidates':len(candidates),'promoted':len(promoted),'eventsFound':len(events),'endpoints':[c.get('endpoint') for c in candidates[:8]]}
+        research=web_research.research_schedule(e.league,{'title':e.title,'startUtc':e.start_utc},limit=8)
+        return {'status':'completed','league':e.league,'candidates':len(candidates),'promoted':len(promoted),'eventsFound':len(events),'googleResearch':research,'endpoints':[c.get('endpoint') for c in candidates[:8]]}
     def discover_event_source_metadata(self,e):
         if not e.league:return {'status':'skipped','reason':'missing-league'}
         candidates=discovery.discover(e.league,event={'title':e.title,'startUtc':e.start_utc},max_queries=3);matches=[]
         for c in candidates:
             for item in c.get('events',[]) or []:
                 if str(item.get('title','')).strip().lower()==e.title.strip().lower():matches.append({'endpoint':c.get('endpoint'),'title':item.get('title'),'startUtc':item.get('startUtc')})
-        return {'status':'completed','league':e.league,'candidates':len(candidates),'eventMatches':matches[:8]}
+        # Separate live-source research searches for an actual broadcast/watch
+        # surface instead of pretending a schedule page is a live source.
+        live_research=web_research.research_live({'title':e.title,'league':e.league,'startUtc':e.start_utc},limit=10)
+        return {'status':'completed','league':e.league,'candidates':len(candidates),'eventMatches':matches[:8],'googleLiveResearch':live_research}
     def probe_live_state_and_source(self,e):
         out={'status':'completed','eventId':e.event_id,'source':_probe(e.source_url) if e.source_url else {'status':'missing'}}
         if e.phase=='LIVE' and not e.source_url:out['sourceDiscovery']=self.discover_event_source_metadata(e)
         return out
-    def refresh_live_evidence(self,e):return {'status':'completed','evidenceRefresh':True,'correlation':e.correlated or {},'probe':self.probe_live_state_and_source(e)}
+    def refresh_live_evidence(self,e):
+        probe=self.probe_live_state_and_source(e)
+        # A live/uncertain event gets a fresh Google research pass. The model
+        # chooses the action, but the tool performs the bounded web research.
+        research=self.discover_event_source_metadata(e) if e.phase in {'LIVE','PREGAME'} or not e.source_present else None
+        return {'status':'completed','evidenceRefresh':True,'correlation':e.correlated or {},'probe':probe,'googleLiveResearch':research}
     def warm_source(self,e):return {'status':'skipped','reason':'missing-source'} if not e.source_url else {'status':'completed','preflight':_probe(e.source_url)}
     def reconcile_or_archive(self,e):return {'status':'completed','decision':'retain' if e.phase in {'LIVE','UPCOMING','PREGAME'} else 'archive-candidate','eventId':e.event_id}
     def refresh_schedule_and_preflight(self,e):return {'status':'completed','scheduleDiscovery':self.discover_schedule_provider(e),'preflight':self.probe_live_state_and_source(e)}
@@ -64,7 +74,7 @@ def deterministic_plan(e):
     elif not e.source_present and e.league:action='discover_schedule_provider'
     return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
 def _model_configs():
-    """Ordered free/paid-compatible model providers; first successful decision wins."""
+    """Ordered model providers; first successful decision wins."""
     configs=[]
     primary=(os.getenv('SPORTS_AGENT_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_MODEL','').strip(),os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip(),'primary')
     gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
@@ -80,10 +90,8 @@ def should_use_model(e):
     if not e.source_present and e.confidence<0.75:return True
     return False
 def _call_model(endpoint,model,key,e):
-    prompt={'task':'Choose the safest useful next sports-intelligence action. Resolve contradictions conservatively.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
+    prompt={'task':'Choose the safest useful next sports-intelligence action. If schedule/live evidence is missing or stale, choose the discovery/refresh action that causes bounded Google-backed research. Resolve contradictions conservatively.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
     body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'Return JSON only. Never invent sources. Only choose an allowed action. Do not override contradictory official evidence without explicit support.'},{'role':'user','content':json.dumps(prompt)}]}).encode()
-    # Groq's Cloudflare edge has been observed rejecting Python's default urllib signature with 403/1010.
-    # Send an explicit application User-Agent and Accept header for compatible providers.
     headers={'Content-Type':'application/json','Authorization':f'Bearer {key}','User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json'}
     request=urllib.request.Request(endpoint,data=body,headers=headers,method='POST')
     with urllib.request.urlopen(request,timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
