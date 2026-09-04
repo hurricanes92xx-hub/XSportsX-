@@ -45,7 +45,7 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
 
     LaunchedEffect(canonicalLeague, reloadToken) {
         loading = true; error = null
-        runCatching { ScheduleSnapshotRepository.upcoming(canonicalLeague, reloadToken > 0) }
+        runCatching { ScheduleSnapshotRepository.all(reloadToken > 0).filter { it.league.let { value -> SportsScheduleService.scheduleLeaguesFor(canonicalLeague).contains(SportsScheduleService.canonicalLeagueFor(value)) } } }
             .onSuccess { loaded -> allEvents = loaded }
             .onFailure { error = it.message ?: "Schedule temporarily unavailable" }
         loading = false
@@ -70,15 +70,15 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
     }.sortedBy { it.startUtc }
     val grouped = visible.groupBy { dayLabel(it.startUtc) }
 
-    Column(Modifier.fillMaxSize().background(Color(0xFF05060A))) {
-        Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+    Column(Modifier.fillMaxSize().background(Color(0xFF05060A)).navigationBarsPadding()) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("‹", color = Color.White, fontSize = 36.sp, modifier = Modifier.clickable { onBack() })
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                Text(canonicalLeague, color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Black)
-                Text("${canonicalLeague} GAMES • NEXT 3 DAYS", color = Color(0xFF737B89), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(canonicalLeague, color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(if (canonicalLeague == "WRESTLING") "WWE • AEW • TNA • AAA • NEXT 3 DAYS" else "${canonicalLeague} GAMES • NEXT 3 DAYS", color = Color(0xFF737B89), fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
-            TextButton(onClick = { reloadToken++ }, enabled = !loading) { Text(if (loading) "LOADING" else "REFRESH") }
+            TextButton(onClick = { reloadToken++ }, enabled = !loading, contentPadding = PaddingValues(horizontal = 8.dp)) { Text(if (loading) "LOAD" else "REFRESH") }
         }
         Row(Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(selected = tab == "LIVE", onClick = { tab = "LIVE" }, label = { Text("LIVE") })
@@ -88,8 +88,8 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
         when {
             loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color(0xFFFF1744)) }
             error != null && visible.isEmpty() -> Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) { Text(error!!, color = Color.White) }
-            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} games in the next 3 days", color = Color(0xFF858B98)) }
-            else -> LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(if (tab == "LIVE") "No live ${canonicalLeague} games right now" else "No upcoming ${canonicalLeague} events in the next 3 days", color = Color(0xFF858B98), textAlign = androidx.compose.ui.text.style.TextAlign.Center) }
+            else -> LazyColumn(contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 grouped.forEach { (day, events) ->
                     item { Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 8.dp)) }
                     items(events, key = { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc}" } }) { event ->
@@ -103,43 +103,28 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
 
 @Composable
 private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
-    Column(
-        Modifier.fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF10141C))
-            .padding(12.dp)
-    ) {
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(12.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF080B11)), contentAlignment = Alignment.Center) {
-                if (event.artUrl.isNotBlank()) {
-                    AsyncImage(model = event.artUrl, contentDescription = event.league, modifier = Modifier.fillMaxSize().padding(9.dp), contentScale = ContentScale.Fit)
-                } else {
-                    XSportsLeagueLogo(event.league, size = 42.dp)
-                }
+                if (event.artUrl.isNotBlank()) AsyncImage(model = event.artUrl, contentDescription = event.league, modifier = Modifier.fillMaxSize().padding(9.dp), contentScale = ContentScale.Fit)
+                else XSportsLeagueLogo(event.league, size = 42.dp)
             }
             Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 if (event.away.isNotBlank() && event.home.isNotBlank()) {
                     TeamLine(event.away, event.awayLogo, "AWAY")
                     TeamLine(event.home, event.homeLogo, "HOME")
-                } else {
-                    Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                }
+                } else Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF536C) else Color(0xFF7F8795), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 if (event.broadcast.isNotBlank()) Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
-            if (event.isLive) {
-                Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744)), contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp)) { Text("WATCH", fontSize = 10.sp, fontWeight = FontWeight.Black) }
-            } else {
-                Surface(color = Color(0xFF171C26), shape = RoundedCornerShape(8.dp)) {
-                    Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp))
-                }
-            }
+            if (event.isLive) Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744)), contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp)) { Text("WATCH", fontSize = 10.sp, fontWeight = FontWeight.Black) }
+            else Surface(color = Color(0xFF171C26), shape = RoundedCornerShape(8.dp)) { Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) }
         }
     }
 }
@@ -153,15 +138,10 @@ private fun TeamLine(name: String, logo: String, label: String) {
         }
         Spacer(Modifier.width(7.dp))
         Text(name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        Spacer(Modifier.width(6.dp))
-        Text(label, color = Color(0xFF667080), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.widthIn(min = 32.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(label, color = Color(0xFF667080), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.width(42.dp), maxLines = 1)
     }
 }
 
-private fun dayLabel(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
-}.getOrElse { "SCHEDULE" }
-
-private fun formatTime(startUtc: String): String = runCatching {
-    SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc)))
-}.getOrElse { startUtc }
+private fun dayLabel(startUtc: String): String = runCatching { SimpleDateFormat("EEE, MMM d", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { "SCHEDULE" }
+private fun formatTime(startUtc: String): String = runCatching { SimpleDateFormat("EEE • h:mm a", Locale.US).apply { timeZone = TimeZone.getDefault() }.format(Date.from(Instant.parse(startUtc))) }.getOrElse { startUtc }
