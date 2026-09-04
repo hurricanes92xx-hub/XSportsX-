@@ -10,13 +10,21 @@ from sports_knowledge_graph import load, observe_feed
 def test_allowlist() -> None:
     evidence = Evidence("e1", "Test", "LIVE", 0.9, "refresh_live_evidence", ["live"], "espn", False)
     registry = ToolRegistry()
-    assert registry.execute("refresh_live_evidence", evidence)["status"] == "queued"
+    result = registry.execute("refresh_live_evidence", evidence)
+    assert result["status"] == "completed"
     assert registry.execute("rm -rf /", evidence)["status"] == "rejected"
 
 
 def test_source_gap_is_escalated() -> None:
     evidence = Evidence("e1", "Test", "LIVE", 0.9, "refresh_live_evidence", ["live"], "espn", False)
     assert deterministic_plan(evidence)["action"] == "discover_event_source_metadata"
+
+
+def test_real_discovery_tool_is_bounded() -> None:
+    evidence = Evidence("e1", "Test", "UPCOMING", 0.5, "discover_schedule_provider", ["missing source"], "espn", False, league="")
+    result = ToolRegistry().execute("discover_schedule_provider", evidence)
+    assert result["status"] == "skipped"
+    assert result["reason"] == "missing-league"
 
 
 def test_graph_and_agent_contract() -> None:
@@ -30,14 +38,15 @@ def test_graph_and_agent_contract() -> None:
         stats = observe_feed(feed, graph)
         assert stats["nodes"] >= 6
         result = run(feed_path, memory, graph)
-        assert result["schema"] == 1
+        assert result["schema"] == 2
         written = json.loads(feed_path.read_text(encoding="utf-8"))
-        assert written["sportsAgent"]["schema"] == 1
+        assert written["sportsAgent"]["schema"] == 2
         assert load(graph)["stats"]["edges"] >= 3
 
 
 if __name__ == "__main__":
     test_allowlist()
     test_source_gap_is_escalated()
+    test_real_discovery_tool_is_bounded()
     test_graph_and_agent_contract()
     print("sports agent tests: PASS")
