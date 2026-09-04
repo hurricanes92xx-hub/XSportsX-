@@ -111,6 +111,27 @@ jobs:
           PY
       - name: Run deep canonical integrity gate
         run: python3 scripts/validate_schedule_integrity.py
+      - name: Publish validated canonical schedule checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Schedule Bot'
+          git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
+          git add -A data/
+          if git diff --cached --quiet; then echo 'No canonical schedule changes to checkpoint.'; else git commit -m 'chore: publish validated canonical sports schedule'; fi
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Canonical schedule checkpoint published on attempt ${attempt}."; exit 0; fi
+            else
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add -A data/
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish validated canonical sports schedule'; fi
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
       - name: Run sports brain evidence pass
         run: python3 scripts/sports_brain.py analyze data/schedule_feed.json --memory data/sports_brain_memory.json
       - name: Run predictive sports intelligence
@@ -153,24 +174,24 @@ jobs:
               if action and action not in {'refresh_live_evidence','discover_schedule_provider','discover_event_source_metadata','warm_source','reconcile_or_archive','refresh_schedule_and_preflight','defer','no_action','probe_live_state_and_source'}: raise SystemExit(f'ERROR: unsafe intelligence action: {action}')
           print(f"Deep audit complete: {len(feed.get('events') or [])} events; Agent plans={agent.get('plans',0)}; Broadcast events={broadcast.get('eventsAnalyzed',0)}")
           PY
-      - name: Publish canonical data and learned intelligence
+      - name: Publish learned intelligence
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'XSportsX Schedule Bot'
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
           git add -A data/
-          if git diff --cached --quiet; then echo 'No canonical, discovery, or AI knowledge changes.'; exit 0; fi
-          git commit -m 'chore: daily deep sports intelligence audit'
+          if git diff --cached --quiet; then echo 'No AI intelligence changes.'; exit 0; fi
+          git commit -m 'chore: publish sports intelligence enrichment'
           for attempt in 1 2 3 4 5; do
             git fetch origin android-app
             if git rebase --autostash origin/android-app; then
-              if git push origin HEAD:android-app; then echo "Publish succeeded on attempt ${attempt}."; exit 0; fi
+              if git push origin HEAD:android-app; then echo "Intelligence publish succeeded on attempt ${attempt}."; exit 0; fi
             else
               git rebase --abort || true
               git reset --mixed origin/android-app
               git add -A data/
-              if ! git diff --cached --quiet; then git commit -m 'chore: rebuild daily sports intelligence publish'; fi
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish sports intelligence enrichment'; fi
             fi
             sleep $((attempt * 2))
           done
