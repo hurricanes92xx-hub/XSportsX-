@@ -25,3 +25,4 @@ if s == old:
 else:
     p.write_text(s, encoding="utf-8")
     print("Patched Mobile/TV sport and network cards to use bundled XSportsX logos.")
+# CI workflow applies this transformation to the committed android-app branch.
