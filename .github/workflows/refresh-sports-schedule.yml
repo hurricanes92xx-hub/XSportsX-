@@ -16,6 +16,7 @@ permissions:
 
 concurrency:
   group: xsportsx-schedule-refresh
+  queue: max
   cancel-in-progress: false
 
 jobs:
@@ -87,15 +88,17 @@ jobs:
           PY
       - name: Run deep canonical integrity gate
         run: python3 scripts/validate_schedule_integrity.py
+      - name: Run sports brain evidence pass
+        run: python3 scripts/sports_brain.py analyze data/schedule_feed.json --memory data/sports_brain_memory.json
       - name: Publish canonical data and learned provider knowledge
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- data/schedule_feed.json data/provider_knowledge.json; then echo 'No canonical or discovery knowledge changes.'; exit 0; fi
+          if git diff --quiet -- data/schedule_feed.json data/provider_knowledge.json data/sports_brain_memory.json; then echo 'No canonical, discovery, or brain knowledge changes.'; exit 0; fi
           git config user.name 'XSportsX Schedule Bot'
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
-          git add data/schedule_feed.json data/provider_knowledge.json
-          git commit -m 'chore: refresh canonical sports schedule'
+          git add data/schedule_feed.json data/provider_knowledge.json data/sports_brain_memory.json
+          git commit -m 'chore: refresh canonical sports intelligence'
           for attempt in 1 2 3; do
             if git push origin HEAD:android-app; then exit 0; fi
             echo "Publish race detected; rebasing attempt ${attempt}..."
