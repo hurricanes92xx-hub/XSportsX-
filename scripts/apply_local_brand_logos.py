@@ -37,3 +37,4 @@ if v != old_v:
 
 print("Mobile changed:", m != old_m)
 print("TV changed:", v != old_v)
+print("Logo contract: bundled/verified logo first, deterministic XSportsX fallback second.")
