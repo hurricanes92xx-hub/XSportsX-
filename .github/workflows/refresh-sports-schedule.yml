@@ -124,7 +124,7 @@ jobs:
           graph=json.loads(Path('data/sports_knowledge_graph.json').read_text(encoding='utf-8'))
           if brain.get('schema') != 1: raise SystemExit('ERROR: sports brain contract missing')
           if agent.get('schema') != 3: raise SystemExit('ERROR: sports agent contract missing')
-          if prediction.get('schema') != 1: raise SystemExit('ERROR: sports prediction contract missing')
+          if prediction.get('schema') != 2: raise SystemExit('ERROR: sports prediction contract missing')
           if not isinstance(graph.get('nodes'), dict) or not isinstance(graph.get('edges'), list): raise SystemExit('ERROR: knowledge graph contract invalid')
           for event in feed.get('events') or []:
               action=event.get('intelligenceAction','')
