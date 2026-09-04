@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -24,6 +23,7 @@ from sports_knowledge_graph import observe_feed
 SCHEMA = 1
 ALLOWED_ACTIONS = {
     "refresh_live_evidence",
+    "probe_live_state_and_source",
     "discover_schedule_provider",
     "discover_event_source_metadata",
     "warm_source",
@@ -55,6 +55,7 @@ class ToolRegistry:
     def __init__(self) -> None:
         self.tools: dict[str, Callable[[Evidence], dict[str, Any]]] = {
             "refresh_live_evidence": lambda e: {"status": "queued", "reason": e.event_id},
+            "probe_live_state_and_source": lambda e: {"status": "queued", "reason": e.event_id},
             "discover_schedule_provider": lambda e: {"status": "queued", "reason": e.title},
             "discover_event_source_metadata": lambda e: {"status": "queued", "reason": e.title},
             "warm_source": lambda e: {"status": "queued", "reason": e.event_id},
@@ -76,7 +77,7 @@ def deterministic_plan(e: Evidence) -> dict[str, Any]:
         action = "discover_event_source_metadata"
     return {
         "action": action,
-        "confidence": e.confidence,
+        "confidence": max(0.0, min(1.0, e.confidence)),
         "reason": "; ".join(e.reasons[:4]) or "deterministic policy",
         "evidenceIds": [e.event_id],
     }
@@ -147,7 +148,6 @@ def run(feed_path: Path, memory_path: Path, graph_path: Path) -> dict[str, Any]:
             provider=str(event.get("provider") or event.get("sourceProvider") or "unknown"),
             source_present=bool(event.get("sourceUrl") or event.get("youtubeVideoId")),
         )
-        # Only escalate events that have an actionable intelligence signal.
         if evidence.action == "defer" and evidence.phase == "UPCOMING":
             continue
         plan = model_plan(evidence) if evidence.event_id else None
@@ -165,6 +165,7 @@ def run(feed_path: Path, memory_path: Path, graph_path: Path) -> dict[str, Any]:
     agent["updatedAt"] = now_iso()
     agent["lastObservedEvents"] = observed
     agent["lastPlans"] = plans[:500]
+    memory_path.parent.mkdir(parents=True, exist_ok=True)
     memory_path.write_text(json.dumps(memory, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     graph_stats = observe_feed(feed, graph_path)
     result = {"schema": SCHEMA, "updatedAt": agent["updatedAt"], "observedEvents": observed, "plans": len(plans), "modelEnabled": bool(os.getenv("SPORTS_AGENT_MODEL_URL") and os.getenv("SPORTS_AGENT_MODEL")), "graph": graph_stats, "actions": agent["actions"]}
