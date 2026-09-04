@@ -27,7 +27,15 @@ prompt = {
 errors=[]
 for endpoint, model, key, provider in configs:
     body=json.dumps({"model":model,"temperature":0,"messages":[{"role":"system","content":"Return JSON only. Never invent sources. Only choose an allowed action."},{"role":"user","content":json.dumps(prompt)}]}).encode()
-    req=urllib.request.Request(endpoint,data=body,headers={"Content-Type":"application/json","Authorization":f"Bearer {key}"},method="POST")
+    # Groq's Cloudflare edge can reject Python's default urllib signature with 403/1010.
+    # Use an explicit application User-Agent and standard Accept header for all compatible providers.
+    headers={
+        "Content-Type":"application/json",
+        "Authorization":f"Bearer {key}",
+        "User-Agent":"XSportsX-SportsAgent/1.0",
+        "Accept":"application/json",
+    }
+    req=urllib.request.Request(endpoint,data=body,headers=headers,method="POST")
     try:
         with urllib.request.urlopen(req,timeout=15) as response:
             raw=response.read(512*1024).decode("utf-8");status=int(response.status)
