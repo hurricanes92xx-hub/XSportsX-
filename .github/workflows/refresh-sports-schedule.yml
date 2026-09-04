@@ -150,16 +150,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- data/schedule_feed.json data/provider_knowledge.json data/sports_brain_memory.json data/sports_knowledge_graph.json; then echo 'No canonical, discovery, or AI knowledge changes.'; exit 0; fi
           git config user.name 'XSportsX Schedule Bot'
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
-          git add data/schedule_feed.json data/provider_knowledge.json data/sports_brain_memory.json data/sports_knowledge_graph.json
+          # All producers are complete here. Stage the complete generated data tree
+          # so a late writer cannot leave the index dirty during a rebase.
+          git add -A data/
+          if git diff --cached --quiet; then echo 'No canonical, discovery, or AI knowledge changes.'; exit 0; fi
           git commit -m 'chore: refresh canonical sports intelligence'
-          for attempt in 1 2 3; do
-            if git push origin HEAD:android-app; then exit 0; fi
-            echo "Publish race detected; rebasing attempt ${attempt}..."
+          for attempt in 1 2 3 4 5; do
+            # A remote update may arrive between checkout and push. Always make
+            # the local tree clean before rebasing; this is the key race fix.
+            if git status --porcelain | grep -q .; then
+              git add -A data/
+              git commit -m 'chore: capture late generated intelligence' || true
+            fi
             git fetch origin android-app
-            git rebase origin/android-app
+            if git rebase origin/android-app; then
+              if git push origin HEAD:android-app; then
+                echo "Publish succeeded on attempt ${attempt}."
+                exit 0
+              fi
+            else
+              echo 'Rebase conflict detected; aborting and retrying from the remote tip.'
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add -A data/
+              if ! git diff --cached --quiet; then
+                git commit -m 'chore: refresh canonical sports intelligence'
+              fi
+            fi
+            echo "Remote advanced during publish; retrying (${attempt}/5)..."
+            sleep $((attempt * 2))
           done
-          echo 'ERROR: unable to publish after three race-safe attempts'
+          echo 'ERROR: unable to publish after five race-safe attempts'
           exit 1
