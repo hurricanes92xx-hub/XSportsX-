@@ -5,7 +5,7 @@ import argparse,json,os,urllib.error,urllib.parse,urllib.request
 from dataclasses import dataclass
 from datetime import datetime,timezone
 from pathlib import Path
-from typing import Any,Callable
+from typing import Any
 import provider_discovery as discovery
 from sports_evidence import correlate
 from sports_knowledge_graph import observe_feed
@@ -63,41 +63,56 @@ def deterministic_plan(e):
     elif verdict=='UNCERTAIN':action='refresh_live_evidence'
     elif not e.source_present and e.league:action='discover_schedule_provider'
     return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
+def _model_configs():
+    """Ordered free/paid-compatible model providers; first successful decision wins."""
+    configs=[]
+    primary=(os.getenv('SPORTS_AGENT_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_MODEL','').strip(),os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip(),'primary')
+    gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
+    for cfg in (primary,gemini):
+        if cfg[0] and cfg[1] and cfg[2]:configs.append(cfg)
+    return configs
 def should_use_model(e):
-    """Use the LLM only where reasoning can materially change an action."""
-    if not (os.getenv('SPORTS_AGENT_MODEL_URL','').strip() and os.getenv('SPORTS_AGENT_MODEL','').strip()):return False
-    if not e.event_id:return False
+    """Use an LLM only where reasoning can materially change an action."""
+    if not _model_configs() or not e.event_id:return False
     verdict=str((e.correlated or {}).get('verdict',''))
     if verdict in {'UNCERTAIN','CONTRADICTED'}:return True
     if e.phase in {'LIVE','PREGAME'}:return True
     if not e.source_present and e.confidence<0.75:return True
     return False
-def model_plan(e):
-    endpoint=os.getenv('SPORTS_AGENT_MODEL_URL','').strip();model=os.getenv('SPORTS_AGENT_MODEL','').strip();key=os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip()
-    if not endpoint or not model:return None
+def _call_model(endpoint,model,key,e):
     prompt={'task':'Choose the safest useful next sports-intelligence action. Resolve contradictions conservatively.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
-    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'Return JSON only. Never invent sources. Only choose an allowed action. Do not override contradictory official evidence without explicit support.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json'}
-    if key:headers['Authorization']=f'Bearer {key}'
-    try:
-        with urllib.request.urlopen(urllib.request.Request(endpoint,data=body,headers=headers,method='POST'),timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
-        plan=json.loads(data.get('choices',[{}])[0].get('message',{}).get('content',''))
-        if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
-        plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
-    except (OSError,ValueError,TypeError,KeyError,IndexError,urllib.error.URLError):return None
+    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'Return JSON only. Never invent sources. Only choose an allowed action. Do not override contradictory official evidence without explicit support.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json','Authorization':f'Bearer {key}'}
+    with urllib.request.urlopen(urllib.request.Request(endpoint,data=body,headers=headers,method='POST'),timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
+    plan=json.loads(data.get('choices',[{}])[0].get('message',{}).get('content',''))
+    if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
+    plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
+def model_plan(e):
+    """Try configured models in order; failures fall through without failing the schedule run."""
+    for endpoint,model,key,_provider in _model_configs():
+        try:
+            plan=_call_model(endpoint,model,key,e)
+            if plan is not None:
+                plan['_modelProvider']=_provider;plan['_model']=model
+                return plan
+        except (OSError,ValueError,TypeError,KeyError,IndexError,urllib.error.URLError):
+            continue
+    return None
 def load_memory(path):
     try:
         d=json.loads(path.read_text(encoding='utf-8'));return d if isinstance(d,dict) else {}
     except Exception:return {}
 def run(feed_path,memory_path,graph_path):
-    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0});registry=ToolRegistry();plans=[]
+    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});registry=ToolRegistry();plans=[]
     for event in events:
         e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''));e.correlated=correlate(event)
         if e.correlated.get('verdict') in {'FINAL','POSTPONED'} and e.correlated.get('confidence',0)>=0.82:e.action='reconcile_or_archive';e.phase='FINAL'
         plan=model_plan(e) if should_use_model(e) else None
-        if plan is None:plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
-        else:agent['modelDecisions']=int(agent.get('modelDecisions',0))+1
+        if plan is None:
+            plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
+        else:
+            agent['modelDecisions']=int(agent.get('modelDecisions',0))+1;provider=str(plan.pop('_modelProvider','primary'));agent['modelProviders'][provider]=int(agent['modelProviders'].get(provider,0))+1
         result=registry.execute(str(plan.get('action','no_action')),e);action=str(plan.get('action','no_action'));agent['actions'][action]=int(agent['actions'].get(action,0))+1;plans.append({'eventId':e.event_id,'phase':e.phase,'correlation':e.correlated,'plan':plan,'execution':result})
-    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastPlans']=plans[:500];memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'modelEnabled':bool(os.getenv('SPORTS_AGENT_MODEL_URL') and os.getenv('SPORTS_AGENT_MODEL')),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
+    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastPlans']=plans[:500];memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
 def main():
     p=argparse.ArgumentParser();p.add_argument('feed');p.add_argument('--memory',default='data/sports_brain_memory.json');p.add_argument('--graph',default='data/sports_knowledge_graph.json');a=p.parse_args();print(json.dumps(run(Path(a.feed),Path(a.memory),Path(a.graph)),indent=2))
 if __name__=='__main__':main()
