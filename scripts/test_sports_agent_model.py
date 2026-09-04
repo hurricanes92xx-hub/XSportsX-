@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Smoke-test the configured LLM endpoint without touching production event data."""
+"""Smoke-test the configured sports reasoning model without touching production event data."""
 from __future__ import annotations
 import json, os, urllib.error, urllib.request
 
@@ -37,7 +37,12 @@ body = json.dumps({
         {"role": "user", "content": json.dumps(prompt)},
     ],
 }).encode()
-req = urllib.request.Request(endpoint, data=body, headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"}, method="POST")
+req = urllib.request.Request(
+    endpoint,
+    data=body,
+    headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
+    method="POST",
+)
 try:
     with urllib.request.urlopen(req, timeout=15) as response:
         raw = response.read(512 * 1024).decode("utf-8")
@@ -51,18 +56,29 @@ except Exception as exc:
 try:
     data = json.loads(raw)
     content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    if not content:
+        raise ValueError("empty choices[0].message.content")
     plan = json.loads(content)
 except Exception as exc:
     raise SystemExit(f"MODEL_SMOKE: invalid model response: {str(exc)[:500]}; raw={raw[:1000]}")
 
-if not isinstance(plan, dict) or plan.get("action") not in ALLOWED:
+if not isinstance(plan, dict):
+    raise SystemExit(f"MODEL_SMOKE: response is not an object: {plan!r}")
+if plan.get("action") not in ALLOWED:
     raise SystemExit(f"MODEL_SMOKE: unsafe/invalid action: {plan!r}")
+try:
+    confidence = float(plan.get("confidence"))
+except (TypeError, ValueError):
+    raise SystemExit(f"MODEL_SMOKE: confidence is not numeric: {plan!r}")
+if not 0.0 <= confidence <= 1.0:
+    raise SystemExit(f"MODEL_SMOKE: confidence outside [0,1]: {confidence}")
 
+print("MODEL_SMOKE: PASS")
 print(json.dumps({
     "modelSmoke": "PASS",
     "httpStatus": status,
     "model": model,
     "action": plan.get("action"),
-    "confidence": plan.get("confidence"),
+    "confidence": confidence,
     "reason": str(plan.get("reason", ""))[:300],
 }, indent=2))
