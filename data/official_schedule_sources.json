@@ -1,5 +1,5 @@
 {
-  "schema": 2,
+  "schema": 3,
   "strategy": "official_first_with_provider_fallback",
   "refreshHours": 6,
   "officialSources": [
@@ -18,12 +18,13 @@
     {"league":"Bundesliga","url":"https://www.bundesliga.com/en/bundesliga/fixtures","mode":"jsonld"},
     {"league":"Ligue 1","url":"https://ligue1.com/en/calendar/ligue1","mode":"jsonld"},
     {"league":"NWSL","url":"https://www.nwslsoccer.com/schedule","mode":"jsonld"},
-    {"league":"UFC","url":"https://www.ufc.com/events","mode":"jsonld"},
+    {"league":"UFC","url":"https://www.ufc.com/events","mode":"html+jsonld"},
     {"league":"F1","url":"https://www.formula1.com/en/racing/2026","mode":"jsonld"},
     {"league":"IndyCar","url":"https://www.indycar.com/Schedule","mode":"jsonld"},
     {"league":"PGA","url":"https://www.pgatour.com/schedule/2026","mode":"jsonld"},
     {"league":"LPGA","url":"https://www.lpga.com/tournaments","mode":"jsonld"},
     {"league":"LIV Golf","url":"https://www.livgolf.com/schedule","mode":"jsonld"},
+    {"league":"ATP","url":"https://www.atptour.com/en/scores/current","mode":"jsonld"},
     {"league":"WTA","url":"https://www.wtatennis.com/tournaments","mode":"jsonld"},
     {"league":"PLL","url":"https://premierlacrosseleague.com/schedule","mode":"jsonld"},
     {"league":"NLL","url":"https://www.nll.com/schedule/","mode":"jsonld"},
@@ -59,6 +60,11 @@
     {"league":"FORMULA E","url":"https://www.fiaformulae.com/en/calendar","mode":"jsonld"},
     {"league":"MXGP","url":"https://www.mxgp.com/calendar","mode":"jsonld"},
     {"league":"MONSTER JAM","url":"https://www.monsterjam.com/en-us/events/","mode":"jsonld"},
-    {"league":"AAA Wrestling","url":"https://www.luchalibreaaa.com/","mode":"jsonld"}
+    {"league":"AAA Wrestling","url":"https://www.luchalibreaaa.com/","mode":"jsonld"},
+    {"league":"NASCAR Cup","url":"https://www.nascar.com/schedule/","mode":"jsonld"},
+    {"league":"NASCAR Xfinity","url":"https://www.nascar.com/schedule/","mode":"jsonld"},
+    {"league":"NASCAR Trucks","url":"https://www.nascar.com/schedule/","mode":"jsonld"},
+    {"league":"X Games","url":"https://www.xgames.com/events/","mode":"jsonld"},
+    {"league":"Boxing","url":"https://wbcboxing.com/calendar/","mode":"jsonld"}
   ]
 }
