@@ -18,7 +18,6 @@ def _configured(provider):
     if provider=="sportsdataio": return bool(os.getenv("SPORTSDATAIO_API_KEY") and os.getenv("SPORTSDATAIO_ENDPOINT_TEMPLATE"))
     if provider=="sportmonks": return bool(os.getenv("SPORTMONKS_API_TOKEN") and os.getenv("SPORTMONKS_ENDPOINT_TEMPLATE"))
     if provider=="cfbd": return bool(os.getenv("CFBD_API_KEY"))
-    if provider=="pandascore": return bool(os.getenv("PANDASCORE_API_TOKEN") and os.getenv("PANDASCORE_ENDPOINT_TEMPLATE"))
     return True
 
 def _load():
@@ -61,7 +60,6 @@ def build_matrix(league_names,official,dedicated,espn,sportsdb):
         if league in FIVB_LEAGUES: candidates.append("fivb")
         if league=="F1": candidates += ["jolpica-f1","openf1"]
         if league=="Bundesliga": candidates.append("openligadb")
-        if league=="Esports": candidates.append("pandascore")
         if league in espn: candidates.append("espn")
         if league in sportsdb: candidates.append("sportsdb")
         unique=[]
