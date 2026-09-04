@@ -45,12 +45,7 @@ def _espn_fallback(league,icon):
     except Exception:return False,[]
 
 def _espn_cricket(league,icon):
-    """Use ESPN's personalized cricket header instead of the broken site scoreboard.
-
-    The site scoreboard returns 404 for cricket; the public header exposes active
-    series and match events without a key. This also avoids probing dozens of
-    guessed league slugs.
-    """
+    """Use ESPN's personalized cricket header instead of the broken site scoreboard."""
     wanted={"IPL":{"ipl","indianpremierleague"},"ICC T20":{"icct20","t20worldcup","internationalcrickett20"}}
     try:
         root=_get("https://site.api.espn.com/apis/personalized/v2/scoreboard/header?sport=cricket&region=in&tz=Asia/Calcutta",timeout=8)
@@ -61,18 +56,36 @@ def _espn_cricket(league,icon):
             if not any(any(alias in name for alias in wanted.get(league,set())) for name in names):continue
             for event in series.get("events") or []:
                 if not isinstance(event,dict):continue
-                comp=(event.get("competitions") or [{}])[0]
-                teams=comp.get("competitors") or []
+                comp=(event.get("competitions") or [{}])[0]; teams=comp.get("competitors") or []
                 home=next((x.get("team",{}).get("displayName") or x.get("team",{}).get("shortDisplayName") for x in teams if x.get("homeAway")=="home"),"")
                 away=next((x.get("team",{}).get("displayName") or x.get("team",{}).get("shortDisplayName") for x in teams if x.get("homeAway")=="away"),"")
                 start=event.get("date") or event.get("startDate")
                 if not start:continue
                 state=str(((comp.get("status") or {}).get("type") or {}).get("state") or "pre").lower()
-                if not home or not away:
-                    name=str(event.get("name") or event.get("shortName") or "").strip()
-                    title=name or str(series.get("name") or league)
-                else:title=f"{away} @ {home}"
+                title=f"{away} @ {home}" if home and away else str(event.get("name") or event.get("shortName") or series.get("name") or league)
                 out.append({"league":league,"title":title,"start":_iso(start),"tag":"LIVE" if state=="in" else "FINAL" if state=="post" else "UPCOMING","icon":icon,"source":"espn-cricket","home":home,"away":away,"providerEventId":f"espn:{event.get('id') or start}"})
+        return True,out
+    except Exception:return False,[]
+
+def _openwec(league,icon):
+    """Public OpenWEC schedule/results; no key required for event discovery."""
+    series_map={"WEC":"WEC","IMSA":"IMSA"}
+    series=series_map.get(league)
+    if not series:return True,[]
+    year=datetime.now(timezone.utc).year
+    try:
+        root=_get(f"https://api.openwec.com/api/v1/series/{urllib.parse.quote(series)}/seasons/{year}/events",timeout=8)
+        rows=root.get("items") if isinstance(root,dict) else root
+        if rows is None and isinstance(root,dict):rows=root.get("events")
+        out=[]
+        for item in rows or []:
+            if not isinstance(item,dict):continue
+            start=_iso(item.get("start_time") or item.get("start") or item.get("date") or item.get("event_date"))
+            if not start:continue
+            name=str(item.get("name") or item.get("event_name") or item.get("title") or league).strip()
+            venue=str(item.get("circuit") or item.get("track") or item.get("venue") or "").strip()
+            title=f"{name} @ {venue}" if venue else name
+            out.append({"league":league,"title":title,"start":start,"tag":"UPCOMING","icon":icon,"source":"openwec","providerEventId":f"openwec:{item.get('id') or item.get('event_id') or _norm(name)+'-'+start}"})
         return True,out
     except Exception:return False,[]
 
@@ -142,4 +155,7 @@ def fetch(provider,league,icon):
     if provider=="jolpica-f1":return jolpica_f1(league,icon)
     if provider=="openf1":return openf1(league,icon)
     if provider=="openligadb":return openliga(league,icon)
+    if provider=="openwec":
+        ok,rows=_openwec(league,icon)
+        return ok,rows,"" if ok else "OpenWEC unavailable"
     return False,[],"unknown free provider"
