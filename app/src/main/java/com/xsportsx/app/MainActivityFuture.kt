@@ -92,9 +92,8 @@ class MainActivityFuture : ComponentActivity() {
                                 else { selectedEvent = null; liveFilter = network.name }
                             }
                         )
-                        // Pairing control belongs below the header instead of being an
-                        // absolute overlay on top of the Home header/source indicator.
-                        TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 86.dp, end = 24.dp))
+                        // Keep pairing available without obscuring the Home header or hero.
+                        TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 104.dp, end = 24.dp))
                     }
                 }
             }
