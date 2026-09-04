@@ -1,0 +1,42 @@
+from pathlib import Path
+from datetime import datetime, timezone, timedelta
+
+def patch(path, old, new):
+    p=Path(path); s=p.read_text(encoding='utf-8')
+    if old not in s: raise SystemExit(f'PATCH_ANCHOR_MISSING:{path}:{old[:90]}')
+    p.write_text(s.replace(old,new,1),encoding='utf-8')
+
+patch('scripts/refresh_schedules_legacy.py',"WRESTLING_FALLBACK=[('WWE','Monday Night Raw','2026-09-07T00:00:00Z','SPECIAL','🏆')","WRESTLING_FALLBACK=[('WWE','SmackDown','2026-09-05T00:00:00Z','SPECIAL','🏆'),('WWE',\"Sunday Night's Main Event\",'2026-09-07T00:00:00Z','SPECIAL','🏆'),('WWE','Monday Night Raw','2026-09-08T00:00:00Z','SPECIAL','🏆')")
+patch('app/src/main/java/com/xsportsx/app/FastXtreamEventResolver.kt',"private const val MAX_CATEGORIES = 8\n        private const val MAX_MATCHES = 12\n        private const val RESOLVE_BUDGET_MS = 4500L\n        private const val CONNECT_MS = 1200L\n        private const val READ_MS = 2500L","private const val MAX_CATEGORIES = 6\n        private const val MAX_MATCHES = 12\n        private const val RESOLVE_BUDGET_MS = 2600L\n        private const val CONNECT_MS = 700L\n        private const val READ_MS = 1600L")
+patch('app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt','val fast = withTimeoutOrNull(5_000L) { fastXtream.resolve(target) }.orEmpty()','val fast = withTimeoutOrNull(2_800L) { fastXtream.resolve(target) }.orEmpty()')
+patch('app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt','val targeted = withTimeoutOrNull(4_000L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()','val targeted = withTimeoutOrNull(2_200L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()')
+patch('app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt','withTimeoutOrNull(12_000L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()','withTimeoutOrNull(1_500L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()')
+patch('app/src/main/java/com/xsportsx/app/FuturisticSports.kt','SportVisual("NFL", "NFL", "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png")','SportVisual("NFL", "NFL", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/National_Football_League_logo.svg/256px-National_Football_League_logo.svg.png")')
+patch('scripts/sports_agent.py','import provider_discovery as discovery\nimport sports_web_research as web_research','import provider_discovery as discovery\nimport refresh_schedules_legacy as schedule_legacy\nimport sports_web_research as web_research')
+patch('scripts/sports_agent.py','OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/events"}','OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/event/ufc-fight-night-september-05-2026"}')
+patch('scripts/sports_agent.py',"    if league.upper()!='UFC':return []","""    if league.upper()!='UFC':return []
+    for obj in schedule_legacy.jsonld_objects(text):
+        kind=obj.get('@type'); start=_parse_date(obj.get('startDate')); title=str(obj.get('name') or '').strip()
+        if (kind=='Event' or (isinstance(kind,list) and 'Event' in kind)) and title and start and start>=datetime.now(timezone.utc)-timedelta(hours=12):
+            events.append({'sport':'MMA','league':league,'title':title,'startUtc':start.isoformat().replace('+00:00','Z'),'start':start.isoformat().replace('+00:00','Z'),'status':'scheduled','state':'','source':'official-jsonld','discoveryUrl':url})""")
+marker='def _recover_gap(league):'
+helper="""def _recover_wrestling_expectations(feed):
+    current=[e for e in (feed.get('events') or []) if isinstance(e,dict)]
+    raw=[]
+    try: schedule_legacy.add_wrestling(raw)
+    except Exception: return [], {'checked':True,'recovered':0,'error':'wrestling-source-failure'}
+    now=datetime.now(timezone.utc); horizon=now+timedelta(days=14); recovered=[]
+    wanted={'smackdown','monday night raw','sunday night\\'s main event'}
+    for e in raw:
+        if str(e.get('league') or '')!='WWE': continue
+        title=str(e.get('title') or '').strip(); low=title.lower(); start=_parse_date(e.get('startUtc') or e.get('start'))
+        if not title or not start or not now-timedelta(hours=12)<=start<=horizon: continue
+        if not any(x in low for x in wanted): continue
+        if not any(str(x.get('league') or '')=='WWE' and str(x.get('title') or '').strip().lower()==low and _parse_date(x.get('startUtc') or x.get('start'))==start for x in current):
+            candidate=dict(e); candidate['source']='ai-official-wrestling-recovery'; candidate['aiRecovered']=True; recovered.append(candidate)
+    return recovered, {'checked':True,'recovered':len(recovered)}
+
+"""
+patch('scripts/sports_agent.py',marker,helper+marker)
+patch('scripts/sports_agent.py',"    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];gap_reports=[]\n    if mode=='full':","    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];gap_reports=[]\n    wrestling_recovered,wrestling_report=_recover_wrestling_expectations(feed)\n    if wrestling_recovered:\n        events,merges,_=dedupe_events(events+wrestling_recovered);feed['identityMergeCount']=int(feed.get('identityMergeCount',0))+merges\n    gap_reports.append({'league':'WRESTLING_EXPECTATIONS',**wrestling_report})\n    if mode=='full':")
+print('CRITICAL_REPAIR_OK',datetime.now(timezone.utc).isoformat())
