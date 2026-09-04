@@ -1,0 +1,97 @@
+name: Strict Schedule Recovery Heartbeat
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+  push:
+    branches: [android-app]
+    paths:
+      - 'scripts/autonomous_schedule_repair.py'
+      - 'scripts/provider_discovery.py'
+      - 'scripts/sports_web_research.py'
+      - 'data/official_schedule_sources.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-schedule-refresh
+  queue: max
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout canonical engine
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install provider dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Recover active schedule gaps
+        env:
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
+        run: python3 scripts/autonomous_schedule_repair.py
+      - name: Strict schedule integrity gate
+        run: |
+          python3 scripts/normalize_schedule_feed.py
+          python3 scripts/validate_schedule_integrity.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/schedule_feed.json')
+          feed=json.loads(p.read_text(encoding='utf-8'))
+          events=feed.get('events') or []
+          matrix=feed.get('leagueProviderMatrix') or {}
+          counts={}
+          for e in events:
+              if isinstance(e,dict): counts[str(e.get('league','')).strip()]=counts.get(str(e.get('league','')).strip(),0)+1
+          active_gaps=[]
+          repair=feed.get('autonomousScheduleRepair') or {}
+          unresolved=set(str(x) for x in repair.get('unresolvedLeagues') or [])
+          for league in matrix:
+              if str(league).strip() and counts.get(str(league).strip(),0)==0 and str(league).strip() not in unresolved:
+                  active_gaps.append(league)
+          if active_gaps:
+              raise SystemExit('ERROR: unresolved canonical schedule gaps after recovery: '+', '.join(active_gaps[:24]))
+          print('STRICT_SCHEDULE_GATE: PASS')
+          print('Canonical events:', len(events))
+          print('Unresolved active gaps:', len(unresolved))
+          print('Recovered events:', repair.get('eventsRecovered',0))
+          PY
+      - name: Publish recovered schedule
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Schedule Bot'
+          git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
+          git add data/schedule_feed.json
+          if git diff --cached --quiet; then echo 'No schedule recovery changes.'; exit 0; fi
+          git commit -m 'chore: publish strict schedule recovery'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Recovery publish succeeded on attempt ${attempt}."; exit 0; fi
+            else
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add data/schedule_feed.json
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish strict schedule recovery'; fi
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
