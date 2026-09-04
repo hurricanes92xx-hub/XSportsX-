@@ -26,7 +26,7 @@ def icon_map():
     out={x[0]:x[3] for x in engine.ESPN_LEAGUES}
     out.update({x[0]:x[3] for x in engine.NCAA_LEAGUES})
     out.update({x:"🏎️" for x in engine.NASCAR_SERIES})
-    out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","Esports":"🎮"})
+    out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","Esports":"🎮","WEC":"🏎️","IMSA":"🏎️"})
     return out
 
 def source_priority(source):
@@ -112,6 +112,14 @@ def main():
     all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"Esports","WEC","IMSA"}
     dedicated={name:("ncaa" if name in ncaa else "nascar" if name in engine.NASCAR_SERIES else "wrestling") for name in dedicated_names}
     matrix=build_matrix(all_leagues,official_names,dedicated,set(espn),sportsdb_names)
+    for league in ("WEC","IMSA"):
+        matrix.setdefault(league,{})["configured"]=["openwec"]
+        matrix[league]["activeOrder"]=["openwec"]
+        matrix[league]["primary"]="openwec"
+        matrix[league]["secondary"]="cache"
+        matrix[league]["tertiary"]="cache"
+        matrix[league]["cachedRecovery"]="cache"
+        matrix[league]["standbyProviders"]=[]
     events=[]; failures=[]; no_event_leagues=[]; attempts={}; promotions={}; cache_recovery=[]; overlap_leagues=[]; overlap_records=0
     for league in sorted(all_leagues):
         ordered=provider_order(league,matrix[league]["configured"]); matrix[league]["activeOrder"]=ordered; attempts[league]=[]
