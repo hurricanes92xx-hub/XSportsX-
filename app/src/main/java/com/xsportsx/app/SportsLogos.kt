@@ -49,9 +49,9 @@ private fun spec(key: String): BrandSpec = when (key) {
     "NFL" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), "nfl", "NFL")
     "NBA" -> BrandSpec(Color(0xFF17408B), Color.White, Color(0xFFE31837), "nba", "NBA")
     "NCAA FB", "NCAA BB", "NCAA VB" -> BrandSpec(Color(0xFF102B55), Color.White, Color(0xFFFFC72C), "ncaa", "NCAA")
-    "MLB" -> BrandSpec(Color(0xFF041E42), Color.White, Color(0xFFE31837), "mlb", "MLB")
+    "MLB" -> BrandSpec(Color(0xFF16395F), Color.White, Color(0xFFEE1C25), "mlb", "MLB")
     "NHL" -> BrandSpec(Color(0xFF111820), Color.White, Color(0xFFB8C7D9), "nhl", "NHL")
-    "UFC" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), null, "UFC", "https://commons.wikimedia.org/wiki/Special:FilePath/UFC_Logo.svg?width=256")
+    "UFC" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFD20A0A), "ufc", "UFC")
     "WRESTLING", "WWE" -> BrandSpec(Color(0xFF090909), Color.White, Color(0xFFE31B23), "wwe", "WWE")
     "AEW" -> BrandSpec(Color(0xFF101010), Color.White, Color.White, "aew", "AEW")
     "TNA" -> BrandSpec(Color(0xFF111111), Color.White, Color(0xFFE61B1F), "tna", "TNA")
@@ -136,6 +136,10 @@ private suspend fun loadRemoteBitmap(url:String,width:Int,height:Int):Bitmap?=wi
 
 @Composable private fun VectorBrandMark(spec:BrandSpec,size:Dp){Box(Modifier.size(size),contentAlignment=Alignment.Center){Canvas(Modifier.fillMaxSize()){val w=size.toPx();val h=size.toPx();val c=center;when(spec.mark){"SEC"->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.22f,c,style=Stroke(width=5f))};"ACC"->drawLine(spec.accent,Offset(w*.18f,h*.72f),Offset(w*.82f,h*.28f),8f);"B1G"->drawRoundRect(spec.accent,Offset(w*.14f,h*.28f),Size(w*.72f,h*.44f),CornerRadius(8f,8f),style=Stroke(width=6f));"FS1"->drawOval(Color.White,Offset(w*.13f,h*.27f),Size(w*.74f,h*.46f),style=Stroke(width=5f));else->{drawCircle(spec.accent,w*.30f,c);drawCircle(spec.bg,w*.21f,c,style=Stroke(width=5f))}}};Text(spec.mark,color=spec.fg,fontSize=if(spec.mark.length>6)7.sp else 14.sp,fontWeight=FontWeight.Black,textAlign=TextAlign.Center,maxLines=1)}}
 
-@Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.70f,description);spec.remote!=null->RemoteBrandLogo(spec,Modifier,size*.72f,description);else->VectorBrandMark(spec,size*.70f)}}}
+@Composable private fun BrandBox(spec:BrandSpec,size:Dp,description:String){Box(Modifier.size(size).clip(RoundedCornerShape(size/3)).background(spec.bg).border(1.dp,spec.accent.copy(alpha=.9f),RoundedCornerShape(size/3)),contentAlignment=Alignment.Center){
+    // The vector mark is the permanent fallback. Bundled/remote artwork is an enhancement, never the only paint operation.
+    VectorBrandMark(spec,size*.70f)
+    when{spec.asset!=null->LocalSvgLogo(spec.asset,Modifier,size*.70f,description);spec.remote!=null->RemoteBrandLogo(spec,Modifier,size*.72f,description)}
+}}
 @Composable fun XSportsLeagueLogo(name:String,modifier:Modifier=Modifier,size:Dp=72.dp){val key=name.uppercase();Box(modifier,contentAlignment=Alignment.Center){BrandBox(spec(key),size,name)}}
 @Composable fun XSportsNetworkLogo(name:String,modifier:Modifier=Modifier,size:Dp=52.dp){val key=name.uppercase();val s=networkSpec(key);Box(modifier,contentAlignment=Alignment.Center){BrandBox(s,size,name)}}
