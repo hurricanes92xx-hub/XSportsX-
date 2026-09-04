@@ -32,7 +32,19 @@ object ScheduleSnapshotRepository {
         val canonical = league?.let(SportsScheduleService::canonicalLeagueFor)
         val now = Instant.now(); val cutoff = now.plus(UI_DAYS.toLong(), ChronoUnit.DAYS)
         return all(force).asSequence().filter { !it.isLive }
-            .filter { event -> canonical == null || SportsScheduleService.canonicalLeagueFor(event.league) == canonical }
+            .filter { event ->
+                when {
+                    canonical == null -> true
+                    canonical.equals("WRESTLING", true) -> {
+                        // The UI's WRESTLING category is an umbrella for the
+                        // separately sourced WWE/AEW/TNA/AAA schedules.
+                        event.league.equals("WWE", true) || event.league.equals("AEW", true) ||
+                            event.league.equals("TNA", true) || event.league.equals("AAA Wrestling", true) ||
+                            event.league.equals("WRESTLING", true)
+                    }
+                    else -> SportsScheduleService.canonicalLeagueFor(event.league) == canonical
+                }
+            }
             .filter { event ->
                 val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return@filter false
                 val localDate = start.atZone(java.time.ZoneId.systemDefault()).toLocalDate(); val today = now.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
