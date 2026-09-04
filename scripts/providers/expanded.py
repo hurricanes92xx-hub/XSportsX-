@@ -16,7 +16,10 @@ def _iso(value):
     except Exception:return str(value)
 
 def _team(obj,side):
-    value=obj.get(side) or obj.get(f"{side}Team") or obj.get(f"{side}_team") or {}
+    # Provider adapters use several common shapes. CFBD specifically exposes
+    # home_team/away_team, while other adapters commonly expose home/away.
+    value=(obj.get(side) or obj.get(f"{side}Team") or obj.get(f"{side}_team") or
+           obj.get(f"{side}_team_name") or obj.get(f"{side}TeamName") or {})
     if isinstance(value,dict):return value.get("shortDisplayName") or value.get("displayName") or value.get("name") or value.get("abbreviation") or ""
     return str(value or "")
 
