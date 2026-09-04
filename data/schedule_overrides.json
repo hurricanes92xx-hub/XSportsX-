@@ -3,6 +3,9 @@
   "purpose": "verified-current-event-corrections",
   "updatedAt": "2026-09-04T23:25:00Z",
   "expiresAt": "2026-09-08T23:59:59Z",
+  "remove": [
+    {"league":"WWE","title":"Monday Night Raw","start":"2026-09-07T00:00:00Z"}
+  ],
   "events": [
     {"id":"wwe-smackdown-2026-09-05","league":"WWE","title":"SmackDown","start":"2026-09-05T00:00:00Z","startUtc":"2026-09-05T00:00:00Z","tag":"UPCOMING","source":"official","officialScheduleUrl":"https://www.wwe.com/article/wwe-upcoming-events"},
     {"id":"aaa-lucha-libre-2026-09-06","league":"AAA Wrestling","title":"AAA Lucha Libre","start":"2026-09-06T02:00:00Z","startUtc":"2026-09-06T02:00:00Z","tag":"UPCOMING","source":"official","officialScheduleUrl":"https://www.wwe.com/article/wwe-upcoming-events"},
