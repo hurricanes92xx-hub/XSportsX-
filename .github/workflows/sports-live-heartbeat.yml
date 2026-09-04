@@ -47,13 +47,15 @@ jobs:
           if not isinstance(d.get('events'), list): raise SystemExit('Invalid canonical feed')
           print(f"Heartbeat input events: {len(d['events'])}")
           PY
-      - name: Run lightweight live intelligence
+      - name: Validate strict AI operating policy
+        run: python3 scripts/test_sports_ai_policy.py
+      - name: Run lightweight live intelligence with strict policy
         env:
           PYTHONUNBUFFERED: '1'
           SPORTS_AGENT_MODEL_API_KEY: ${{ secrets.SPORTS_AGENT_MODEL_API_KEY }}
           SPORTS_AGENT_GEMINI_API_KEY: ${{ secrets.SPORTS_AGENT_GEMINI_API_KEY }}
         run: |
-          python3 scripts/sports_agent.py data/schedule_feed.json --mode live --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
+          python3 scripts/sports_agent_strict_runner.py data/schedule_feed.json --mode live --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
       - name: Persist heartbeat state
         shell: bash
         run: |
