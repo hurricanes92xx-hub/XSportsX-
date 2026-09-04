@@ -1,0 +1,41 @@
+name: Run XSportsX Critical Repair
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-app]
+    paths:
+      - 'PATCH_TRIGGER.txt'
+      - 'scripts/critical_repair.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-critical-repair-run
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 0
+      - name: Apply repairs
+        run: python3 scripts/critical_repair.py
+      - name: Validate Python
+        run: python3 -m py_compile scripts/refresh_schedules_legacy.py scripts/sports_agent.py
+      - name: Commit repairs
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Repair Bot'
+          git config user.email 'xsportsx-repair-bot@users.noreply.github.com'
+          git add scripts app/src/main/java/com/xsportsx/app/FastXtreamEventResolver.kt app/src/main/java/com/xsportsx/app/LiveChannelsScreen.kt app/src/main/java/com/xsportsx/app/FuturisticSports.kt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'fix: repair schedule AI source latency and NFL logo'
+          git fetch origin android-app
+          git rebase --autostash origin/android-app
+          git push origin HEAD:android-app
