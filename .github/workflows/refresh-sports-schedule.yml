@@ -29,7 +29,7 @@ env:
 jobs:
   refresh:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout canonical engine
         uses: actions/checkout@v5
@@ -74,6 +74,12 @@ jobs:
           GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
           GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
         run: python3 scripts/refresh_schedules.py
+      - name: Autonomous schedule repair — all configured leagues
+        env:
+          PYTHONUNBUFFERED: '1'
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
+        run: python3 scripts/autonomous_schedule_repair.py
       - name: Normalize app-facing schedule contract
         run: python3 scripts/normalize_schedule_feed.py
       - name: Validate canonical feed
@@ -105,8 +111,10 @@ jobs:
           discovery=data.get('providerDiscovery') or {}
           season=data.get('seasonIntelligence') or {}
           gap=data.get('scheduleGapResolution') or {}
+          repair=data.get('autonomousScheduleRepair') or {}
           print(f"Discovery candidates: {discovery.get('discoveredCandidates',0)}; promoted: {discovery.get('promotedProviders',0)}")
           print(f"Season gaps: active={gap.get('activeGaps',0)} off-season={gap.get('offSeasonGaps',0)} searched={gap.get('searchedActiveGaps',0)} unresolved={gap.get('unresolvedAfterDiscovery',0)}")
+          print(f"Autonomous repair: candidates={repair.get('repairCandidates',0)} searched={repair.get('searchedLeagues',0)} recovered={repair.get('eventsRecovered',0)} unresolved={len(repair.get('unresolvedLeagues') or [])}")
           print(f"Season classifications recorded: {len(season)}")
           PY
       - name: Run deep canonical integrity gate
