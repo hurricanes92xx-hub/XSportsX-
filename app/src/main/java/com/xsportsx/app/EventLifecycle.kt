@@ -16,8 +16,9 @@ enum class EventLifecycle {
  * Self-sufficient event intelligence.
  *
  * It combines explicit provider state, clock position, event metadata and sport-aware
- * timing instead of treating "start time has passed" as proof of LIVE.  This lets the
- * client remain useful when a provider is late, briefly stale, or omits a live flag.
+ * timing instead of treating "start time has passed" as proof of LIVE. Server-side
+ * Sports Brain evidence is an additional signal only; it cannot override terminal state
+ * or extend an event beyond its sport-aware maximum duration.
  */
 object EventLifecycleResolver {
     private const val START_GRACE_MS = 5L * 60_000L
@@ -39,7 +40,15 @@ object EventLifecycleResolver {
             }
         }
 
-        // Some feeds omit state while still exposing score/period/clock/broadcast data.
+        // Server-side Brain evidence is deliberately advisory. It is useful when a
+        // provider's live flag is delayed, but still obeys the same duration guard.
+        if (hasBrainLiveEvidence(event)) {
+            return if (elapsed <= maxLiveDurationMs(event)) {
+                EventLifecycle.LIVE_CONFIRMED
+            } else EventLifecycle.STALE_UNKNOWN
+        }
+
+        // Some feeds omit state while still exposing score/period/clock metadata.
         if (hasSoftLiveEvidence(event)) {
             return if (elapsed <= maxLiveDurationMs(event)) {
                 EventLifecycle.LIVE_INFERRED
@@ -72,6 +81,10 @@ object EventLifecycleResolver {
             status == "live" || status == "in progress" || status == "in-progress" ||
             status == "inprogress" || status.contains("live") || status.contains("in progress")
     }
+
+    /** High-confidence server-side evidence from the deterministic Sports Brain. */
+    private fun hasBrainLiveEvidence(event: SportsEvent): Boolean =
+        event.intelligencePhase.equals("LIVE", true) && event.intelligenceConfidence >= 0.90
 
     /**
      * Soft evidence catches feeds where the status field is stale/blank but the event has
@@ -108,6 +121,9 @@ object EventLifecycleResolver {
         val elapsed = nowMillis - start
         if (isTerminal(event)) return 100
         if (hasStrongLiveSignal(event)) return if (elapsed <= maxLiveDurationMs(event)) 98 else 10
+        if (hasBrainLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) {
+            (event.intelligenceConfidence * 100.0).toInt().coerceIn(1, 99)
+        } else 12
         if (hasSoftLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) 82 else 12
         if (elapsed in 0..inferredWindowMs(event)) return 62
         if (start > nowMillis && start - nowMillis <= pregameWindowMs(event)) return 92
