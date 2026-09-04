@@ -13,9 +13,10 @@ on:
 permissions:
   contents: write
 
+# This is an evidence-recovery lane. It must not sit behind the deep schedule
+# refresh, otherwise a broken league can remain broken for an entire queue.
 concurrency:
-  group: xsportsx-schedule-refresh
-  queue: max
+  group: xsportsx-official-audit
   cancel-in-progress: false
 
 env:
