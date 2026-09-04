@@ -52,6 +52,8 @@ jobs:
         run: python3 scripts/test_sports_agent.py
       - name: Test multi-source evidence reasoning
         run: python3 scripts/test_sports_evidence.py
+      - name: Test autonomous Google sports research
+        run: python3 scripts/test_sports_web_research.py
       - name: Snapshot previous feed
         run: |
           if [ -f data/schedule_feed.json ]; then cp data/schedule_feed.json /tmp/schedule_feed.previous.json; else echo '{}' > /tmp/schedule_feed.previous.json; fi
@@ -152,14 +154,10 @@ jobs:
           set -euo pipefail
           git config user.name 'XSportsX Schedule Bot'
           git config user.email 'xsportsx-schedule-bot@users.noreply.github.com'
-          # All producers are complete here. Stage the complete generated data tree
-          # so a late writer cannot leave the index dirty during a rebase.
           git add -A data/
           if git diff --cached --quiet; then echo 'No canonical, discovery, or AI knowledge changes.'; exit 0; fi
           git commit -m 'chore: refresh canonical sports intelligence'
           for attempt in 1 2 3 4 5; do
-            # A remote update may arrive between checkout and push. Always make
-            # the local tree clean before rebasing; this is the key race fix.
             if git status --porcelain | grep -q .; then
               git add -A data/
               git commit -m 'chore: capture late generated intelligence' || true
@@ -171,7 +169,7 @@ jobs:
                 exit 0
               fi
             else
-              echo 'Rebase conflict detected; aborting and retrying from the remote tip.'
+              echo 'Rebase conflict detected; aborting and rebuilding the publish commit.'
               git rebase --abort || true
               git reset --mixed origin/android-app
               git add -A data/
