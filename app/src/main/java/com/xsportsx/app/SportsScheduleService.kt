@@ -3,17 +3,17 @@ package com.xsportsx.app
 /**
  * Canonical schedule facade used by Mobile and TV.
  *
- * ScheduleEngine owns the runtime schedule state. This facade remains as the
+ * ScheduleEngine owns the runtime schedule state. This facade remains the
  * compatibility API for older screens, but it no longer creates an independent
- * provider request path. That prevents UI callers from bypassing the engine's
- * warm cache, live overlay, refresh cadence, and last-good state.
+ * provider request path. Aggregate labels such as WRESTLING are UI groups,
+ * not provider identities.
  */
 object SportsScheduleService {
     private val uiChoices = listOf(
         "NFL", "NBA", "WNBA", "NCAA FB", "NCAA FCS", "NCAA BB", "NCAA WBB", "MLB", "NCAA BASEBALL", "NHL",
         "NCAA MEN HOCKEY", "NCAA WOMEN HOCKEY", "NCAA SOFTBALL", "NCAA VB", "NCAA MEN SOCCER", "NCAA WOMEN SOCCER",
         "NCAA MEN LAX", "NCAA WOMEN LAX", "MLS", "EPL", "LaLiga", "Bundesliga", "Serie A", "Ligue 1", "UCL", "UEL", "NWSL",
-        "UFC", "BOXING"
+        "UFC", "BOXING", "WRESTLING"
     )
 
     fun normalizeLeague(label: String): String = when (label.trim().uppercase()) {
@@ -35,26 +35,29 @@ object SportsScheduleService {
 
     fun canonicalLeagueFor(label: String): String = normalizeLeague(label)
 
+    /** Provider leagues represented by a UI aggregate. */
+    fun scheduleLeaguesFor(label: String): Set<String> = when (normalizeLeague(label)) {
+        "WRESTLING" -> setOf("WWE", "AEW", "TNA", "AAA WRESTLING")
+        else -> setOf(normalizeLeague(label))
+    }
+
     val uiLeagueChoices: List<String> = uiChoices
 
-    /** Return the engine's canonical warm schedule, refreshing only when empty. */
     suspend fun load(): List<SportsEvent> {
         ScheduleEngine.start()
         if (ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
         return ScheduleEngine.state.value.events
     }
 
-    /** Return the engine's canonical schedule, including the wider warm horizon. */
     suspend fun loadBackground(): List<SportsEvent> {
         ScheduleEngine.start()
         if (ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
         return ScheduleEngine.state.value.events
     }
 
-    /** Filter the canonical engine state rather than starting a separate provider request. */
     suspend fun loadForLeague(label: String, daysAhead: Int = 3): List<SportsEvent> {
         val events = load()
-        val league = normalizeLeague(label)
-        return events.filter { normalizeLeague(it.league) == league }
+        val wanted = scheduleLeaguesFor(label)
+        return events.filter { normalizeLeague(it.league) in wanted }
     }
 }
