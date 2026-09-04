@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [android-app]
-    paths: ['scripts/repair_ticker_placement.py']
+    paths: ['scripts/**', 'app/src/main/java/com/xsportsx/app/**']
 permissions:
   contents: write
 concurrency:
@@ -30,6 +30,10 @@ jobs:
           git add app/src/main/java/com/xsportsx/app/FuturisticSports.kt
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'fix: place sports ticker above mobile navigation'
-          git fetch origin android-app
-          git rebase --autostash origin/android-app
-          git push origin HEAD:android-app
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app && git push origin HEAD:android-app; then exit 0; fi
+            git rebase --abort || true
+            sleep $((attempt * 2))
+          done
+          exit 1
