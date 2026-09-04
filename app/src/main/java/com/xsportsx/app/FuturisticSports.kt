@@ -40,8 +40,6 @@ private val Panel = Color(0xFF0D1119)
 private val Panel2 = Color(0xFF141A24)
 private val Muted = Color(0xFF727B8B)
 
-private const val WIKI_LOGO = "https://commons.wikimedia.org/wiki/Special:FilePath/"
-
 data class XNetwork(val name: String, val type: String, val icon: String, val logoUrl: String = "")
 private val xNetworks = listOf(
     XNetwork("ESPN", "SPORTS", "ESPN", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/960px-ESPN_wordmark.svg.png"),
@@ -52,10 +50,10 @@ private val xNetworks = listOf(
     XNetwork("CBS Sports", "SPORTS", "CBS", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/CBS_Sports_%282021%29.svg/960px-CBS_Sports_%282021%29.svg.png"),
     XNetwork("SEC Network", "SPORTS", "SEC", "https://commons.wikimedia.org/wiki/Special:FilePath/SEC_Network_%282024%29.svg?width=256"),
     XNetwork("ACC Network", "SPORTS", "ACC", "https://commons.wikimedia.org/wiki/Special:FilePath/ACC_Network_ESPN_logo.svg?width=256"),
-    XNetwork("Big Ten Network", "SPORTS", "B1G", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256"),
+    XNetwork("Big Ten Network", "SPORTS", "SPORTS", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256"),
     XNetwork("ESPN+", "SPORTS", "ESPN+", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN%2B_logo.svg?width=256"),
     XNetwork("Pac-12 Network", "SPORTS", "PAC12", "https://commons.wikimedia.org/wiki/Special:FilePath/Pac-12_Network_logo.svg?width=256"),
-    XNetwork("Red Bull TV", "ACTION", "RED BULL", "https://img.logokit.com/redbull.tv"),
+    XNetwork("Red Bull TV", "SPORTS", "RED BULL", "https://img.logokit.com/redbull.tv"),
     XNetwork("Monster Jam", "MOTORSPORT", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256"),
     XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256")
 )
@@ -71,7 +69,7 @@ private val sports = listOf(
     SportVisual("MOTOGP", "GP", "https://commons.wikimedia.org/wiki/Special:FilePath/MotoGP_logo_%282024%29.svg?width=256"), SportVisual("WRC", "WRC", "https://commons.wikimedia.org/wiki/Special:FilePath/WRC_logo.svg?width=256"),
     SportVisual("WEC", "WEC", "https://commons.wikimedia.org/wiki/Special:FilePath/WEC_Logo.svg?width=256"), SportVisual("IMSA", "IMSA", "https://commons.wikimedia.org/wiki/Special:FilePath/IMSA_SportsCar_Championship_logo.svg?width=256"),
     SportVisual("FORMULA E", "FE", "https://commons.wikimedia.org/wiki/Special:FilePath/Formula-e-logo-championship_2023.svg?width=256"), SportVisual("MXGP", "MX", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_MXGP.svg?width=256"),
-    SportVisual("MONSTER JAM", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256"), SportVisual("ESPORTS", "ESPORTS", ""), SportVisual("ACTION SPORTS", "ACTION", "")
+    SportVisual("MONSTER JAM", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256")
 )
 
 @Composable private fun SportGlyph(label: String, size: androidx.compose.ui.unit.Dp = 28.dp) { Box(Modifier.size(size).clip(RoundedCornerShape(size / 3)).background(Brush.linearGradient(listOf(Color(0xFF202A38), Color(0xFF10141D)))), contentAlignment = Alignment.Center) { Text(label, color = Color.White, fontSize = if (label.length > 3) 7.sp else 8.sp, fontWeight = FontWeight.Black, letterSpacing = .2.sp, maxLines = 1) } }
@@ -108,7 +106,7 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onSource: () -> Unit = {}, onNetw
 @Composable private fun MobileLiveCenter(sourceConfigured:Boolean,onConnect:()->Unit,onNetwork:(XNetwork)->Unit){MobileSectionLabel("LIVE CENTER",if(sourceConfigured)"SOURCE READY"else"CONNECT SOURCE");Spacer(Modifier.height(10.dp));if(!sourceConfigured)ActionPanel("CONNECT YOUR SOURCE","Connect Xtream/M3U, then XSportsX can match your live events and networks.","CONNECT SOURCE →",onConnect)else{ActionPanel("LIVE EVENT MATCHING","Your source is connected. Choose a network to browse matched streams.","REFRESH LIVE →",onConnect);Spacer(Modifier.height(18.dp));LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp)){items(xNetworks.take(8)){NetworkCard(it,onNetwork)}}}}
 @Composable private fun MobileNetworks(sourceConfigured:Boolean,onConnect:()->Unit,onNetwork:(XNetwork)->Unit){MobileSectionLabel("NETWORKS","SOURCE MATCH");Spacer(Modifier.height(10.dp));if(!sourceConfigured){ActionPanel("NETWORKS ARE READY","Connect your authorized source to turn these cards into playable source matches.","ADD SOURCE →",onConnect);Spacer(Modifier.height(16.dp))};LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(end=8.dp)){items(xNetworks,key={it.name}){NetworkCard(it,onNetwork)}}}
 @Composable private fun MobileFavorites(onConnect:()->Unit){MobileSectionLabel("FAVORITES","YOUR PICKS");Spacer(Modifier.height(12.dp));ActionPanel("YOUR FAVORITES LIVE HERE","Pin teams, networks and events once your source is connected.","ADD SOURCE →",onConnect)}
-private fun mobileSportFilter(sport:String):String=when(sport.uppercase()){"NFL"->"nfl||nfl network";"NBA"->"nba";"NCAA FB"->"ncaaf||ncaa football||college football";"NCAA BB"->"ncaab||ncaa basketball||college basketball";"MLB"->"mlb||major league baseball";"NHL"->"nhl||national hockey league";"UFC"->"ufc||ultimate fighting championship";"BOXING"->"boxing||world boxing";"RUGBY"->"rugby||rugby pass";"VOLLEYBALL"->"volleyball||fivb";"LACROSSE"->"lacrosse||world lacrosse";"WRESTLING"->"wrestling||wwe||aew";"MOTOGP"->"motogp||moto gp";"WRC"->"wrc||world rally championship";"WEC"->"wec||world endurance championship";"IMSA"->"imsa";"FORMULA E"->"formula e||formulae";"MXGP"->"mxgp||motocross";"MONSTER JAM"->"monster jam";"ESPORTS"->"esports";"ACTION SPORTS"->"action sports";else->sport}
+private fun mobileSportFilter(sport:String):String=when(sport.uppercase()){"NFL"->"nfl||nfl network";"NBA"->"nba";"NCAA FB"->"ncaaf||ncaa football||college football";"NCAA BB"->"ncaab||ncaa basketball||college basketball";"MLB"->"mlb||major league baseball";"NHL"->"nhl||national hockey league";"UFC"->"ufc||ultimate fighting championship";"BOXING"->"boxing||world boxing";"RUGBY"->"rugby||rugby pass";"VOLLEYBALL"->"volleyball||fivb";"LACROSSE"->"lacrosse||world lacrosse";"WRESTLING"->"wrestling||wwe||aew";"MOTOGP"->"motogp||moto gp";"WRC"->"wrc||world rally championship";"WEC"->"wec||world endurance championship";"IMSA"->"imsa";"FORMULA E"->"formula e||formulae";"MXGP"->"mxgp||motocross";"MONSTER JAM"->"monster jam";else->sport}
 
 @Composable private fun MobileSectionLabel(title:String,eyebrow:String?){Row(verticalAlignment=Alignment.CenterVertically){Text(title,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp);eyebrow?.let{Spacer(Modifier.width(8.dp));Text(it,color=Muted,fontSize=8.sp,fontWeight=FontWeight.Black,letterSpacing=.8.sp)}}}
 @Composable private fun ActionPanel(title:String,body:String,button:String,onClick:()->Unit){Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF111722),Color(0xFF2A0D14)))).padding(18.dp)){Text(title,color=Color.White,fontSize=17.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(6.dp));Text(body,color=Color(0xFF8F98A7),fontSize=11.sp,lineHeight=16.sp);Spacer(Modifier.height(13.dp));Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).clickable{onClick()}.padding(horizontal=14.dp,vertical=9.dp)){Text(button,color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black)}}}
