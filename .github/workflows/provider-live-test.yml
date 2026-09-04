@@ -29,6 +29,8 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Validate sports agent and knowledge graph
         run: python3 scripts/test_sports_agent.py
+      - name: Validate multi-source evidence reasoning
+        run: python3 scripts/test_sports_evidence.py
       - name: Run canonical provider live test
         env:
           PYTHONUNBUFFERED: '1'
