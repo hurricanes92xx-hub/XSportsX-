@@ -23,7 +23,7 @@ def _status(value):
     return "UPCOMING"
 
 def _competition_matches(value,league):
-    aliases={"EPL":{"englishpremierleague","premierleague"},"UCL":{"uefachampionsleague","championsleague"},"UEL":{"uefaeuropaleague","europaleague"},"LaLiga":{"laliga","spanishlaliga"},"Serie A":{"seriea","italianseriea"},"Bundesliga":{"bundesliga","germanbundesliga"},"Ligue 1":{"ligue1","frenchligue1"},"MLS":{"mls","majorleaguesoccer"},"NWSL":{"nwsl","nationalwomenssoccerleague"},"NBA":{"nba","nationalbasketballassociation"},"WNBA":{"wnba","womensnationalbasketballassociation"},"IPL":{"ipl","indianpremierleague"},"ICC T20":{"icct20","t20worldcup","internationalcrickett20"},"ATP":{"atp","atptour"},"WTA":{"wta","wtatour"}}
+    aliases={"EPL":{"englishpremierleague","premierleague"},"UCL":{"uefachampionsleague","championsleague"},"UEL":{"uefaeuropa","uefaeuropaleague","europaleague"},"LaLiga":{"laliga","spanishlaliga"},"Serie A":{"seriea","italianseriea"},"Bundesliga":{"bundesliga","germanbundesliga"},"Ligue 1":{"ligue1","frenchligue1"},"MLS":{"mls","majorleaguesoccer"},"NWSL":{"nwsl","nationalwomenssoccerleague"},"NBA":{"nba","nationalbasketballassociation"},"WNBA":{"wnba","womensnationalbasketballassociation"},"IPL":{"ipl","indianpremierleague"},"ICC T20":{"icct20","t20worldcup","internationalcrickett20"},"ATP":{"atp","atptour"},"WTA":{"wta","wtatour"}}
     return _norm(value) in aliases.get(league,set())
 
 def _espn_fallback(league,icon):
@@ -44,10 +44,45 @@ def _espn_fallback(league,icon):
         return True,out
     except Exception:return False,[]
 
+def _espn_cricket(league,icon):
+    """Use ESPN's personalized cricket header instead of the broken site scoreboard.
+
+    The site scoreboard returns 404 for cricket; the public header exposes active
+    series and match events without a key. This also avoids probing dozens of
+    guessed league slugs.
+    """
+    wanted={"IPL":{"ipl","indianpremierleague"},"ICC T20":{"icct20","t20worldcup","internationalcrickett20"}}
+    try:
+        root=_get("https://site.api.espn.com/apis/personalized/v2/scoreboard/header?sport=cricket&region=in&tz=Asia/Calcutta",timeout=8)
+        leagues=(((root.get("sports") or [{}])[0]).get("leagues") or []) if isinstance(root,dict) else []
+        out=[]
+        for series in leagues:
+            names={_norm(series.get("name")),_norm(series.get("slug")),_norm(series.get("abbreviation")),_norm(series.get("shortName"))}
+            if not any(any(alias in name for alias in wanted.get(league,set())) for name in names):continue
+            for event in series.get("events") or []:
+                if not isinstance(event,dict):continue
+                comp=(event.get("competitions") or [{}])[0]
+                teams=comp.get("competitors") or []
+                home=next((x.get("team",{}).get("displayName") or x.get("team",{}).get("shortDisplayName") for x in teams if x.get("homeAway")=="home"),"")
+                away=next((x.get("team",{}).get("displayName") or x.get("team",{}).get("shortDisplayName") for x in teams if x.get("homeAway")=="away"),"")
+                start=event.get("date") or event.get("startDate")
+                if not start:continue
+                state=str(((comp.get("status") or {}).get("type") or {}).get("state") or "pre").lower()
+                if not home or not away:
+                    name=str(event.get("name") or event.get("shortName") or "").strip()
+                    title=name or str(series.get("name") or league)
+                else:title=f"{away} @ {home}"
+                out.append({"league":league,"title":title,"start":_iso(start),"tag":"LIVE" if state=="in" else "FINAL" if state=="post" else "UPCOMING","icon":icon,"source":"espn-cricket","home":home,"away":away,"providerEventId":f"espn:{event.get('id') or start}"})
+        return True,out
+    except Exception:return False,[]
+
 def sportscore(league,icon):
     sport_by_league={"EPL":"football","UCL":"football","UEL":"football","LaLiga":"football","Serie A":"football","Bundesliga":"football","Ligue 1":"football","MLS":"football","NWSL":"football","NBA":"basketball","WNBA":"basketball","IPL":"cricket","ICC T20":"cricket","ATP":"tennis","WTA":"tennis"}
     sport=sport_by_league.get(league)
     if not sport:return True,[],"unsupported league for SportScore"
+    if sport=="cricket":
+        ok,shadow=_espn_cricket(league,icon)
+        if ok and shadow:return True,shadow,""
     url="https://sportscore.com/api/widget/matches/?"+urllib.parse.urlencode({"sport":sport,"limit":50,"src":"XSportsX"})
     try:
         root=_get(url,timeout=8); rows=root.get("matches") if isinstance(root,dict) else root; out=[]
