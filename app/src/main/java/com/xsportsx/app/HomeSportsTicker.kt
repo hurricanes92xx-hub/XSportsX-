@@ -75,7 +75,7 @@ fun HomeSportsTicker(modifier: Modifier = Modifier, enabled: Boolean = true) {
         ?: if (loading) "SPORTS FEED • LOADING" else "SPORTS FEED • NO GAMES AVAILABLE"
 
     Row(
-        modifier.fillMaxWidth().height(42.dp).background(Color(0xEE07090E)).padding(horizontal = 18.dp),
+        modifier.fillMaxWidth().navigationBarsPadding().height(42.dp).background(Color(0xEE07090E)).padding(horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("X", color = Color(0xFFFF1744), fontWeight = FontWeight.Black, fontSize = 20.sp)
