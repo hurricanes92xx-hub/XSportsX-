@@ -9,18 +9,25 @@ def _load_policy():
     try:return json.loads(POLICY_PATH.read_text(encoding='utf-8'))
     except Exception:return {'default':{'unknownLeagueMode':'active','inactiveProbeHours':24,'recentActivityDays':45},'leagueWindows':{}}
 def _month_day(v):
-    """Accept [month,day] and legacy scalar month safely."""
+    """Accept [month,day] and legacy scalar/string dates safely."""
     if isinstance(v,(list,tuple)) and len(v)>=2:return int(v[0]),int(v[1])
     if isinstance(v,int):return int(v),1
     if isinstance(v,str):
         parts=v.replace('/','-').split('-')
         if len(parts)>=2:return int(parts[0]),int(parts[1])
     raise ValueError(f'invalid season date: {v!r}')
+def _is_date_pair(v):
+    return isinstance(v,(list,tuple)) and len(v)==2 and all(not isinstance(x,(list,tuple,dict)) for x in v)
+def _normalize_windows(windows):
+    if not isinstance(windows,(list,tuple)) or not windows:return []
+    # Policy supports a single season as [[month,day],[month,day]].
+    if len(windows)==2 and all(_is_date_pair(x) for x in windows):return [windows]
+    # Multiple seasons are [[[m,d],[m,d]], ...].
+    return [w for w in windows if isinstance(w,(list,tuple)) and len(w)==2 and _is_date_pair(w[0]) and _is_date_pair(w[1])]
 def _window_active(today:date,windows):
     if not windows:return True
     md=today.month*100+today.day
-    for window in windows:
-        if not isinstance(window,(list,tuple)) or len(window)!=2:continue
+    for window in _normalize_windows(windows):
         start,end=window
         sm,sd=_month_day(start); em,ed=_month_day(end)
         start_md,end_md=sm*100+sd,em*100+ed
