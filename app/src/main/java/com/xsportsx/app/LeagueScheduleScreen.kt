@@ -103,26 +103,44 @@ fun LeagueScheduleScreen(league: String, onBack: () -> Unit) {
 
 @Composable
 private fun LeagueEventCard(event: SportsEvent, onWatch: () -> Unit) {
-    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF10141C)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF080B11)), contentAlignment = Alignment.Center) {
-            if (event.artUrl.isNotBlank()) AsyncImage(model = event.artUrl, contentDescription = event.league, modifier = Modifier.fillMaxSize().padding(9.dp), contentScale = ContentScale.Fit)
-            else XSportsLeagueLogo(event.league, size = 42.dp)
-        }
-        Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) {
-            if (event.away.isNotBlank() && event.home.isNotBlank()) {
-                TeamLine(event.away, event.awayLogo, "AWAY")
-                Spacer(Modifier.height(3.dp))
-                TeamLine(event.home, event.homeLogo, "HOME")
-            } else {
-                Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
+    Column(
+        Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF10141C))
+            .padding(12.dp)
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF080B11)), contentAlignment = Alignment.Center) {
+                if (event.artUrl.isNotBlank()) {
+                    AsyncImage(model = event.artUrl, contentDescription = event.league, modifier = Modifier.fillMaxSize().padding(9.dp), contentScale = ContentScale.Fit)
+                } else {
+                    XSportsLeagueLogo(event.league, size = 42.dp)
+                }
             }
-            Spacer(Modifier.height(5.dp))
-            Text(if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF536C) else Color(0xFF7F8795), fontSize = 10.sp)
-            if (event.broadcast.isNotBlank()) Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (event.away.isNotBlank() && event.home.isNotBlank()) {
+                    TeamLine(event.away, event.awayLogo, "AWAY")
+                    TeamLine(event.home, event.homeLogo, "HOME")
+                } else {
+                    Text(event.title.ifBlank { event.league }, color = Color.White, fontWeight = FontWeight.Black, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                }
+            }
         }
-        if (event.isLive) Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744))) { Text("WATCH") }
-        else Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 9.sp, fontWeight = FontWeight.Black)
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(if (event.isLive) "LIVE • ${event.status.ifBlank { event.state }}" else formatTime(event.startUtc), color = if (event.isLive) Color(0xFFFF536C) else Color(0xFF7F8795), fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                if (event.broadcast.isNotBlank()) Text(event.broadcast, color = Color(0xFF9BA4B2), fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            if (event.isLive) {
+                Button(onClick = onWatch, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF1744)), contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp)) { Text("WATCH", fontSize = 10.sp, fontWeight = FontWeight.Black) }
+            } else {
+                Surface(color = Color(0xFF171C26), shape = RoundedCornerShape(8.dp)) {
+                    Text("UPCOMING", color = Color(0xFF9BA4B2), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp))
+                }
+            }
+        }
     }
 }
 
@@ -135,7 +153,8 @@ private fun TeamLine(name: String, logo: String, label: String) {
         }
         Spacer(Modifier.width(7.dp))
         Text(name, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        Text(label, color = Color(0xFF667080), fontSize = 8.sp, fontWeight = FontWeight.Black)
+        Spacer(Modifier.width(6.dp))
+        Text(label, color = Color(0xFF667080), fontSize = 8.sp, fontWeight = FontWeight.Black, modifier = Modifier.widthIn(min = 32.dp))
     }
 }
 
