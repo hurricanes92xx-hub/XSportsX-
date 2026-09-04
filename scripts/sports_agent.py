@@ -40,13 +40,14 @@ def _parse_date(value):
     except Exception:return None
 def _recover_html_schedule(league,url):
     if league.upper()!='UFC':return []
+    body,ctype,_=discovery._get(url,timeout=6)
+    if not body:return []
+    text=body.decode('utf-8','replace');events=[]
+    # Official single-event pages often expose Event JSON-LD even when the index is JS-rendered.
     for obj in schedule_legacy.jsonld_objects(text):
         kind=obj.get('@type'); start=_parse_date(obj.get('startDate')); title=str(obj.get('name') or '').strip()
         if (kind=='Event' or (isinstance(kind,list) and 'Event' in kind)) and title and start and start>=datetime.now(timezone.utc)-timedelta(hours=12):
             events.append({'sport':'MMA','league':league,'title':title,'startUtc':start.isoformat().replace('+00:00','Z'),'start':start.isoformat().replace('+00:00','Z'),'status':'scheduled','state':'','source':'official-jsonld','discoveryUrl':url})
-    body,ctype,_=discovery._get(url,timeout=6)
-    if not body:return []
-    text=body.decode('utf-8','replace');events=[]
     links=list(re.finditer(r'<a[^>]+href=["\']/event/([^"\']+)[^>]*>(.*?)</a>',text,re.I|re.S))
     date_re=re.compile(r'(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s+([A-Z][a-z]{2})\s+(\d{1,2})\s*/\s*(\d{1,2}:\d{2}\s*[AP]M)\s*([A-Z]{2,5})')
     seen=set();now=datetime.now(timezone.utc)
@@ -157,7 +158,6 @@ def _recover_wrestling_expectations(feed):
         if not any(str(x.get('league') or '')=='WWE' and str(x.get('title') or '').strip().lower()==low and _parse_date(x.get('startUtc') or x.get('start'))==start for x in current):
             candidate=dict(e); candidate['source']='ai-official-wrestling-recovery'; candidate['aiRecovered']=True; recovered.append(candidate)
     return recovered, {'checked':True,'recovered':len(recovered)}
-
 def _recover_gap(league):
     recovered=[];research=web_research.research_schedule(league,limit=10)
     urls=[str(r.get('url','')) for r in research if float(r.get('score',0))>=0.70]
