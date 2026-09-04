@@ -1,20 +1,23 @@
 package com.xsportsx.app
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedInputStream
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPInputStream
-import java.io.BufferedInputStream
-import java.io.InputStream
 
 /**
- * Fast Xtream metadata index. Categories are fetched first and sports categories
- * are resolved on demand; the complete catalog can be hydrated in the background.
- * Credentials are never persisted here; only stream metadata is cached locally.
+ * Fast Xtream metadata index. Categories are fetched first; event resolution never
+ * downloads the provider's full live catalog. Cached category indexes are preferred.
  */
 class XtreamSourceIndex(context: Context) {
     data class Category(val id: String, val name: String)
@@ -28,16 +31,22 @@ class XtreamSourceIndex(context: Context) {
     companion object {
         private const val CATEGORY_TTL = 6 * 60 * 60 * 1000L
         private const val INDEX_TTL = 30 * 60 * 1000L
+        private const val CATEGORY_CALL_TIMEOUT_MS = 3_000
+        private const val MAX_EVENT_CATEGORIES = 8
         private val SPORTS_TERMS = setOf(
             "sport", "sports", "espn", "fox", "fs1", "fs2", "cbs sport", "nfl", "mlb", "nba", "nhl",
             "ncaa", "college", "sec", "acc", "big ten", "btn", "tnt", "tbs", "trutv", "usa sport",
             "wwe", "aew", "tna", "wrestling", "ufc", "fight", "boxing", "dazn", "tsn", "sportsnet",
             "paramount", "peacock", "fubo", "fanduel", "golf", "tennis", "nascar", "racing", "soccer", "football",
-            "hockey", "baseball", "basketball", "motorsport", "bein", "tudn"
+            "hockey", "baseball", "basketball", "motorsport", "bein", "tudn", "volleyball", "field hockey"
         )
     }
 
-    suspend fun fastResolve(config: SourceConfig, event: SportsEvent, maxCategories: Int = 12): List<Channel> {
+    /**
+     * Event-first resolution. It searches only relevant Xtream categories and does
+     * the category requests concurrently. It never falls back to get_live_streams.
+     */
+    suspend fun fastResolve(config: SourceConfig, event: SportsEvent, maxCategories: Int = MAX_EVENT_CATEGORIES): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = getCategories(config, force = false)
         val ranked = categories.map { it to categoryScore(it.name, event) }
@@ -46,8 +55,30 @@ class XtreamSourceIndex(context: Context) {
             .take(maxCategories)
             .map { it.first }
         if (ranked.isEmpty()) return emptyList()
-        val loaded = ranked.flatMap { category -> getCategoryChannels(config, category.id, force = false) }
-        return loaded.distinctBy { it.id }
+
+        val cached = ranked.flatMap { category ->
+            val key = sourceKey(config) + ":" + category.id
+            channelCache[key] ?: loadPersistedChannels(key).orEmpty()
+        }.distinctBy { it.id }
+        if (cached.isNotEmpty()) return cached
+
+        return coroutineScope {
+            ranked.map { category ->
+                async(Dispatchers.IO) {
+                    runCatching { getCategoryChannelsBlocking(config, category.id, force = false) }.getOrDefault(emptyList())
+                }
+            }.awaitAll().flatten().distinctBy { it.id }
+        }
+    }
+
+    /** Cached sports categories/channels for startup; no network work. */
+    fun getCachedSports(config: SourceConfig): List<Channel> {
+        if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
+        val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
+        val key = sourceKey(config)
+        return categories.filter { categoryScore(it.name, null) > 0 }
+            .flatMap { channelCache["$key:${it.id}"] ?: loadPersistedChannels("$key:${it.id}").orEmpty() }
+            .distinctBy { it.id }
     }
 
     fun warm(config: SourceConfig) {
@@ -57,7 +88,7 @@ class XtreamSourceIndex(context: Context) {
         Thread {
             try {
                 val categories = getCategoriesBlocking(config, false)
-                categories.forEach { getCategoryChannelsBlocking(config, it.id, false) }
+                categories.filter { categoryScore(it.name, null) > 0 }.take(24).forEach { getCategoryChannelsBlocking(config, it.id, false) }
             } catch (_: Throwable) {
             } finally {
                 running.remove("all:$key")
@@ -65,10 +96,7 @@ class XtreamSourceIndex(context: Context) {
         }.start()
     }
 
-    fun getCachedAll(config: SourceConfig): List<Channel> {
-        val key = sourceKey(config)
-        return channelCache[key] ?: loadPersistedChannels(key).orEmpty()
-    }
+    fun getCachedAll(config: SourceConfig): List<Channel> = getCachedSports(config)
 
     private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> =
         getCategoriesBlocking(config, force)
@@ -94,9 +122,6 @@ class XtreamSourceIndex(context: Context) {
         return result
     }
 
-    private suspend fun getCategoryChannels(config: SourceConfig, categoryId: String, force: Boolean): List<Channel> =
-        getCategoryChannelsBlocking(config, categoryId, force)
-
     private fun getCategoryChannelsBlocking(config: SourceConfig, categoryId: String, force: Boolean): List<Channel> {
         val key = sourceKey(config) + ":" + categoryId
         channelCache[key]?.let { if (!force) return it }
@@ -121,17 +146,22 @@ class XtreamSourceIndex(context: Context) {
         return result
     }
 
-    private fun categoryScore(name: String, event: SportsEvent): Int {
+    private fun categoryScore(name: String, event: SportsEvent?): Int {
         val n = normalize(name)
+        if (n.isBlank()) return 0
         var score = 0
         SPORTS_TERMS.forEach { if (n.contains(normalize(it))) score += 10 }
-        val eventTerms = normalize("${event.sport} ${event.league} ${event.broadcast} ${event.title}")
-        listOf(event.sport, event.league, event.broadcast).forEach { term ->
-            val t = normalize(term)
-            if (t.length >= 3 && n.contains(t)) score += 25
+        if (event != null) {
+            listOf(event.sport, event.league, event.broadcast).forEach { term ->
+                val t = normalize(term)
+                if (t.length >= 3 && n.contains(t)) score += 25
+            }
+            val eventTerms = normalize("${event.sport} ${event.league} ${event.broadcast} ${event.title}")
+            if (eventTerms.contains("wwe") && n.contains("wrestling")) score += 25
+            if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
+            if (eventTerms.contains("volleyball") && n.contains("volleyball")) score += 30
+            if (eventTerms.contains("field hockey") && n.contains("hockey")) score += 30
         }
-        if (eventTerms.contains("wwe") && n.contains("wrestling")) score += 25
-        if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
         return score
     }
 
@@ -144,6 +174,7 @@ class XtreamSourceIndex(context: Context) {
         val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name)) }
         prefs.edit().putString("cat_$key", a.toString()).putLong("cat_time_$key", System.currentTimeMillis()).apply()
     }
+
     private fun loadPersistedCategories(key: String): List<Category>? = runCatching {
         val a = JSONArray(prefs.getString("cat_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Category(o.optString("id"), o.optString("name"))) } }
     }.getOrNull()?.takeIf { it.isNotEmpty() }
@@ -152,6 +183,7 @@ class XtreamSourceIndex(context: Context) {
         val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name).put("categoryId", it.categoryId).put("group", it.group).put("icon", it.icon)) }
         prefs.edit().putString("streams_$key", a.toString()).putLong("stream_time_$key", System.currentTimeMillis()).apply()
     }
+
     private fun loadPersistedChannels(key: String): List<Channel>? = runCatching {
         val a = JSONArray(prefs.getString("streams_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Channel(o.optString("id"), o.optString("name"), o.optString("categoryId"), o.optString("group"), o.optString("icon"))) } }
     }.getOrNull()?.takeIf { it.isNotEmpty() }
@@ -160,13 +192,22 @@ class XtreamSourceIndex(context: Context) {
         val bytes = java.security.MessageDigest.getInstance("SHA-1").digest(value.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
+
     private fun http(target: String): String {
         val c = (URL(target).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"; connectTimeout = 2500; readTimeout = 6000; instanceFollowRedirects = true; useCaches = true
-            setRequestProperty("User-Agent", "XSportsX/2.0"); setRequestProperty("Accept", "application/json"); setRequestProperty("Accept-Encoding", "gzip"); setRequestProperty("Connection", "keep-alive")
+            requestMethod = "GET"
+            connectTimeout = 2_000
+            readTimeout = CATEGORY_CALL_TIMEOUT_MS
+            instanceFollowRedirects = true
+            useCaches = true
+            setRequestProperty("User-Agent", "XSportsX/3.0")
+            setRequestProperty("Accept", "application/json")
+            setRequestProperty("Accept-Encoding", "gzip")
+            setRequestProperty("Connection", "keep-alive")
         }
         return try {
-            val code = c.responseCode; if (code !in 200..299) error("Source returned HTTP $code")
+            val code = c.responseCode
+            if (code !in 200..299) error("Source returned HTTP $code")
             val raw: InputStream = BufferedInputStream(c.inputStream)
             val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw
             input.bufferedReader(Charsets.UTF_8).use { it.readText() }
