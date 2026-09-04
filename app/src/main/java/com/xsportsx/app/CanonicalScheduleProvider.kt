@@ -14,8 +14,10 @@ import java.time.temporal.ChronoUnit
 /** Reads the repository's server-refreshed canonical schedule feed. */
 object CanonicalScheduleProvider {
     private const val FEED_URL = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/data/schedule_feed.json"
+    private const val OVERRIDE_URL = "https://raw.githubusercontent.com/hurricanes92xx-hub/XSportsX-/android-app/data/schedule_overrides.json"
     private const val CONNECT_TIMEOUT_MS = 1_500
     private const val READ_TIMEOUT_MS = 4_000
+    private const val OVERRIDE_READ_TIMEOUT_MS = 1_500
     private const val MAX_FEED_AGE_HOURS = 24L
 
     suspend fun load(league: String? = null, daysAhead: Int = 3): List<SportsEvent> = withContext(Dispatchers.IO) {
@@ -27,17 +29,39 @@ object CanonicalScheduleProvider {
             val canonical = league?.let { SportsScheduleService.canonicalLeagueFor(it) }
             val now = Instant.now()
             val cutoff = now.plus(daysAhead.toLong(), ChronoUnit.DAYS)
-            val events = root.optJSONArray("events") ?: JSONArray()
-            val out = ArrayList<SportsEvent>(events.length())
 
-            for (i in 0 until events.length()) {
-                val e = events.optJSONObject(i) ?: continue
+            val allEvents = ArrayList<JSONObject>()
+            val feedEvents = root.optJSONArray("events") ?: JSONArray()
+            for (i in 0 until feedEvents.length()) feedEvents.optJSONObject(i)?.let(allEvents::add)
+
+            // Short-lived, independently published corrections let the Android client
+            // recover immediately from a bad provider snapshot while the main feed heals.
+            val overrideRoot = runCatching { JSONObject(httpOverride("$OVERRIDE_URL?ts=${System.currentTimeMillis() / 10_000L}")) }.getOrNull()
+            val overridesActive = overrideRoot?.let { parseInstant(it.optString("expiresAt"))?.isAfter(now) == true } == true
+            val removed = mutableSetOf<String>()
+            if (overridesActive) {
+                val remove = overrideRoot?.optJSONArray("remove") ?: JSONArray()
+                for (i in 0 until remove.length()) {
+                    val r = remove.optJSONObject(i) ?: continue
+                    removed += "${r.optString("league").trim().uppercase()}|${r.optString("title").trim().lowercase()}|${r.optString("start").trim()}"
+                }
+                val extra = overrideRoot?.optJSONArray("events") ?: JSONArray()
+                for (i in 0 until extra.length()) extra.optJSONObject(i)?.let(allEvents::add)
+            }
+
+            val out = ArrayList<SportsEvent>(allEvents.size)
+            for (e in allEvents) {
                 val rawLeague = e.optString("league").trim()
                 if (rawLeague.isBlank()) continue
                 val canonicalLeague = canonicalFeedLeague(rawLeague)
-                if (canonical != null && SportsScheduleService.canonicalLeagueFor(canonicalLeague) != canonical) continue
 
                 val start = parseInstant(e.optString("start")) ?: continue
+                val title = e.optString("title").trim()
+                val removeKey = "${rawLeague.uppercase()}|${title.lowercase()}|${start.toString()}"
+                if (removeKey in removed) continue
+
+                if (canonical != null && SportsScheduleService.canonicalLeagueFor(canonicalLeague) != canonical) continue
+
                 val tag = e.optString("tag").uppercase()
                 val isLive = tag == "LIVE"
                 if (!isLive && tag == "UPCOMING") {
@@ -46,7 +70,6 @@ object CanonicalScheduleProvider {
                     if (start.isBefore(now.minus(10, ChronoUnit.MINUTES)) || !start.isBefore(cutoff)) continue
                 }
 
-                val title = e.optString("title").trim()
                 val teams = splitMatchup(title)
                 val state = when (tag) { "LIVE" -> "in"; "FINAL" -> "post"; else -> "pre" }
                 val status = if (tag.isNotBlank()) tag else "UPCOMING"
@@ -131,6 +154,21 @@ object CanonicalScheduleProvider {
         c.setRequestProperty("User-Agent", "XSportsX/2.0 Android")
         return try {
             if (c.responseCode !in 200..299) error("Schedule feed HTTP ${c.responseCode}")
+            c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { c.disconnect() }
+    }
+
+    private fun httpOverride(target: String): String {
+        val c = URL(target).openConnection() as HttpURLConnection
+        c.connectTimeout = 800
+        c.readTimeout = OVERRIDE_READ_TIMEOUT_MS
+        c.requestMethod = "GET"
+        c.instanceFollowRedirects = true
+        c.useCaches = false
+        c.setRequestProperty("Accept", "application/json")
+        c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
+        return try {
+            if (c.responseCode !in 200..299) error("Schedule override HTTP ${c.responseCode}")
             c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
         } finally { c.disconnect() }
     }
