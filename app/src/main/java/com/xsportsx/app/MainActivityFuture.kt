@@ -93,7 +93,6 @@ class MainActivityFuture : ComponentActivity() {
                             }
                         )
                         TvPairButton(connected = connected, onClick = { if (connected) mobilePair = true else connectSource = true }, modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 24.dp))
-                        HomeSportsTicker(Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp))
                     }
                 }
             }
