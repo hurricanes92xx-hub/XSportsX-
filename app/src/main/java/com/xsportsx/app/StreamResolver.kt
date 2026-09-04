@@ -154,7 +154,7 @@ class StreamResolver(context: Context) {
     }
     private fun http(target: String): String {
         val request = Request.Builder().url(target).get().header("User-Agent", "XSportsX/3.0").header("Accept", "application/json,application/vnd.apple.mpegurl,application/x-mpegURL,text/plain,*/*").build()
-        HTTP.newCall(request).execute().use { response ->
+        return HTTP.newCall(request).execute().use { response ->
             if (!response.isSuccessful) error("Source returned HTTP ${response.code}")
             val body = response.body ?: error("Empty source response")
             val input: InputStream = body.byteStream()
