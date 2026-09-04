@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical schedule refresh with provider health separated from empty schedules.
-
-The refresh samples every configured provider before canonicalization. The
-health-ranked provider remains preferred, while secondary providers remain as
-evidence so cross-provider identity and metadata merging can operate.
-"""
+"""Canonical schedule refresh with provider health separated from empty schedules."""
 from __future__ import annotations
 import json,time
 from datetime import datetime,timezone
@@ -20,14 +15,12 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data"/"schedule_feed.json"
 _WRESTLING_CACHE=None
 
-
 def official_map():
     out={}
     for source in engine.load_official_registry():
         league=str(source.get("league") or "").strip()
         if league: out.setdefault(league,[]).append(source)
     return out
-
 
 def icon_map():
     out={x[0]:x[3] for x in engine.ESPN_LEAGUES}
@@ -36,14 +29,12 @@ def icon_map():
     out.update({"WWE":"🏆","AEW":"🤼","TNA":"🤼","Esports":"🎮"})
     return out
 
-
 def source_priority(source):
     return {"mlb-official":0,"nhl-official":0,"official":0,
             "ncaa":1,"nascar":1,"wrestling":1,"sportradar":1,
             "sportsdataio":1,"sportmonks":1,"cfbd":1,"pandascore":1,
-            "espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"sportscore":2,
+            "espn":2,"espn-ncaa":2,"jolpica-f1":2,"openf1":2,"openligadb":2,"openwec":2,"sportscore":2,
             "sportsdb":3,"fallback":4,"cache":5}.get(source,9)
-
 
 def dedupe(events):
     canonical=[]; merges=0; counts={}
@@ -59,13 +50,12 @@ def dedupe(events):
         event["id"]=event_identity(event.get("league"),event.get("title"),event.get("start"),event.get("home"),event.get("away"))
     return canonical,merges,counts
 
-
 def fetch(provider,league,meta,official,previous):
     global _WRESTLING_CACHE
     try:
         if provider in {"sportradar","sportsdataio","sportmonks","cfbd","mlb-official","nhl-official","pandascore"}:
             return fetch_expanded(provider,league,meta["icon"])
-        if provider in {"sportscore","jolpica-f1","openf1","openligadb"}:
+        if provider in {"sportscore","jolpica-f1","openf1","openligadb","openwec"}:
             return fetch_free(provider,league,meta["icon"])
         if provider=="official":
             events=[]; ok=False
@@ -110,7 +100,6 @@ def fetch(provider,league,meta,official,previous):
     except Exception as exc:
         return False,[],f"{type(exc).__name__}: {exc}"[:300]
 
-
 def main():
     previous={}
     if OUT.exists():
@@ -120,11 +109,10 @@ def main():
     officials=official_map(); icons=icon_map()
     espn={x[0]:x[1:] for x in engine.ESPN_LEAGUES}; ncaa={x[0]:x[1:] for x in engine.NCAA_LEAGUES}
     dedicated_names=set(ncaa)|set(engine.NASCAR_SERIES)|{"WWE","AEW","TNA"}; official_names=set(officials); sportsdb_names=set(engine.SPORTDB_LEAGUES)
-    all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"Esports"}
+    all_leagues=official_names|set(espn)|dedicated_names|sportsdb_names|{"Esports","WEC","IMSA"}
     dedicated={name:("ncaa" if name in ncaa else "nascar" if name in engine.NASCAR_SERIES else "wrestling") for name in dedicated_names}
     matrix=build_matrix(all_leagues,official_names,dedicated,set(espn),sportsdb_names)
     events=[]; failures=[]; no_event_leagues=[]; attempts={}; promotions={}; cache_recovery=[]; overlap_leagues=[]; overlap_records=0
-
     for league in sorted(all_leagues):
         ordered=provider_order(league,matrix[league]["configured"]); matrix[league]["activeOrder"]=ordered; attempts[league]=[]
         meta={"icon":icons.get(league,"🏆"),"espn":espn.get(league),"ncaa":ncaa.get(league)}; successful=[]; provider_ok=False
@@ -139,10 +127,8 @@ def main():
             provider_ok = provider_ok or cache_ok
             if cache_ok and cache_events: successful=[("cache",cache_events)]; cache_recovery.append(league)
         if not successful:
-            if provider_ok:
-                no_event_leagues.append(league)
-            else:
-                failures.append(league)
+            if provider_ok:no_event_leagues.append(league)
+            else:failures.append(league)
             continue
         selected=successful[0][0]
         if ordered and selected!=ordered[0]: matrix[league]["promotedFrom"]=ordered[0]; matrix[league]["promotedTo"]=selected; promotions[league]=selected
@@ -150,7 +136,6 @@ def main():
         for provider,records in successful:
             for event in records:event.setdefault("source",provider)
             events.extend(records)
-
     events,merges,source_counts=dedupe(events); events.sort(key=lambda e:e.get("start") or e.get("startUtc") or "")
     per={}
     for event in events:
