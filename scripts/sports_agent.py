@@ -70,8 +70,6 @@ class ToolRegistry:
 def deterministic_plan(e):
     action=e.action if e.action in ALLOWED_ACTIONS else 'no_action'
     c=e.correlated or {}; verdict=str(c.get('verdict',''))
-    # The phase is the Brain's primary live signal; correlation is a secondary evidence source.
-    # A live event without a source must immediately escalate to event-source discovery.
     if (verdict=='LIVE' or e.phase=='LIVE') and not e.source_present: action='discover_event_source_metadata'
     elif verdict=='UNCERTAIN': action='refresh_live_evidence'
     elif not e.source_present and e.league: action='discover_schedule_provider'
