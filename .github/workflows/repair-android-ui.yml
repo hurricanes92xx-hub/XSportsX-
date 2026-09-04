@@ -5,7 +5,8 @@ on:
   push:
     branches: [android-app]
     paths:
-      - 'scripts/repair_android_ui_contract.py'
+      - 'scripts/**'
+      - 'app/src/main/java/com/xsportsx/app/**'
 
 permissions:
   contents: write
