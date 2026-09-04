@@ -38,9 +38,9 @@ def test_graph_and_agent_contract() -> None:
         stats = observe_feed(feed, graph)
         assert stats["nodes"] >= 6
         result = run(feed_path, memory, graph)
-        assert result["schema"] == 2
+        assert result["schema"] == 3
         written = json.loads(feed_path.read_text(encoding="utf-8"))
-        assert written["sportsAgent"]["schema"] == 2
+        assert written["sportsAgent"]["schema"] == 3
         assert load(graph)["stats"]["edges"] >= 3
 
 
