@@ -10,6 +10,7 @@ BROAD_LEAGUES={"NFL","CFL","NBA","WNBA","NHL","MLB","MLS","EPL","UCL","UEL","LaL
 SPORTMONKS_LEAGUES={"MLS","EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","NWSL","ICC T20","IPL","F1"}
 CFBD_LEAGUES={"NCAA FB"}
 SPORTSCORE_LEAGUES={"EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","MLS","NWSL","NBA","WNBA","IPL","ICC T20","ATP","WTA"}
+FIVB_LEAGUES={"FIVB Men","FIVB Women"}
 DIRECT_LEAGUES={"MLB":"mlb-official","NHL":"nhl-official"}
 
 def _configured(provider):
@@ -57,6 +58,7 @@ def build_matrix(league_names,official,dedicated,espn,sportsdb):
         if league in SPORTMONKS_LEAGUES: candidates.append("sportmonks")
         if league in CFBD_LEAGUES: candidates.append("cfbd")
         if league in SPORTSCORE_LEAGUES: candidates.append("sportscore")
+        if league in FIVB_LEAGUES: candidates.append("fivb")
         if league=="F1": candidates += ["jolpica-f1","openf1"]
         if league=="Bundesliga": candidates.append("openligadb")
         if league=="Esports": candidates.append("pandascore")
