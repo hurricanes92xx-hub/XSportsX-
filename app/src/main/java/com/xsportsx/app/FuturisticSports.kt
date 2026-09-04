@@ -50,25 +50,33 @@ private val xNetworks = listOf(
     XNetwork("CBS Sports", "SPORTS", "CBS", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/CBS_Sports_%282021%29.svg/960px-CBS_Sports_%282021%29.svg.png"),
     XNetwork("SEC Network", "SPORTS", "SEC", "https://commons.wikimedia.org/wiki/Special:FilePath/SEC_Network_%282024%29.svg?width=256"),
     XNetwork("ACC Network", "SPORTS", "ACC", "https://commons.wikimedia.org/wiki/Special:FilePath/ACC_Network_ESPN_logo.svg?width=256"),
-    XNetwork("Big Ten Network", "SPORTS", "SPORTS", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256"),
+    XNetwork("Big Ten Network", "SPORTS", "B1G", "https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ten_Network_Logo.svg?width=256"),
     XNetwork("ESPN+", "SPORTS", "ESPN+", "https://commons.wikimedia.org/wiki/Special:FilePath/ESPN%2B_logo.svg?width=256"),
     XNetwork("Pac-12 Network", "SPORTS", "PAC12", "https://commons.wikimedia.org/wiki/Special:FilePath/Pac-12_Network_logo.svg?width=256"),
-    XNetwork("Red Bull TV", "SPORTS", "RED BULL", "https://img.logokit.com/redbull.tv"),
     XNetwork("Monster Jam", "MOTORSPORT", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256"),
     XNetwork("RugbyPass TV", "RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256")
 )
 
 private data class SportVisual(val name: String, val icon: String, val logoUrl: String)
 private val sports = listOf(
-    SportVisual("NFL", "NFL", "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png"), SportVisual("NBA", "NBA", "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"),
-    SportVisual("NCAA FB", "NCAA", "https://a.espncdn.com/i/teamlogos/leagues/500/ncaaf.png"), SportVisual("NCAA BB", "NCAA", "https://a.espncdn.com/i/teamlogos/leagues/500/ncaab.png"),
-    SportVisual("MLB", "MLB", "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"), SportVisual("NHL", "NHL", "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"),
-    SportVisual("UFC", "UFC", "https://commons.wikimedia.org/wiki/Special:FilePath/UFC_Logo.svg?width=256"), SportVisual("BOXING", "BOX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Boxing_logo_2023.svg?width=256"),
-    SportVisual("RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256"), SportVisual("VOLLEYBALL", "VB", "https://commons.wikimedia.org/wiki/Special:FilePath/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg?width=256"),
-    SportVisual("LACROSSE", "LAX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Lacrosse_logo.png?width=256"), SportVisual("WRESTLING", "WWE", "https://commons.wikimedia.org/wiki/Special:FilePath/WWE_Official_Logo.svg?width=256"),
-    SportVisual("MOTOGP", "GP", "https://commons.wikimedia.org/wiki/Special:FilePath/MotoGP_logo_%282024%29.svg?width=256"), SportVisual("WRC", "WRC", "https://commons.wikimedia.org/wiki/Special:FilePath/WRC_logo.svg?width=256"),
-    SportVisual("WEC", "WEC", "https://commons.wikimedia.org/wiki/Special:FilePath/WEC_Logo.svg?width=256"), SportVisual("IMSA", "IMSA", "https://commons.wikimedia.org/wiki/Special:FilePath/IMSA_SportsCar_Championship_logo.svg?width=256"),
-    SportVisual("FORMULA E", "FE", "https://commons.wikimedia.org/wiki/Special:FilePath/Formula-e-logo-championship_2023.svg?width=256"), SportVisual("MXGP", "MX", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_MXGP.svg?width=256"),
+    SportVisual("NFL", "NFL", "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png"),
+    SportVisual("NBA", "NBA", "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"),
+    SportVisual("NCAA FB", "NCAA", "https://commons.wikimedia.org/wiki/Special:FilePath/NCAA_logo.svg?width=256"),
+    SportVisual("NCAA BB", "NCAA", "https://commons.wikimedia.org/wiki/Special:FilePath/NCAA_logo.svg?width=256"),
+    SportVisual("MLB", "MLB", "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png"),
+    SportVisual("NHL", "NHL", "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png"),
+    SportVisual("UFC", "UFC", "https://commons.wikimedia.org/wiki/Special:FilePath/UFC_Logo.svg?width=256"),
+    SportVisual("BOXING", "BOX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Boxing_logo_2023.svg?width=256"),
+    SportVisual("RUGBY", "RUGBY", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_WXV.svg?width=256"),
+    SportVisual("VOLLEYBALL", "VB", "https://commons.wikimedia.org/wiki/Special:FilePath/F%C3%A9d%C3%A9ration_Internationale_de_Volleyball_logo.svg?width=256"),
+    SportVisual("LACROSSE", "LAX", "https://commons.wikimedia.org/wiki/Special:FilePath/World_Lacrosse_logo.png?width=256"),
+    SportVisual("WRESTLING", "WWE", "https://commons.wikimedia.org/wiki/Special:FilePath/WWE_Official_Logo.svg?width=256"),
+    SportVisual("MOTOGP", "GP", "https://commons.wikimedia.org/wiki/Special:FilePath/MotoGP_logo_%282024%29.svg?width=256"),
+    SportVisual("WRC", "WRC", "https://commons.wikimedia.org/wiki/Special:FilePath/WRC_logo.svg?width=256"),
+    SportVisual("WEC", "WEC", "https://commons.wikimedia.org/wiki/Special:FilePath/WEC_Logo.svg?width=256"),
+    SportVisual("IMSA", "IMSA", "https://commons.wikimedia.org/wiki/Special:FilePath/IMSA_SportsCar_Championship_logo.svg?width=256"),
+    SportVisual("FORMULA E", "FE", "https://commons.wikimedia.org/wiki/Special:FilePath/Formula-e-logo-championship_2023.svg?width=256"),
+    SportVisual("MXGP", "MX", "https://commons.wikimedia.org/wiki/Special:FilePath/Logo_MXGP.svg?width=256"),
     SportVisual("MONSTER JAM", "MJ", "https://commons.wikimedia.org/wiki/Special:FilePath/Monster_Jam_logo.svg?width=256")
 )
 
@@ -106,44 +114,13 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onSource: () -> Unit = {}, onNetw
 @Composable private fun MobileLiveCenter(sourceConfigured:Boolean,onConnect:()->Unit,onNetwork:(XNetwork)->Unit){MobileSectionLabel("LIVE CENTER",if(sourceConfigured)"SOURCE READY"else"CONNECT SOURCE");Spacer(Modifier.height(10.dp));if(!sourceConfigured)ActionPanel("CONNECT YOUR SOURCE","Connect Xtream/M3U, then XSportsX can match your live events and networks.","CONNECT SOURCE →",onConnect)else{ActionPanel("LIVE EVENT MATCHING","Your source is connected. Choose a network to browse matched streams.","REFRESH LIVE →",onConnect);Spacer(Modifier.height(18.dp));LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp)){items(xNetworks.take(8)){NetworkCard(it,onNetwork)}}}}
 @Composable private fun MobileNetworks(sourceConfigured:Boolean,onConnect:()->Unit,onNetwork:(XNetwork)->Unit){MobileSectionLabel("NETWORKS","SOURCE MATCH");Spacer(Modifier.height(10.dp));if(!sourceConfigured){ActionPanel("NETWORKS ARE READY","Connect your authorized source to turn these cards into playable source matches.","ADD SOURCE →",onConnect);Spacer(Modifier.height(16.dp))};LazyRow(horizontalArrangement=Arrangement.spacedBy(10.dp),contentPadding=PaddingValues(end=8.dp)){items(xNetworks,key={it.name}){NetworkCard(it,onNetwork)}}}
 @Composable private fun MobileFavorites(onConnect:()->Unit){MobileSectionLabel("FAVORITES","YOUR PICKS");Spacer(Modifier.height(12.dp));ActionPanel("YOUR FAVORITES LIVE HERE","Pin teams, networks and events once your source is connected.","ADD SOURCE →",onConnect)}
-private fun mobileSportFilter(sport:String):String=when(sport.uppercase()){"NFL"->"nfl||nfl network";"NBA"->"nba";"NCAA FB"->"ncaaf||ncaa football||college football";"NCAA BB"->"ncaab||ncaa basketball||college basketball";"MLB"->"mlb||major league baseball";"NHL"->"nhl||national hockey league";"UFC"->"ufc||ultimate fighting championship";"BOXING"->"boxing||world boxing";"RUGBY"->"rugby||rugby pass";"VOLLEYBALL"->"volleyball||fivb";"LACROSSE"->"lacrosse||world lacrosse";"WRESTLING"->"wrestling||wwe||aew";"MOTOGP"->"motogp||moto gp";"WRC"->"wrc||world rally championship";"WEC"->"wec||world endurance championship";"IMSA"->"imsa";"FORMULA E"->"formula e||formulae";"MXGP"->"mxgp||motocross";"MONSTER JAM"->"monster jam";else->sport}
-
+private fun mobileSportFilter(sport:String):String=when(sport.uppercase()){ "NFL"->"nfl||nfl network"; "NBA"->"nba"; "NCAA FB"->"ncaaf||ncaa football||college football"; "NCAA BB"->"ncaab||ncaa basketball||college basketball"; "MLB"->"mlb||major league baseball"; "NHL"->"nhl||national hockey league"; "UFC"->"ufc||ultimate fighting championship"; "BOXING"->"boxing||world boxing"; "RUGBY"->"rugby||rugby pass"; "VOLLEYBALL"->"volleyball||fivb"; "LACROSSE"->"lacrosse||world lacrosse"; "WRESTLING"->"wrestling||wwe||aew"; "MOTOGP"->"motogp||moto gp"; "WRC"->"wrc||world rally championship"; "WEC"->"wec||world endurance championship"; "IMSA"->"imsa"; "FORMULA E"->"formula e||formulae"; "MXGP"->"mxgp||motocross"; "MONSTER JAM"->"monster jam"; else->sport }
 @Composable private fun MobileSectionLabel(title:String,eyebrow:String?){Row(verticalAlignment=Alignment.CenterVertically){Text(title,color=Color.White,fontSize=15.sp,fontWeight=FontWeight.Black,letterSpacing=1.4.sp);eyebrow?.let{Spacer(Modifier.width(8.dp));Text(it,color=Muted,fontSize=8.sp,fontWeight=FontWeight.Black,letterSpacing=.8.sp)}}}
 @Composable private fun ActionPanel(title:String,body:String,button:String,onClick:()->Unit){Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Brush.horizontalGradient(listOf(Color(0xFF111722),Color(0xFF2A0D14)))).padding(18.dp)){Text(title,color=Color.White,fontSize=17.sp,fontWeight=FontWeight.Black);Spacer(Modifier.height(6.dp));Text(body,color=Color(0xFF8F98A7),fontSize=11.sp,lineHeight=16.sp);Spacer(Modifier.height(13.dp));Box(Modifier.clip(RoundedCornerShape(10.dp)).background(XRed).clickable{onClick()}.padding(horizontal=14.dp,vertical=9.dp)){Text(button,color=Color.White,fontSize=9.sp,fontWeight=FontWeight.Black)}}}
 @Composable private fun SportPill(sport:SportVisual,onClick:()->Unit){Row(Modifier.clip(RoundedCornerShape(15.dp)).background(Panel2).clickable{onClick()}.padding(horizontal=13.dp,vertical=10.dp),verticalAlignment=Alignment.CenterVertically){SportGlyph(sport.icon,26.dp);Spacer(Modifier.width(7.dp));Text(sport.name,color=Color(0xFFDCE1E9),fontSize=10.sp,fontWeight=FontWeight.Black,maxLines=1)}}
 @Composable private fun SportBadgeCard(sport:SportVisual,onClick:()->Unit){Column(Modifier.width(118.dp).height(142.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable{onClick()}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){Box(Modifier.fillMaxWidth().height(88.dp),contentAlignment=Alignment.Center){BadgeImage(sport.logoUrl,sport.icon,Modifier.size(72.dp))};Spacer(Modifier.height(5.dp));Text(sport.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Black,maxLines=1,overflow=TextOverflow.Ellipsis)}}
 @Composable private fun NetworkCard(network:XNetwork,onClick:(XNetwork)->Unit){Column(Modifier.width(132.dp).height(124.dp).clip(RoundedCornerShape(18.dp)).background(Panel).clickable{onClick(network)}.padding(10.dp),horizontalAlignment=Alignment.CenterHorizontally){Box(Modifier.fillMaxWidth().height(70.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF0A0F17)),contentAlignment=Alignment.Center){BadgeImage(network.logoUrl,network.name,Modifier.size(58.dp))};Spacer(Modifier.height(7.dp));Text(network.name,color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)}}
-@Composable private fun BrandPill(text:String,foreground:Color,background:Color=Color(0xFF202A38)){Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(background).padding(horizontal=8.dp,vertical=9.dp),contentAlignment=Alignment.Center){Text(text,color=foreground,fontSize=if(text.length>7)8.sp else 14.sp,fontWeight=FontWeight.Black,letterSpacing=.4.sp,maxLines=1)}}
-
-@Composable private fun UpcomingStrip() {
-    var games by remember { mutableStateOf<List<SportsEvent>>(emptyList()) }
-    LaunchedEffect(Unit) {
-        games = runCatching {
-            SportsScheduleService.load()
-                .filter { it.isUpcoming || it.isPregame() }
-                .sortedBy { it.startUtc }
-                .take(6)
-        }.getOrDefault(emptyList())
-    }
-    if (games.isEmpty()) {
-        Row(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()) {
-            repeat(3) { Box(Modifier.weight(1f).clip(RoundedCornerShape(14.dp)).background(Panel).padding(vertical=13.dp),contentAlignment=Alignment.Center){Text("SCHEDULE",color=Muted,fontSize=8.sp,fontWeight=FontWeight.Black)} }
-        }
-    } else {
-        LazyRow(horizontalArrangement=Arrangement.spacedBy(8.dp),contentPadding=PaddingValues(end=8.dp)) {
-            items(games,key={it.id.ifBlank{"${it.league}|${it.away}|${it.home}|${it.startUtc}"}}) { game ->
-                Column(Modifier.width(190.dp).clip(RoundedCornerShape(14.dp)).background(Panel).padding(12.dp)) {
-                    Text(game.league,color=XRed,fontSize=8.sp,fontWeight=FontWeight.Black)
-                    Text("${game.away} @ ${game.home}",color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=2,overflow=TextOverflow.Ellipsis)
-                    Spacer(Modifier.height(4.dp))
-                    Text(game.startUtc.replace("T"," • ").removeSuffix("Z"),color=Muted,fontSize=8.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
-                }
-            }
-        }
-    }
-}
-
+@Composable private fun UpcomingStrip(){var games by remember{mutableStateOf<List<SportsEvent>>(emptyList())};LaunchedEffect(Unit){games=runCatching{SportsScheduleService.load().filter{it.isUpcoming||it.isPregame()}.sortedBy{it.startUtc}.take(6)}.getOrDefault(emptyList())};if(games.isEmpty()){Row(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()){repeat(3){Box(Modifier.weight(1f).clip(RoundedCornerShape(14.dp)).background(Panel).padding(vertical=13.dp),contentAlignment=Alignment.Center){Text("SCHEDULE",color=Muted,fontSize=8.sp,fontWeight=FontWeight.Black)}}}}else{LazyRow(horizontalArrangement=Arrangement.spacedBy(8.dp),contentPadding=PaddingValues(end=8.dp)){items(games,key={it.id.ifBlank{"${it.league}|${it.away}|${it.home}|${it.startUtc}"}}){game->Column(Modifier.width(190.dp).clip(RoundedCornerShape(14.dp)).background(Panel).padding(12.dp)){Text(game.league,color=XRed,fontSize=8.sp,fontWeight=FontWeight.Black);Text("${game.away} @ ${game.home}",color=Color.White,fontSize=10.sp,fontWeight=FontWeight.Bold,maxLines=2,overflow=TextOverflow.Ellipsis);Spacer(Modifier.height(4.dp));Text(game.startUtc.replace("T"," • ").removeSuffix("Z"),color=Muted,fontSize=8.sp,maxLines=1,overflow=TextOverflow.Ellipsis)}}}}}
 @Composable private fun MobileBottomNav(selected:String,onSelect:(String)->Unit){Row(Modifier.fillMaxWidth().height(70.dp).background(Color(0xF2090B10)).padding(horizontal=10.dp,vertical=7.dp),horizontalArrangement=Arrangement.SpaceEvenly,verticalAlignment=Alignment.CenterVertically){MobileNavItem("⌂","HOME",selected,onSelect);MobileNavItem("●","LIVE",selected,onSelect);MobileNavItem("▦","NETWORKS",selected,onSelect);MobileNavItem("★","FAVORITES",selected,onSelect);MobileNavItem("⚙","SOURCE",selected,onSelect)}}
 @Composable private fun MobileNavItem(icon:String,label:String,selected:String,onSelect:(String)->Unit){val active=selected==label;Column(Modifier.clip(RoundedCornerShape(13.dp)).background(if(active)Color(0xFF25121A)else Color.Transparent).clickable{onSelect(label)}.semantics{contentDescription=label}.padding(horizontal=13.dp,vertical=5.dp),horizontalAlignment=Alignment.CenterHorizontally){Text(icon,color=if(active)XRed else Color(0xFF7A8290),fontSize=18.sp,fontWeight=FontWeight.Black);Text(label,color=if(active)Color.White else Color(0xFF7A8290),fontSize=7.sp,fontWeight=FontWeight.Black,letterSpacing=.5.sp)}}
-
 @Composable private fun GlowingCracks(modifier:Modifier,intensity:Float){Canvas(modifier){val w=size.width;val h=size.height;val lines=listOf(listOf(.00f to .14f,.10f to .20f,.14f to .31f,.28f to .37f),listOf(1.00f to .18f,.89f to .24f,.84f to .34f,.69f to .41f),listOf(.02f to .76f,.13f to .70f,.19f to .59f,.35f to .53f),listOf(.98f to .72f,.87f to .65f,.80f to .54f,.64f to .47f),listOf(.38f to .00f,.43f to .11f,.50f to .18f,.58f to .27f),listOf(.62f to 1f,.57f to .89f,.50f to .82f,.42f to .73f),listOf(.08f to .44f,.19f to .47f,.25f to .42f),listOf(.92f to .48f,.81f to .44f,.75f to .39f));lines.forEach{points->for(i in 0 until points.lastIndex){val a=points[i];val b=points[i+1];drawLine(XRed.copy(alpha=intensity*.10f),androidx.compose.ui.geometry.Offset(a.first*w,a.second*h),androidx.compose.ui.geometry.Offset(b.first*w,b.second*h),strokeWidth=28f);drawLine(XRed.copy(alpha=intensity*.24f),androidx.compose.ui.geometry.Offset(a.first*w,a.second*h),androidx.compose.ui.geometry.Offset(b.first*w,b.second*h),strokeWidth=10f);drawLine(XRed.copy(alpha=intensity),androidx.compose.ui.geometry.Offset(a.first*w,a.second*h),androidx.compose.ui.geometry.Offset(b.first*w,b.second*h),strokeWidth=2.8f);drawLine(Color.White.copy(alpha=intensity*.20f),androidx.compose.ui.geometry.Offset(a.first*w,a.second*h),androidx.compose.ui.geometry.Offset(b.first*w,b.second*h),strokeWidth=.8f)}};val shards=listOf(floatArrayOf(.05f,.29f,.12f,.34f),floatArrayOf(.15f,.58f,.22f,.51f),floatArrayOf(.86f,.29f,.95f,.25f),floatArrayOf(.78f,.62f,.90f,.68f),floatArrayOf(.33f,.16f,.38f,.08f),floatArrayOf(.67f,.84f,.72f,.94f));shards.forEach{q->drawLine(XRed.copy(alpha=intensity*.8f),androidx.compose.ui.geometry.Offset(q[0]*w,q[1]*h),androidx.compose.ui.geometry.Offset(q[2]*w,q[3]*h),strokeWidth=2.2f)}}}
