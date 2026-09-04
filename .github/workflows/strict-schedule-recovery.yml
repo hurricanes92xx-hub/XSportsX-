@@ -53,25 +53,22 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p=Path('data/schedule_feed.json')
-          feed=json.loads(p.read_text(encoding='utf-8'))
+          feed=json.loads(Path('data/schedule_feed.json').read_text(encoding='utf-8'))
           events=feed.get('events') or []
-          matrix=feed.get('leagueProviderMatrix') or {}
-          counts={}
-          for e in events:
-              if isinstance(e,dict): counts[str(e.get('league','')).strip()]=counts.get(str(e.get('league','')).strip(),0)+1
-          active_gaps=[]
           repair=feed.get('autonomousScheduleRepair') or {}
-          unresolved=set(str(x) for x in repair.get('unresolvedLeagues') or [])
-          for league in matrix:
-              if str(league).strip() and counts.get(str(league).strip(),0)==0 and str(league).strip() not in unresolved:
-                  active_gaps.append(league)
-          if active_gaps:
-              raise SystemExit('ERROR: unresolved canonical schedule gaps after recovery: '+', '.join(active_gaps[:24]))
+          unresolved=[str(x) for x in (repair.get('unresolvedLeagues') or []) if str(x).strip()]
+          if unresolved:
+              raise SystemExit('ERROR: unresolved active schedule gaps after authoritative recovery: '+', '.join(unresolved[:24]))
+          ids=[str(e.get('id','')) for e in events if isinstance(e,dict)]
+          if len(ids)!=len(set(ids)):
+              raise SystemExit('ERROR: duplicate canonical event IDs detected')
+          for e in events:
+              if not all(e.get(k) for k in ('id','sport','league','title','startUtc')):
+                  raise SystemExit('ERROR: malformed canonical event detected')
           print('STRICT_SCHEDULE_GATE: PASS')
           print('Canonical events:', len(events))
-          print('Unresolved active gaps:', len(unresolved))
           print('Recovered events:', repair.get('eventsRecovered',0))
+          print('Repair candidates:', repair.get('repairCandidates',0))
           PY
       - name: Publish recovered schedule
         shell: bash
