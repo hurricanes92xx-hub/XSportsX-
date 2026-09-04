@@ -103,6 +103,7 @@ fun FuturisticHome(onConnect: () -> Unit = {}, onSource: () -> Unit = {}, onNetw
                         MobileHeader(sourceConfigured, alpha, onConnect); Spacer(Modifier.height(16.dp))
                         when (selectedSection) { "LIVE" -> MobileLiveCenter(sourceConfigured,onConnect,onNetwork); "NETWORKS" -> MobileNetworks(sourceConfigured,onConnect,onNetwork); "FAVORITES" -> MobileFavorites(onConnect); else -> MobileHomeContent(sourceConfigured,onConnect,onNetwork){selectedSport=it} }
                     }
+                    HomeSportsTicker(Modifier.padding(bottom = 4.dp))
                     MobileBottomNav(selectedSection){section->if(section=="SOURCE")onSource()else selectedSection=section}
                 }
             }
