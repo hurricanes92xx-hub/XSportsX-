@@ -70,7 +70,9 @@ class ToolRegistry:
 def deterministic_plan(e):
     action=e.action if e.action in ALLOWED_ACTIONS else 'no_action'
     c=e.correlated or {}; verdict=str(c.get('verdict',''))
-    if verdict=='LIVE' and not e.source_present: action='discover_event_source_metadata'
+    # The phase is the Brain's primary live signal; correlation is a secondary evidence source.
+    # A live event without a source must immediately escalate to event-source discovery.
+    if (verdict=='LIVE' or e.phase=='LIVE') and not e.source_present: action='discover_event_source_metadata'
     elif verdict=='UNCERTAIN': action='refresh_live_evidence'
     elif not e.source_present and e.league: action='discover_schedule_provider'
     return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
@@ -98,7 +100,6 @@ def run(feed_path,memory_path,graph_path):
     for event in events:
         e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''))
         e.correlated=correlate(event)
-        # Hard safety rule: a strong postponed/final verdict cannot be turned into LIVE by the model.
         if e.correlated.get('verdict') in {'FINAL','POSTPONED'} and e.correlated.get('confidence',0)>=0.82: e.action='reconcile_or_archive'; e.phase='FINAL'
         plan=model_plan(e) if e.event_id else None
         if plan is None:plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
