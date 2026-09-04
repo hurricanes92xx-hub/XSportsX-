@@ -50,8 +50,6 @@ class ToolRegistry:
         for c in candidates:
             for item in c.get('events',[]) or []:
                 if str(item.get('title','')).strip().lower()==e.title.strip().lower():matches.append({'endpoint':c.get('endpoint'),'title':item.get('title'),'startUtc':item.get('startUtc')})
-        # Separate live-source research searches for an actual broadcast/watch
-        # surface instead of pretending a schedule page is a live source.
         live_research=web_research.research_live({'title':e.title,'league':e.league,'startUtc':e.start_utc},limit=10)
         return {'status':'completed','league':e.league,'candidates':len(candidates),'eventMatches':matches[:8],'googleLiveResearch':live_research}
     def probe_live_state_and_source(self,e):
@@ -60,8 +58,6 @@ class ToolRegistry:
         return out
     def refresh_live_evidence(self,e):
         probe=self.probe_live_state_and_source(e)
-        # A live/uncertain event gets a fresh Google research pass. The model
-        # chooses the action, but the tool performs the bounded web research.
         research=self.discover_event_source_metadata(e) if e.phase in {'LIVE','PREGAME'} or not e.source_present else None
         return {'status':'completed','evidenceRefresh':True,'correlation':e.correlated or {},'probe':probe,'googleLiveResearch':research}
     def warm_source(self,e):return {'status':'skipped','reason':'missing-source'} if not e.source_url else {'status':'completed','preflight':_probe(e.source_url)}
@@ -76,13 +72,12 @@ def deterministic_plan(e):
 def _model_configs():
     """Ordered model providers; first successful decision wins."""
     configs=[]
-    primary=(os.getenv('SPORTS_AGENT_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_MODEL','').strip(),os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip(),'primary')
-    gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
+    primary=(os.getenv('SPORTS_AGENT_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_MODEL','').strip().rstrip(' .'),os.getenv('SPORTS_AGENT_MODEL_API_KEY','').strip(),'primary')
+    gemini=(os.getenv('SPORTS_AGENT_GEMINI_MODEL_URL','').strip(),os.getenv('SPORTS_AGENT_GEMINI_MODEL','').strip().rstrip(' .'),' '.join([]) if False else os.getenv('SPORTS_AGENT_GEMINI_API_KEY','').strip(),'gemini')
     for cfg in (primary,gemini):
         if cfg[0] and cfg[1] and cfg[2]:configs.append(cfg)
     return configs
 def should_use_model(e):
-    """Use an LLM only where reasoning can materially change an action."""
     if not _model_configs() or not e.event_id:return False
     verdict=str((e.correlated or {}).get('verdict',''))
     if verdict in {'UNCERTAIN','CONTRADICTED'}:return True
@@ -99,7 +94,6 @@ def _call_model(endpoint,model,key,e):
     if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
     plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
 def model_plan(e):
-    """Try configured models in order; failures fall through without failing the schedule run."""
     for endpoint,model,key,_provider in _model_configs():
         try:
             plan=_call_model(endpoint,model,key,e)
@@ -114,7 +108,7 @@ def load_memory(path):
         d=json.loads(path.read_text(encoding='utf-8'));return d if isinstance(d,dict) else {}
     except Exception:return {}
 def run(feed_path,memory_path,graph_path):
-    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});registry=ToolRegistry();plans=[]
+    feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});agent.setdefault('actions',{});agent.setdefault('modelDecisions',0);agent.setdefault('fallbackDecisions',0);agent.setdefault('modelProviders',{});registry=ToolRegistry();plans=[]
     for event in events:
         e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''));e.correlated=correlate(event)
         if e.correlated.get('verdict') in {'FINAL','POSTPONED'} and e.correlated.get('confidence',0)>=0.82:e.action='reconcile_or_archive';e.phase='FINAL'
@@ -122,7 +116,7 @@ def run(feed_path,memory_path,graph_path):
         if plan is None:
             plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
         else:
-            agent['modelDecisions']=int(agent.get('modelDecisions',0))+1;provider=str(plan.pop('_modelProvider','primary'));agent['modelProviders'][provider]=int(agent['modelProviders'].get(provider,0))+1
+            agent['modelDecisions']=int(agent.get('modelDecisions',0))+1;provider=str(plan.pop('_modelProvider','primary'));agent.setdefault('modelProviders',{});agent['modelProviders'][provider]=int(agent['modelProviders'].get(provider,0))+1
         result=registry.execute(str(plan.get('action','no_action')),e);action=str(plan.get('action','no_action'));agent['actions'][action]=int(agent['actions'].get(action,0))+1;plans.append({'eventId':e.event_id,'phase':e.phase,'correlation':e.correlated,'plan':plan,'execution':result})
     agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastPlans']=plans[:500];memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
 def main():
