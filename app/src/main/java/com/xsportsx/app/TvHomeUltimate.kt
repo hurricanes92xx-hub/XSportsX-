@@ -104,7 +104,7 @@ fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {})
         Spacer(Modifier.height(18.dp))
         Text("SPORTS", color = TvUltimateMuted, fontSize = 9.sp, fontWeight = FontWeight.Black, letterSpacing = 1.3.sp)
         Spacer(Modifier.height(6.dp))
-        tvUltimateSports.forEach { league -> TvUltimateRailItem(league, false, blue = true) { onNetwork("LEAGUE:$league") } }
+        tvUltimateSports.forEach { league -> Row(Modifier.fillMaxWidth().clickable { onNetwork("LEAGUE:$league") }.padding(vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) { XSportsLeagueLogo(league, Modifier.size(34.dp), 34.dp); Spacer(Modifier.width(8.dp)); Text(league, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
         Spacer(Modifier.weight(1f))
         Text("TV MODE", color = Color(0xFF596371), fontSize = 10.sp, fontWeight = FontWeight.Bold)
     }
@@ -143,13 +143,13 @@ fun TvHomeUltimate(onConnect: () -> Unit = {}, onNetwork: (String) -> Unit = {})
 
 @Composable private fun TvUltimateSportRow(onNetwork: (String) -> Unit) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(bottom = 3.dp)) {
-        items(tvUltimateSports) { league -> Column(Modifier.width(118.dp).height(74.dp).background(TvUltimatePanel, RoundedCornerShape(14.dp)).border(1.dp, TvUltimateBlue.copy(alpha = .28f), RoundedCornerShape(14.dp)).clickable { onNetwork("LEAGUE:$league") }.padding(10.dp), verticalArrangement = Arrangement.Center) { Text(league.take(5).uppercase(), color = TvUltimateBlue, fontSize = 13.sp, fontWeight = FontWeight.Black); Text(league, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
+        items(tvUltimateSports) { league -> Column(Modifier.width(142.dp).height(106.dp).background(TvUltimatePanel, RoundedCornerShape(14.dp)).border(1.dp, TvUltimateBlue.copy(alpha = .28f), RoundedCornerShape(14.dp)).clickable { onNetwork("LEAGUE:$league") }.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) { XSportsLeagueLogo(league, Modifier.size(54.dp), 54.dp); Spacer(Modifier.height(5.dp)); Text(league, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
     }
 }
 
 @Composable private fun TvUltimateNetworkRow(onNetwork: (String) -> Unit) {
     val networks = listOf("ESPN", "ESPN2", "ESPNU", "NFL NETWORK", "FS1", "CBS SPORTS", "SEC NETWORK", "ACC NETWORK", "BIG TEN NETWORK", "ESPN+")
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(networks) { network -> TvUltimateButton(network) { onNetwork(network) } } }
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) { items(networks) { network -> Column(Modifier.width(116.dp).height(92.dp).background(TvUltimatePanel, RoundedCornerShape(14.dp)).border(1.dp, TvUltimateRed.copy(alpha = .3f), RoundedCornerShape(14.dp)).clickable { onNetwork(network) }.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) { XSportsNetworkLogo(network, Modifier.size(46.dp), 46.dp); Spacer(Modifier.height(5.dp)); Text(network, color = Color.White, fontSize = 8.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis) } } }
 }
 
 @Composable private fun TvUltimateButton(text: String, onClick: () -> Unit) { Text(text, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Black, modifier = Modifier.background(Color(0xFF101722), RoundedCornerShape(11.dp)).border(1.dp, TvUltimateRed.copy(alpha = .3f), RoundedCornerShape(11.dp)).clickable { onClick() }.padding(horizontal = 12.dp, vertical = 9.dp)) }
