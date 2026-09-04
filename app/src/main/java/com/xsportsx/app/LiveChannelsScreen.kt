@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -54,9 +56,19 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 withTimeoutOrNull(9_000L) {
                     when {
                         selectedEvent != null -> {
-                            // Authorized Xtream is Tier 0: cached-first, then bounded category lookup.
-                            val fast = fastXtream.resolve(selectedEvent!!)
-                            if (fast.isNotEmpty()) fast else StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force)
+                            // Run authorized Xtream and public/learned discovery concurrently.
+                            // A cold Xtream catalog must never serialize every other source.
+                            kotlinx.coroutines.coroutineScope {
+                                val xtreamJob = async(Dispatchers.IO) { fastXtream.resolve(selectedEvent!!) }
+                                val publicJob = async(Dispatchers.IO) { StreamResolver(context).loadMatchingEventStreams(selectedEvent!!, force) }
+                                val xtream = xtreamJob.await()
+                                if (xtream.isNotEmpty()) {
+                                    publicJob.cancel()
+                                    xtream
+                                } else {
+                                    publicJob.await()
+                                }
+                            }
                         }
                         !requestFilter.isNullOrBlank() -> StreamResolver(context).loadMatchingStreams(requestFilter, force)
                         else -> {
