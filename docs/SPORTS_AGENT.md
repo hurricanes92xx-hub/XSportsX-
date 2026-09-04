@@ -15,13 +15,19 @@ XSportsX now has a model-optional agent controller above the deterministic Sport
 
 ## Model configuration
 
-The model is intentionally optional so CI remains deterministic and the app does not depend on an external AI service. To enable model reasoning, configure:
+The model is intentionally optional so CI remains deterministic and the app does not depend on an external AI service. To enable model reasoning, configure these GitHub Actions values on the repository/organization:
 
-- `SPORTS_AGENT_MODEL_URL` — an OpenAI-compatible chat-completions endpoint.
-- `SPORTS_AGENT_MODEL` — the selected reasoning model name.
-- `SPORTS_AGENT_MODEL_API_KEY` — secret credential for that endpoint.
+- `SPORTS_AGENT_MODEL_URL` — **Actions Variable**, an OpenAI-compatible chat-completions endpoint.
+- `SPORTS_AGENT_MODEL` — **Actions Variable**, the selected reasoning model name.
+- `SPORTS_AGENT_MODEL_API_KEY` — **Actions Secret**, the API credential for that endpoint.
 
-If the endpoint is unavailable, malformed, or returns an unsafe action, the agent automatically falls back to the deterministic policy.
+The schedule workflow passes those values only to the agent step. The API key is never written to the repository, feed, memory, or knowledge graph.
+
+### Configuration examples
+
+For an OpenAI-compatible gateway, use its chat-completions URL for `SPORTS_AGENT_MODEL_URL` and the exact deployed model identifier for `SPORTS_AGENT_MODEL`. The agent sends temperature `0` and requires JSON containing only an allowlisted action, confidence, reason, and evidence IDs.
+
+If the endpoint is unavailable, malformed, or returns an unsafe action, the agent automatically falls back to the deterministic policy. The workflow reports `modelEnabled` so model-backed runs are distinguishable from fallback runs.
 
 ## Safe actions
 
