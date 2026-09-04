@@ -115,7 +115,6 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                 Text(when { selectedEvent != null -> "GAME STREAMS"; filter.isNullOrBlank() -> "LIVE GAMES"; else -> "GAME STREAMS" }, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
                 Text(when { selectedEvent != null -> "${selectedEvent!!.title.ifBlank { "Live event" }} • ${selectedEvent!!.league} • ${streams.size} sources"; filter.isNullOrBlank() -> "Live events across all leagues • ${liveEvents.size} games"; showFavorites -> "MY FAVORITES • ${visibleStreams.size} channels"; else -> "Free public + authorized streams • ${streams.size} matches" }, color = Color(0xFF737B89), fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
-            if (selectedEvent == null && !requestFilter.isNullOrBlank()) { }
             if (selectedEvent == null && !filter.isNullOrBlank()) TextButton(onClick = { showFavorites = !showFavorites; favorites = ChannelFavorites.load(context) }) { Text(if (showFavorites) "ALL" else "★ ${favorites.size}", color = if (showFavorites) Color.White else Color(0xFFFF1744)) }
             TextButton(onClick = { reload(true, background = true) }) { Text("REFRESH") }
         }
