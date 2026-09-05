@@ -7,13 +7,14 @@ on:
     paths:
       - 'scripts/live_sports_sweep.py'
       - 'scripts/live_sports_sweep_recent.py'
-      - 'scripts/normalize_schedule_feed.py'
-      - 'scripts/refresh_provider_matrix_v3.py'
       - 'scripts/providers/ncaa.py'
       - 'scripts/providers/fivb.py'
       - 'scripts/providers/free.py'
       - 'scripts/providers/shadow.py'
       - 'scripts/providers/shadow_special.py'
+      - 'scripts/providers/official_live_adapters.py'
+      - 'scripts/normalize_schedule_feed.py'
+      - 'scripts/refresh_provider_matrix_v3.py'
       - 'scripts/provider_health_gate.py'
       - 'scripts/official_event_recovery.py'
       - '.github/workflows/live-coverage-rebuild.yml'
@@ -73,6 +74,9 @@ jobs:
       - name: Cross-sport live sweep
         run: python3 scripts/live_sports_sweep_recent.py
 
+      - name: Dedicated official live adapters
+        run: python3 scripts/providers/official_live_adapters.py
+
       - name: Normalize canonical feed
         run: python3 scripts/normalize_schedule_feed.py
 
@@ -92,6 +96,7 @@ jobs:
           live=[e for e in events if str(e.get('tag','')).upper()=='LIVE' or str(e.get('status','')).upper()=='LIVE' or str(e.get('state','')).lower()=='in']
           print('EVENTS:',len(events)); print('LEAGUES:',len(d.get('eventCounts') or {})); print('LIVE EVENTS:',len(live))
           print('LIVE SPORTS:',sorted({str(e.get('sport') or e.get('league')) for e in live}))
+          print('OFFICIAL ADAPTERS:',json.dumps(d.get('officialLiveAdapters') or {},indent=2))
           sweep=d.get('liveSweep') or {}
           if sweep.get('schema') != 5: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
           if sweep.get('liveStatePolicy') != 'provider-authoritative-strict-reconciliation': raise SystemExit('LIVE SWEEP IS NOT STRICTLY PROVIDER-AUTHORITATIVE')
