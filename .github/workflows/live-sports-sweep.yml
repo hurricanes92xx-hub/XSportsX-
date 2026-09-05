@@ -20,7 +20,6 @@ permissions:
 # Live state must never sit behind the slower 6-hour schedule refresh.
 concurrency:
   group: xsportsx-live-sweep
-  queue: 1
   cancel-in-progress: true
 
 env:
