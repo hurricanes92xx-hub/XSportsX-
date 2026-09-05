@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "known_patterns": {
+    "UFC":{"sessions":["Early Prelims","Prelims","Main Card"],"rule":"Treat each published session as a distinct event; never infer a missing session time."},
+    "WWE":{"weekly":{"Monday":"Raw","Tuesday":"NXT","Wednesday":"Evolve","Thursday":"Main Event","Friday":"SmackDown","Sunday":"Sunday Night's Main Event"}},
+    "NFL":{"rule":"Use official/network evidence for kickoff and broadcast; do not infer a network from league alone."},
+    "NCAA FB":{"rule":"College football has multiple concurrent games; use event IDs plus team matchup and kickoff to match streams."},
+    "MLB":{"rule":"Baseball games can run long; timing alone must not mark a game final."},
+    "FIVB Men":{"rule":"Volleyball is set-based; a match may remain live well beyond a generic two-hour window."},
+    "FIVB Women":{"rule":"Volleyball is set-based; a match may remain live well beyond a generic two-hour window."}
+  }
+}
