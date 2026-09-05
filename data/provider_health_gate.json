@@ -1,25 +1,15 @@
 {
   "schema": 3,
-  "checkedAtUtc": "2026-09-05T03:43:32.468163Z",
-  "eventCount": 3324,
+  "checkedAtUtc": "2026-09-05T04:23:17.307092Z",
+  "eventCount": 3250,
   "futureLiveCorrected": 0,
-  "missingStartLiveCorrected": 2,
+  "missingStartLiveCorrected": 0,
+  "missingStartLiveWarnings": 0,
   "staleLiveEvidenceCorrected": 0,
   "providerFailures": [
     "NASCAR Trucks",
-    "WRC",
     "X Games"
   ],
-  "failedLiveStates": [
-    {
-      "league": "NCAA FB",
-      "title": "Miami (FL) @ Stanford",
-      "reason": "missing_start"
-    },
-    {
-      "league": "NCAA FB",
-      "title": "Fresno St. @ Southern California",
-      "reason": "missing_start"
-    }
-  ]
+  "failedLiveStates": [],
+  "liveWarnings": []
 }
