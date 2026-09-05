@@ -5,13 +5,9 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime,timezone,timedelta
 from zoneinfo import ZoneInfo
 BASE="https://ncaa-api.henrygd.me"; HEADERS={"User-Agent":"XSportsX-Schedule/6.2","Accept":"application/json"}; ESPN_HEADERS=HEADERS; NCAA_TZ=ZoneInfo("America/New_York"); MAX_WORKERS=3; RETRIES=3
-# These public NCAA mirror routes repeatedly return structural 400/422/428 errors on the
-# GitHub runner. Use ESPN directly for these leagues instead of retrying known-bad URLs.
 PRIMARY_DISABLED={"NCAA Softball","NCAA Women's Field Hockey","NCAA Beach Volleyball"}
-NCAA_LEAGUES=[
-("NCAA FB","football","fbs","🏈"),("NCAA BB","basketball-men","d1","🏀"),("NCAA WBB","basketball-women","d1","🏀"),("NCAA Baseball","baseball","d1","⚾"),("NCAA Softball","softball","d1","🥎"),("NCAA Men's Hockey","icehockey-men","d1","🏒"),("NCAA Women's Hockey","icehockey-women","d1","🏒"),("NCAA Men's Soccer","soccer-men","d1","⚽"),("NCAA Women's Soccer","soccer-women","d1","⚽"),("NCAA Men's Lacrosse","lacrosse-men","d1","🥍"),("NCAA Women's Lacrosse","lacrosse-women","d1","🥍"),("NCAA Men's Volleyball","volleyball-men","d1","🏐"),("NCAA Women's Volleyball","volleyball-women","d1","🏐"),("NCAA Men's Water Polo","waterpolo-men","d1","🤽"),("NCAA Women's Water Polo","waterpolo-women","d1","🤽"),("NCAA Women's Field Hockey","fieldhockey-women","d1","🏑"),("NCAA Beach Volleyball","beach-volleyball","d1","🏐")]
-ESPN_FALLBACK={
-"NCAA FB":("football","college-football"),"NCAA BB":("basketball","mens-college-basketball"),"NCAA WBB":("basketball","womens-college-basketball"),"NCAA Baseball":("baseball","college-baseball"),"NCAA Softball":("softball","college-softball"),"NCAA Men's Hockey":("hockey","mens-college-hockey"),"NCAA Women's Hockey":("hockey","womens-college-hockey"),"NCAA Men's Soccer":("soccer","usa.ncaa.m.1"),"NCAA Women's Soccer":("soccer","usa.ncaa.w.1"),"NCAA Men's Lacrosse":("lacrosse","mens-college-lacrosse"),"NCAA Women's Lacrosse":("lacrosse","womens-college-lacrosse"),"NCAA Men's Volleyball":("volleyball","mens-college-volleyball"),"NCAA Women's Volleyball":("volleyball","womens-college-volleyball"),"NCAA Men's Water Polo":("water-polo","mens-college-water-polo"),"NCAA Women's Water Polo":("water-polo","womens-college-water-polo"),"NCAA Women's Field Hockey":("field-hockey","womens-college-field-hockey"),"NCAA Beach Volleyball":("beach-volleyball","ncaa-beach-volleyball")}
+NCAA_LEAGUES=[("NCAA FB","football","fbs","🏈"),("NCAA BB","basketball-men","d1","🏀"),("NCAA WBB","basketball-women","d1","🏀"),("NCAA Baseball","baseball","d1","⚾"),("NCAA Softball","softball","d1","🥎"),("NCAA Men's Hockey","icehockey-men","d1","🏒"),("NCAA Women's Hockey","icehockey-women","d1","🏒"),("NCAA Men's Soccer","soccer-men","d1","⚽"),("NCAA Women's Soccer","soccer-women","d1","⚽"),("NCAA Men's Lacrosse","lacrosse-men","d1","🥍"),("NCAA Women's Lacrosse","lacrosse-women","d1","🥍"),("NCAA Men's Volleyball","volleyball-men","d1","🏐"),("NCAA Women's Volleyball","volleyball-women","d1","🏐"),("NCAA Men's Water Polo","waterpolo-men","d1","🤽"),("NCAA Women's Water Polo","waterpolo-women","d1","🤽"),("NCAA Women's Field Hockey","fieldhockey-women","d1","🏑"),("NCAA Beach Volleyball","beach-volleyball","d1","🏐")]
+ESPN_FALLBACK={"NCAA FB":("football","college-football"),"NCAA BB":("basketball","mens-college-basketball"),"NCAA WBB":("basketball","womens-college-basketball"),"NCAA Baseball":("baseball","college-baseball"),"NCAA Softball":("softball","college-softball"),"NCAA Men's Hockey":("hockey","mens-college-hockey"),"NCAA Women's Hockey":("hockey","womens-college-hockey"),"NCAA Men's Soccer":("soccer","usa.ncaa.m.1"),"NCAA Women's Soccer":("soccer","usa.ncaa.w.1"),"NCAA Men's Lacrosse":("lacrosse","mens-college-lacrosse"),"NCAA Women's Lacrosse":("lacrosse","womens-college-lacrosse"),"NCAA Men's Volleyball":("volleyball","mens-college-volleyball"),"NCAA Women's Volleyball":("volleyball","womens-college-volleyball"),"NCAA Men's Water Polo":("water-polo","mens-college-water-polo"),"NCAA Women's Water Polo":("water-polo","womens-college-water-polo"),"NCAA Women's Field Hockey":("field-hockey","womens-college-field-hockey"),"NCAA Beach Volleyball":("beach-volleyball","ncaa-beach-volleyball")}
 def _get(url,headers=HEADERS,timeout=15):
  last=None
  for attempt in range(RETRIES):
@@ -62,9 +58,11 @@ def _normalize(game,league,icon):
  if pid:event["providerEventId"]=f"ncaa:{pid}"
  event.update({"status":tag,"state":{"LIVE":"in","FINAL":"post","UPCOMING":"pre"}[tag]});return event
 def _normalize_espn(game,league,icon):
- dt=_parse_iso(game.get("date"));
+ dt=_parse_iso(game.get("date"))
  if not dt:return None
- comp=(game.get("competitions") or [{}])[0];competitors=comp.get("competitors") or [];home=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in competitors if x.get("homeAway")=="home"),"");away=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in competitors if x.get("homeAway")=="away","")
+ comp=(game.get("competitions") or [{}])[0];competitors=comp.get("competitors") or []
+ home=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in competitors if x.get("homeAway")=="home"),"")
+ away=next((x.get("team",{}).get("shortDisplayName") or x.get("team",{}).get("displayName") for x in competitors if x.get("homeAway")=="away"),"")
  title=f"{away} @ {home}" if away and home else str(game.get("name") or game.get("shortName") or league);state=str(((comp.get("status") or {}).get("type") or {}).get("state") or "").lower();tag="LIVE" if state=="in" else "FINAL" if state=="post" else "UPCOMING";event={"league":league,"title":title,"start":dt.isoformat().replace("+00:00","Z"),"startUtc":dt.isoformat().replace("+00:00","Z"),"tag":tag,"icon":icon,"source":"espn-ncaa"}
  if away:event["away"]=away
  if home:event["home"]=home
