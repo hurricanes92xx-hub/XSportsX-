@@ -57,12 +57,9 @@ jobs:
           import json
           from pathlib import Path
           p=Path('data/schedule_feed.json')
-          if not p.exists() or p.stat().st_size < 100:
-              raise SystemExit('CANONICAL FEED MISSING OR EMPTY')
-          d=json.loads(p.read_text())
-          events=d.get('events')
-          if not isinstance(events,list) or not events:
-              raise SystemExit('CANONICAL REBUILD PRODUCED NO EVENTS')
+          if not p.exists() or p.stat().st_size < 100: raise SystemExit('CANONICAL FEED MISSING OR EMPTY')
+          d=json.loads(p.read_text()); events=d.get('events')
+          if not isinstance(events,list) or not events: raise SystemExit('CANONICAL REBUILD PRODUCED NO EVENTS')
           print(f"Canonical events: {len(events)}")
           print(f"Canonical leagues: {len(d.get('eventCounts') or {})}")
           PY
@@ -86,24 +83,18 @@ jobs:
           from datetime import datetime, timezone, timedelta
           from pathlib import Path
           p=Path('data/schedule_feed.json')
-          if not p.exists() or p.stat().st_size < 100:
-              raise SystemExit('FINAL FEED MISSING OR EMPTY')
-          d=json.loads(p.read_text())
-          events=d.get('events') or []
+          if not p.exists() or p.stat().st_size < 100: raise SystemExit('FINAL FEED MISSING OR EMPTY')
+          d=json.loads(p.read_text()); events=d.get('events') or []
           if not events: raise SystemExit('EMPTY CANONICAL FEED')
           live=[e for e in events if str(e.get('tag','')).upper()=='LIVE' or str(e.get('status','')).upper()=='LIVE' or str(e.get('state','')).lower()=='in']
-          sports={str(e.get('sport') or e.get('league')) for e in live}
-          print('EVENTS:',len(events))
-          print('LEAGUES:',len(d.get('eventCounts') or {}))
-          print('LIVE EVENTS:',len(live))
-          print('LIVE SPORTS:',sorted(sports))
+          print('EVENTS:',len(events)); print('LEAGUES:',len(d.get('eventCounts') or {})); print('LIVE EVENTS:',len(live))
+          print('LIVE SPORTS:',sorted({str(e.get('sport') or e.get('league')) for e in live}))
           sweep=d.get('liveSweep') or {}
           if sweep.get('schema') != 5: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
           if sweep.get('liveStatePolicy') != 'provider-authoritative-strict-reconciliation': raise SystemExit('LIVE SWEEP IS NOT STRICTLY PROVIDER-AUTHORITATIVE')
           now=datetime.now(timezone.utc)
           for e in live:
-              evidence=e.get('liveEvidence') or {}
-              if not evidence.get('providerEventId'): raise SystemExit(f"LIVE EVENT WITHOUT PROVIDER EVIDENCE: {e.get('league')} | {e.get('title')}")
+              if not (e.get('liveEvidence') or {}).get('providerEventId'): raise SystemExit(f"LIVE EVENT WITHOUT PROVIDER EVIDENCE: {e.get('league')} | {e.get('title')}")
               start=str(e.get('startUtc') or e.get('start') or '')
               if start:
                   dt=datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(timezone.utc)
@@ -122,9 +113,8 @@ jobs:
             git fetch origin android-app
             git rebase --autostash origin/android-app
             if git push origin HEAD:android-app; then exit 0; fi
-            git reset --hard origin/android-app
-            git pull --rebase origin android-app
-            git apply <(git show --format= --binary HEAD 2>/dev/null) 2>/dev/null || true
+            git rebase --abort || true
             sleep $((attempt * 2))
           done
+          echo 'Unable to publish feed after retries.'
           exit 1
