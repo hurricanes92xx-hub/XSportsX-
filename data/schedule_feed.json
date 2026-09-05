@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-05T02:37:46.651222Z",
+  "generatedAt": "2026-09-05T02:41:30.241786Z",
   "refreshHours": 6,
   "eventCounts": {
     "F1": 28,
@@ -23,7 +23,7 @@
     "Ligue 1": 24,
     "NCAA FB": 35,
     "NCAA Women's Field Hockey": 78,
-    "UFC": 17,
+    "UFC": 10,
     "NCAA Men's Soccer": 161,
     "NWSL": 40,
     "MLS": 76,
@@ -125,7 +125,7 @@
     "NHL",
     "Serie A"
   ],
-  "providerOverlapRecordCount": 1426,
+  "providerOverlapRecordCount": 1082,
   "leagueProviderMatrix": {
     "AAA Wrestling": {
       "configured": [
@@ -212,14 +212,14 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "openligadb",
         "official",
         "sportscore"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "openligadb",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -254,13 +254,13 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "official",
         "sportscore"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -450,13 +450,13 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "official",
         "sportscore"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -473,13 +473,13 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "sportscore",
         "official"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -496,12 +496,12 @@
       ],
       "activeOrder": [
         "sportsdb",
-        "mlb-official",
-        "espn"
+        "espn",
+        "mlb-official"
       ],
       "primary": "sportsdb",
-      "secondary": "mlb-official",
-      "tertiary": "espn",
+      "secondary": "espn",
+      "tertiary": "mlb-official",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -516,13 +516,13 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "sportscore",
         "official"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -639,13 +639,13 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "official",
         "sportscore"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -893,12 +893,12 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "official"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "official",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -913,12 +913,12 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "nhl-official"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "nhl-official",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -1034,12 +1034,12 @@
         "sportsdb"
       ],
       "activeOrder": [
-        "sportsdb",
         "espn",
+        "sportsdb",
         "sportscore"
       ],
-      "primary": "sportsdb",
-      "secondary": "espn",
+      "primary": "espn",
+      "secondary": "sportsdb",
       "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
@@ -1190,12 +1190,12 @@
       ],
       "activeOrder": [
         "espn",
-        "sportscore",
-        "official"
+        "official",
+        "sportscore"
       ],
       "primary": "espn",
-      "secondary": "sportscore",
-      "tertiary": "official",
+      "secondary": "official",
+      "tertiary": "sportscore",
       "cachedRecovery": "cache",
       "standbyProviders": [
         "sportradar",
@@ -1235,14 +1235,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 177.4,
+        "latencyMs": 230.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.1,
+        "latencyMs": 12.5,
         "error": "cache"
       }
     ],
@@ -1251,7 +1251,7 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 752.4,
+        "latencyMs": 832.1,
         "error": ""
       }
     ],
@@ -1260,14 +1260,14 @@
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 189.8,
+        "latencyMs": 305.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 277.1,
+        "latencyMs": 441.5,
         "error": ""
       }
     ],
@@ -1276,28 +1276,28 @@
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 412.9,
+        "latencyMs": 492.2,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 164.4,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 559.0,
+        "error": ""
       },
       {
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 144.5,
+        "latencyMs": 119.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 155.6,
+        "latencyMs": 274.7,
         "error": ""
       }
     ],
@@ -1306,51 +1306,51 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1802.5,
+        "latencyMs": 1837.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.4,
+        "latencyMs": 11.0,
         "error": "cache"
       }
     ],
     "Bundesliga": [
       {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 113.4,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 26,
-        "latencyMs": 208.7,
+        "latencyMs": 293.1,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 209.0,
         "error": ""
       },
       {
         "provider": "openligadb",
         "ok": true,
         "events": 306,
-        "latencyMs": 1149.3,
+        "latencyMs": 1516.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 189.6,
+        "latencyMs": 90.6,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": false,
         "events": 0,
-        "latencyMs": 107.9,
+        "latencyMs": 177.2,
         "error": "HTTPError: HTTP Error 503: Service Unavailable"
       }
     ],
@@ -1359,52 +1359,52 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 125.5,
+        "latencyMs": 175.2,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 284.8,
+        "latencyMs": 414.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 12.9,
+        "latencyMs": 10.8,
         "error": "cache"
       }
     ],
     "EPL": [
       {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 114.2,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 29,
-        "latencyMs": 266.9,
+        "latencyMs": 299.7,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 207.2,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 845.1,
+        "latencyMs": 1257.4,
         "error": ""
       },
       {
         "provider": "sportscore",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 110.3,
-        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+        "latencyMs": 270.6,
+        "error": ""
       }
     ],
     "F1": [
@@ -1412,28 +1412,28 @@
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 144.6,
+        "latencyMs": 250.9,
         "error": ""
       },
       {
         "provider": "jolpica-f1",
         "ok": true,
         "events": 23,
-        "latencyMs": 361.1,
+        "latencyMs": 545.2,
         "error": ""
       },
       {
         "provider": "openf1",
         "ok": true,
         "events": 1,
-        "latencyMs": 515.3,
+        "latencyMs": 708.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 205.0,
+        "latencyMs": 193.9,
         "error": ""
       }
     ],
@@ -1442,7 +1442,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 90,
-        "latencyMs": 338.4,
+        "latencyMs": 517.7,
         "error": ""
       }
     ],
@@ -1451,7 +1451,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 29,
-        "latencyMs": 193.5,
+        "latencyMs": 274.0,
         "error": ""
       }
     ],
@@ -1460,14 +1460,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 731.0,
+        "latencyMs": 147.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.4,
+        "latencyMs": 12.0,
         "error": "cache"
       }
     ],
@@ -1476,35 +1476,35 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 952.5,
+        "latencyMs": 259.0,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 550.4,
+        "latencyMs": 561.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 229.3,
+        "latencyMs": 278.0,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 108.6,
+        "latencyMs": 206.1,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.6,
+        "latencyMs": 12.2,
         "error": "cache"
       }
     ],
@@ -1513,14 +1513,14 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 322.4,
+        "latencyMs": 933.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.3,
+        "latencyMs": 10.9,
         "error": "cache"
       }
     ],
@@ -1529,35 +1529,35 @@
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 266.6,
+        "latencyMs": 318.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 531.1,
+        "latencyMs": 172.9,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 314.5,
+        "latencyMs": 321.8,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 115.3,
+        "latencyMs": 201.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": true,
         "events": 74,
-        "latencyMs": 12.9,
+        "latencyMs": 10.9,
         "error": "cache"
       }
     ],
@@ -1566,14 +1566,14 @@
         "provider": "espn",
         "ok": true,
         "events": 1,
-        "latencyMs": 85.3,
+        "latencyMs": 153.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 244.9,
+        "latencyMs": 569.1,
         "error": ""
       }
     ],
@@ -1582,14 +1582,378 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 246.2,
+        "latencyMs": 163.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 179.9,
+        "latencyMs": 330.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.0,
+        "error": "cache"
+      }
+    ],
+    "LPGA": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 3,
+        "latencyMs": 176.0,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 233.7,
+        "error": ""
+      }
+    ],
+    "LaLiga": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 38,
+        "latencyMs": 327.0,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 202.7,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1360.0,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 177.7,
+        "error": ""
+      }
+    ],
+    "Ligue 1": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 24,
+        "latencyMs": 307.6,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 202.7,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 221.1,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1215.0,
+        "error": ""
+      }
+    ],
+    "MLB": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 207.0,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 326,
+        "latencyMs": 610.9,
+        "error": ""
+      },
+      {
+        "provider": "mlb-official",
+        "ok": true,
+        "events": 342,
+        "latencyMs": 414.8,
+        "error": ""
+      }
+    ],
+    "MLS": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 75,
+        "latencyMs": 373.5,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 206.0,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 75,
+        "latencyMs": 543.0,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 595.5,
+        "error": ""
+      }
+    ],
+    "MONSTER JAM": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 127.0,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.3,
+        "error": "cache"
+      }
+    ],
+    "MXGP": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 841.6,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 11.3,
+        "error": "cache"
+      }
+    ],
+    "MotoGP": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 144.3,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 10.7,
+        "error": "cache"
+      }
+    ],
+    "NASCAR Cup": [
+      {
+        "provider": "nascar",
+        "ok": true,
+        "events": 49,
+        "latencyMs": 386.2,
+        "error": ""
+      }
+    ],
+    "NASCAR Truck": [
+      {
+        "provider": "nascar",
+        "ok": true,
+        "events": 21,
+        "latencyMs": 101.8,
+        "error": ""
+      }
+    ],
+    "NASCAR Trucks": [
+      {
+        "provider": "official",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 136.4,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.4,
+        "error": "cache"
+      }
+    ],
+    "NASCAR Xfinity": [
+      {
+        "provider": "nascar",
+        "ok": true,
+        "events": 28,
+        "latencyMs": 84.0,
+        "error": ""
+      }
+    ],
+    "NBA": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 7,
+        "latencyMs": 190.4,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 213.3,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 174.5,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 233.6,
+        "error": ""
+      }
+    ],
+    "NCAA BB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2210.4,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.3,
+        "error": "cache"
+      }
+    ],
+    "NCAA Baseball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2292.9,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.3,
+        "error": "cache"
+      }
+    ],
+    "NCAA Beach Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2637.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 13.6,
+        "error": "cache"
+      }
+    ],
+    "NCAA FB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 35,
+        "latencyMs": 1915.5,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2027.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 14.1,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Lacrosse": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2089.3,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 13.8,
+        "error": "cache"
+      }
+    ],
+    "NCAA Men's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 161,
+        "latencyMs": 2305.3,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 3082.0,
         "error": ""
       },
       {
@@ -1600,262 +1964,119 @@
         "error": "cache"
       }
     ],
-    "LPGA": [
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 3,
-        "latencyMs": 84.7,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 188.0,
-        "error": ""
-      }
-    ],
-    "LaLiga": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 114.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 38,
-        "latencyMs": 182.2,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1157.6,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 546.6,
-        "error": ""
-      }
-    ],
-    "Ligue 1": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 119.3,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 24,
-        "latencyMs": 164.6,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 568.6,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1225.1,
-        "error": ""
-      }
-    ],
-    "MLB": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 133.9,
-        "error": ""
-      },
-      {
-        "provider": "mlb-official",
-        "ok": true,
-        "events": 342,
-        "latencyMs": 221.7,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 326,
-        "latencyMs": 453.1,
-        "error": ""
-      }
-    ],
-    "MLS": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 138.4,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 75,
-        "latencyMs": 233.5,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 75,
-        "latencyMs": 237.8,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 270.3,
-        "error": ""
-      }
-    ],
-    "MONSTER JAM": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 185.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 15.2,
-        "error": "cache"
-      }
-    ],
-    "MXGP": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 664.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 12.9,
-        "error": "cache"
-      }
-    ],
-    "MotoGP": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 655.2,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 13.2,
-        "error": "cache"
-      }
-    ],
-    "NASCAR Cup": [
-      {
-        "provider": "nascar",
-        "ok": true,
-        "events": 49,
-        "latencyMs": 231.9,
-        "error": ""
-      }
-    ],
-    "NASCAR Truck": [
-      {
-        "provider": "nascar",
-        "ok": true,
-        "events": 21,
-        "latencyMs": 40.7,
-        "error": ""
-      }
-    ],
-    "NASCAR Trucks": [
-      {
-        "provider": "official",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 114.6,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 14.9,
-        "error": "cache"
-      }
-    ],
-    "NASCAR Xfinity": [
-      {
-        "provider": "nascar",
-        "ok": true,
-        "events": 28,
-        "latencyMs": 94.1,
-        "error": ""
-      }
-    ],
-    "NBA": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 111.6,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 7,
-        "latencyMs": 106.5,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 140.3,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 125.3,
-        "error": ""
-      }
-    ],
-    "NCAA BB": [
+    "NCAA Men's Water Polo": [
       {
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2138.0,
+        "latencyMs": 2163.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 14.7,
+        "error": "cache"
+      }
+    ],
+    "NCAA Softball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2574.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.4,
+        "error": "cache"
+      }
+    ],
+    "NCAA WBB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2026.5,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 12.1,
+        "error": "cache"
+      }
+    ],
+    "NCAA Women's Field Hockey": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 78,
+        "latencyMs": 1927.6,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Hockey": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 743,
+        "latencyMs": 456.3,
+        "error": ""
+      },
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2166.1,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Lacrosse": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1949.4,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 14.5,
+        "error": "cache"
+      }
+    ],
+    "NCAA Women's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 264,
+        "latencyMs": 2262.7,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 509,
+        "latencyMs": 2402.9,
+        "error": ""
+      }
+    ],
+    "NCAA Women's Water Polo": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 2275.9,
         "error": ""
       },
       {
@@ -1866,270 +2087,49 @@
         "error": "cache"
       }
     ],
-    "NCAA Baseball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2425.6,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 15.2,
-        "error": "cache"
-      }
-    ],
-    "NCAA Beach Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2145.1,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.3,
-        "error": "cache"
-      }
-    ],
-    "NCAA FB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 35,
-        "latencyMs": 2054.7,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1995.6,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.9,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Lacrosse": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2058.8,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.1,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 161,
-        "latencyMs": 2233.0,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1831.3,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.3,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Water Polo": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2108.4,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.9,
-        "error": "cache"
-      }
-    ],
-    "NCAA Softball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2447.2,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 15.5,
-        "error": "cache"
-      }
-    ],
-    "NCAA WBB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1951.4,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 14.3,
-        "error": "cache"
-      }
-    ],
-    "NCAA Women's Field Hockey": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 78,
-        "latencyMs": 1858.7,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Hockey": [
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 743,
-        "latencyMs": 317.6,
-        "error": ""
-      },
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1926.6,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Lacrosse": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 2001.2,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.6,
-        "error": "cache"
-      }
-    ],
-    "NCAA Women's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 264,
-        "latencyMs": 2016.4,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 509,
-        "latencyMs": 3005.0,
-        "error": ""
-      }
-    ],
-    "NCAA Women's Water Polo": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1711.3,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 18.5,
-        "error": "cache"
-      }
-    ],
     "NFL": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 116.1,
-        "error": ""
-      },
       {
         "provider": "espn",
         "ok": true,
         "events": 17,
-        "latencyMs": 197.4,
+        "latencyMs": 286.0,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 206.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 207.1,
+        "latencyMs": 190.6,
         "error": ""
       }
     ],
     "NHL": [
       {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 119.5,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 108,
-        "latencyMs": 277.4,
+        "latencyMs": 405.2,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 198.8,
         "error": ""
       },
       {
         "provider": "nhl-official",
         "ok": false,
         "events": 0,
-        "latencyMs": 107.9,
+        "latencyMs": 171.0,
         "error": ""
       }
     ],
@@ -2138,21 +2138,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 82.9,
+        "latencyMs": 165.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 5971.8,
+        "latencyMs": 289.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.0,
+        "latencyMs": 10.8,
         "error": "cache"
       }
     ],
@@ -2161,14 +2161,14 @@
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 157.5,
+        "latencyMs": 153.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1009.5,
+        "latencyMs": 1965.2,
         "error": ""
       }
     ],
@@ -2177,14 +2177,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 40,
-        "latencyMs": 219.0,
+        "latencyMs": 315.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 397.6,
+        "latencyMs": 140.1,
         "error": ""
       }
     ],
@@ -2193,14 +2193,14 @@
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 81.9,
+        "latencyMs": 157.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 177.1,
+        "latencyMs": 158.1,
         "error": ""
       }
     ],
@@ -2209,14 +2209,14 @@
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 113.1,
+        "latencyMs": 156.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 140.4,
+        "latencyMs": 329.4,
         "error": ""
       }
     ],
@@ -2225,44 +2225,44 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 83.9,
+        "latencyMs": 158.2,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 994.8,
+        "latencyMs": 1497.4,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 16.0,
+        "latencyMs": 13.2,
         "error": "cache"
       }
     ],
     "Serie A": [
       {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 114.4,
-        "error": ""
-      },
-      {
         "provider": "espn",
         "ok": true,
         "events": 29,
-        "latencyMs": 190.3,
+        "latencyMs": 309.5,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 200.0,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 113.0,
+        "latencyMs": 252.3,
         "error": ""
       }
     ],
@@ -2271,21 +2271,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 125.6,
+        "latencyMs": 212.2,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 188.2,
+        "latencyMs": 231.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.1,
+        "latencyMs": 12.5,
         "error": "cache"
       }
     ],
@@ -2303,21 +2303,21 @@
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 141.0,
+        "latencyMs": 265.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 206.8,
+        "latencyMs": 150.4,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 259.8,
+        "latencyMs": 401.2,
         "error": ""
       }
     ],
@@ -2326,14 +2326,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 18,
-        "latencyMs": 363.5,
+        "latencyMs": 770.5,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 131.7,
+        "latencyMs": 299.2,
         "error": ""
       }
     ],
@@ -2342,21 +2342,21 @@
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 130.4,
+        "latencyMs": 271.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 165.6,
+        "latencyMs": 385.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 124.6,
+        "latencyMs": 217.5,
         "error": ""
       }
     ],
@@ -2365,14 +2365,14 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 521.7,
+        "latencyMs": 406.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.0,
+        "latencyMs": 11.1,
         "error": "cache"
       }
     ],
@@ -2381,21 +2381,21 @@
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 245.4,
+        "latencyMs": 335.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 154.0,
+        "latencyMs": 288.9,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 152.7,
+        "latencyMs": 412.7,
         "error": ""
       }
     ],
@@ -2404,14 +2404,14 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 595.7,
+        "latencyMs": 876.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 13.5,
+        "latencyMs": 11.1,
         "error": "cache"
       }
     ],
@@ -2420,21 +2420,21 @@
         "provider": "espn",
         "ok": true,
         "events": 19,
-        "latencyMs": 400.1,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 131.1,
+        "latencyMs": 566.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 214.4,
+        "latencyMs": 154.7,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 309.2,
         "error": ""
       }
     ],
@@ -2452,14 +2452,14 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 496.1,
+        "latencyMs": 239.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.0,
+        "latencyMs": 12.2,
         "error": "cache"
       }
     ]
@@ -4825,7 +4825,7 @@
       "league": "MLB",
       "title": "Detroit Tigers @ Cleveland Guardians",
       "start": "2026-09-04T23:15:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "⚾",
       "source": "mlb-official",
       "home": "Cleveland Guardians",
@@ -5012,7 +5012,7 @@
       "league": "NRL",
       "title": "Sea Eagles @ Warriors",
       "start": "2026-09-05T05:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Warriors",
@@ -5022,19 +5022,20 @@
       "awayTeamId": "289196",
       "id": "evt_08d3c35e581717cf001cc3e5",
       "startUtc": "2026-09-05T05:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/5 - 1:00 AM EDT",
       "provider_detail": "Sat, September 4th at 1:00 AM EDT",
       "provider_displayClock": "1'",
       "provider_period": 0,
-      "sport": "rugby-league"
+      "sport": "rugby-league",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "AFL",
       "title": "Brisbane Lions @ Sydney Swans",
       "start": "2026-09-05T05:15Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Sydney Swans",
@@ -5044,19 +5045,20 @@
       "awayTeamId": "11",
       "id": "evt_4d400ea9fdc3eeab4f8161e7",
       "startUtc": "2026-09-05T05:15Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/4 - 10:15 PM EDT",
       "provider_detail": "Fri, September 4th at 10:15 PM EDT",
       "provider_displayClock": "0:00",
       "provider_period": 0,
-      "sport": "australian-football"
+      "sport": "australian-football",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NRL",
       "title": "Raiders @ Cowboys",
       "start": "2026-09-05T07:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Cowboys",
@@ -5066,13 +5068,14 @@
       "awayTeamId": "289198",
       "id": "evt_580da06905c763781b08188a",
       "startUtc": "2026-09-05T07:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/5 - 3:30 AM EDT",
       "provider_detail": "Sat, September 5th at 3:30 AM EDT",
       "provider_displayClock": "1'",
       "provider_period": 0,
-      "sport": "rugby-league"
+      "sport": "rugby-league",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "FIVB Men",
@@ -5094,7 +5097,7 @@
       "league": "AFL",
       "title": "Western Bulldogs @ Adelaide Crows",
       "start": "2026-09-05T09:35Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Adelaide Crows",
@@ -5104,19 +5107,20 @@
       "awayTeamId": "6",
       "id": "evt_f102b6c1cad31687aef5632a",
       "startUtc": "2026-09-05T09:35Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/5 - 2:35 AM EDT",
       "provider_detail": "Sat, September 4th at 2:35 AM EDT",
       "provider_displayClock": "0:00",
       "provider_period": 0,
-      "sport": "australian-football"
+      "sport": "australian-football",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NRL",
       "title": "Storm @ Sharks",
       "start": "2026-09-05T09:35Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Sharks",
@@ -5126,19 +5130,20 @@
       "awayTeamId": "289208",
       "id": "evt_4d021af5429cb5c206e9536e",
       "startUtc": "2026-09-05T09:35Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/5 - 5:35 AM EDT",
       "provider_detail": "Sat, September 5th at 5:35 AM EDT",
       "provider_displayClock": "1'",
       "provider_period": 0,
-      "sport": "rugby-league"
+      "sport": "rugby-league",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "Bournemouth @ Newcastle",
       "start": "2026-09-05T11:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Newcastle",
@@ -5152,12 +5157,13 @@
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/5oihbe1784549302.jpg",
       "id": "evt_cd16f899cd4a1e1af0c75263",
       "startUtc": "2026-09-05T11:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "FIVB Women",
@@ -5209,7 +5215,7 @@
       "league": "Serie A",
       "title": "Torino @ Fiorentina",
       "start": "2026-09-05T13:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Fiorentina",
@@ -5223,12 +5229,13 @@
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/dapyhe1755934645.jpg",
       "id": "evt_c020adcda4ad44bf20ddd26a",
       "startUtc": "2026-09-05T13:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
@@ -5321,7 +5328,7 @@
       "league": "Bundesliga",
       "title": "Union Berlin @ Leverkusen",
       "start": "2026-09-05T13:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Leverkusen",
@@ -5331,18 +5338,19 @@
       "awayTeamId": "598",
       "id": "evt_eb524e5fd0ccc8dc23570c9f",
       "startUtc": "2026-09-05T13:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
       "title": "Elversberg @ Gladbach",
       "start": "2026-09-05T13:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Gladbach",
@@ -5352,18 +5360,19 @@
       "awayTeamId": "10388",
       "id": "evt_90f934181daf2be576f945e4",
       "startUtc": "2026-09-05T13:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
       "title": "Freiburg @ Paderborn",
       "start": "2026-09-05T13:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Paderborn",
@@ -5373,18 +5382,19 @@
       "awayTeamId": "126",
       "id": "evt_02049b363ce22b3d71d342fa",
       "startUtc": "2026-09-05T13:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
       "title": "Dortmund @ Hoffenheim",
       "start": "2026-09-05T13:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Hoffenheim",
@@ -5394,18 +5404,19 @@
       "awayTeamId": "124",
       "id": "evt_485a8fe70b9a17c96a8e7ab8",
       "startUtc": "2026-09-05T13:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
       "title": "RB Leipzig @ Bremen",
       "start": "2026-09-05T13:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Bremen",
@@ -5415,12 +5426,13 @@
       "awayTeamId": "11420",
       "id": "evt_3c0cc8298b08693d9411cb5c",
       "startUtc": "2026-09-05T13:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -5468,7 +5480,7 @@
       "league": "EPL",
       "title": "Sunderland @ Brentford",
       "start": "2026-09-05T14:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Brentford",
@@ -5478,18 +5490,19 @@
       "awayTeamId": "366",
       "id": "evt_e6b610343e595bd4ffb442b5",
       "startUtc": "2026-09-05T14:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "Leeds @ Brighton",
       "start": "2026-09-05T14:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Brighton",
@@ -5499,18 +5512,19 @@
       "awayTeamId": "357",
       "id": "evt_08e99dd98009c88e6cb830ce",
       "startUtc": "2026-09-05T14:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "C Palace @ Fulham",
       "start": "2026-09-05T14:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Fulham",
@@ -5520,18 +5534,19 @@
       "awayTeamId": "384",
       "id": "evt_771a61f44a3c6d1a741ced63",
       "startUtc": "2026-09-05T14:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "Coventry @ Man City",
       "start": "2026-09-05T14:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Man City",
@@ -5541,18 +5556,19 @@
       "awayTeamId": "388",
       "id": "evt_ad4371f78223095678876529",
       "startUtc": "2026-09-05T14:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "Spurs @ Nottm Forest",
       "start": "2026-09-05T14:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Nottm Forest",
@@ -5562,12 +5578,13 @@
       "awayTeamId": "367",
       "id": "evt_fb4a985f1d754fb40c41ab2e",
       "startUtc": "2026-09-05T14:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:00 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "LaLiga",
@@ -5590,7 +5607,7 @@
       "league": "LaLiga",
       "title": "Atlético @ Athletic",
       "start": "2026-09-05T14:15Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Athletic",
@@ -5600,12 +5617,13 @@
       "awayTeamId": "1068",
       "id": "evt_11f224d41f117b0c82b69dc5",
       "startUtc": "2026-09-05T14:15Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:15 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NASCAR Cup",
@@ -5779,7 +5797,7 @@
       "league": "Ligue 1",
       "title": "Lorient @ Lens",
       "start": "2026-09-05T15:15Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Lens",
@@ -5793,12 +5811,13 @@
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/4hf8lz1754727104.jpg",
       "id": "evt_2c2df2b21671b3ff1684d802",
       "startUtc": "2026-09-05T15:15Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 11:15 AM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -6267,7 +6286,7 @@
       "league": "Serie A",
       "title": "Napoli @ Inter Milan",
       "start": "2026-09-05T16:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Inter Milan",
@@ -6277,12 +6296,13 @@
       "awayTeamId": "114",
       "id": "evt_8152df42220ac8584a276597",
       "startUtc": "2026-09-05T16:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 12:00 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Bundesliga",
@@ -6344,7 +6364,7 @@
       "league": "Bundesliga",
       "title": "Bayern @ Schalke",
       "start": "2026-09-05T16:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Schalke",
@@ -6354,18 +6374,19 @@
       "awayTeamId": "132",
       "id": "evt_9ddb15e6672d07b2fa49bdaf",
       "startUtc": "2026-09-05T16:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 12:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "EPL",
       "title": "Aston Villa @ Hull",
       "start": "2026-09-05T16:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Hull",
@@ -6375,18 +6396,19 @@
       "awayTeamId": "362",
       "id": "evt_7f0931f2e62189bbfde5cd44",
       "startUtc": "2026-09-05T16:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 12:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "LaLiga",
       "title": "Racing @ Rayo",
       "start": "2026-09-05T16:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Rayo",
@@ -6396,12 +6418,13 @@
       "awayTeamId": "87",
       "id": "evt_f4e73cfd74dc3a06725f9ad9",
       "startUtc": "2026-09-05T16:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 12:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA FB",
@@ -7299,7 +7322,7 @@
       "league": "Ligue 1",
       "title": "Brest @ Le Havre AC",
       "start": "2026-09-05T18:45Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Le Havre AC",
@@ -7309,18 +7332,19 @@
       "awayTeamId": "6997",
       "id": "evt_ec67ff38c200e48c2ee3c5ef",
       "startUtc": "2026-09-05T18:45Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 2:45 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Ligue 1",
       "title": "Le Mans @ Nice",
       "start": "2026-09-05T18:45Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Nice",
@@ -7330,18 +7354,19 @@
       "awayTeamId": "2697",
       "id": "evt_5b78b92023aa1c035f6ce4b2",
       "startUtc": "2026-09-05T18:45Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 2:45 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "Serie A",
       "title": "Atalanta @ AS Roma",
       "start": "2026-09-05T18:45Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "AS Roma",
@@ -7351,12 +7376,13 @@
       "awayTeamId": "105",
       "id": "evt_aa9c3d038ca8559748a7f5ec",
       "startUtc": "2026-09-05T18:45Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 2:45 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA FB",
@@ -7671,7 +7697,7 @@
       "league": "LaLiga",
       "title": "Deportivo @ Villarreal",
       "start": "2026-09-05T19:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Villarreal",
@@ -7681,12 +7707,13 @@
       "awayTeamId": "90",
       "id": "evt_2a88de6e44968634ee035fee",
       "startUtc": "2026-09-05T19:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 3:00 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA FB",
@@ -8172,12 +8199,12 @@
       "home": "Miami Marlins",
       "away": "Chicago Cubs",
       "providerEventId": "mlb:823823",
+      "homeTeamId": "28",
+      "awayTeamId": "16",
       "sportsDbEventId": "2458172",
       "sportsDbHomeTeamId": "135273",
       "sportsDbAwayTeamId": "135269",
       "artUrl": "https://r2.thesportsdb.com/images/media/event/thumb/z22u201785919037.jpg",
-      "homeTeamId": "28",
-      "awayTeamId": "16",
       "id": "evt_1690b478df66d9305fa5941c",
       "startUtc": "2026-09-05T20:10:00Z",
       "sport": "baseball",
@@ -9184,28 +9211,6 @@
     },
     {
       "league": "MLB",
-      "title": "Toronto Blue Jays @ Kansas City Royals",
-      "start": "2026-09-05T23:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Kansas City Royals",
-      "away": "Toronto Blue Jays",
-      "providerEventId": "mlb:824066",
-      "homeTeamId": "7",
-      "awayTeamId": "14",
-      "id": "evt_09bb7363914bf21676bb5bb1",
-      "startUtc": "2026-09-05T23:10:00Z",
-      "sport": "baseball",
-      "status": "UPCOMING",
-      "state": "pre",
-      "provider_shortDetail": "9/5 - 7:10 PM EDT",
-      "provider_detail": "Scheduled",
-      "provider_displayClock": "0:00",
-      "provider_period": 1
-    },
-    {
-      "league": "MLB",
       "title": "Minnesota Twins @ Chicago White Sox",
       "start": "2026-09-05T23:10:00Z",
       "tag": "UPCOMING",
@@ -9217,6 +9222,28 @@
       "homeTeamId": "4",
       "awayTeamId": "9",
       "id": "evt_98d4f2f000b4425176f36bf9",
+      "startUtc": "2026-09-05T23:10:00Z",
+      "sport": "baseball",
+      "status": "UPCOMING",
+      "state": "pre",
+      "provider_shortDetail": "9/5 - 7:10 PM EDT",
+      "provider_detail": "Scheduled",
+      "provider_displayClock": "0:00",
+      "provider_period": 1
+    },
+    {
+      "league": "MLB",
+      "title": "Toronto Blue Jays @ Kansas City Royals",
+      "start": "2026-09-05T23:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Kansas City Royals",
+      "away": "Toronto Blue Jays",
+      "providerEventId": "mlb:824066",
+      "homeTeamId": "7",
+      "awayTeamId": "14",
+      "id": "evt_09bb7363914bf21676bb5bb1",
       "startUtc": "2026-09-05T23:10:00Z",
       "sport": "baseball",
       "status": "UPCOMING",
@@ -9291,7 +9318,7 @@
       "league": "MLS",
       "title": "Houston @ Charlotte",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Charlotte",
@@ -9301,18 +9328,19 @@
       "awayTeamId": "6077",
       "id": "evt_e094d30907c4d1a4755da60e",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "Colorado @ Columbus",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Columbus",
@@ -9322,18 +9350,19 @@
       "awayTeamId": "184",
       "id": "evt_d2e5a7beb83ca4e103d0a67b",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "D.C. United @ Cincinnati",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Cincinnati",
@@ -9343,18 +9372,19 @@
       "awayTeamId": "193",
       "id": "evt_d17d513927394a7fa8064813",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "Atlanta @ Miami",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Miami",
@@ -9364,18 +9394,19 @@
       "awayTeamId": "18418",
       "id": "evt_fadfbae83dcbd9c307f2b5ec",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "San Diego @ Orlando",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Orlando",
@@ -9385,18 +9416,19 @@
       "awayTeamId": "22529",
       "id": "evt_e18ab5ce3cbc82b8fc874307",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "CF Montréal @ Philadelphia",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Philadelphia",
@@ -9406,18 +9438,19 @@
       "awayTeamId": "9720",
       "id": "evt_f8a49f66e82d6f32ad366666",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "Chicago @ Toronto",
       "start": "2026-09-05T23:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Toronto",
@@ -9427,12 +9460,13 @@
       "awayTeamId": "182",
       "id": "evt_021d82dbf85c59190d353018",
       "startUtc": "2026-09-05T23:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 7:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -9530,7 +9564,7 @@
       "league": "MLS",
       "title": "San Jose @ Austin",
       "start": "2026-09-06T00:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Austin",
@@ -9540,18 +9574,19 @@
       "awayTeamId": "191",
       "id": "evt_d78c29527f1f6323adf40921",
       "startUtc": "2026-09-06T00:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 8:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "Kansas City @ Dallas",
       "start": "2026-09-06T00:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Dallas",
@@ -9561,18 +9596,19 @@
       "awayTeamId": "186",
       "id": "evt_aa59a8ac98689700749068a3",
       "startUtc": "2026-09-06T00:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 8:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "Red Bull NY @ Seattle",
       "start": "2026-09-06T00:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Seattle",
@@ -9582,12 +9618,13 @@
       "awayTeamId": "190",
       "id": "evt_31e76d173c2ebbaa1cd5d637",
       "startUtc": "2026-09-06T00:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 8:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "FIVB Men",
@@ -9717,7 +9754,7 @@
       "league": "MLS",
       "title": "New England @ LA Galaxy",
       "start": "2026-09-06T01:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "LA Galaxy",
@@ -9727,18 +9764,19 @@
       "awayTeamId": "189",
       "id": "evt_602c86b974d105b3716fb29a",
       "startUtc": "2026-09-06T01:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "LAFC @ Salt Lake",
       "start": "2026-09-06T01:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Salt Lake",
@@ -9748,12 +9786,13 @@
       "awayTeamId": "18966",
       "id": "evt_f31d278a65d3dc6ed51dc434",
       "startUtc": "2026-09-06T01:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 9:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLB",
@@ -9851,7 +9890,7 @@
       "league": "MLS",
       "title": "Minnesota @ Portland",
       "start": "2026-09-06T02:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Portland",
@@ -9861,18 +9900,19 @@
       "awayTeamId": "17362",
       "id": "evt_51f66b85bcef9439acf48437",
       "startUtc": "2026-09-06T02:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "MLS",
       "title": "St. Louis @ Vancouver",
       "start": "2026-09-06T02:30Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "⚽",
       "source": "espn-live-sweep",
       "home": "Vancouver",
@@ -9882,18 +9922,19 @@
       "awayTeamId": "21812",
       "id": "evt_cee47c10bd63a52afcbb656b",
       "startUtc": "2026-09-06T02:30Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "Scheduled",
       "provider_detail": "Sat, September 5th at 10:30 PM EDT",
       "provider_displayClock": "0'",
-      "sport": "soccer"
+      "sport": "soccer",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "NRL",
       "title": "Eels @ Dragons",
       "start": "2026-09-06T04:00Z",
-      "tag": "LIVE",
+      "tag": "UPCOMING",
       "icon": "🏉",
       "source": "espn-live-sweep",
       "home": "Dragons",
@@ -9903,13 +9944,14 @@
       "awayTeamId": "289194",
       "id": "evt_b6834450942dedb65c794572",
       "startUtc": "2026-09-06T04:00Z",
-      "status": "LIVE",
-      "state": "in",
+      "status": "UPCOMING",
+      "state": "pre",
       "provider_shortDetail": "9/6 - 12:00 AM EDT",
       "provider_detail": "Sun, September 5th at 12:00 AM EDT",
       "provider_displayClock": "1'",
       "provider_period": 0,
-      "sport": "rugby-league"
+      "sport": "rugby-league",
+      "liveStateSource": "provider-health-gate"
     },
     {
       "league": "FIVB Men",
@@ -11637,6 +11679,22 @@
     },
     {
       "league": "MLB",
+      "title": "Los Angeles Angels @ Pittsburgh Pirates",
+      "start": "2026-09-06T17:35:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Pittsburgh Pirates",
+      "away": "Los Angeles Angels",
+      "providerEventId": "mlb:823336",
+      "homeTeamId": "23",
+      "awayTeamId": "3",
+      "id": "evt_7407709d5e63383272376bca",
+      "startUtc": "2026-09-06T17:35:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
       "title": "Boston Red Sox @ Baltimore Orioles",
       "start": "2026-09-06T17:35:00Z",
       "tag": "UPCOMING",
@@ -11653,18 +11711,18 @@
     },
     {
       "league": "MLB",
-      "title": "Los Angeles Angels @ Pittsburgh Pirates",
-      "start": "2026-09-06T17:35:00Z",
+      "title": "Chicago Cubs @ Miami Marlins",
+      "start": "2026-09-06T17:40:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "Pittsburgh Pirates",
-      "away": "Los Angeles Angels",
-      "providerEventId": "mlb:823336",
-      "homeTeamId": "23",
-      "awayTeamId": "3",
-      "id": "evt_7407709d5e63383272376bca",
-      "startUtc": "2026-09-06T17:35:00Z",
+      "home": "Miami Marlins",
+      "away": "Chicago Cubs",
+      "providerEventId": "mlb:823822",
+      "homeTeamId": "28",
+      "awayTeamId": "16",
+      "id": "evt_166105870a93241b65627765",
+      "startUtc": "2026-09-06T17:40:00Z",
       "sport": "baseball"
     },
     {
@@ -11696,22 +11754,6 @@
       "homeTeamId": "21",
       "awayTeamId": "26",
       "id": "evt_fd9229f0766363946ced5238",
-      "startUtc": "2026-09-06T17:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
-      "title": "Chicago Cubs @ Miami Marlins",
-      "start": "2026-09-06T17:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Miami Marlins",
-      "away": "Chicago Cubs",
-      "providerEventId": "mlb:823822",
-      "homeTeamId": "28",
-      "awayTeamId": "16",
-      "id": "evt_166105870a93241b65627765",
       "startUtc": "2026-09-06T17:40:00Z",
       "sport": "baseball"
     },
@@ -15295,22 +15337,6 @@
     },
     {
       "league": "MLB",
-      "title": "Minnesota Twins @ Detroit Tigers",
-      "start": "2026-09-08T22:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Detroit Tigers",
-      "away": "Minnesota Twins",
-      "providerEventId": "mlb:824228",
-      "homeTeamId": "6",
-      "awayTeamId": "9",
-      "id": "evt_f98f268783ee2426b24dbd8f",
-      "startUtc": "2026-09-08T22:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Houston Astros @ Philadelphia Phillies",
       "start": "2026-09-08T22:40:00Z",
       "tag": "UPCOMING",
@@ -15322,6 +15348,22 @@
       "homeTeamId": "22",
       "awayTeamId": "18",
       "id": "evt_7846595df9da6f6ca3171977",
+      "startUtc": "2026-09-08T22:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Minnesota Twins @ Detroit Tigers",
+      "start": "2026-09-08T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Detroit Tigers",
+      "away": "Minnesota Twins",
+      "providerEventId": "mlb:824228",
+      "homeTeamId": "6",
+      "awayTeamId": "9",
+      "id": "evt_f98f268783ee2426b24dbd8f",
       "startUtc": "2026-09-08T22:40:00Z",
       "sport": "baseball"
     },
@@ -15785,22 +15827,6 @@
     },
     {
       "league": "MLB",
-      "title": "Pittsburgh Pirates @ Chicago White Sox",
-      "start": "2026-09-08T23:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Chicago White Sox",
-      "away": "Pittsburgh Pirates",
-      "providerEventId": "mlb:824551",
-      "homeTeamId": "4",
-      "awayTeamId": "23",
-      "id": "evt_c56a38ff3687da746b137239",
-      "startUtc": "2026-09-08T23:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Chicago Cubs @ Milwaukee Brewers",
       "start": "2026-09-08T23:40:00Z",
       "tag": "UPCOMING",
@@ -15812,6 +15838,22 @@
       "homeTeamId": "8",
       "awayTeamId": "16",
       "id": "evt_afae6119ded10cf5d013869b",
+      "startUtc": "2026-09-08T23:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Pittsburgh Pirates @ Chicago White Sox",
+      "start": "2026-09-08T23:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Chicago White Sox",
+      "away": "Pittsburgh Pirates",
+      "providerEventId": "mlb:824551",
+      "homeTeamId": "4",
+      "awayTeamId": "23",
+      "id": "evt_c56a38ff3687da746b137239",
       "startUtc": "2026-09-08T23:40:00Z",
       "sport": "baseball"
     },
@@ -15917,22 +15959,6 @@
     },
     {
       "league": "MLB",
-      "title": "Washington Nationals @ San Diego Padres",
-      "start": "2026-09-09T01:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "San Diego Padres",
-      "away": "Washington Nationals",
-      "providerEventId": "mlb:823250",
-      "homeTeamId": "25",
-      "awayTeamId": "20",
-      "id": "evt_d0c7adeca9130de22e5289e8",
-      "startUtc": "2026-09-09T01:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Texas Rangers @ Seattle Mariners",
       "start": "2026-09-09T01:40:00Z",
       "tag": "UPCOMING",
@@ -15960,6 +15986,22 @@
       "homeTeamId": "11",
       "awayTeamId": "14",
       "id": "evt_d4692638d3895bfd1e0816ab",
+      "startUtc": "2026-09-09T01:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Washington Nationals @ San Diego Padres",
+      "start": "2026-09-09T01:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "San Diego Padres",
+      "away": "Washington Nationals",
+      "providerEventId": "mlb:823250",
+      "homeTeamId": "25",
+      "awayTeamId": "20",
+      "id": "evt_d0c7adeca9130de22e5289e8",
       "startUtc": "2026-09-09T01:40:00Z",
       "sport": "baseball"
     },
@@ -16321,22 +16363,6 @@
     },
     {
       "league": "MLB",
-      "title": "Washington Nationals @ San Diego Padres",
-      "start": "2026-09-09T20:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "San Diego Padres",
-      "away": "Washington Nationals",
-      "providerEventId": "mlb:823251",
-      "homeTeamId": "25",
-      "awayTeamId": "20",
-      "id": "evt_044f341d0baf65c8d9de3908",
-      "startUtc": "2026-09-09T20:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Texas Rangers @ Seattle Mariners",
       "start": "2026-09-09T20:10:00Z",
       "tag": "UPCOMING",
@@ -16348,6 +16374,22 @@
       "homeTeamId": "12",
       "awayTeamId": "13",
       "id": "evt_c2f64c33bab50d4f1e18e1d2",
+      "startUtc": "2026-09-09T20:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Washington Nationals @ San Diego Padres",
+      "start": "2026-09-09T20:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "San Diego Padres",
+      "away": "Washington Nationals",
+      "providerEventId": "mlb:823251",
+      "homeTeamId": "25",
+      "awayTeamId": "20",
+      "id": "evt_044f341d0baf65c8d9de3908",
       "startUtc": "2026-09-09T20:10:00Z",
       "sport": "baseball"
     },
@@ -16967,22 +17009,6 @@
     },
     {
       "league": "MLB",
-      "title": "Pittsburgh Pirates @ Chicago White Sox",
-      "start": "2026-09-09T23:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Chicago White Sox",
-      "away": "Pittsburgh Pirates",
-      "providerEventId": "mlb:824549",
-      "homeTeamId": "4",
-      "awayTeamId": "23",
-      "id": "evt_4dedc12a115aa6069c4ef1e1",
-      "startUtc": "2026-09-09T23:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Chicago Cubs @ Milwaukee Brewers",
       "start": "2026-09-09T23:40:00Z",
       "tag": "UPCOMING",
@@ -16994,6 +17020,22 @@
       "homeTeamId": "8",
       "awayTeamId": "16",
       "id": "evt_0a9fce5512fa5684c86c6a1f",
+      "startUtc": "2026-09-09T23:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Pittsburgh Pirates @ Chicago White Sox",
+      "start": "2026-09-09T23:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Chicago White Sox",
+      "away": "Pittsburgh Pirates",
+      "providerEventId": "mlb:824549",
+      "homeTeamId": "4",
+      "awayTeamId": "23",
+      "id": "evt_4dedc12a115aa6069c4ef1e1",
       "startUtc": "2026-09-09T23:40:00Z",
       "sport": "baseball"
     },
@@ -23455,22 +23497,6 @@
     },
     {
       "league": "MLB",
-      "title": "Kansas City Royals @ Boston Red Sox",
-      "start": "2026-09-11T23:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Boston Red Sox",
-      "away": "Kansas City Royals",
-      "providerEventId": "mlb:824711",
-      "homeTeamId": "2",
-      "awayTeamId": "7",
-      "id": "evt_43828f32e425503c3cd2aae2",
-      "startUtc": "2026-09-11T23:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Houston Astros @ Tampa Bay Rays",
       "start": "2026-09-11T23:10:00Z",
       "tag": "UPCOMING",
@@ -23482,6 +23508,22 @@
       "homeTeamId": "30",
       "awayTeamId": "18",
       "id": "evt_bd4aea92de78d7f8e838c827",
+      "startUtc": "2026-09-11T23:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Kansas City Royals @ Boston Red Sox",
+      "start": "2026-09-11T23:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Boston Red Sox",
+      "away": "Kansas City Royals",
+      "providerEventId": "mlb:824711",
+      "homeTeamId": "2",
+      "awayTeamId": "7",
+      "id": "evt_43828f32e425503c3cd2aae2",
       "startUtc": "2026-09-11T23:10:00Z",
       "sport": "baseball"
     },
@@ -25402,22 +25444,6 @@
     },
     {
       "league": "MLB",
-      "title": "Cleveland Guardians @ Minnesota Twins",
-      "start": "2026-09-12T20:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Minnesota Twins",
-      "away": "Cleveland Guardians",
-      "providerEventId": "mlb:823657",
-      "homeTeamId": "9",
-      "awayTeamId": "5",
-      "id": "evt_57278a1415ef12d0d99d2d0e",
-      "startUtc": "2026-09-12T20:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Los Angeles Dodgers @ Miami Marlins",
       "start": "2026-09-12T20:10:00Z",
       "tag": "UPCOMING",
@@ -25433,6 +25459,22 @@
       "sport": "baseball"
     },
     {
+      "league": "MLB",
+      "title": "Cleveland Guardians @ Minnesota Twins",
+      "start": "2026-09-12T20:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Minnesota Twins",
+      "away": "Cleveland Guardians",
+      "providerEventId": "mlb:823657",
+      "homeTeamId": "9",
+      "awayTeamId": "5",
+      "id": "evt_57278a1415ef12d0d99d2d0e",
+      "startUtc": "2026-09-12T20:10:00Z",
+      "sport": "baseball"
+    },
+    {
       "league": "NASCAR Cup",
       "title": "Enjoy Illinois 300 — Qualifying @ World Wide Technology Raceway",
       "start": "2026-09-12T20:35:00Z",
@@ -25443,21 +25485,6 @@
       "id": "evt_514d018e65d6400e31e573a3",
       "startUtc": "2026-09-12T20:35:00Z",
       "sport": "other"
-    },
-    {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Silva vs Delgado",
-      "startUtc": "2026-09-12T21:00:00Z",
-      "start": "2026-09-12T21:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_977a59acce10ed0a8a7fc53b"
     },
     {
       "league": "FIVB Men",
@@ -26393,22 +26420,6 @@
     },
     {
       "league": "MLB",
-      "title": "Kansas City Royals @ Boston Red Sox",
-      "start": "2026-09-13T17:35:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Boston Red Sox",
-      "away": "Kansas City Royals",
-      "providerEventId": "mlb:824708",
-      "homeTeamId": "2",
-      "awayTeamId": "7",
-      "id": "evt_157103f54bec112bc2418da1",
-      "startUtc": "2026-09-13T17:35:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Los Angeles Angels @ Washington Nationals",
       "start": "2026-09-13T17:35:00Z",
       "tag": "UPCOMING",
@@ -26425,17 +26436,17 @@
     },
     {
       "league": "MLB",
-      "title": "Philadelphia Phillies @ Atlanta Braves",
+      "title": "Kansas City Royals @ Boston Red Sox",
       "start": "2026-09-13T17:35:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "Atlanta Braves",
-      "away": "Philadelphia Phillies",
-      "providerEventId": "mlb:824869",
-      "homeTeamId": "15",
-      "awayTeamId": "22",
-      "id": "evt_96dd0b690ba012572f3d76b5",
+      "home": "Boston Red Sox",
+      "away": "Kansas City Royals",
+      "providerEventId": "mlb:824708",
+      "homeTeamId": "2",
+      "awayTeamId": "7",
+      "id": "evt_157103f54bec112bc2418da1",
       "startUtc": "2026-09-13T17:35:00Z",
       "sport": "baseball"
     },
@@ -26452,6 +26463,22 @@
       "homeTeamId": "10",
       "awayTeamId": "21",
       "id": "evt_87a6805829d88b9c7e947e68",
+      "startUtc": "2026-09-13T17:35:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Philadelphia Phillies @ Atlanta Braves",
+      "start": "2026-09-13T17:35:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Atlanta Braves",
+      "away": "Philadelphia Phillies",
+      "providerEventId": "mlb:824869",
+      "homeTeamId": "15",
+      "awayTeamId": "22",
+      "id": "evt_96dd0b690ba012572f3d76b5",
       "startUtc": "2026-09-13T17:35:00Z",
       "sport": "baseball"
     },
@@ -26521,22 +26548,6 @@
     },
     {
       "league": "MLB",
-      "title": "Cleveland Guardians @ Minnesota Twins",
-      "start": "2026-09-13T18:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Minnesota Twins",
-      "away": "Cleveland Guardians",
-      "providerEventId": "mlb:823658",
-      "homeTeamId": "9",
-      "awayTeamId": "5",
-      "id": "evt_1c4d35c173c4b8aee34d402b",
-      "startUtc": "2026-09-13T18:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Cincinnati Reds @ Milwaukee Brewers",
       "start": "2026-09-13T18:10:00Z",
       "tag": "UPCOMING",
@@ -26548,6 +26559,22 @@
       "homeTeamId": "8",
       "awayTeamId": "17",
       "id": "evt_e0f586a205abed0e6ad0a847",
+      "startUtc": "2026-09-13T18:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Cleveland Guardians @ Minnesota Twins",
+      "start": "2026-09-13T18:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Minnesota Twins",
+      "away": "Cleveland Guardians",
+      "providerEventId": "mlb:823658",
+      "homeTeamId": "9",
+      "awayTeamId": "5",
+      "id": "evt_1c4d35c173c4b8aee34d402b",
       "startUtc": "2026-09-13T18:10:00Z",
       "sport": "baseball"
     },
@@ -27150,22 +27177,6 @@
     },
     {
       "league": "MLB",
-      "title": "Los Angeles Dodgers @ Cincinnati Reds",
-      "start": "2026-09-14T22:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Cincinnati Reds",
-      "away": "Los Angeles Dodgers",
-      "providerEventId": "mlb:824465",
-      "homeTeamId": "17",
-      "awayTeamId": "19",
-      "id": "evt_a2e991014f36fae9a54586b5",
-      "startUtc": "2026-09-14T22:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Chicago White Sox @ Cleveland Guardians",
       "start": "2026-09-14T22:40:00Z",
       "tag": "UPCOMING",
@@ -27177,6 +27188,22 @@
       "homeTeamId": "5",
       "awayTeamId": "4",
       "id": "evt_c3aca063806c961825ab78fd",
+      "startUtc": "2026-09-14T22:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Los Angeles Dodgers @ Cincinnati Reds",
+      "start": "2026-09-14T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Cincinnati Reds",
+      "away": "Los Angeles Dodgers",
+      "providerEventId": "mlb:824465",
+      "homeTeamId": "17",
+      "awayTeamId": "19",
+      "id": "evt_a2e991014f36fae9a54586b5",
       "startUtc": "2026-09-14T22:40:00Z",
       "sport": "baseball"
     },
@@ -27502,22 +27529,6 @@
     },
     {
       "league": "MLB",
-      "title": "Los Angeles Dodgers @ Cincinnati Reds",
-      "start": "2026-09-15T22:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Cincinnati Reds",
-      "away": "Los Angeles Dodgers",
-      "providerEventId": "mlb:824466",
-      "homeTeamId": "17",
-      "awayTeamId": "19",
-      "id": "evt_3db53e202134764b550b6511",
-      "startUtc": "2026-09-15T22:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Athletics @ Tampa Bay Rays",
       "start": "2026-09-15T22:40:00Z",
       "tag": "UPCOMING",
@@ -27545,6 +27556,22 @@
       "homeTeamId": "5",
       "awayTeamId": "4",
       "id": "evt_8c8bf8bf8b430026864818ee",
+      "startUtc": "2026-09-15T22:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Los Angeles Dodgers @ Cincinnati Reds",
+      "start": "2026-09-15T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Cincinnati Reds",
+      "away": "Los Angeles Dodgers",
+      "providerEventId": "mlb:824466",
+      "homeTeamId": "17",
+      "awayTeamId": "19",
+      "id": "evt_3db53e202134764b550b6511",
       "startUtc": "2026-09-15T22:40:00Z",
       "sport": "baseball"
     },
@@ -28172,22 +28199,6 @@
     },
     {
       "league": "MLB",
-      "title": "Los Angeles Dodgers @ Cincinnati Reds",
-      "start": "2026-09-16T22:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Cincinnati Reds",
-      "away": "Los Angeles Dodgers",
-      "providerEventId": "mlb:824467",
-      "homeTeamId": "17",
-      "awayTeamId": "19",
-      "id": "evt_cb4bced1a188ca7c9ad709de",
-      "startUtc": "2026-09-16T22:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Athletics @ Tampa Bay Rays",
       "start": "2026-09-16T22:40:00Z",
       "tag": "UPCOMING",
@@ -28199,6 +28210,22 @@
       "homeTeamId": "30",
       "awayTeamId": "11",
       "id": "evt_a672784d98bf3f340c76bcaa",
+      "startUtc": "2026-09-16T22:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Los Angeles Dodgers @ Cincinnati Reds",
+      "start": "2026-09-16T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Cincinnati Reds",
+      "away": "Los Angeles Dodgers",
+      "providerEventId": "mlb:824467",
+      "homeTeamId": "17",
+      "awayTeamId": "19",
+      "id": "evt_cb4bced1a188ca7c9ad709de",
       "startUtc": "2026-09-16T22:40:00Z",
       "sport": "baseball"
     },
@@ -28710,22 +28737,6 @@
     },
     {
       "league": "MLB",
-      "title": "Kansas City Royals @ Houston Astros",
-      "start": "2026-09-17T23:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Houston Astros",
-      "away": "Kansas City Royals",
-      "providerEventId": "mlb:824141",
-      "homeTeamId": "18",
-      "awayTeamId": "7",
-      "id": "evt_719c5285cd34f508e05fe7de",
-      "startUtc": "2026-09-17T23:15:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Philadelphia Phillies @ New York Mets",
       "start": "2026-09-17T23:15:00Z",
       "tag": "UPCOMING",
@@ -28737,6 +28748,22 @@
       "homeTeamId": "21",
       "awayTeamId": "22",
       "id": "evt_dbe8117ffe00a18d4b356b3c",
+      "startUtc": "2026-09-17T23:15:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Kansas City Royals @ Houston Astros",
+      "start": "2026-09-17T23:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Houston Astros",
+      "away": "Kansas City Royals",
+      "providerEventId": "mlb:824141",
+      "homeTeamId": "18",
+      "awayTeamId": "7",
+      "id": "evt_719c5285cd34f508e05fe7de",
       "startUtc": "2026-09-17T23:15:00Z",
       "sport": "baseball"
     },
@@ -29296,22 +29323,6 @@
     },
     {
       "league": "MLB",
-      "title": "Seattle Mariners @ Colorado Rockies",
-      "start": "2026-09-19T00:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Colorado Rockies",
-      "away": "Seattle Mariners",
-      "providerEventId": "mlb:824303",
-      "homeTeamId": "27",
-      "awayTeamId": "12",
-      "id": "evt_9335bc6e6b12c4efc18eedb6",
-      "startUtc": "2026-09-19T00:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Atlanta Braves @ Houston Astros",
       "start": "2026-09-19T00:10:00Z",
       "tag": "UPCOMING",
@@ -29323,6 +29334,22 @@
       "homeTeamId": "18",
       "awayTeamId": "15",
       "id": "evt_b44247bd5b20c2e1ce513bd4",
+      "startUtc": "2026-09-19T00:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Seattle Mariners @ Colorado Rockies",
+      "start": "2026-09-19T00:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Colorado Rockies",
+      "away": "Seattle Mariners",
+      "providerEventId": "mlb:824303",
+      "homeTeamId": "27",
+      "awayTeamId": "12",
+      "id": "evt_9335bc6e6b12c4efc18eedb6",
       "startUtc": "2026-09-19T00:10:00Z",
       "sport": "baseball"
     },
@@ -30466,21 +30493,6 @@
       "sport": "soccer"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Van vs Pantoja 2",
-      "startUtc": "2026-09-20T01:00:00Z",
-      "start": "2026-09-20T01:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_80fdeddcd3832660efe6b042"
-    },
-    {
       "league": "NHL",
       "title": "Golden Knights @ Kings",
       "start": "2026-09-20T01:00Z",
@@ -31004,22 +31016,6 @@
     },
     {
       "league": "MLB",
-      "title": "Chicago Cubs @ Cincinnati Reds",
-      "start": "2026-09-20T17:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Cincinnati Reds",
-      "away": "Chicago Cubs",
-      "providerEventId": "mlb:824462",
-      "homeTeamId": "17",
-      "awayTeamId": "16",
-      "id": "evt_2c357fc78997fe498fa9815a",
-      "startUtc": "2026-09-20T17:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Athletics @ Cleveland Guardians",
       "start": "2026-09-20T17:40:00Z",
       "tag": "UPCOMING",
@@ -31047,6 +31043,22 @@
       "homeTeamId": "30",
       "awayTeamId": "2",
       "id": "evt_256cd8d8afe0743b66de2777",
+      "startUtc": "2026-09-20T17:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Chicago Cubs @ Cincinnati Reds",
+      "start": "2026-09-20T17:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Cincinnati Reds",
+      "away": "Chicago Cubs",
+      "providerEventId": "mlb:824462",
+      "homeTeamId": "17",
+      "awayTeamId": "16",
+      "id": "evt_2c357fc78997fe498fa9815a",
       "startUtc": "2026-09-20T17:40:00Z",
       "sport": "baseball"
     },
@@ -31258,22 +31270,6 @@
     },
     {
       "league": "MLB",
-      "title": "San Francisco Giants @ Los Angeles Dodgers",
-      "start": "2026-09-20T20:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Los Angeles Dodgers",
-      "away": "San Francisco Giants",
-      "providerEventId": "mlb:823896",
-      "homeTeamId": "19",
-      "awayTeamId": "26",
-      "id": "evt_f0d475aec21c86f3a79e02c9",
-      "startUtc": "2026-09-20T20:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Miami Marlins @ San Diego Padres",
       "start": "2026-09-20T20:10:00Z",
       "tag": "UPCOMING",
@@ -31301,6 +31297,22 @@
       "homeTeamId": "29",
       "awayTeamId": "10",
       "id": "evt_7cd789ec0eacd51a32fc6245",
+      "startUtc": "2026-09-20T20:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "San Francisco Giants @ Los Angeles Dodgers",
+      "start": "2026-09-20T20:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Los Angeles Dodgers",
+      "away": "San Francisco Giants",
+      "providerEventId": "mlb:823896",
+      "homeTeamId": "19",
+      "awayTeamId": "26",
+      "id": "evt_f0d475aec21c86f3a79e02c9",
       "startUtc": "2026-09-20T20:10:00Z",
       "sport": "baseball"
     },
@@ -31803,17 +31815,17 @@
     },
     {
       "league": "MLB",
-      "title": "Washington Nationals @ Detroit Tigers",
+      "title": "Milwaukee Brewers @ Philadelphia Phillies",
       "start": "2026-09-22T22:40:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "Detroit Tigers",
-      "away": "Washington Nationals",
-      "providerEventId": "mlb:824222",
-      "homeTeamId": "6",
-      "awayTeamId": "20",
-      "id": "evt_7116973bed75eaa3763fd38f",
+      "home": "Philadelphia Phillies",
+      "away": "Milwaukee Brewers",
+      "providerEventId": "mlb:823412",
+      "homeTeamId": "22",
+      "awayTeamId": "8",
+      "id": "evt_ec5d3fc2f7d2cb419dd30cf5",
       "startUtc": "2026-09-22T22:40:00Z",
       "sport": "baseball"
     },
@@ -31835,17 +31847,17 @@
     },
     {
       "league": "MLB",
-      "title": "Milwaukee Brewers @ Philadelphia Phillies",
+      "title": "Washington Nationals @ Detroit Tigers",
       "start": "2026-09-22T22:40:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "Philadelphia Phillies",
-      "away": "Milwaukee Brewers",
-      "providerEventId": "mlb:823412",
-      "homeTeamId": "22",
-      "awayTeamId": "8",
-      "id": "evt_ec5d3fc2f7d2cb419dd30cf5",
+      "home": "Detroit Tigers",
+      "away": "Washington Nationals",
+      "providerEventId": "mlb:824222",
+      "homeTeamId": "6",
+      "awayTeamId": "20",
+      "id": "evt_7116973bed75eaa3763fd38f",
       "startUtc": "2026-09-22T22:40:00Z",
       "sport": "baseball"
     },
@@ -32383,22 +32395,6 @@
     },
     {
       "league": "MLB",
-      "title": "St. Louis Cardinals @ Pittsburgh Pirates",
-      "start": "2026-09-23T22:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Pittsburgh Pirates",
-      "away": "St. Louis Cardinals",
-      "providerEventId": "mlb:823327",
-      "homeTeamId": "23",
-      "awayTeamId": "24",
-      "id": "evt_ef25cdb2f1ca7a4b819e12fd",
-      "startUtc": "2026-09-23T22:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Milwaukee Brewers @ Philadelphia Phillies",
       "start": "2026-09-23T22:40:00Z",
       "tag": "UPCOMING",
@@ -32410,6 +32406,22 @@
       "homeTeamId": "22",
       "awayTeamId": "8",
       "id": "evt_6bae3ceea4a7ff4eab3a84ed",
+      "startUtc": "2026-09-23T22:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "St. Louis Cardinals @ Pittsburgh Pirates",
+      "start": "2026-09-23T22:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Pittsburgh Pirates",
+      "away": "St. Louis Cardinals",
+      "providerEventId": "mlb:823327",
+      "homeTeamId": "23",
+      "awayTeamId": "24",
+      "id": "evt_ef25cdb2f1ca7a4b819e12fd",
       "startUtc": "2026-09-23T22:40:00Z",
       "sport": "baseball"
     },
@@ -32623,22 +32635,6 @@
     },
     {
       "league": "MLB",
-      "title": "San Diego Padres @ Los Angeles Dodgers",
-      "start": "2026-09-24T02:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Los Angeles Dodgers",
-      "away": "San Diego Padres",
-      "providerEventId": "mlb:823894",
-      "homeTeamId": "19",
-      "awayTeamId": "25",
-      "id": "evt_4ec1f97c472e94de12916498",
-      "startUtc": "2026-09-24T02:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Houston Astros @ Seattle Mariners",
       "start": "2026-09-24T02:10:00Z",
       "tag": "UPCOMING",
@@ -32650,6 +32646,22 @@
       "homeTeamId": "12",
       "awayTeamId": "18",
       "id": "evt_67108e5fc20ccaf5afa1d98e",
+      "startUtc": "2026-09-24T02:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "San Diego Padres @ Los Angeles Dodgers",
+      "start": "2026-09-24T02:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Los Angeles Dodgers",
+      "away": "San Diego Padres",
+      "providerEventId": "mlb:823894",
+      "homeTeamId": "19",
+      "awayTeamId": "25",
+      "id": "evt_4ec1f97c472e94de12916498",
       "startUtc": "2026-09-24T02:10:00Z",
       "sport": "baseball"
     },
@@ -33055,22 +33067,6 @@
     },
     {
       "league": "MLB",
-      "title": "Houston Astros @ Athletics",
-      "start": "2026-09-25T01:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Athletics",
-      "away": "Houston Astros",
-      "providerEventId": "mlb:824950",
-      "homeTeamId": "11",
-      "awayTeamId": "18",
-      "id": "evt_a8013942b2442c5728a3f440",
-      "startUtc": "2026-09-25T01:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Los Angeles Angels @ Seattle Mariners",
       "start": "2026-09-25T01:40:00Z",
       "tag": "UPCOMING",
@@ -33082,6 +33078,22 @@
       "homeTeamId": "12",
       "awayTeamId": "3",
       "id": "evt_8991f96ff02e58bde22a6080",
+      "startUtc": "2026-09-25T01:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Houston Astros @ Athletics",
+      "start": "2026-09-25T01:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Athletics",
+      "away": "Houston Astros",
+      "providerEventId": "mlb:824950",
+      "homeTeamId": "11",
+      "awayTeamId": "18",
+      "id": "evt_a8013942b2442c5728a3f440",
       "startUtc": "2026-09-25T01:40:00Z",
       "sport": "baseball"
     },
@@ -33593,22 +33605,6 @@
     },
     {
       "league": "MLB",
-      "title": "Chicago Cubs @ Boston Red Sox",
-      "start": "2026-09-25T23:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Boston Red Sox",
-      "away": "Chicago Cubs",
-      "providerEventId": "mlb:824706",
-      "homeTeamId": "2",
-      "awayTeamId": "16",
-      "id": "evt_ceb446181b609c67f9843841",
-      "startUtc": "2026-09-25T23:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Atlanta Braves @ Miami Marlins",
       "start": "2026-09-25T23:10:00Z",
       "tag": "UPCOMING",
@@ -33620,6 +33616,22 @@
       "homeTeamId": "28",
       "awayTeamId": "15",
       "id": "evt_741e619bf58b7286b14f7558",
+      "startUtc": "2026-09-25T23:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Chicago Cubs @ Boston Red Sox",
+      "start": "2026-09-25T23:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Boston Red Sox",
+      "away": "Chicago Cubs",
+      "providerEventId": "mlb:824706",
+      "homeTeamId": "2",
+      "awayTeamId": "16",
+      "id": "evt_ceb446181b609c67f9843841",
       "startUtc": "2026-09-25T23:10:00Z",
       "sport": "baseball"
     },
@@ -33760,22 +33772,6 @@
     },
     {
       "league": "MLB",
-      "title": "Houston Astros @ Athletics",
-      "start": "2026-09-26T01:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Athletics",
-      "away": "Houston Astros",
-      "providerEventId": "mlb:824947",
-      "homeTeamId": "11",
-      "awayTeamId": "18",
-      "id": "evt_f002578f8f5731723271692b",
-      "startUtc": "2026-09-26T01:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Arizona Diamondbacks @ San Diego Padres",
       "start": "2026-09-26T01:40:00Z",
       "tag": "UPCOMING",
@@ -33787,6 +33783,22 @@
       "homeTeamId": "25",
       "awayTeamId": "29",
       "id": "evt_eb55b951b1c1375cadaae205",
+      "startUtc": "2026-09-26T01:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Houston Astros @ Athletics",
+      "start": "2026-09-26T01:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Athletics",
+      "away": "Houston Astros",
+      "providerEventId": "mlb:824947",
+      "homeTeamId": "11",
+      "awayTeamId": "18",
+      "id": "evt_f002578f8f5731723271692b",
       "startUtc": "2026-09-26T01:40:00Z",
       "sport": "baseball"
     },
@@ -34278,22 +34290,6 @@
     },
     {
       "league": "MLB",
-      "title": "Texas Rangers @ Minnesota Twins",
-      "start": "2026-09-26T20:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Minnesota Twins",
-      "away": "Texas Rangers",
-      "providerEventId": "mlb:823653",
-      "homeTeamId": "9",
-      "awayTeamId": "13",
-      "id": "evt_5082a995b1d4730cb2bdb2e9",
-      "startUtc": "2026-09-26T20:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Atlanta Braves @ Miami Marlins",
       "start": "2026-09-26T20:10:00Z",
       "tag": "UPCOMING",
@@ -34305,6 +34301,22 @@
       "homeTeamId": "28",
       "awayTeamId": "15",
       "id": "evt_66c5eef52e081a2c518b73f4",
+      "startUtc": "2026-09-26T20:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Texas Rangers @ Minnesota Twins",
+      "start": "2026-09-26T20:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Minnesota Twins",
+      "away": "Texas Rangers",
+      "providerEventId": "mlb:823653",
+      "homeTeamId": "9",
+      "awayTeamId": "13",
+      "id": "evt_5082a995b1d4730cb2bdb2e9",
       "startUtc": "2026-09-26T20:10:00Z",
       "sport": "baseball"
     },
@@ -34355,21 +34367,6 @@
       "id": "evt_92c21777329b4b7dcbbc7df7",
       "startUtc": "2026-09-26T21:00Z",
       "sport": "hockey"
-    },
-    {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Rosas Jr. vs Barcelos",
-      "startUtc": "2026-09-26T22:00:00Z",
-      "start": "2026-09-26T22:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_24ba5a665a06566f0de3c0a1"
     },
     {
       "league": "NHL",
@@ -34526,6 +34523,22 @@
     },
     {
       "league": "MLB",
+      "title": "Baltimore Orioles @ New York Yankees",
+      "start": "2026-09-26T23:15:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "New York Yankees",
+      "away": "Baltimore Orioles",
+      "providerEventId": "mlb:823489",
+      "homeTeamId": "10",
+      "awayTeamId": "1",
+      "id": "evt_0d40ff79055e14f60888ae64",
+      "startUtc": "2026-09-26T23:15:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
       "title": "Chicago Cubs @ Boston Red Sox",
       "start": "2026-09-26T23:15:00Z",
       "tag": "UPCOMING",
@@ -34553,22 +34566,6 @@
       "homeTeamId": "22",
       "awayTeamId": "30",
       "id": "evt_ac070a5e6f90ebdb547c7b9a",
-      "startUtc": "2026-09-26T23:15:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
-      "title": "Baltimore Orioles @ New York Yankees",
-      "start": "2026-09-26T23:15:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "New York Yankees",
-      "away": "Baltimore Orioles",
-      "providerEventId": "mlb:823489",
-      "homeTeamId": "10",
-      "awayTeamId": "1",
-      "id": "evt_0d40ff79055e14f60888ae64",
       "startUtc": "2026-09-26T23:15:00Z",
       "sport": "baseball"
     },
@@ -34796,22 +34793,6 @@
     },
     {
       "league": "MLB",
-      "title": "Houston Astros @ Athletics",
-      "start": "2026-09-27T01:40:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Athletics",
-      "away": "Houston Astros",
-      "providerEventId": "mlb:824949",
-      "homeTeamId": "11",
-      "awayTeamId": "18",
-      "id": "evt_cf008736d9e2d01540f7a9a2",
-      "startUtc": "2026-09-27T01:40:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Los Angeles Angels @ Seattle Mariners",
       "start": "2026-09-27T01:40:00Z",
       "tag": "UPCOMING",
@@ -34823,6 +34804,22 @@
       "homeTeamId": "12",
       "awayTeamId": "3",
       "id": "evt_4a3079d829c883e78534d8af",
+      "startUtc": "2026-09-27T01:40:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Houston Astros @ Athletics",
+      "start": "2026-09-27T01:40:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Athletics",
+      "away": "Houston Astros",
+      "providerEventId": "mlb:824949",
+      "homeTeamId": "11",
+      "awayTeamId": "18",
+      "id": "evt_cf008736d9e2d01540f7a9a2",
       "startUtc": "2026-09-27T01:40:00Z",
       "sport": "baseball"
     },
@@ -34948,6 +34945,22 @@
     },
     {
       "league": "MLB",
+      "title": "Tampa Bay Rays @ Philadelphia Phillies",
+      "start": "2026-09-27T19:05:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Philadelphia Phillies",
+      "away": "Tampa Bay Rays",
+      "providerEventId": "mlb:823408",
+      "homeTeamId": "22",
+      "awayTeamId": "30",
+      "id": "evt_50b00b5339192625df6fa936",
+      "startUtc": "2026-09-27T19:05:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
       "title": "Houston Astros @ Athletics",
       "start": "2026-09-27T19:05:00Z",
       "tag": "UPCOMING",
@@ -34980,22 +34993,6 @@
     },
     {
       "league": "MLB",
-      "title": "Tampa Bay Rays @ Philadelphia Phillies",
-      "start": "2026-09-27T19:05:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Philadelphia Phillies",
-      "away": "Tampa Bay Rays",
-      "providerEventId": "mlb:823408",
-      "homeTeamId": "22",
-      "awayTeamId": "30",
-      "id": "evt_50b00b5339192625df6fa936",
-      "startUtc": "2026-09-27T19:05:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "Cincinnati Reds @ Toronto Blue Jays",
       "start": "2026-09-27T19:07:00Z",
       "tag": "UPCOMING",
@@ -35012,17 +35009,17 @@
     },
     {
       "league": "MLB",
-      "title": "Cleveland Guardians @ Kansas City Royals",
+      "title": "Atlanta Braves @ Miami Marlins",
       "start": "2026-09-27T19:10:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "Kansas City Royals",
-      "away": "Cleveland Guardians",
-      "providerEventId": "mlb:824055",
-      "homeTeamId": "7",
-      "awayTeamId": "5",
-      "id": "evt_cdc8708ab93cbd42107802c3",
+      "home": "Miami Marlins",
+      "away": "Atlanta Braves",
+      "providerEventId": "mlb:823814",
+      "homeTeamId": "28",
+      "awayTeamId": "15",
+      "id": "evt_abfebc67ef71a4224082a72b",
       "startUtc": "2026-09-27T19:10:00Z",
       "sport": "baseball"
     },
@@ -35044,49 +35041,17 @@
     },
     {
       "league": "MLB",
-      "title": "Arizona Diamondbacks @ San Diego Padres",
+      "title": "Cleveland Guardians @ Kansas City Royals",
       "start": "2026-09-27T19:10:00Z",
       "tag": "UPCOMING",
       "icon": "⚾",
       "source": "mlb-official",
-      "home": "San Diego Padres",
-      "away": "Arizona Diamondbacks",
-      "providerEventId": "mlb:823246",
-      "homeTeamId": "25",
-      "awayTeamId": "29",
-      "id": "evt_3ff6db393585f5f49e90bdbd",
-      "startUtc": "2026-09-27T19:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
-      "title": "Los Angeles Angels @ Seattle Mariners",
-      "start": "2026-09-27T19:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Seattle Mariners",
-      "away": "Los Angeles Angels",
-      "providerEventId": "mlb:823084",
-      "homeTeamId": "12",
-      "awayTeamId": "3",
-      "id": "evt_e192637d759a612e221b69fa",
-      "startUtc": "2026-09-27T19:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
-      "title": "Texas Rangers @ Minnesota Twins",
-      "start": "2026-09-27T19:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Minnesota Twins",
-      "away": "Texas Rangers",
-      "providerEventId": "mlb:823650",
-      "homeTeamId": "9",
-      "awayTeamId": "13",
-      "id": "evt_ac6719de734d756342c82c50",
+      "home": "Kansas City Royals",
+      "away": "Cleveland Guardians",
+      "providerEventId": "mlb:824055",
+      "homeTeamId": "7",
+      "awayTeamId": "5",
+      "id": "evt_cdc8708ab93cbd42107802c3",
       "startUtc": "2026-09-27T19:10:00Z",
       "sport": "baseball"
     },
@@ -35108,22 +35073,6 @@
     },
     {
       "league": "MLB",
-      "title": "Atlanta Braves @ Miami Marlins",
-      "start": "2026-09-27T19:10:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚾",
-      "source": "mlb-official",
-      "home": "Miami Marlins",
-      "away": "Atlanta Braves",
-      "providerEventId": "mlb:823814",
-      "homeTeamId": "28",
-      "awayTeamId": "15",
-      "id": "evt_abfebc67ef71a4224082a72b",
-      "startUtc": "2026-09-27T19:10:00Z",
-      "sport": "baseball"
-    },
-    {
-      "league": "MLB",
       "title": "St. Louis Cardinals @ Milwaukee Brewers",
       "start": "2026-09-27T19:10:00Z",
       "tag": "UPCOMING",
@@ -35135,6 +35084,54 @@
       "homeTeamId": "8",
       "awayTeamId": "24",
       "id": "evt_b54789455cd9f564b97ba2db",
+      "startUtc": "2026-09-27T19:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Texas Rangers @ Minnesota Twins",
+      "start": "2026-09-27T19:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Minnesota Twins",
+      "away": "Texas Rangers",
+      "providerEventId": "mlb:823650",
+      "homeTeamId": "9",
+      "awayTeamId": "13",
+      "id": "evt_ac6719de734d756342c82c50",
+      "startUtc": "2026-09-27T19:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Los Angeles Angels @ Seattle Mariners",
+      "start": "2026-09-27T19:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "Seattle Mariners",
+      "away": "Los Angeles Angels",
+      "providerEventId": "mlb:823084",
+      "homeTeamId": "12",
+      "awayTeamId": "3",
+      "id": "evt_e192637d759a612e221b69fa",
+      "startUtc": "2026-09-27T19:10:00Z",
+      "sport": "baseball"
+    },
+    {
+      "league": "MLB",
+      "title": "Arizona Diamondbacks @ San Diego Padres",
+      "start": "2026-09-27T19:10:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚾",
+      "source": "mlb-official",
+      "home": "San Diego Padres",
+      "away": "Arizona Diamondbacks",
+      "providerEventId": "mlb:823246",
+      "homeTeamId": "25",
+      "awayTeamId": "29",
+      "id": "evt_3ff6db393585f5f49e90bdbd",
       "startUtc": "2026-09-27T19:10:00Z",
       "sport": "baseball"
     },
@@ -36728,21 +36725,6 @@
       "sport": "soccer"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "TBD vs TBD",
-      "startUtc": "2026-10-04T01:00:00Z",
-      "start": "2026-10-04T01:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_d0cf455910bcc5920b0c1a7e"
-    },
-    {
       "league": "NHL",
       "title": "Blues @ Avalanche",
       "start": "2026-10-04T01:00Z",
@@ -37917,21 +37899,6 @@
       "sport": "other"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "View Event Details",
-      "startUtc": "2026-10-11T00:00:00Z",
-      "start": "2026-10-11T00:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_7fc8219e2ed5dc7f75fdfbd5"
-    },
-    {
       "league": "NCAA Women's Hockey",
       "title": "New Hampshire @ Northeastern",
       "start": "2026-10-11T04:00Z",
@@ -38775,21 +38742,6 @@
       "sport": "other"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Buckley vs Malott",
-      "startUtc": "2026-10-18T00:00:00Z",
-      "start": "2026-10-18T00:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_e599490f15f9e144991cf7b9"
-    },
-    {
       "league": "WWE",
       "title": "Monday Night Raw",
       "start": "2026-10-19T00:00:00Z",
@@ -39277,21 +39229,6 @@
       "id": "evt_15dab1cad5d7c2abcdfb8c4a",
       "startUtc": "2026-10-24T17:00Z",
       "sport": "other"
-    },
-    {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Volkanovski vs Evloev",
-      "startUtc": "2026-10-24T18:00:00Z",
-      "start": "2026-10-24T18:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T02:39:27Z",
-      "tag": "UPCOMING",
-      "id": "evt_105cb020133a585cf05cb9b4"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -52061,7 +51998,7 @@
     }
   ],
   "officialRecovery": {
-    "updatedAt": "2026-09-05T02:37:45Z",
+    "updatedAt": "2026-09-05T02:41:26Z",
     "recoveredRecords": 4,
     "wrestlingChecked": true,
     "ufcChecked": true,
@@ -52069,7 +52006,7 @@
   },
   "liveSweep": {
     "schema": 2,
-    "checkedAtUtc": "2026-09-05T02:37:46.651222Z",
+    "checkedAtUtc": "2026-09-05T02:41:30.241786Z",
     "leaguesChecked": 49,
     "providerEventsFetched": 294,
     "providerLive": 43,
@@ -52083,440 +52020,275 @@
       "ICC T20",
       "IPL"
     ],
-    "liveCountAfterSweep": 50,
+    "liveCountAfterSweep": 49,
     "providerGroups": {
-      "NFL": "espn",
-      "NBA": "espn",
-      "LaLiga": "espn",
-      "CFL": "espn",
       "NHL": "espn",
+      "CFL": "espn",
       "WNBA": "espn",
-      "NCAA Women's Hockey": "ncaa",
+      "NBA": "espn",
+      "NFL": "espn",
       "UCL": "espn",
+      "NCAA Women's Hockey": "ncaa",
       "EPL": "espn",
       "Serie A": "espn",
-      "Ligue 1": "espn",
-      "UFC": "espn",
-      "Bundesliga": "espn",
-      "PGA": "espn",
-      "MLS": "espn",
-      "IndyCar": "espn",
-      "LPGA": "espn",
+      "LaLiga": "espn",
       "MLB": "espn",
+      "MLS": "espn",
+      "Bundesliga": "espn",
+      "Ligue 1": "espn",
+      "LPGA": "espn",
+      "PGA": "espn",
+      "IndyCar": "espn",
+      "UFC": "espn",
       "LIV Golf": "espn",
       "F1": "espn",
       "PLL": "espn",
       "NLL": "espn",
       "Rugby World Cup": "espn",
-      "NRL": "espn",
       "Six Nations": "espn",
+      "NRL": "espn",
       "AFL": "espn",
+      "NCAA BB": "ncaa",
+      "NCAA WBB": "ncaa",
+      "NCAA FB": "ncaa",
       "NCAA Baseball": "ncaa",
       "WTA": "espn",
-      "NCAA FB": "ncaa",
-      "NCAA BB": "ncaa",
       "NCAA Men's Hockey": "ncaa",
       "ATP": "espn",
-      "NCAA WBB": "ncaa",
-      "NCAA Men's Volleyball": "ncaa",
-      "NCAA Women's Lacrosse": "ncaa",
-      "NCAA Men's Lacrosse": "ncaa",
       "NCAA Women's Soccer": "ncaa",
       "NCAA Men's Soccer": "ncaa",
-      "NCAA Softball": "ncaa",
-      "NCAA Women's Field Hockey": "ncaa",
+      "NCAA Women's Lacrosse": "ncaa",
+      "NCAA Men's Lacrosse": "ncaa",
       "NCAA Men's Water Polo": "ncaa",
-      "NCAA Women's Water Polo": "ncaa",
+      "NCAA Women's Field Hockey": "ncaa",
       "NCAA Women's Volleyball": "ncaa",
+      "NCAA Softball": "ncaa",
+      "NCAA Women's Water Polo": "ncaa",
+      "NCAA Men's Volleyball": "ncaa",
       "NCAA Beach Volleyball": "ncaa"
     }
   },
-  "officialScheduleAudit": {
-    "enabled": true,
-    "mode": "all-official-sources",
-    "sourcesChecked": 63,
-    "reachableSources": 53,
-    "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T02:39:33Z",
-    "sources": [
+  "providerHealthGate": {
+    "schema": 1,
+    "checkedAtUtc": "2026-09-05T02:41:33.057432Z",
+    "eventCount": 3251,
+    "futureLiveCorrected": 42,
+    "missingStartLiveCorrected": 0,
+    "providerFailures": [
+      "NASCAR Trucks",
+      "WRC",
+      "X Games"
+    ],
+    "failedLiveStates": [
       {
-        "league": "AAA Wrestling",
-        "url": "https://www.wwe.com/shows/aaa",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "AEW",
-        "url": "https://www.allelitewrestling.com/aew-events",
-        "reachable": true,
-        "parsed": 0
+        "league": "NRL",
+        "title": "Sea Eagles @ Warriors",
+        "startUtc": "2026-09-05T05:00Z"
       },
       {
         "league": "AFL",
-        "url": "https://www.afl.com.au/fixture",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "ATP",
-        "url": "https://www.atptour.com/en/scores/current",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "Boxing",
-        "url": "https://wbcboxing.com/calendar/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "Bundesliga",
-        "url": "https://www.bundesliga.com/en/bundesliga/fixtures",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "CFL",
-        "url": "https://www.cfl.ca/schedule/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "EPL",
-        "url": "https://www.premierleague.com/en/fixtures",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "F1",
-        "url": "https://www.formula1.com/en/racing/2026",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FIVB Men",
-        "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FIVB Women",
-        "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FORMULA E",
-        "url": "https://www.fiaformulae.com/en/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "ICC T20",
-        "url": "https://www.icc-cricket.com/fixtures-results",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "IMSA",
-        "url": "https://www.imsa.com/events/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "IPL",
-        "url": "https://www.iplt20.com/matches/schedule",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "IndyCar",
-        "url": "https://www.indycar.com/Schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LIV Golf",
-        "url": "https://www.livgolf.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LPGA",
-        "url": "https://www.lpga.com/tournaments",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LaLiga",
-        "url": "https://www.laliga.com/en-GB/laliga-easports/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "Ligue 1",
-        "url": "https://ligue1.com/en/calendar/ligue1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MLB",
-        "url": "https://www.mlb.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MLS",
-        "url": "https://www.mlssoccer.com/schedule/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MONSTER JAM",
-        "url": "https://www.monsterjam.com/en-us/events/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MXGP",
-        "url": "https://www.mxgp.com/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MotoGP",
-        "url": "https://www.motogp.com/en/Calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Cup",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Trucks",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Xfinity",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NBA",
-        "url": "https://www.nba.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA BB",
-        "url": "https://www.ncaa.com/sports/basketball-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Baseball",
-        "url": "https://www.ncaa.com/sports/baseball/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Beach Volleyball",
-        "url": "https://www.ncaa.com/sports/beach-volleyball",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA FB",
-        "url": "https://www.ncaa.com/sports/football/fbs",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Lacrosse",
-        "url": "https://www.ncaa.com/sports/lacrosse-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Soccer",
-        "url": "https://www.ncaa.com/sports/soccer-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Volleyball",
-        "url": "https://www.ncaa.com/sports/volleyball-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Water Polo",
-        "url": "https://www.ncaa.com/sports/water-polo-men/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Softball",
-        "url": "https://www.ncaa.com/sports/softball/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA WBB",
-        "url": "https://www.ncaa.com/sports/basketball-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Field Hockey",
-        "url": "https://www.ncaa.com/sports/field-hockey/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Lacrosse",
-        "url": "https://www.ncaa.com/sports/lacrosse-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Soccer",
-        "url": "https://www.ncaa.com/sports/soccer-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Volleyball",
-        "url": "https://www.ncaa.com/sports/volleyball-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Water Polo",
-        "url": "https://www.ncaa.com/sports/water-polo-women/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NFL",
-        "url": "https://www.nfl.com/schedules",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NHL",
-        "url": "https://www.nhl.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NLL",
-        "url": "https://www.nll.com/schedule/",
-        "reachable": true,
-        "parsed": 0
+        "title": "Brisbane Lions @ Sydney Swans",
+        "startUtc": "2026-09-05T05:15Z"
       },
       {
         "league": "NRL",
-        "url": "https://www.nrl.com/draw/",
-        "reachable": true,
-        "parsed": 0
+        "title": "Raiders @ Cowboys",
+        "startUtc": "2026-09-05T07:30Z"
       },
       {
-        "league": "NWSL",
-        "url": "https://www.nwslsoccer.com/schedule",
-        "reachable": true,
-        "parsed": 0
+        "league": "AFL",
+        "title": "Western Bulldogs @ Adelaide Crows",
+        "startUtc": "2026-09-05T09:35Z"
       },
       {
-        "league": "PGA",
-        "url": "https://www.pgatour.com/schedule/2026",
-        "reachable": true,
-        "parsed": 0
+        "league": "NRL",
+        "title": "Storm @ Sharks",
+        "startUtc": "2026-09-05T09:35Z"
       },
       {
-        "league": "PLL",
-        "url": "https://premierlacrosseleague.com/schedule",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "Bournemouth @ Newcastle",
+        "startUtc": "2026-09-05T11:30Z"
       },
       {
-        "league": "Rugby World Cup",
-        "url": "https://www.rugbyworldcup.com/",
-        "reachable": true,
-        "parsed": 0
+        "league": "Serie A",
+        "title": "Torino @ Fiorentina",
+        "startUtc": "2026-09-05T13:00Z"
       },
       {
-        "league": "Six Nations",
-        "url": "https://www.sixnationsrugby.com/en/m6n/fixtures",
-        "reachable": true,
-        "parsed": 0
+        "league": "Bundesliga",
+        "title": "Union Berlin @ Leverkusen",
+        "startUtc": "2026-09-05T13:30Z"
       },
       {
-        "league": "TNA",
-        "url": "https://tnawrestling.com/events/",
-        "reachable": true,
-        "parsed": 0
+        "league": "Bundesliga",
+        "title": "Elversberg @ Gladbach",
+        "startUtc": "2026-09-05T13:30Z"
       },
       {
-        "league": "UCL",
-        "url": "https://www.uefa.com/uefachampionsleague/fixtures-results/",
-        "reachable": true,
-        "parsed": 0
+        "league": "Bundesliga",
+        "title": "Freiburg @ Paderborn",
+        "startUtc": "2026-09-05T13:30Z"
       },
       {
-        "league": "UEL",
-        "url": "https://www.uefa.com/uefaeuropaleague/fixtures-results/",
-        "reachable": true,
-        "parsed": 0
+        "league": "Bundesliga",
+        "title": "Dortmund @ Hoffenheim",
+        "startUtc": "2026-09-05T13:30Z"
       },
       {
-        "league": "UFC",
-        "url": "https://www.ufc.com/events",
-        "reachable": true,
-        "parsed": 8
+        "league": "Bundesliga",
+        "title": "RB Leipzig @ Bremen",
+        "startUtc": "2026-09-05T13:30Z"
       },
       {
-        "league": "WEC",
-        "url": "https://www.fia.com/championship/world-endurance-championship",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "Sunderland @ Brentford",
+        "startUtc": "2026-09-05T14:00Z"
       },
       {
-        "league": "WNBA",
-        "url": "https://www.wnba.com/schedule",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "Leeds @ Brighton",
+        "startUtc": "2026-09-05T14:00Z"
       },
       {
-        "league": "WRC",
-        "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "C Palace @ Fulham",
+        "startUtc": "2026-09-05T14:00Z"
       },
       {
-        "league": "WTA",
-        "url": "https://www.wtatennis.com/tournaments",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "Coventry @ Man City",
+        "startUtc": "2026-09-05T14:00Z"
       },
       {
-        "league": "WWE",
-        "url": "https://www.wwe.com/article/wwe-upcoming-events",
-        "reachable": true,
-        "parsed": 0
+        "league": "EPL",
+        "title": "Spurs @ Nottm Forest",
+        "startUtc": "2026-09-05T14:00Z"
       },
       {
-        "league": "X Games",
-        "url": "https://www.xgames.com/events/",
-        "reachable": false,
-        "parsed": 0
+        "league": "LaLiga",
+        "title": "Atlético @ Athletic",
+        "startUtc": "2026-09-05T14:15Z"
+      },
+      {
+        "league": "Ligue 1",
+        "title": "Lorient @ Lens",
+        "startUtc": "2026-09-05T15:15Z"
+      },
+      {
+        "league": "Serie A",
+        "title": "Napoli @ Inter Milan",
+        "startUtc": "2026-09-05T16:00Z"
+      },
+      {
+        "league": "Bundesliga",
+        "title": "Bayern @ Schalke",
+        "startUtc": "2026-09-05T16:30Z"
+      },
+      {
+        "league": "EPL",
+        "title": "Aston Villa @ Hull",
+        "startUtc": "2026-09-05T16:30Z"
+      },
+      {
+        "league": "LaLiga",
+        "title": "Racing @ Rayo",
+        "startUtc": "2026-09-05T16:30Z"
+      },
+      {
+        "league": "Ligue 1",
+        "title": "Brest @ Le Havre AC",
+        "startUtc": "2026-09-05T18:45Z"
+      },
+      {
+        "league": "Ligue 1",
+        "title": "Le Mans @ Nice",
+        "startUtc": "2026-09-05T18:45Z"
+      },
+      {
+        "league": "Serie A",
+        "title": "Atalanta @ AS Roma",
+        "startUtc": "2026-09-05T18:45Z"
+      },
+      {
+        "league": "LaLiga",
+        "title": "Deportivo @ Villarreal",
+        "startUtc": "2026-09-05T19:00Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Houston @ Charlotte",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Colorado @ Columbus",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "D.C. United @ Cincinnati",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Atlanta @ Miami",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "San Diego @ Orlando",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "CF Montréal @ Philadelphia",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Chicago @ Toronto",
+        "startUtc": "2026-09-05T23:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "San Jose @ Austin",
+        "startUtc": "2026-09-06T00:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Kansas City @ Dallas",
+        "startUtc": "2026-09-06T00:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Red Bull NY @ Seattle",
+        "startUtc": "2026-09-06T00:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "New England @ LA Galaxy",
+        "startUtc": "2026-09-06T01:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "LAFC @ Salt Lake",
+        "startUtc": "2026-09-06T01:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "Minnesota @ Portland",
+        "startUtc": "2026-09-06T02:30Z"
+      },
+      {
+        "league": "MLS",
+        "title": "St. Louis @ Vancouver",
+        "startUtc": "2026-09-06T02:30Z"
+      },
+      {
+        "league": "NRL",
+        "title": "Eels @ Dragons",
+        "startUtc": "2026-09-06T04:00Z"
       }
     ]
   }
