@@ -2,7 +2,6 @@ package com.xsportsx.app
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.channels.Channel
@@ -97,7 +96,6 @@ class XtreamSourceIndex(context: Context) {
                     return@coroutineScope found.values.toList()
                 }
             }
-            jobs.awaitAll()
             found.values.toList()
         }
     }
