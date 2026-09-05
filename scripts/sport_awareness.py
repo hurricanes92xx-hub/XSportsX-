@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Shared sport profiles for schedule recovery and AI decisions.
+"""Shared sport profiles plus the static Sports Knowledge Brain.
 
-Keep lifecycle expectations and AI urgency aligned so a sport is not judged
-with generic timings. Profiles are intentionally conservative: provider/official
-state still outranks inferred timing.
+Knowledge guides inference and model context; explicit provider/official state
+always outranks inference. No credentials or playback secrets belong here.
 """
 from __future__ import annotations
+import json
+from datetime import datetime, timezone
+from functools import lru_cache
+from pathlib import Path
 
 PROFILES = {
     "soccer": {"aliases": ("soccer", "football", "epl", "mls", "uefa", "fifa"), "pregame": 45, "infer": 30, "duration": 165, "urgent": 90},
@@ -22,41 +25,51 @@ PROFILES = {
     "wrestling": {"aliases": ("wwe", "aew", "tna", "wrestling", "aaa wrestling", "aaa"), "pregame": 60, "infer": 240, "duration": 300, "urgent": 240},
 }
 DEFAULT = {"aliases": (), "pregame": 30, "infer": 30, "duration": 180, "urgent": 90}
+ROOT = Path(__file__).resolve().parents[1] / "data" / "sports_knowledge"
 
+@lru_cache(maxsize=16)
+def knowledge(name: str) -> dict:
+    try:
+        data = json.loads((ROOT / name).read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
 
 def profile(sport: str = "", league: str = "", title: str = "") -> tuple[str, dict]:
     text = f"{sport} {league} {title}".lower()
-    # More specific combat/racing aliases win before generic football/soccer.
     order = ("mma", "boxing", "wrestling", "racing", "soccer", "football", "baseball", "hockey", "basketball", "volleyball", "tennis", "golf")
     for key in order:
-        if any(alias in text for alias in PROFILES[key]["aliases"]):
-            return key, PROFILES[key]
+        if any(alias in text for alias in PROFILES[key]["aliases"]): return key, PROFILES[key]
     return "other", DEFAULT
-
 
 def phase_windows(sport: str = "", league: str = "", title: str = "") -> dict:
     key, p = profile(sport, league, title)
     return {"sportKey": key, "pregameMinutes": p["pregame"], "inferredLiveMinutes": p["infer"], "maxLiveMinutes": p["duration"], "urgentMinutes": p["urgent"]}
 
-
 def is_urgent(event: dict, now=None) -> bool:
-    from datetime import datetime, timezone
     now = now or datetime.now(timezone.utc)
-    phase = str(event.get("intelligencePhase") or "").upper()
-    if phase in {"LIVE", "PREGAME"}:
-        return True
+    if str(event.get("intelligencePhase") or "").upper() in {"LIVE", "PREGAME"}: return True
     raw = event.get("startUtc") or event.get("start")
-    if not raw:
-        return False
-    try:
-        start = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
-    except Exception:
-        return False
-    key, p = profile(str(event.get("sport") or ""), str(event.get("league") or ""), str(event.get("title") or ""))
+    if not raw: return False
+    try: start = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+    except Exception: return False
+    _, p = profile(str(event.get("sport") or ""), str(event.get("league") or ""), str(event.get("title") or ""))
     seconds = (start - now).total_seconds()
     return 0 <= seconds <= p["urgent"] * 60
 
-
 def ai_context(event: dict) -> dict:
     key, p = profile(str(event.get("sport") or ""), str(event.get("league") or ""), str(event.get("title") or ""))
-    return {"sportKey": key, "sportProfile": {"pregameMinutes": p["pregame"], "inferredLiveMinutes": p["infer"], "maxLiveMinutes": p["duration"], "urgentMinutes": p["urgent"]}, "sportPolicy": "provider/official state outranks timing inference; use the profile only when explicit state is absent"}
+    leagues = knowledge("leagues.json").get("leagues", {})
+    broadcast = knowledge("broadcast_patterns.json").get("known_patterns", {})
+    event_types = knowledge("event_types.json")
+    terminology = knowledge("terminology.json").get("terms", {})
+    return {
+        "sportKey": key,
+        "sportProfile": {"pregameMinutes": p["pregame"], "inferredLiveMinutes": p["infer"], "maxLiveMinutes": p["duration"], "urgentMinutes": p["urgent"]},
+        "leagueKnowledge": leagues.get(str(event.get("league") or ""), {}),
+        "broadcastKnowledge": broadcast.get(str(event.get("league") or ""), {}),
+        "eventTypeKnowledge": event_types.get("rules", []),
+        "statusTerminology": terminology,
+        "sportKnowledgeLoaded": True,
+        "sportPolicy": "provider/official state outranks timing inference; knowledge only fills reasoning gaps and never invents canonical facts"
+    }
