@@ -32,10 +32,12 @@ def main():
         start=parse_dt(event.get("startUtc") or event.get("start"))
         if start and start>now+timedelta(minutes=2):
             future_live.append({"league":event.get("league"),"title":event.get("title"),"startUtc":event.get("startUtc") or event.get("start")});set_upcoming(event,"provider-live-starts-too-far-in-future")
-    for event in events:
-        if is_live(event) and not parse_dt(event.get("startUtc") or event.get("start")):
-            missing_start.append({"league":event.get("league"),"title":event.get("title"),"reason":"missing_start"});set_upcoming(event,"missing_start")
-    report={"schema":3,"checkedAtUtc":now.isoformat().replace("+00:00","Z"),"eventCount":len(events),"futureLiveCorrected":len(future_live),"missingStartLiveCorrected":len(missing_start),"staleLiveEvidenceCorrected":len(stale_evidence),"providerFailures":payload.get("providerFailures") or payload.get("failedSources") or [],"failedLiveStates":future_live+missing_start+stale_evidence}
+        elif not start:
+            # A provider-confirmed LIVE state is stronger than a missing clock.
+            # Do not turn a game that is actually in progress into UPCOMING just
+            # because the provider omitted its scheduled start timestamp.
+            missing_start.append({"league":event.get("league"),"title":event.get("title"),"reason":"missing_start_provider_confirmed"})
+    report={"schema":3,"checkedAtUtc":now.isoformat().replace("+00:00","Z"),"eventCount":len(events),"futureLiveCorrected":len(future_live),"missingStartLiveCorrected":0,"missingStartLiveWarnings":len(missing_start),"staleLiveEvidenceCorrected":len(stale_evidence),"providerFailures":payload.get("providerFailures") or payload.get("failedSources") or [],"failedLiveStates":future_live+stale_evidence,"liveWarnings":missing_start}
     payload["events"]=events;payload["providerHealthGate"]=report;FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8");REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8");print(json.dumps(report,indent=2))
     remaining=[e for e in events if is_live(e)]
     if any(not (e.get("liveEvidence") or {}).get("providerEventId") for e in remaining):raise SystemExit("provider health gate: unevidenced LIVE event remains")
