@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Apply only validated schedule events returned by Sports Agent tool execution.
-
-The agent may research and validate a recovery but historically that result stopped
-at sports_brain_memory.json. This bridge makes a successful recovery authoritative
-for the next canonical feed while preserving the no-fabrication policy.
-"""
+"""Apply only validated schedule events returned by Sports Agent tool execution."""
 from __future__ import annotations
 import json
 from datetime import datetime, timezone
@@ -14,6 +9,11 @@ import refresh_provider_matrix_v3 as core
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "data" / "schedule_feed.json"
 MEMORY = ROOT / "data" / "sports_brain_memory.json"
+SPORT_BY_LEAGUE = {
+    "UFC": "mma", "WWE": "wrestling", "AEW": "wrestling", "TNA": "wrestling",
+    "AAA Wrestling": "wrestling", "AAA": "wrestling", "Boxing": "boxing",
+    "F1": "racing", "MotoGP": "racing", "WRC": "racing", "WEC": "racing", "IMSA": "racing",
+}
 
 
 def valid(event: dict) -> bool:
@@ -43,6 +43,8 @@ def main() -> None:
         execution = plan.get("execution") or {}
         for event in execution.get("validatedRecoveredEvents") or []:
             if valid(event):
+                event = dict(event)
+                event.setdefault("sport", SPORT_BY_LEAGUE.get(str(event.get("league")), "other"))
                 candidates.append(event)
     if not candidates:
         payload["aiScheduleRepair"] = {"applied": 0, "inspectedPlans": len(plans), "updatedAt": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")}
