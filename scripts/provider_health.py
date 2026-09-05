@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 HEALTH_FILE=ROOT/"data"/"provider_health.json"
-BROAD_LEAGUES={"NFL","CFL","NBA","WNBA","NHL","MLB","MLS","EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","UFC","F1","IndyCar","PGA","LPGA","LIV Golf","ATP","WTA","PLL","NLL","NASCAR Cup","NASCAR Xfinity","NASCAR Truck","NCAA FB","NCAA BB","NCAA WBB"}
+BROAD_LEAGUES={"NFL","CFL","NBA","WNBA","NHL","MLB","MLS","EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","UFC","F1","IndyCar","PGA","LPGA","LIV Golf","ATP","WTA","PLL","NLL","NASCAR Cup","NASCAR Xfinity","NASCAR Truck","X Games","NCAA FB","NCAA BB","NCAA WBB"}
 SPORTMONKS_LEAGUES={"MLS","EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","NWSL","ICC T20","IPL","F1"}
 CFBD_LEAGUES={"NCAA FB"}
 SPORTSCORE_LEAGUES={"EPL","UCL","UEL","LaLiga","Serie A","Bundesliga","Ligue 1","MLS","NWSL","NBA","WNBA","IPL","ICC T20","ATP","WTA"}
