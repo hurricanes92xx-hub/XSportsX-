@@ -83,7 +83,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 449,
+  "identityMergeCount": 456,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1527,
@@ -54854,10 +54854,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 53,
+    "reachableSources": 52,
     "eventsRecovered": 8,
     "identityMerges": 7,
-    "updatedAt": "2026-09-05T15:26:04Z",
+    "updatedAt": "2026-09-05T15:26:23Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -54886,7 +54886,7 @@
       {
         "league": "Boxing",
         "url": "https://wbcboxing.com/calendar/",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
@@ -55204,7 +55204,7 @@
       {
         "league": "WEC",
         "url": "https://www.fia.com/championship/world-endurance-championship",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
@@ -55216,7 +55216,7 @@
       {
         "league": "WRC",
         "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
