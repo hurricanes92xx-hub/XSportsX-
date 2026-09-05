@@ -5,9 +5,9 @@ import json, re, urllib.request, urllib.error, urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.8'
+ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.9'
 FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'
-FIVB_LIVE_URLS=('https://www.fivb.org/Vis2009/GetMatchLive.asmx','https://www.fivb.org/Vis2009/GetVolleyLive.asmx')
+
 def _get_bytes(url,timeout=12):
  req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/xml,text/xml,*/*'})
  with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
@@ -46,42 +46,49 @@ def _parse_live(raw):
   if {'nochanges','notmodified'} & tags:return True,'unchanged',root
   errs=[]
   for e in root.iter():
-   if 'error' in e.tag.lower():errs.append(f"{_field(e,'Code','code')}:{_field(e,'Text','Message','message')}")
+   if 'error' in e.tag.lower() or e.tag.split('}')[-1].lower() in {'badparameter','parametermissing','notinnewformat','nodata'}:errs.append(f"{e.tag.split('}')[-1]}:{_field(e,'Code','code','Text','Message','message','Parameter')}")
   return False,'response:'+(';'.join(errs) or ','.join(sorted(tags)) or 'empty'),root
  except Exception as e:return False,f'parse:{type(e).__name__}',None
+
 def _fivb_live_request(no):
- no=int(no);reasons=[]
- # Current VIS SDK documents GetMatchLive with NoVolleyMatch/Options/Version.
- # Validate that contract first; only fall back to legacy GetVolleyLive if needed.
- for endpoint,typ in ((FIVB_LIVE_URLS[0],'GetMatchLive'),(FIVB_LIVE_URLS[1],'GetVolleyLive')):
-  q=urllib.parse.urlencode({'NoVolleyMatch':no,'Options':128,'Version':0})
-  raw,status,body=_fivb_http(endpoint+'?'+q);ok,why,_=_parse_live(raw)
-  if ok:return True,f'GET:{endpoint}:{why}'
-  reasons.append(f'GET:{endpoint}:http={status}:{body or why}')
- for typ in ('GetMatchLive','GetVolleyLive'):
-  xml=f'<Request Type="{typ}" NoVolleyMatch="{no}" Options="128" Version="0" />'
-  try:
-   raw=_post_xml(xml);ok,why,_=_parse_live(raw)
-   if ok:return True,f'POST:{typ}:{why}'
-   reasons.append(f'POST:{typ}:{why}')
-  except urllib.error.HTTPError as e:
-   b=e.read().decode('utf-8','replace')[:1000];reasons.append(f'POST:{typ}:http={e.code}:{b}')
-  except Exception as e:reasons.append(f'POST:{typ}:{type(e).__name__}:{str(e)[:160]}')
- return False,' || '.join(reasons)
+ """Use the documented VIS multi-request contract. Do not hammer candidates when the contract fails."""
+ no=int(no)
+ # FIVB's current SDK documents GetMatchLive with NoVolleyMatch, Options and Version.
+ # The legacy XmlRequest endpoint rejects single requests with NotInNewFormat (1008),
+ # so the request must be enclosed in <Requests>...</Requests>.
+ xml=f'<Requests><Request Type="GetMatchLive" NoVolleyMatch="{no}" Options="128" Version="0" /></Requests>'
+ try:
+  raw=_post_xml(xml);ok,why,_=_parse_live(raw)
+  if ok:return True,f'POST:wrapped:GetMatchLive:{why}'
+  return False,f'POST:wrapped:GetMatchLive:{why}'
+ except urllib.error.HTTPError as e:
+  b=e.read().decode('utf-8','replace')[:1000];return False,f'POST:wrapped:GetMatchLive:http={e.code}:{b}'
+ except Exception as e:return False,f'POST:wrapped:GetMatchLive:{type(e).__name__}:{str(e)[:160]}'
+
 def _fivb():
  result=[];d={'status':'ok','listRecords':0,'candidates':0,'liveVerified':0,'liveRejected':0,'errors':[],'verification':{}}
  req='<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc BeginDateTimeUtc TeamNameA TeamNameB Status Gender TournamentName HasLiveData"><Filter ForLiveScore="true" /></Request>'
  try:root=ET.fromstring(_post_xml(req))
  except Exception as e:d['status']='unavailable';d['errors'].append(f'list:{type(e).__name__}:{str(e)[:300]}');return result,d
  records=_fivb_records(root);d['listRecords']=len(records)
+ candidates=[]
  for el in records:
   no=_field(el,'No','NoMatch','NoVolleyMatch');status=_field(el,'Status','StatusName','MatchStatus')
-  if not _is_live(status):continue
-  d['candidates']+=1;home=_field(el,'TeamNameA','TeamAName','NameA','TeamA');away=_field(el,'TeamNameB','TeamBName','NameB','TeamB');start=_iso(_field(el,'DateTimeUtc','BeginDateTimeUtc','DateUtc'));gender=_norm(_field(el,'Gender','TournamentGender'));tournament=_field(el,'TournamentName','Name');league='FIVB Women' if gender in {'w','women','female','f'} or 'women' in _norm(tournament) else 'FIVB Men'
-  ok,why=_fivb_live_request(no);d['verification'][str(no)]=why
-  if not ok:d['liveRejected']+=1;continue
+  if _is_live(status):candidates.append((el,no))
+ d['candidates']=len(candidates)
+ if not candidates:return result,d
+ # One contract smoke test. If it fails, record the exact server response and stop.
+ smoke_el,smoke_no=candidates[0];ok,why=_fivb_live_request(smoke_no);d['verification'][str(smoke_no)]=why
+ if not ok:
+  d['status']='contract-failed';d['errors'].append(why);d['liveRejected']=len(candidates);return result,d
+ for el,no in candidates:
+  if str(no)!=str(smoke_no):
+   ok,why=_fivb_live_request(no);d['verification'][str(no)]=why
+   if not ok:d['liveRejected']+=1;continue
+  home=_field(el,'TeamNameA','TeamAName','NameA','TeamA');away=_field(el,'TeamNameB','TeamBName','NameB','TeamB');start=_iso(_field(el,'DateTimeUtc','BeginDateTimeUtc','DateUtc'));gender=_norm(_field(el,'Gender','TournamentGender'));tournament=_field(el,'TournamentName','Name');league='FIVB Women' if gender in {'w','women','female','f'} or 'women' in _norm(tournament) else 'FIVB Men'
   result.append({'league':league,'title':f'{away} @ {home}' if away and home else f'FIVB Match {no}','start':start,'startUtc':start,'tag':'LIVE','status':'LIVE','state':'in','home':home,'away':away,'source':'fivb-vis-official','providerEventId':f'fivb:{no}','liveEvidenceSource':'fivb-vis'});d['liveVerified']+=1
  return result,d
+
 def _nascar():
  result=[];d={'status':'ok','liveFeed':False,'liveVerified':0,'errors':[]}
  for v in ('1','2'):
@@ -96,6 +103,7 @@ def _nascar():
    break
   except Exception as e:d['errors'].append(f'livefeed:{type(e).__name__}')
  d['status']='blocked' if d['errors'] and not d['liveFeed'] else 'no-live';return result,d
+
 def main():
  if not FEED.exists():raise SystemExit('official adapters: missing schedule_feed.json')
  payload=json.loads(FEED.read_text());events=[e for e in payload.get('events',[]) if isinstance(e,dict)];checked=str((payload.get('liveSweep') or {}).get('checkedAtUtc') or datetime.now(timezone.utc).isoformat().replace('+00:00','Z'));diagnostics={};added=corroborated=0
