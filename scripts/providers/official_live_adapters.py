@@ -1,19 +1,26 @@
 #!/usr/bin/env python3
 """Dedicated official live adapters for FIVB and NASCAR."""
 from __future__ import annotations
-import json, urllib.request, urllib.error
+import json, urllib.request, urllib.error, urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.6'; FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'
-def _get(url,timeout=10,headers=None):
+ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.7'; FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'; FIVB_LIVE_URL='https://www.fivb.org/Vis2009/GetVolleyLive.asmx'
+def _get(url,timeout=10,headers=None,raw=False):
  req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/json,text/plain,*/*',**(headers or {})})
- with urllib.request.urlopen(req,timeout=timeout) as r:return json.loads(r.read().decode('utf-8','ignore'))
+ with urllib.request.urlopen(req,timeout=timeout) as r:
+  data=r.read()
+  return data if raw else json.loads(data.decode('utf-8','ignore'))
 def _post_xml(xml,timeout=12,accept='application/xml,text/xml,*/*'):
- # VIS XmlRequest.asmx accepts the XML request in the HTTP payload. Sending it
- # as an x-www-form-urlencoded Request field causes HTTP 400 on GetVolleyLive.
  req=urllib.request.Request(FIVB_URL,data=xml.encode('utf-8'),headers={'User-Agent':UA,'Accept':accept,'Content-Type':'text/xml; charset=utf-8'},method='POST')
  with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
+def _fivb_get_xml(url,timeout=12):
+ req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/xml,text/xml,*/*'})
+ try:
+  with urllib.request.urlopen(req,timeout=timeout) as r:return r.read(),r.status,''
+ except urllib.error.HTTPError as exc:
+  body=exc.read().decode('utf-8','replace')[:1200]
+  return body.encode(),exc.code,body
 def _iso(v):
  if not v:return ''
  try:return datetime.fromisoformat(str(v).replace('Z','+00:00')).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
@@ -44,28 +51,48 @@ def _desc_field(el,*names):
  return ''
 def _fivb_records(root):
  return [el for el in root.iter() if el.tag.split('}')[-1].lower() in {'volleyballmatch','volleymatch','match'} and _desc_field(el,'No','NoMatch','NoVolleyMatch').isdigit()]
+def _parse_fivb_live(raw):
+ try:
+  root=ET.fromstring(raw)
+  tags={n.tag.split('}')[-1].lower() for n in root.iter()}
+  if 'volleylive' in tags:return True,'volleylive',root
+  if 'nochanges' in tags or 'notmodified' in tags:return True,'nochanges',root
+  errors=[]
+  for n in root.iter():
+   t=n.tag.split('}')[-1].lower()
+   if 'error' in t:
+    errors.append((_field(n,'Code','code'),_field(n,'Text','text','Message','message')))
+  return False,'response:'+(';'.join(':'.join(x) for x in errors) or ','.join(sorted(tags)) or 'empty'),root
+ except Exception as exc:return False,f'parse:{type(exc).__name__}',None
 def _fivb_live_request(no):
- attempts=[
-  f'<Request Type="GetVolleyLive" No="{int(no)}" Options="128" Version="0" />',
-  f'<Request Type="GetVolleyLive" No="{int(no)}" Options="128" />',
- ]
+ no=int(no); attempts=[]
+ # FIVB documents GetVolleyLive.asmx as the dedicated HTTP endpoint. Try the
+ # documented parameter name first, then the legacy No name used by VIS XML.
+ for endpoint in (FIVB_LIVE_URL,FIVB_URL):
+  for name in ('NoVolleyMatch','No'):
+   params=urllib.parse.urlencode({name:no,'Options':128,'Version':0})
+   attempts.append(('GET',endpoint+'?'+params))
+  # The generic XmlRequest also accepts a request in the HTTP payload.
+  attempts.append(('POST',endpoint if endpoint==FIVB_URL else endpoint, f'<Request Type="GetVolleyLive" No="{no}" Options="128" Version="0" />'))
  reasons=[]
- for request in attempts:
+ for item in attempts:
   try:
-   raw=_post_xml(request);root=ET.fromstring(raw);tags={n.tag.split('}')[-1].lower() for n in root.iter()}
-   if 'volleylive' in tags:return True,'volleylive'
-   if 'nochanges' in tags:return True,'nochanges'
-   reasons.append(','.join(sorted(tags)) or 'empty')
+   if item[0]=='GET':raw,status,body=_fivb_get_xml(item[1])
+   else:
+    raw=_post_xml(item[2]);status=200;body=''
+   ok,why,_=_parse_fivb_live(raw)
+   if ok:return True,f'{item[0]}:{item[1]}:{why}'
+   reasons.append(f'{item[0]}:{item[1]}:{why}')
   except urllib.error.HTTPError as exc:
-   reasons.append(f'http:{exc.code}')
-   if exc.code not in {400,404}:break
-  except Exception as exc:reasons.append(type(exc).__name__)
- return False,'|'.join(reasons)
+   body=exc.read().decode('utf-8','replace')[:1200]
+   reasons.append(f'{item[0]}:{item[1]}:http:{exc.code}:{body}')
+  except Exception as exc:reasons.append(f'{item[0]}:{item[1]}:{type(exc).__name__}:{str(exc)[:200]}')
+ return False,' || '.join(reasons)
 def _fivb():
  result=[];d={'status':'ok','listRecords':0,'candidates':0,'liveVerified':0,'liveRejected':0,'errors':[],'verification':{}}
  request='<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc BeginDateTimeUtc TeamNameA TeamNameB Status Gender TournamentName HasLiveData"><Filter ForLiveScore="true" /></Request>'
  try:root=ET.fromstring(_post_xml(request))
- except Exception as exc:d['status']='unavailable';d['errors'].append(f'list:{type(exc).__name__}');return result,d
+ except Exception as exc:d['status']='unavailable';d['errors'].append(f'list:{type(exc).__name__}:{str(exc)[:300]}');return result,d
  records=_fivb_records(root);d['listRecords']=len(records)
  for el in records:
   no=_desc_field(el,'No','NoMatch','NoVolleyMatch');status=_desc_field(el,'Status','StatusName','MatchStatus')
@@ -79,7 +106,8 @@ def _nascar():
  result=[];d={'status':'ok','liveFeed':False,'scheduleRecords':0,'liveVerified':0,'errors':[]}
  for version in ('1','2'):
   try:
-   root=_get(f'https://feed.nascar.com/api/LiveFeed?v={version}',headers={'Referer':'https://www.nascar.com/','Origin':'https://www.nascar.com'});d['liveFeed']=True
+   root=_get(f'https://feed.nascar.com/api/LiveFeed?v={version}',headers={'Referer':'https://www.nascar.com/','Origin':'https://www.nascar.com'})
+   d['liveFeed']=True
    for x in root if isinstance(root,list) else [root]:
     if not isinstance(x,dict) or str(x.get('series_id') or x.get('seriesId'))!='3':continue
     rid=x.get('race_id') or x.get('raceId') or x.get('run_id');nm=x.get('run_name') or x.get('event_name') or 'NASCAR Craftsman Truck Series';start=_iso(x.get('time_of_day_os') or x.get('start_time_utc') or x.get('start_time'));result.append({'league':'NASCAR Truck','title':nm,'start':start,'startUtc':start,'tag':'LIVE','status':'LIVE','state':'in','source':'nascar-livefeed-official','providerEventId':f'nascar:live:{rid}','liveEvidenceSource':'nascar-livefeed'});d['liveVerified']+=1
