@@ -76,13 +76,15 @@ def _parse_time(game):
     date = str(game.get("startDate") or game.get("gameDate") or "").strip()
     if not date: return None
     raw = str(game.get("startTime") or "").strip().upper().replace(" ET", "")
-    if not raw: return f"{date}T00:00:00Z"
+    # Do not turn an unknown clock into midnight UTC. A fabricated start can
+    # make a real live NCAA game look stale/future and fail the live gate.
+    if not raw: return None
     for fmt in ("%Y-%m-%d %I:%M%p", "%Y-%m-%d %H:%M", "%Y-%m-%dT%I:%M%p", "%Y-%m-%dT%H:%M"):
         try:
             text = f"{date} {raw}" if "T" not in date else f"{date}T{raw}"
             return datetime.strptime(text, fmt).replace(tzinfo=NCAA_TZ).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
         except ValueError: continue
-    return f"{date}T00:00:00Z"
+    return None
 
 def _normalize(game, league, icon):
     away, home = _team_name(game.get("away")), _team_name(game.get("home")); teams = game.get("teams") or []
