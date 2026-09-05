@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "description": "Canonical sport-domain knowledge used by the XSportsX reasoner. Timing is inference only; explicit provider and official state wins.",
+  "sports": {
+    "soccer": {"aliases": ["soccer","football"],"matchShape":"two-team","periods":["1H","HT","2H","ET","PENALTIES"],"typicalMinutes":105},
+    "football": {"aliases": ["nfl","ncaa football","college football","cfl"],"matchShape":"two-team","periods":["Q1","Q2","HALFTIME","Q3","Q4","OT"],"typicalMinutes":210},
+    "baseball": {"aliases": ["mlb"],"matchShape":"two-team","periods":["INNING"],"typicalMinutes":180},
+    "basketball": {"aliases": ["nba","wnba","ncaa basketball"],"matchShape":"two-team","periods":["Q1","Q2","HALFTIME","Q3","Q4","OT"],"typicalMinutes":150},
+    "hockey": {"aliases": ["nhl"],"matchShape":"two-team","periods":["P1","P2","P3","OT","SO"],"typicalMinutes":150},
+    "volleyball": {"aliases": ["ncaa volleyball"],"matchShape":"two-team","periods":["SET1","SET2","SET3","SET4","SET5"],"typicalMinutes":120},
+    "tennis": {"aliases": ["atp","wta","grand slam"],"matchShape":"two-player","periods":["SET"],"typicalMinutes":150},
+    "golf": {"aliases": ["pga","lpga","liv golf"],"matchShape":"individual-or-field","periods":["ROUND1","ROUND2","ROUND3","ROUND4"],"typicalMinutes":480},
+    "racing": {"aliases": ["f1","formula 1","nascar","indycar","motogp","imsa","wec","wrc"],"matchShape":"field","periods":["PRACTICE","QUALIFYING","RACE"],"typicalMinutes":180},
+    "mma": {"aliases": ["ufc","mma"],"matchShape":"fight-card","periods":["EARLY_PRELIMS","PRELIMS","MAIN_CARD","FIGHT"],"typicalMinutes":300},
+    "boxing": {"aliases": ["boxing"],"matchShape":"fight-card","periods":["UNDERCARD","MAIN_CARD","FIGHT"],"typicalMinutes":300},
+    "wrestling": {"aliases": ["wwe","aew","tna","aaa"],"matchShape":"show","periods":["SHOW"],"typicalMinutes":180}
+  }
+}
