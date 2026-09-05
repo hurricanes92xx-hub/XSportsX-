@@ -12,6 +12,8 @@ on:
       - 'scripts/providers/ncaa.py'
       - 'scripts/providers/fivb.py'
       - 'scripts/providers/free.py'
+      - 'scripts/providers/shadow.py'
+      - 'scripts/providers/shadow_special.py'
       - 'scripts/provider_health_gate.py'
       - 'scripts/official_event_recovery.py'
       - '.github/workflows/live-coverage-rebuild.yml'
