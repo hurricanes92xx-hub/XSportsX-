@@ -11,6 +11,7 @@ import refresh_schedules_legacy as schedule_legacy
 import sports_web_research as web_research
 from sports_evidence import correlate
 from sports_knowledge_graph import observe_feed
+import sport_awareness
 SCHEMA=4
 ALLOWED_ACTIONS={"refresh_live_evidence","probe_live_state_and_source","discover_schedule_provider","discover_event_source_metadata","warm_source","reconcile_or_archive","refresh_schedule_and_preflight","defer","no_action"}
 OFFICIAL_RECOVERY_URLS={"UFC":"https://www.ufc.com/event/ufc-fight-night-september-05-2026"}
@@ -18,10 +19,12 @@ def now_iso():return datetime.now(timezone.utc).replace(microsecond=0).isoformat
 @dataclass
 class Evidence:
     event_id:str; title:str; phase:str; confidence:float; action:str; reasons:list[str]; provider:str; source_present:bool; source_url:str=''; league:str=''; start_utc:str=''; correlated:dict[str,Any]|None=None
+
 def _safe_http_url(url):
     try:
         p=urllib.parse.urlparse(url);return p.scheme in {'http','https'} and (p.hostname or '').lower() not in {'localhost','127.0.0.1','0.0.0.0','::1'}
     except Exception:return False
+
 def _probe(url):
     if not _safe_http_url(url):return {'status':'rejected','reason':'unsafe-url'}
     req=urllib.request.Request(url,headers={'User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json,text/plain,text/html;q=0.8,*/*;q=0.5'},method='HEAD')
@@ -35,15 +38,16 @@ def _probe(url):
             except Exception as e:return {'status':'unreachable','reason':str(e)[:220]}
         return {'status':'http-error','httpStatus':exc.code}
     except Exception as e:return {'status':'unreachable','reason':str(e)[:220]}
+
 def _parse_date(value):
     try:return datetime.fromisoformat(str(value).replace('Z','+00:00')).astimezone(timezone.utc)
     except Exception:return None
+
 def _recover_html_schedule(league,url):
     if league.upper()!='UFC':return []
     body,ctype,_=discovery._get(url,timeout=6)
     if not body:return []
     text=body.decode('utf-8','replace');events=[]
-    # Official single-event pages often expose Event JSON-LD even when the index is JS-rendered.
     for obj in schedule_legacy.jsonld_objects(text):
         kind=obj.get('@type'); start=_parse_date(obj.get('startDate')); title=str(obj.get('name') or '').strip()
         if (kind=='Event' or (isinstance(kind,list) and 'Event' in kind)) and title and start and start>=datetime.now(timezone.utc)-timedelta(hours=12):
@@ -64,6 +68,7 @@ def _recover_html_schedule(league,url):
         if start<now-timedelta(hours=12):continue
         events.append({'sport':'MMA','league':league,'title':title,'startUtc':start.isoformat().replace('+00:00','Z'),'start':start.isoformat().replace('+00:00','Z'),'status':'scheduled','state':'','source':'official-html','discoveryUrl':url});seen.add(slug)
     return events[:50]
+
 class ToolRegistry:
     def __init__(self):self.tools={'refresh_live_evidence':self.refresh_live_evidence,'probe_live_state_and_source':self.probe_live_state_and_source,'discover_schedule_provider':self.discover_schedule_provider,'discover_event_source_metadata':self.discover_event_source_metadata,'warm_source':self.warm_source,'reconcile_or_archive':self.reconcile_or_archive,'refresh_schedule_and_preflight':self.refresh_schedule_and_preflight,'defer':lambda e:{'status':'deferred','reason':e.event_id},'no_action':lambda e:{'status':'noop','reason':e.event_id}}
     def execute(self,action,e):
@@ -77,8 +82,7 @@ class ToolRegistry:
             url=result.get('url','');body,ctype,_=discovery._get(url,timeout=5)
             if body:recovered.extend(discovery._extract_events(body,ctype,e.league))
             recovered.extend(_recover_html_schedule(e.league,url))
-        if e.league.upper() in OFFICIAL_RECOVERY_URLS:
-            recovered.extend(_recover_html_schedule(e.league,OFFICIAL_RECOVERY_URLS[e.league.upper()]))
+        if e.league.upper() in OFFICIAL_RECOVERY_URLS:recovered.extend(_recover_html_schedule(e.league,OFFICIAL_RECOVERY_URLS[e.league.upper()]))
         return {'status':'completed','league':e.league,'candidates':len(candidates),'promoted':len(promoted),'eventsFound':len(events),'googleResearch':research,'validatedRecoveredEvents':recovered[:100],'endpoints':[c.get('endpoint') for c in candidates[:8]]}
     def discover_event_source_metadata(self,e):
         if not e.league:return {'status':'skipped','reason':'missing-league'}
@@ -95,29 +99,37 @@ class ToolRegistry:
     def warm_source(self,e):return {'status':'skipped','reason':'missing-source'} if not e.source_url else {'status':'completed','preflight':_probe(e.source_url)}
     def reconcile_or_archive(self,e):return {'status':'completed','decision':'retain' if e.phase in {'LIVE','UPCOMING','PREGAME'} else 'archive-candidate','eventId':e.event_id}
     def refresh_schedule_and_preflight(self,e):return {'status':'completed','scheduleDiscovery':self.discover_schedule_provider(e),'preflight':self.probe_live_state_and_source(e)}
+
 def deterministic_plan(e):
-    c=e.correlated or {};verdict=str(c.get('verdict',''));action=e.action if e.action in ALLOWED_ACTIONS else 'no_action'
+    c=e.correlated or {};verdict=str(c.get('verdict',''));action=e.action if e.action in ALLOWED_ACTIONS else 'no_action';ctx=sport_awareness.ai_context({'sport':'','league':e.league,'title':e.title})
     if (verdict=='LIVE' or e.phase=='LIVE') and not e.source_present:action='discover_event_source_metadata'
     elif verdict=='UNCERTAIN':action='refresh_live_evidence'
     elif not e.source_present and e.league:action='discover_schedule_provider'
-    return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':'; '.join(e.reasons[:4]) or 'deterministic policy','evidenceIds':[e.event_id]}
+    reason='; '.join(e.reasons[:4]) or 'deterministic policy'
+    return {'action':action,'confidence':max(0,min(1,e.confidence)),'reason':f'{reason}; sport={ctx["sportKey"]}','evidenceIds':[e.event_id],'sportProfile':ctx['sportProfile']}
+
 def _model_configs():
     out=[]
     for urlenv,modelenv,keyenv,label in [('SPORTS_AGENT_MODEL_URL','SPORTS_AGENT_MODEL','SPORTS_AGENT_MODEL_API_KEY','primary'),('SPORTS_AGENT_GEMINI_MODEL_URL','SPORTS_AGENT_GEMINI_MODEL','SPORTS_AGENT_GEMINI_API_KEY','gemini')]:
         u=os.getenv(urlenv,'').strip();m=os.getenv(modelenv,'').strip().rstrip(' .');k=os.getenv(keyenv,'').strip()
         if u and m and k:out.append((u,m,k,label))
     return out
+
 def should_use_model(e):
     if not _model_configs() or not e.event_id:return False
     verdict=str((e.correlated or {}).get('verdict',''))
-    return verdict in {'UNCERTAIN','CONTRADICTED'} or e.phase in {'LIVE','PREGAME'} or (not e.source_present and e.confidence<0.75)
+    urgent=sport_awareness.is_urgent({'sport':'','league':e.league,'title':e.title,'startUtc':e.start_utc})
+    return verdict in {'UNCERTAIN','CONTRADICTED'} or e.phase in {'LIVE','PREGAME'} or urgent or (not e.source_present and e.confidence<0.75)
+
 def _call_model(endpoint,model,key,e):
-    prompt={'task':'Act as a strict sports-data recovery agent. A missing, stale, or contradictory schedule is a failure condition. Choose the safest next action. NEVER invent an event, time, status, source, broadcast, or provider. OFFICIAL league/promotional evidence outranks secondary evidence. If an active league has no events, choose discover_schedule_provider. If LIVE/PREGAME has no source, choose discover_event_source_metadata. If evidence conflicts, choose refresh_live_evidence. FINAL/POSTPONED is terminal unless stronger explicit evidence proves a change. Do not choose no_action when a required recovery condition exists.','allowedActions':sorted(ALLOWED_ACTIONS),'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
-    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'STRICT XSportsX SPORTS INTELLIGENCE POLICY. Return JSON only. Never fabricate. Never suppress a known schedule gap. Never turn an unsupported search result into canonical truth. Follow the action policy exactly.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json','Authorization':f'Bearer {key}','User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json'};request=urllib.request.Request(endpoint,data=body,headers=headers,method='POST')
+    ctx=sport_awareness.ai_context({'sport':'','league':e.league,'title':e.title})
+    prompt={'task':'Act as a strict sport-aware sports-data recovery agent. Apply the supplied sport profile; do not use generic timing assumptions when the profile provides a sport-specific window. A missing, stale, or contradictory schedule is a failure condition. Choose the safest next action. NEVER invent an event, time, status, source, broadcast, or provider. OFFICIAL league/promotional evidence outranks secondary evidence. For combat sports, treat Early Prelims, Prelims, and Main Card as distinct broadcast sessions when official evidence provides separate times. If an active league has no events, choose discover_schedule_provider. If LIVE/PREGAME has no source, choose discover_event_source_metadata. If evidence conflicts, choose refresh_live_evidence. FINAL/POSTPONED is terminal unless stronger explicit evidence proves a change. Do not choose no_action when a required recovery condition exists.','allowedActions':sorted(ALLOWED_ACTIONS),'sportContext':ctx,'evidence':{'eventId':e.event_id,'title':e.title,'league':e.league,'startUtc':e.start_utc,'phase':e.phase,'confidence':e.confidence,'actionHint':e.action,'reasons':e.reasons,'provider':e.provider,'sourcePresent':e.source_present,'correlation':e.correlated},'outputSchema':{'action':'string','confidence':'number','reason':'string','evidenceIds':'array'}}
+    body=json.dumps({'model':model,'temperature':0,'messages':[{'role':'system','content':'STRICT XSportsX SPORTS INTELLIGENCE POLICY. Return JSON only. Never fabricate. Never suppress a known schedule gap. Never turn an unsupported search result into canonical truth. Sport profile is authoritative for inference windows, urgency, and lifecycle expectations; provider/official state is authoritative for actual state. Follow the action policy exactly.'},{'role':'user','content':json.dumps(prompt)}]}).encode();headers={'Content-Type':'application/json','Authorization':f'Bearer {key}','User-Agent':'XSportsX-SportsAgent/1.0','Accept':'application/json'};request=urllib.request.Request(endpoint,data=body,headers=headers,method='POST')
     with urllib.request.urlopen(request,timeout=8) as r:data=json.loads(r.read(512*1024).decode('utf-8'))
     plan=json.loads(data.get('choices',[{}])[0].get('message','{}').get('content',''))
     if not isinstance(plan,dict) or plan.get('action') not in ALLOWED_ACTIONS:return None
-    plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];return plan
+    plan['confidence']=max(0,min(1,float(plan.get('confidence',e.confidence))));plan['reason']=str(plan.get('reason','model decision'))[:500];plan['evidenceIds']=[str(x) for x in (plan.get('evidenceIds') or [e.event_id])[:8]];plan['sportProfile']=ctx['sportProfile'];plan['sportKey']=ctx['sportKey'];return plan
+
 def model_plan(e):
     for endpoint,model,key,provider in _model_configs():
         try:
@@ -125,42 +137,40 @@ def model_plan(e):
             if plan is not None:plan['_modelProvider']=provider;plan['_model']=model;return plan
         except (OSError,ValueError,TypeError,KeyError,IndexError,urllib.error.URLError):continue
     return None
+
 def load_memory(path):
     try:d=json.loads(path.read_text(encoding='utf-8'));return d if isinstance(d,dict) else {}
     except Exception:return {}
+
 def _selected_events(events,mode):
     if mode!='live':return events
     now=datetime.now(timezone.utc);selected=[]
     for event in events:
-        phase=str(event.get('intelligencePhase','')).upper();start=str(event.get('startUtc') or event.get('start') or '');urgent=phase in {'LIVE','PREGAME'}
-        if not urgent and start:
-            try:urgent=0 <= (datetime.fromisoformat(start.replace('Z','+00:00'))-now).total_seconds() <= 1800
-            except Exception:pass
-        if urgent:selected.append(event)
+        if sport_awareness.is_urgent(event,now):selected.append(event)
     return selected
+
 def _mandatory_schedule_gaps(feed):
     events=feed.get('events') or [];counts={}
     for e in events:counts[str(e.get('league') or '')]=counts.get(str(e.get('league') or ''),0)+1
     expected=set(str(x) for x in (feed.get('leagueProviderMatrix') or {}).keys())|set(str(x) for x in (feed.get('eventCounts') or {}).keys())
     return sorted(x for x in expected if x and counts.get(x,0)==0)
+
 def _recover_wrestling_expectations(feed):
-    current=[e for e in (feed.get('events') or []) if isinstance(e,dict)]
-    raw=[]
-    try: schedule_legacy.add_wrestling(raw)
-    except Exception: return [], {'checked':True,'recovered':0,'error':'wrestling-source-failure'}
-    now=datetime.now(timezone.utc); horizon=now+timedelta(days=14); recovered=[]
-    wanted={'smackdown','monday night raw','sunday night\'s main event'}
+    current=[e for e in (feed.get('events') or []) if isinstance(e,dict)];raw=[]
+    try:schedule_legacy.add_wrestling(raw)
+    except Exception:return [], {'checked':True,'recovered':0,'error':'wrestling-source-failure'}
+    now=datetime.now(timezone.utc);horizon=now+timedelta(days=14);recovered=[];wanted={'smackdown','monday night raw','sunday night\'s main event'}
     for e in raw:
-        if str(e.get('league') or '')!='WWE': continue
-        title=str(e.get('title') or '').strip(); low=title.lower(); start=_parse_date(e.get('startUtc') or e.get('start'))
-        if not title or not start or not now-timedelta(hours=12)<=start<=horizon: continue
-        if not any(x in low for x in wanted): continue
+        if str(e.get('league') or '')!='WWE':continue
+        title=str(e.get('title') or '').strip();low=title.lower();start=_parse_date(e.get('startUtc') or e.get('start'))
+        if not title or not start or not now-timedelta(hours=12)<=start<=horizon:continue
+        if not any(x in low for x in wanted):continue
         if not any(str(x.get('league') or '')=='WWE' and str(x.get('title') or '').strip().lower()==low and _parse_date(x.get('startUtc') or x.get('start'))==start for x in current):
-            candidate=dict(e); candidate['source']='ai-official-wrestling-recovery'; candidate['aiRecovered']=True; recovered.append(candidate)
+            candidate=dict(e);candidate['source']='ai-official-wrestling-recovery';candidate['aiRecovered']=True;recovered.append(candidate)
     return recovered, {'checked':True,'recovered':len(recovered)}
+
 def _recover_gap(league):
-    recovered=[];research=web_research.research_schedule(league,limit=10)
-    urls=[str(r.get('url','')) for r in research if float(r.get('score',0))>=0.70]
+    recovered=[];research=web_research.research_schedule(league,limit=10);urls=[str(r.get('url','')) for r in research if float(r.get('score',0))>=0.70]
     if league.upper() in OFFICIAL_RECOVERY_URLS:urls.insert(0,OFFICIAL_RECOVERY_URLS[league.upper()])
     for url in dict.fromkeys(urls):
         body,ctype,_=discovery._get(url,timeout=5)
@@ -171,6 +181,7 @@ def _recover_gap(league):
         if not e.get('title') or not start or start<now-timedelta(hours=12):continue
         e['league']=league;e['source']='ai-web-recovery';e['discoveryConfidence']=max(0.70,float(e.get('discoveryConfidence',0.70)));valid.append(e)
     return valid[:100],research
+
 def dedupe_events(events):
     from event_identity import identity_match,merge_event_records,event_identity
     canonical=[];merges=0
@@ -180,6 +191,7 @@ def dedupe_events(events):
         merges+=1;canonical[match]=merge_event_records(canonical[match],candidate)
     for e in canonical:e['id']=event_identity(e.get('league'),e.get('title'),e.get('start') or e.get('startUtc'),e.get('home'),e.get('away'))
     return canonical,merges,{}
+
 def run(feed_path,memory_path,graph_path,mode='full'):
     feed=json.loads(feed_path.read_text(encoding='utf-8'));events=[e for e in feed.get('events',[]) if isinstance(e,dict)];gap_reports=[]
     wrestling_recovered,wrestling_report=_recover_wrestling_expectations(feed)
@@ -193,7 +205,7 @@ def run(feed_path,memory_path,graph_path,mode='full'):
         feed['events']=events
     events=_selected_events(events,mode);memory=load_memory(memory_path);agent=memory.setdefault('agent',{'runs':0,'actions':{},'modelDecisions':0,'fallbackDecisions':0,'modelProviders':{}});agent.setdefault('actions',{});agent.setdefault('modelDecisions',0);agent.setdefault('fallbackDecisions',0);agent.setdefault('modelProviders',{});registry=ToolRegistry();plans=[]
     for event in events:
-        e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''));e.correlated=correlate(event)
+        sport_ctx=sport_awareness.ai_context(event);e=Evidence(str(event.get('id','')),str(event.get('title','')),str(event.get('intelligencePhase','UNKNOWN')),float(event.get('intelligenceConfidence',0)),str(event.get('intelligenceAction','no_action')),list(event.get('intelligenceReasons') or []),str(event.get('provider') or event.get('sourceProvider') or 'unknown'),bool(event.get('sourceUrl') or event.get('youtubeVideoId')),str(event.get('sourceUrl') or ''),str(event.get('league') or ''),str(event.get('startUtc') or event.get('start') or ''));e.correlated=correlate(event)
         if e.correlated.get('verdict') in {'FINAL','POSTPONED'} and e.correlated.get('confidence',0)>=0.82:e.action='reconcile_or_archive';e.phase='FINAL'
         plan=model_plan(e) if should_use_model(e) else None
         if plan is None:plan=deterministic_plan(e);agent['fallbackDecisions']=int(agent.get('fallbackDecisions',0))+1
@@ -202,8 +214,9 @@ def run(feed_path,memory_path,graph_path,mode='full'):
         if (e.correlated or {}).get('verdict') in {'FINAL','POSTPONED'} and (e.correlated or {}).get('confidence',0)>=0.82:plan['action']='reconcile_or_archive'
         elif e.phase in {'LIVE','PREGAME'} and not e.source_present:plan['action']='discover_event_source_metadata'
         elif not e.source_present and e.league and plan.get('action')=='no_action':plan['action']='discover_schedule_provider'
-        result=registry.execute(str(plan.get('action','no_action')),e);action=str(plan.get('action','no_action'));agent['actions'][action]=int(agent['actions'].get(action,0))+1;plans.append({'eventId':e.event_id,'phase':e.phase,'correlation':e.correlated,'plan':plan,'execution':result})
-    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastMode']=mode;agent['lastPlans']=plans[:500];agent['lastScheduleGapRecovery']=gap_reports;memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'mode':mode,'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'scheduleGapRecovery':gap_reports,'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans)};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
+        plan.setdefault('sportKey',sport_ctx['sportKey']);plan.setdefault('sportProfile',sport_ctx['sportProfile']);result=registry.execute(str(plan.get('action','no_action')),e);action=str(plan.get('action','no_action'));agent['actions'][action]=int(agent['actions'].get(action,0))+1;plans.append({'eventId':e.event_id,'phase':e.phase,'sportKey':sport_ctx['sportKey'],'sportProfile':sport_ctx['sportProfile'],'correlation':e.correlated,'plan':plan,'execution':result})
+    agent['runs']=int(agent.get('runs',0))+1;agent['updatedAt']=now_iso();agent['lastObservedEvents']=len(events);agent['lastMode']=mode;agent['lastPlans']=plans[:500];agent['lastScheduleGapRecovery']=gap_reports;memory_path.parent.mkdir(parents=True,exist_ok=True);memory_path.write_text(json.dumps(memory,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');graph_stats=observe_feed(feed,graph_path);result={'schema':SCHEMA,'updatedAt':agent['updatedAt'],'observedEvents':len(events),'plans':len(plans),'mode':mode,'modelEnabled':bool(_model_configs()),'modelDecisions':agent.get('modelDecisions',0),'fallbackDecisions':agent.get('fallbackDecisions',0),'modelProviders':agent.get('modelProviders',{}),'scheduleGapRecovery':gap_reports,'graph':graph_stats,'actions':agent['actions'],'correlatedEvents':len(plans),'sportAware':True};feed['sportsAgent']=result;feed_path.write_text(json.dumps(feed,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');return result
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('feed');p.add_argument('--memory',default='data/sports_brain_memory.json');p.add_argument('--graph',default='data/sports_knowledge_graph.json');p.add_argument('--mode',choices=['full','live'],default='full');a=p.parse_args();print(json.dumps(run(Path(a.feed),Path(a.memory),Path(a.graph),a.mode),indent=2))
 if __name__=='__main__':main()
