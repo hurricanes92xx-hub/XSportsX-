@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "profiles": {
+    "soccer":{"pregameMinutes":45,"inferredLiveMinutes":30,"maxLiveMinutes":180},
+    "baseball":{"pregameMinutes":45,"inferredLiveMinutes":45,"maxLiveMinutes":240},
+    "basketball":{"pregameMinutes":30,"inferredLiveMinutes":35,"maxLiveMinutes":180},
+    "football":{"pregameMinutes":60,"inferredLiveMinutes":60,"maxLiveMinutes":300},
+    "hockey":{"pregameMinutes":45,"inferredLiveMinutes":45,"maxLiveMinutes":240},
+    "volleyball":{"pregameMinutes":30,"inferredLiveMinutes":45,"maxLiveMinutes":210},
+    "tennis":{"pregameMinutes":30,"inferredLiveMinutes":60,"maxLiveMinutes":360},
+    "golf":{"pregameMinutes":90,"inferredLiveMinutes":90,"maxLiveMinutes":600},
+    "racing":{"pregameMinutes":60,"inferredLiveMinutes":90,"maxLiveMinutes":360},
+    "mma":{"pregameMinutes":60,"inferredLiveMinutes":360,"maxLiveMinutes":360},
+    "boxing":{"pregameMinutes":60,"inferredLiveMinutes":240,"maxLiveMinutes":360},
+    "wrestling":{"pregameMinutes":60,"inferredLiveMinutes":240,"maxLiveMinutes":300}
+  }
+}
