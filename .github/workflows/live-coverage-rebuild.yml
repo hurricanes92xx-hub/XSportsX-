@@ -1,5 +1,6 @@
 name: Guaranteed Cross-Sport Live Coverage
 
+# FIVB contract fix trigger: use current wrapped VIS multi-request format.
 on:
   workflow_dispatch:
   push:
