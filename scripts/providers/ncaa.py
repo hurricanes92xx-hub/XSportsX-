@@ -6,6 +6,7 @@ throttled/retried because the public NCAA mirror documents a 5 req/s/IP limit.
 The publisher performs the final canonical union/dedupe across authorities.
 """
 import json
+import re
 import time
 import urllib.request
 import urllib.error
@@ -90,8 +91,13 @@ def _normalize(game, league, icon):
     title = f"{away} @ {home}" if away and home else str(game.get("title") or game.get("contestName") or league); start = _parse_time(game)
     if not start: return None
     state = str(game.get("gameState") or game.get("status") or "").lower()
-    if isinstance(game.get("status"), dict): state = str(game["status"].get("state") or game["status"].get("name") or "").lower()
-    tag = "LIVE" if state in {"live", "in-progress", "in", "in progress", "in_progress"} else "FINAL" if state in {"final", "f", "complete", "completed", "closed"} else "UPCOMING"
+    if isinstance(game.get("status"), dict):
+        status_obj = game["status"]
+        state = str(status_obj.get("state") or status_obj.get("name") or status_obj.get("displayClock") or "").lower()
+    status_text = json.dumps(game.get("status"), ensure_ascii=False).lower() if isinstance(game.get("status"), (dict, list)) else state
+    live_clock = bool(re.search(r"\bq[1-4]\b|\b[0-9]{1,2}:[0-9]{2}\b|halftime|in progress|in-progress|inprogress|live", status_text + " " + state))
+    final_state = bool(re.search(r"final|complete|completed|closed", status_text + " " + state))
+    tag = "FINAL" if final_state else "LIVE" if live_clock else "UPCOMING"
     provider_id = game.get("contestId") or game.get("gameID") or game.get("gameId") or ""
     event = {"league": league, "title": title, "start": start, "tag": tag, "icon": icon, "source": "ncaa"}
     if away: event["away"] = away
@@ -114,8 +120,6 @@ def _normalize_espn(game, league, icon):
     return event
 
 def _fetch_scoreboard_day(sport, division, day):
-    # Football's NCAA scoreboard route is week-based; the legacy endpoint is the stable
-    # current-week route. Other sports expose date-based scoreboard routes.
     url = f"{BASE}/scoreboard/football/{division}" if sport == "football" else f"{BASE}/scoreboard/{sport}/{division}/{day:%Y/%m/%d}"
     try: return _get(url)
     except Exception as exc: print(f"ERROR NCAA scoreboard {sport}/{division} {day}: {exc}"); return None
@@ -123,9 +127,19 @@ def _fetch_scoreboard_day(sport, division, day):
 def _fetch_espn_day(league, day):
     mapping = ESPN_FALLBACK.get(league)
     if not mapping: return []
-    sport, slug = mapping; url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={day:%Y%m%d}&limit=1000"
-    try: root = _get(url, ESPN_HEADERS, timeout=20)
-    except Exception as exc: print(f"ERROR ESPN NCAA secondary {league} {day}: {exc}"); return []
+    sport, slug = mapping
+    urls = [
+        f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={day:%Y%m%d}&limit=1000",
+        f"https://site.web.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?dates={day:%Y%m%d}&limit=1000",
+    ]
+    root = None
+    for url in urls:
+        try:
+            root = _get(url, ESPN_HEADERS, timeout=12)
+            if root: break
+        except Exception as exc:
+            print(f"ERROR ESPN NCAA secondary {league} {day} {url}: {exc}")
+    if not root: return []
     icon = next(x[3] for x in NCAA_LEAGUES if x[0] == league)
     return [event for game in (root.get("events") or []) if (event := _normalize_espn(game, league, icon))]
 
