@@ -82,7 +82,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 1004,
+  "identityMergeCount": 1011,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1527,
@@ -63960,10 +63960,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 53,
+    "reachableSources": 52,
     "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T17:06:13Z",
+    "identityMerges": 7,
+    "updatedAt": "2026-09-05T17:08:17Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -64322,7 +64322,7 @@
       {
         "league": "WRC",
         "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
