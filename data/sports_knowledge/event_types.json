@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "rules": [
+    {"sport":"football","types":["regular season","playoff","conference championship","bowl","CFP"]},
+    {"sport":"mma","types":["early prelims","prelims","main card","main event","co-main event"]},
+    {"sport":"boxing","types":["undercard","prelims","main card","main event"]},
+    {"sport":"wrestling","types":["weekly show","special","PPV","PLE"]},
+    {"sport":"racing","types":["practice","qualifying","sprint","race"]},
+    {"sport":"golf","types":["practice","round 1","round 2","round 3","round 4"]},
+    {"sport":"tennis","types":["qualifying","round of 128","round of 64","round of 32","round of 16","quarterfinal","semifinal","final"]},
+    {"sport":"soccer","types":["league match","cup match","knockout","friendly"]}
+  ]
+}
