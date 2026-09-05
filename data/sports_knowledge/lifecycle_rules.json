@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "principles": [
+    "Explicit provider live state beats clock inference.",
+    "Official status beats secondary schedule text.",
+    "A scheduled start does not prove a live broadcast has begun.",
+    "A missing source does not mean an event is not live.",
+    "Long-duration sports must not be expired using generic short windows.",
+    "Combat cards and wrestling shows can remain active much longer than ordinary games.",
+    "Final and postponed are terminal only when supported by explicit evidence."
+  ],
+  "profiles": {
+    "soccer":{"pregame":45,"inferredLive":30,"maxLive":165,"urgent":90},
+    "football":{"pregame":60,"inferredLive":60,"maxLive":300,"urgent":150},
+    "baseball":{"pregame":45,"inferredLive":45,"maxLive":240,"urgent":120},
+    "basketball":{"pregame":30,"inferredLive":35,"maxLive":180,"urgent":90},
+    "hockey":{"pregame":45,"inferredLive":45,"maxLive":240,"urgent":120},
+    "volleyball":{"pregame":30,"inferredLive":45,"maxLive":210,"urgent":120},
+    "tennis":{"pregame":30,"inferredLive":60,"maxLive":360,"urgent":150},
+    "golf":{"pregame":90,"inferredLive":90,"maxLive":600,"urgent":180},
+    "racing":{"pregame":60,"inferredLive":90,"maxLive":360,"urgent":180},
+    "mma":{"pregame":60,"inferredLive":360,"maxLive":360,"urgent":240},
+    "boxing":{"pregame":60,"inferredLive":240,"maxLive":360,"urgent":240},
+    "wrestling":{"pregame":60,"inferredLive":240,"maxLive":300,"urgent":240}
+  }
+}
