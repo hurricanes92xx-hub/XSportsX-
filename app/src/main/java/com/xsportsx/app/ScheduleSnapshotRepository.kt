@@ -31,7 +31,7 @@ object ScheduleSnapshotRepository {
     suspend fun upcoming(league: String? = null, force: Boolean = false): List<SportsEvent> {
         val canonical = league?.let(SportsScheduleService::canonicalLeagueFor)
         val now = Instant.now(); val cutoff = now.plus(UI_DAYS.toLong(), ChronoUnit.DAYS)
-        return all(force).asSequence().filter { !it.isLive }
+        return all(force).asSequence().filter { !serverMarkedLive(it) }
             .filter { event ->
                 when {
                     canonical == null -> true
@@ -59,10 +59,9 @@ object ScheduleSnapshotRepository {
             val again = liveCache
             if (!force && again != null && age(again) < LIVE_TTL_MS) return@withLock again.events
             val fresh = runCatching { CanonicalScheduleProvider.load(null, 1) }.getOrDefault(emptyList())
-            // The server sweep is authoritative for live state. Do not discard a
-            // provider-confirmed LIVE event merely because the Android lifecycle
-            // inference disagrees (this was hiding NCAA/soccer/tennis events).
-            val normalized = normalize(fresh).filter { serverMarkedLive(it) || it.isLive }
+            // LIVE is a server/provider contract. Android must never create a
+            // LIVE event from clock inference because that hides or invents games.
+            val normalized = normalize(fresh).filter { serverMarkedLive(it) }
             if (normalized.isNotEmpty() || fresh.isNotEmpty()) { liveCache = CachedEvents(normalized, System.currentTimeMillis()); normalized } else again?.events.orEmpty()
         }
     }
@@ -71,13 +70,14 @@ object ScheduleSnapshotRepository {
     private fun age(cache: CachedEvents) = System.currentTimeMillis() - cache.loadedAtMs
 
     private fun serverMarkedLive(event: SportsEvent): Boolean =
-        event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true)
+        (event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true)) &&
+            event.startUtc.isNotBlank() && runCatching { Instant.parse(event.startUtc) }.getOrNull()?.let { it <= Instant.now().plus(2, ChronoUnit.MINUTES) } == true
 
     private fun normalize(events: List<SportsEvent>): List<SportsEvent> {
         val seen = LinkedHashSet<String>()
         return events.map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
             .filter { seen.add(eventKey(it)) }
-            .sortedWith(compareBy<SportsEvent> { !(serverMarkedLive(it) || it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+            .sortedWith(compareBy<SportsEvent> { !serverMarkedLive(it) }.thenBy { it.startUtc })
     }
 
     private fun eventKey(event: SportsEvent): String {
