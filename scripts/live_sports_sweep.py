@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Fast, provider-first live-state reconciliation across every configured league."""
+# Current NCAA provider API is _fetch_current_day; keep this sweep aligned with it.
 from __future__ import annotations
 import json,re,urllib.request
 from concurrent.futures import ThreadPoolExecutor,as_completed
@@ -108,34 +109,29 @@ def _apply_provider_time_guard(event,now):
     if str(event.get("tag") or "").upper()!="LIVE":return event,False
     start=_parse_dt(event.get("startUtc") or event.get("start"))
     if start and start>now+timedelta(minutes=2):
-        event.update({"tag":"UPCOMING","status":"UPCOMING","state":"pre"})
-        event["liveStateRejectedReason"]="provider-live-starts-too-far-in-future"
-        return event,True
+        event.update({"tag":"UPCOMING","status":"UPCOMING","state":"pre"});event["liveStateRejectedReason"]="provider-live-starts-too-far-in-future";return event,True
     return event,False
 
 def _mark_live_evidence(event,checked_at):
-    if str(event.get("tag") or "").upper()=="LIVE":
-        event["liveEvidence"]={"source":str(event.get("source") or "provider"),"providerEventId":str(event.get("providerEventId") or ""),"providerState":"LIVE","checkedAtUtc":checked_at}
+    if str(event.get("tag") or "").upper()=="LIVE":event["liveEvidence"]={"source":str(event.get("source") or "provider"),"providerEventId":str(event.get("providerEventId") or ""),"providerState":"LIVE","checkedAtUtc":checked_at}
     else:event.pop("liveEvidence",None)
     return event
 
 def main():
     if not FEED.exists():raise SystemExit("ERROR: schedule_feed.json does not exist")
     payload=json.loads(FEED.read_text(encoding="utf-8"));events=[e for e in (payload.get("events") or []) if isinstance(e,dict)];now=datetime.now(timezone.utc);checked_at=now.isoformat().replace("+00:00","Z")
-    dedicated=[("FIVB Men","fivb","🏐"),("FIVB Women","fivb","🏐"),("ICC T20","cricket","🏏"),("IPL","cricket","🏏"),("F1","f1","🏎️")]
-    results=[]
+    dedicated=[("FIVB Men","fivb","🏐"),("FIVB Women","fivb","🏐"),("ICC T20","cricket","🏏"),("IPL","cricket","🏏"),("F1","f1","🏎️")];results=[]
     with ThreadPoolExecutor(max_workers=min(16,len(ESPN_LEAGUES)+len(NCAA_LEAGUES)+len(dedicated) or 1)) as pool:
         futures=[pool.submit(_fetch_league,meta) for meta in ESPN_LEAGUES];futures.extend(pool.submit(_fetch_ncaa,meta) for meta in NCAA_LEAGUES);futures.extend(pool.submit(_fetch_dedicated,item) for item in dedicated)
         for future in as_completed(futures):results.append(future.result())
-    by_provider={};live_provider=final_provider=fetched_events=0;failed=[];source_groups={};successful_leagues=set();future_live_rejected=0
-    dedicated_names={x[0] for x in dedicated};ncaa_meta={m[0]:m for m in NCAA_LEAGUES};espn_meta={m[0]:m for m in ESPN_LEAGUES}
+    by_provider={};live_provider=final_provider=fetched_events=0;failed=[];source_groups={};successful_leagues=set();future_live_rejected=0;dedicated_names={x[0] for x in dedicated};ncaa_meta={m[0]:m for m in NCAA_LEAGUES};espn_meta={m[0]:m for m in ESPN_LEAGUES}
     for name,raw,error in results:
         if error:failed.append(name);continue
         successful_leagues.add(_league_key(name));source_groups[name]="ncaa" if name in ncaa_meta else "dedicated" if name in dedicated_names else "espn"
         for raw_event in raw:
             if name in ncaa_meta:
                 e=dict(raw_event);e.setdefault("startUtc",e.get("start"));e.setdefault("source","ncaa-live-sweep");e.setdefault("icon",ncaa_meta[name][3]);e.setdefault("sport",str(ncaa_meta[name][1]).lower());tag=str(e.get("tag") or e.get("status") or "UPCOMING").upper();e.update({"status":"LIVE","state":"in"} if tag=="LIVE" else {"status":"FINAL","state":"post"} if tag=="FINAL" else {"status":"UPCOMING","state":"pre"});e["tag"]=tag
-            elif name in dedicated_names:e=_normalize_dedicated(name,raw_event);e.setdefault("sport", "racing" if name=="F1" else "volleyball" if name.startswith("FIVB") else "cricket")
+            elif name in dedicated_names:e=_normalize_dedicated(name,raw_event);e.setdefault("sport","racing" if name=="F1" else "volleyball" if name.startswith("FIVB") else "cricket")
             else:
                 meta=espn_meta.get(name)
                 if not meta:continue
@@ -161,9 +157,7 @@ def main():
     for pid,fresh in by_provider.items():
         if not pid or pid in existing_provider or fresh.get("tag") not in {"LIVE","UPCOMING"}:continue
         fresh["sport"]=str(fresh.get("sport") or "other").lower();fresh["id"]=event_identity(fresh.get("league"),fresh.get("title"),fresh.get("startUtc") or fresh.get("start"),fresh.get("home"),fresh.get("away"));_mark_live_evidence(fresh,checked_at);events.append(fresh);added+=1
-    events.sort(key=lambda e:str(e.get("startUtc") or e.get("start") or ""));payload["events"]=events
-    payload["liveSweep"]={"schema":5,"checkedAtUtc":checked_at,"leaguesChecked":len(ESPN_LEAGUES)+len(NCAA_LEAGUES)+len(dedicated),"providerEventsFetched":fetched_events,"providerLive":live_provider,"providerFinal":final_provider,"stateChanges":changed,"eventsAdded":added,"boundedTimingPromotions":0,"staleLiveDemoted":stale_live_demoted,"futureLiveRejected":future_live_rejected,"failedLeagues":sorted(set(failed)),"liveCountAfterSweep":sum(1 for e in events if str(e.get("tag") or "").upper()=="LIVE"),"providerGroups":source_groups,"liveStatePolicy":"provider-authoritative-strict-reconciliation","endpoints":{"espn":"site.api.espn.com + site.web.api.espn.com","ncaa":"ncaa-api.henrygd.me + ESPN fallback","fivb":"fivb.org VIS","cricket":"ESPN personalized scoreboard","f1":"OpenF1"}}
-    payload["generatedAt"]=checked_at;payload["eventCounts"]={}
+    events.sort(key=lambda e:str(e.get("startUtc") or e.get("start") or ""));payload["events"]=events;payload["liveSweep"]={"schema":5,"checkedAtUtc":checked_at,"leaguesChecked":len(ESPN_LEAGUES)+len(NCAA_LEAGUES)+len(dedicated),"providerEventsFetched":fetched_events,"providerLive":live_provider,"providerFinal":final_provider,"stateChanges":changed,"eventsAdded":added,"boundedTimingPromotions":0,"staleLiveDemoted":stale_live_demoted,"futureLiveRejected":future_live_rejected,"failedLeagues":sorted(set(failed)),"liveCountAfterSweep":sum(1 for e in events if str(e.get("tag") or "").upper()=="LIVE"),"providerGroups":source_groups,"liveStatePolicy":"provider-authoritative-strict-reconciliation","endpoints":{"espn":"site.api.espn.com + site.web.api.espn.com","ncaa":"ncaa-api.henrygd.me + ESPN fallback","fivb":"fivb.org VIS","cricket":"ESPN personalized scoreboard","f1":"OpenF1"}};payload["generatedAt"]=checked_at;payload["eventCounts"]={}
     for event in events:
         league=event.get("league","Unknown");payload["eventCounts"][league]=payload["eventCounts"].get(league,0)+1
     FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8");print(json.dumps(payload["liveSweep"],indent=2))
