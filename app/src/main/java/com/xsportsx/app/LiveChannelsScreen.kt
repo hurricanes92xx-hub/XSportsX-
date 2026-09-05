@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,18 +68,22 @@ fun LiveChannelsScreen(filter: String? = null, event: SportsEvent? = null, onBac
                         // Cold source discovery is bounded and parallel: Xtream and public candidates
                         // are queried together instead of serially consuming the foreground deadline.
                         val (fast, targeted) = coroutineScope {
-                            val xtream = async(Dispatchers.IO) { withTimeoutOrNull(2_800L) { fastXtream.resolve(target) }.orEmpty() }
+                            val xtream = async(Dispatchers.IO) { withTimeoutOrNull(3_500L) { fastXtream.resolve(target) }.orEmpty() }
                             val public = async(Dispatchers.IO) {
-                                withTimeoutOrNull(2_200L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
+                                withTimeoutOrNull(7_000L) { fastPublic.candidates(target, authorized, 8) }.orEmpty()
                                     .map { ResolvedStream("${it.name} • ${it.sourceId}", it.group, it.url) }
                             }
                             xtream.await() to public.await()
                         }
                         val immediate = ranked(fast + targeted)
                         if (immediate.isNotEmpty()) return@runCatching immediate
-                        withTimeoutOrNull(1_500L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
+
+                        // Final cold-path recovery is deliberately longer than the fast indexes.
+                        // It can use the pre-resolved/public discovery pipeline and populate the
+                        // persistent cache for the next open.
+                        withTimeoutOrNull(10_000L) { StreamResolver(context).loadMatchingEventStreams(target, force) }.orEmpty()
                     }
-                    !requestFilter.isNullOrBlank() -> withTimeoutOrNull(5_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
+                    !requestFilter.isNullOrBlank() -> withTimeoutOrNull(7_000L) { StreamResolver(context).loadMatchingStreams(requestFilter, force) }.orEmpty()
                     else -> {
                         if (force || ScheduleEngine.state.value.events.isEmpty()) ScheduleEngine.refreshNow()
                         emptyList<ResolvedStream>()
