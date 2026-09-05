@@ -1,0 +1,55 @@
+name: Dispatch Live Coverage
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout android-app
+        uses: actions/checkout@v5
+        with:
+          ref: android-app
+          fetch-depth: 0
+
+      - name: Run live coverage pipeline
+        run: |
+          python3 -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python3 scripts/refresh_provider_matrix_v3.py
+          python3 scripts/official_event_recovery.py
+          python3 scripts/live_sports_sweep.py
+          python3 scripts/normalize_schedule_feed.py
+          python3 scripts/provider_health_gate.py
+
+      - name: Verify NCAA start times and live state
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/schedule_feed.json')
+          d=json.loads(p.read_text())
+          events=d.get('events') or []
+          targets=('miami (fl)', 'fresno st.')
+          for e in events:
+              title=str(e.get('title','')).lower()
+              if any(x in title for x in targets) and ('stanford' in title or 'southern california' in title or 'usc' in title):
+                  print('NCAA:', e.get('title'), '| start=', e.get('startUtc') or e.get('start'), '| tag=', e.get('tag'), '| status=', e.get('status'))
+          print('Total events:', len(events))
+          print('LIVE events:', sum(1 for e in events if str(e.get('tag','')).upper()=='LIVE'))
+          PY
+
+      - name: Publish corrected feed
+        run: |
+          git config user.name 'XSportsX Live Coverage Bot'
+          git config user.email 'xsportsx-live-coverage-bot@users.noreply.github.com'
+          git add data/schedule_feed.json data/provider_health_gate.json
+          if git diff --cached --quiet; then echo 'No feed changes.'; exit 0; fi
+          git commit -m 'chore: dispatch live coverage from android-app'
+          git fetch origin android-app
+          git rebase --autostash origin/android-app
+          git push origin HEAD:android-app
