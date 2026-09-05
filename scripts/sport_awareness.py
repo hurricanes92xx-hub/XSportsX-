@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+"""Shared sport profiles for schedule recovery and AI decisions.
+
+Keep lifecycle expectations and AI urgency aligned so a sport is not judged
+with generic timings. Profiles are intentionally conservative: provider/official
+state still outranks inferred timing.
+"""
+from __future__ import annotations
+
+PROFILES = {
+    "soccer": {"aliases": ("soccer", "football", "epl", "mls", "uefa", "fifa"), "pregame": 45, "infer": 30, "duration": 165, "urgent": 90},
+    "baseball": {"aliases": ("baseball", "mlb"), "pregame": 45, "infer": 45, "duration": 240, "urgent": 120},
+    "basketball": {"aliases": ("basketball", "nba", "wnba", "ncaa basketball"), "pregame": 30, "infer": 35, "duration": 180, "urgent": 90},
+    "football": {"aliases": ("football", "nfl", "ncaa football", "college football", "cfl"), "pregame": 60, "infer": 60, "duration": 300, "urgent": 150},
+    "hockey": {"aliases": ("hockey", "nhl"), "pregame": 45, "infer": 45, "duration": 240, "urgent": 120},
+    "volleyball": {"aliases": ("volleyball", "ncaa women's volleyball", "ncaa volleyball"), "pregame": 30, "infer": 45, "duration": 210, "urgent": 120},
+    "tennis": {"aliases": ("tennis", "atp", "wta"), "pregame": 30, "infer": 60, "duration": 360, "urgent": 150},
+    "golf": {"aliases": ("golf", "pga", "lpga"), "pregame": 90, "infer": 90, "duration": 600, "urgent": 180},
+    "racing": {"aliases": ("racing", "f1", "formula 1", "nascar", "motogp", "imsa", "wec", "wrc"), "pregame": 60, "infer": 90, "duration": 360, "urgent": 180},
+    "mma": {"aliases": ("ufc", "mma"), "pregame": 60, "infer": 360, "duration": 360, "urgent": 240},
+    "boxing": {"aliases": ("boxing",), "pregame": 60, "infer": 240, "duration": 360, "urgent": 240},
+    "wrestling": {"aliases": ("wwe", "aew", "tna", "wrestling", "aaa wrestling", "aaa"), "pregame": 60, "infer": 240, "duration": 300, "urgent": 240},
+}
+DEFAULT = {"aliases": (), "pregame": 30, "infer": 30, "duration": 180, "urgent": 90}
+
+
+def profile(sport: str = "", league: str = "", title: str = "") -> tuple[str, dict]:
+    text = f"{sport} {league} {title}".lower()
+    # More specific combat/racing aliases win before generic football/soccer.
+    order = ("mma", "boxing", "wrestling", "racing", "soccer", "football", "baseball", "hockey", "basketball", "volleyball", "tennis", "golf")
+    for key in order:
+        if any(alias in text for alias in PROFILES[key]["aliases"]):
+            return key, PROFILES[key]
+    return "other", DEFAULT
+
+
+def phase_windows(sport: str = "", league: str = "", title: str = "") -> dict:
+    key, p = profile(sport, league, title)
+    return {"sportKey": key, "pregameMinutes": p["pregame"], "inferredLiveMinutes": p["infer"], "maxLiveMinutes": p["duration"], "urgentMinutes": p["urgent"]}
+
+
+def is_urgent(event: dict, now=None) -> bool:
+    from datetime import datetime, timezone
+    now = now or datetime.now(timezone.utc)
+    phase = str(event.get("intelligencePhase") or "").upper()
+    if phase in {"LIVE", "PREGAME"}:
+        return True
+    raw = event.get("startUtc") or event.get("start")
+    if not raw:
+        return False
+    try:
+        start = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+    except Exception:
+        return False
+    key, p = profile(str(event.get("sport") or ""), str(event.get("league") or ""), str(event.get("title") or ""))
+    seconds = (start - now).total_seconds()
+    return 0 <= seconds <= p["urgent"] * 60
+
+
+def ai_context(event: dict) -> dict:
+    key, p = profile(str(event.get("sport") or ""), str(event.get("league") or ""), str(event.get("title") or ""))
+    return {"sportKey": key, "sportProfile": {"pregameMinutes": p["pregame"], "inferredLiveMinutes": p["infer"], "maxLiveMinutes": p["duration"], "urgentMinutes": p["urgent"]}, "sportPolicy": "provider/official state outranks timing inference; use the profile only when explicit state is absent"}
