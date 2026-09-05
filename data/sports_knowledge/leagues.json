@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "leagues": {
+    "NFL":{"sport":"football","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "NCAA Football":{"sport":"football","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "MLB":{"sport":"baseball","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "NBA":{"sport":"basketball","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "WNBA":{"sport":"basketball","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "NHL":{"sport":"hockey","seasonModel":"regular+postseason","eventGranularity":"game","livePriority":"high"},
+    "MLS":{"sport":"soccer","seasonModel":"regular+postseason","eventGranularity":"match","livePriority":"high"},
+    "EPL":{"sport":"soccer","seasonModel":"regular+postseason","eventGranularity":"match","livePriority":"high"},
+    "UEFA Champions League":{"sport":"soccer","seasonModel":"group-or-league+knockout","eventGranularity":"match","livePriority":"high"},
+    "ATP":{"sport":"tennis","seasonModel":"tournament","eventGranularity":"match","livePriority":"medium"},
+    "WTA":{"sport":"tennis","seasonModel":"tournament","eventGranularity":"match","livePriority":"medium"},
+    "PGA":{"sport":"golf","seasonModel":"tournament","eventGranularity":"round","livePriority":"medium"},
+    "Formula 1":{"sport":"racing","seasonModel":"season","eventGranularity":"session","livePriority":"high"},
+    "NASCAR":{"sport":"racing","seasonModel":"season","eventGranularity":"session","livePriority":"high"},
+    "UFC":{"sport":"mma","seasonModel":"event-card","eventGranularity":"session","livePriority":"critical"},
+    "WWE":{"sport":"wrestling","seasonModel":"weekly+premium-events","eventGranularity":"show","livePriority":"critical"},
+    "AEW":{"sport":"wrestling","seasonModel":"weekly+special-events","eventGranularity":"show","livePriority":"critical"},
+    "TNA":{"sport":"wrestling","seasonModel":"weekly+special-events","eventGranularity":"show","livePriority":"high"}
+  }
+}
