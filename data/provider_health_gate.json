@@ -1,12 +1,12 @@
 {
-  "schema": 1,
-  "checkedAtUtc": "2026-09-05T02:41:33.057432Z",
-  "eventCount": 3251,
+  "schema": 2,
+  "checkedAtUtc": "2026-09-05T03:05:22.076837Z",
+  "eventCount": 3327,
   "futureLiveCorrected": 42,
-  "missingStartLiveCorrected": 0,
+  "missingStartLiveCorrected": 5,
   "providerFailures": [
+    "Boxing",
     "NASCAR Trucks",
-    "WRC",
     "X Games"
   ],
   "failedLiveStates": [
@@ -219,6 +219,31 @@
       "league": "NRL",
       "title": "Eels @ Dragons",
       "startUtc": "2026-09-06T04:00Z"
+    },
+    {
+      "league": "NCAA FB",
+      "title": "UTEP @ Oklahoma",
+      "reason": "missing_start"
+    },
+    {
+      "league": "NCAA FB",
+      "title": "LIU @ Kansas",
+      "reason": "missing_start"
+    },
+    {
+      "league": "NCAA FB",
+      "title": "Toledo @ Michigan St.",
+      "reason": "missing_start"
+    },
+    {
+      "league": "NCAA FB",
+      "title": "Miami (FL) @ Stanford",
+      "reason": "missing_start"
+    },
+    {
+      "league": "NCAA FB",
+      "title": "Fresno St. @ Southern California",
+      "reason": "missing_start"
     }
   ]
 }
