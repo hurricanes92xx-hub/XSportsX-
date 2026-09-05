@@ -46,7 +46,7 @@ private fun remote(value: String) = if (value.startsWith("https://")) value else
 private val remoteLogoCache = LruCache<String, Bitmap>(48)
 
 private fun spec(key: String): BrandSpec = when (key) {
-    "NFL" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), "nfl", "NFL")
+    "NFL" -> BrandSpec(Color(0xFF013369), Color.White, Color(0xFFD50A0A), null, "NFL", "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png")
     "NBA" -> BrandSpec(Color(0xFF17408B), Color.White, Color(0xFFE31837), "nba", "NBA")
     "NCAA FB", "NCAA BB", "NCAA VB" -> BrandSpec(Color(0xFF102B55), Color.White, Color(0xFFFFC72C), "ncaa", "NCAA")
     "MLB" -> BrandSpec(Color(0xFF16395F), Color.White, Color(0xFFEE1C25), "mlb", "MLB")
