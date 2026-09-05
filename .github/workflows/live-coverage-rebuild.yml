@@ -65,8 +65,15 @@ jobs:
           for e in live[:100]: print(e.get('league'),'|',e.get('title'),'|',e.get('startUtc'),'|',e.get('status'),'|',e.get('state'),'|',e.get('source'))
           if not live: raise SystemExit('NO LIVE EVENTS AFTER SWEEP')
           sweep=d.get('liveSweep') or {}
-          if sweep.get('schema') != 4: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
-          if sweep.get('liveStatePolicy') != 'provider-authoritative-no-timing-inference': raise SystemExit('LIVE SWEEP IS NOT PROVIDER-AUTHORITATIVE')
+          if sweep.get('schema') != 5: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
+          if sweep.get('liveStatePolicy') != 'provider-authoritative-strict-reconciliation': raise SystemExit('LIVE SWEEP IS NOT STRICTLY PROVIDER-AUTHORITATIVE')
+          for e in live:
+              if not e.get('liveEvidence'): raise SystemExit(f"LIVE EVENT WITHOUT PROVIDER EVIDENCE: {e.get('title')}")
+              start=str(e.get('startUtc') or '')
+              if start.endswith('Z'):
+                  from datetime import datetime,timezone,timedelta
+                  dt=datetime.fromisoformat(start.replace('Z','+00:00'))
+                  if dt > datetime.now(timezone.utc)+timedelta(minutes=2): raise SystemExit(f"FUTURE LIVE EVENT: {e.get('title')} {start}")
           PY
       - name: Publish
         run: |
