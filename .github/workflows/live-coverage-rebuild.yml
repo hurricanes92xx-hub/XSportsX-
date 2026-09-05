@@ -12,16 +12,21 @@ on:
       - 'scripts/providers/fivb.py'
       - 'scripts/providers/free.py'
       - 'scripts/provider_health_gate.py'
+      - 'scripts/official_event_recovery.py'
       - '.github/workflows/live-coverage-rebuild.yml'
   schedule:
     - cron: '*/10 * * * *'
+
 permissions:
   contents: write
+
 concurrency:
   group: xsportsx-live-coverage
   cancel-in-progress: true
+
 env:
   PYTHONUNBUFFERED: '1'
+
 jobs:
   rebuild:
     runs-on: ubuntu-24.04
@@ -32,49 +37,79 @@ jobs:
         with:
           fetch-depth: 0
           ref: android-app
+
       - name: Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+
       - name: Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Rebuild canonical schedule
         run: python3 scripts/refresh_provider_matrix_v3.py
-      - name: Official event recovery
-        run: python3 scripts/official_event_recovery.py || true
-      - name: Cross-sport live sweep
-        run: python3 scripts/live_sports_sweep.py
-      - name: Normalize canonical feed
-        run: python3 scripts/normalize_schedule_feed.py
-      - name: Provider health gate
-        run: python3 scripts/provider_health_gate.py
-      - name: Verify live coverage
+
+      - name: Validate canonical rebuild
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
-          d=json.loads(Path('data/schedule_feed.json').read_text())
+          p=Path('data/schedule_feed.json')
+          if not p.exists() or p.stat().st_size < 100:
+              raise SystemExit('CANONICAL FEED MISSING OR EMPTY')
+          d=json.loads(p.read_text())
+          events=d.get('events')
+          if not isinstance(events,list) or not events:
+              raise SystemExit('CANONICAL REBUILD PRODUCED NO EVENTS')
+          print(f"Canonical events: {len(events)}")
+          print(f"Canonical leagues: {len(d.get('eventCounts') or {})}")
+          PY
+
+      - name: Official event recovery
+        run: python3 scripts/official_event_recovery.py
+
+      - name: Cross-sport live sweep
+        run: python3 scripts/live_sports_sweep.py
+
+      - name: Normalize canonical feed
+        run: python3 scripts/normalize_schedule_feed.py
+
+      - name: Provider health gate
+        run: python3 scripts/provider_health_gate.py
+
+      - name: Final feed integrity and live-state verification
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+          p=Path('data/schedule_feed.json')
+          if not p.exists() or p.stat().st_size < 100:
+              raise SystemExit('FINAL FEED MISSING OR EMPTY')
+          d=json.loads(p.read_text())
           events=d.get('events') or []
           if not events: raise SystemExit('EMPTY CANONICAL FEED')
           live=[e for e in events if str(e.get('tag','')).upper()=='LIVE' or str(e.get('status','')).upper()=='LIVE' or str(e.get('state','')).lower()=='in']
           sports={str(e.get('sport') or e.get('league')) for e in live}
+          print('EVENTS:',len(events))
+          print('LEAGUES:',len(d.get('eventCounts') or {}))
           print('LIVE EVENTS:',len(live))
           print('LIVE SPORTS:',sorted(sports))
-          for e in live[:100]: print(e.get('league'),'|',e.get('title'),'|',e.get('startUtc'),'|',e.get('status'),'|',e.get('state'),'|',e.get('source'))
-          if not live: raise SystemExit('NO LIVE EVENTS AFTER SWEEP')
           sweep=d.get('liveSweep') or {}
           if sweep.get('schema') != 5: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
           if sweep.get('liveStatePolicy') != 'provider-authoritative-strict-reconciliation': raise SystemExit('LIVE SWEEP IS NOT STRICTLY PROVIDER-AUTHORITATIVE')
+          now=datetime.now(timezone.utc)
           for e in live:
-              if not e.get('liveEvidence'): raise SystemExit(f"LIVE EVENT WITHOUT PROVIDER EVIDENCE: {e.get('title')}")
-              start=str(e.get('startUtc') or '')
-              if start.endswith('Z'):
-                  from datetime import datetime,timezone,timedelta
-                  dt=datetime.fromisoformat(start.replace('Z','+00:00'))
-                  if dt > datetime.now(timezone.utc)+timedelta(minutes=2): raise SystemExit(f"FUTURE LIVE EVENT: {e.get('title')} {start}")
+              evidence=e.get('liveEvidence') or {}
+              if not evidence.get('providerEventId'): raise SystemExit(f"LIVE EVENT WITHOUT PROVIDER EVIDENCE: {e.get('league')} | {e.get('title')}")
+              start=str(e.get('startUtc') or e.get('start') or '')
+              if start:
+                  dt=datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(timezone.utc)
+                  if dt > now+timedelta(minutes=2): raise SystemExit(f"FUTURE LIVE EVENT: {e.get('title')} {start}")
           PY
+
       - name: Publish
         run: |
           set -euo pipefail
@@ -85,8 +120,11 @@ jobs:
           git commit -m 'chore: publish guaranteed cross-sport live coverage'
           for attempt in 1 2 3 4 5; do
             git fetch origin android-app
-            git rebase --autostash origin/android-app || { git rebase --abort || true; git reset --mixed origin/android-app; git add data/schedule_feed.json data/provider_health_gate.json; git commit -m 'chore: republish live coverage' || true; }
+            git rebase --autostash origin/android-app
             if git push origin HEAD:android-app; then exit 0; fi
+            git reset --hard origin/android-app
+            git pull --rebase origin android-app
+            git apply <(git show --format= --binary HEAD 2>/dev/null) 2>/dev/null || true
             sleep $((attempt * 2))
           done
           exit 1
