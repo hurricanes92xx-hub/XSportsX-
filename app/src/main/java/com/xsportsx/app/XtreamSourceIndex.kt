@@ -32,13 +32,21 @@ class XtreamSourceIndex(context: Context) {
         private const val CATEGORY_TTL = 6 * 60 * 60 * 1000L
         private const val INDEX_TTL = 30 * 60 * 1000L
         private const val CATEGORY_CALL_TIMEOUT_MS = 3_000
-        private const val MAX_EVENT_CATEGORIES = 8
+        private const val MAX_EVENT_CATEGORIES = 12
         private val SPORTS_TERMS = setOf(
             "sport", "sports", "espn", "fox", "fs1", "fs2", "cbs sport", "nfl", "mlb", "nba", "nhl",
             "ncaa", "college", "sec", "acc", "big ten", "btn", "tnt", "tbs", "trutv", "usa sport",
             "wwe", "aew", "tna", "wrestling", "ufc", "fight", "boxing", "dazn", "tsn", "sportsnet",
             "paramount", "peacock", "fubo", "fanduel", "golf", "tennis", "nascar", "racing", "soccer", "football",
             "hockey", "baseball", "basketball", "motorsport", "bein", "tudn", "volleyball", "field hockey"
+        )
+        private val BROADCAST_CATEGORY_TERMS = setOf(
+            "espn", "espn2", "espn 2", "espnu", "espn u", "espn plus", "espn+", "abc",
+            "cbs", "cbs sports", "cbs sports network", "fox", "fox sports", "fs1", "fs2",
+            "nbc", "peacock", "sec network", "secn", "secn+", "acc network", "accn", "accnx",
+            "big ten network", "btn", "tnt", "tbs", "trutv", "tru tv", "nfl network", "nba tv",
+            "mlb network", "nhl network", "paramount", "paramount+", "paramount plus", "tudn", "telemundo",
+            "univision", "fanduel sports network", "fanduel", "the cw", "cw sports"
         )
     }
 
@@ -71,7 +79,7 @@ class XtreamSourceIndex(context: Context) {
         }
     }
 
-    /** Cached sports categories/channels for startup; no network work. */
+    /** Cached sports/broadcast categories and channels for startup; no network work. */
     fun getCachedSports(config: SourceConfig): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
@@ -88,7 +96,10 @@ class XtreamSourceIndex(context: Context) {
         Thread {
             try {
                 val categories = getCategoriesBlocking(config, false)
-                categories.filter { categoryScore(it.name, null) > 0 }.take(24).forEach { getCategoryChannelsBlocking(config, it.id, false) }
+                categories.filter { categoryScore(it.name, null) > 0 }
+                    .sortedByDescending { categoryScore(it.name, null) }
+                    .take(32)
+                    .forEach { getCategoryChannelsBlocking(config, it.id, false) }
             } catch (_: Throwable) {
             } finally {
                 running.remove("all:$key")
@@ -151,6 +162,7 @@ class XtreamSourceIndex(context: Context) {
         if (n.isBlank()) return 0
         var score = 0
         SPORTS_TERMS.forEach { if (n.contains(normalize(it))) score += 10 }
+        BROADCAST_CATEGORY_TERMS.forEach { if (n.contains(normalize(it))) score += 18 }
         if (event != null) {
             listOf(event.sport, event.league, event.broadcast).forEach { term ->
                 val t = normalize(term)
@@ -161,6 +173,13 @@ class XtreamSourceIndex(context: Context) {
             if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
             if (eventTerms.contains("volleyball") && n.contains("volleyball")) score += 30
             if (eventTerms.contains("field hockey") && n.contains("hockey")) score += 30
+
+            // College events often arrive without a broadcaster. Keep the major
+            // U.S. broadcast families eligible without requiring exact event text.
+            if (eventTerms.contains("ncaa") || eventTerms.contains("college") || eventTerms.contains("university")) {
+                listOf("espn", "abc", "cbs", "fox", "fs1", "sec network", "secn", "acc network", "accn", "big ten network", "btn")
+                    .forEach { if (n.contains(it)) score += 12 }
+            }
         }
         return score
     }
