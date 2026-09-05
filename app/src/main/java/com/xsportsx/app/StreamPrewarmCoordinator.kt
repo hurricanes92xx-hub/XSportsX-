@@ -6,16 +6,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import java.util.concurrent.ConcurrentHashMap
 
-/** Keeps only a tiny working set warm; never competes with the interactive UI. */
+/** Keeps a small working set warm without competing with the interactive UI. */
 object StreamPrewarmCoordinator {
-    private const val MAX_LIVE = 2
-    private const val MAX_UPCOMING = 2
-    private const val UPCOMING_WINDOW_MS = 30 * 60 * 1000L
+    private const val MAX_LIVE = 4
+    private const val MAX_UPCOMING = 6
+    private const val UPCOMING_WINDOW_MS = 3 * 60 * 60 * 1000L
     private const val PREWARM_TTL_MS = 120 * 1000L
+    private const val PREWARM_CONCURRENCY = 2
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val gate = Semaphore(PREWARM_CONCURRENCY)
     private val lastWarmed = ConcurrentHashMap<String, Long>()
     private val inFlight = ConcurrentHashMap<String, Job>()
 
@@ -35,7 +39,9 @@ object StreamPrewarmCoordinator {
             lastWarmed[id] = now
             inFlight[id] = scope.launch {
                 try {
-                    StreamResolver(context.applicationContext).loadMatchingEventStreams(event, force = false)
+                    gate.withPermit {
+                        StreamResolver(context.applicationContext).loadMatchingEventStreams(event, force = false)
+                    }
                 } finally {
                     inFlight.remove(id)
                 }
