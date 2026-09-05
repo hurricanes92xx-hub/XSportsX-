@@ -83,7 +83,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 989,
+  "identityMergeCount": 996,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1527,
@@ -64921,10 +64921,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 54,
+    "reachableSources": 53,
     "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T17:01:05Z",
+    "identityMerges": 7,
+    "updatedAt": "2026-09-05T17:01:22Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -64953,7 +64953,7 @@
       {
         "league": "Boxing",
         "url": "https://wbcboxing.com/calendar/",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
