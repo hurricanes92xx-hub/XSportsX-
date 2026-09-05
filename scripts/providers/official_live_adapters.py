@@ -5,7 +5,7 @@ import json, re, urllib.request, urllib.error, urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.9'
+ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/2.0'
 FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'
 
 def _get_bytes(url,timeout=12):
@@ -14,11 +14,6 @@ def _get_bytes(url,timeout=12):
 def _post_xml(xml,timeout=12):
  req=urllib.request.Request(FIVB_URL,data=xml.encode(),headers={'User-Agent':UA,'Accept':'application/xml,text/xml,*/*','Content-Type':'text/xml; charset=utf-8'},method='POST')
  with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
-def _fivb_http(url,timeout=12):
- try:return _get_bytes(url,timeout),200,''
- except urllib.error.HTTPError as e:
-  b=e.read().decode('utf-8','replace')[:1000];return b.encode(),e.code,b
- except Exception as e:return b'',0,f'{type(e).__name__}:{str(e)[:160]}'
 def _iso(v):
  if not v:return ''
  try:return datetime.fromisoformat(str(v).replace('Z','+00:00')).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
@@ -46,38 +41,50 @@ def _parse_live(raw):
   if {'nochanges','notmodified'} & tags:return True,'unchanged',root
   errs=[]
   for e in root.iter():
-   if 'error' in e.tag.lower() or e.tag.split('}')[-1].lower() in {'badparameter','parametermissing','notinnewformat','nodata'}:errs.append(f"{e.tag.split('}')[-1]}:{_field(e,'Code','code','Text','Message','message','Parameter')}")
+   tag=e.tag.split('}')[-1]
+   if 'error' in e.tag.lower() or tag.lower() in {'badparameter','parametermissing','notinnewformat','nodata'}:
+    detail=_field(e,'Code','code','Text','Message','message','Parameter') or (e.text or '').strip()
+    ident=_field(e,'Id','id')
+    errs.append(f'{tag}:{ident}:{detail}'.rstrip(':'))
   return False,'response:'+(';'.join(errs) or ','.join(sorted(tags)) or 'empty'),root
  except Exception as e:return False,f'parse:{type(e).__name__}',None
 
-def _fivb_live_request(no):
- """Use the documented VIS multi-request contract. Do not hammer candidates when the contract fails."""
+def _fivb_probe(no,typ='GetVolleyLive',param='NoMatch',options=128):
  no=int(no)
- # FIVB's current SDK documents GetMatchLive with NoVolleyMatch, Options and Version.
- # The legacy XmlRequest endpoint rejects single requests with NotInNewFormat (1008),
- # so the request must be enclosed in <Requests>...</Requests>.
- xml=f'<Requests><Request Type="GetMatchLive" NoVolleyMatch="{no}" Options="128" Version="0" /></Requests>'
+ xml=f'<Requests><Request Type="{typ}" {param}="{no}" Options="{options}" Version="0" /></Requests>'
  try:
-  raw=_post_xml(xml);ok,why,_=_parse_live(raw)
-  if ok:return True,f'POST:wrapped:GetMatchLive:{why}'
-  return False,f'POST:wrapped:GetMatchLive:{why}'
+  raw=_post_xml(xml);ok,why,_=_parse_live(raw);return ok,f'POST:wrapped:{typ}:{param}:{options}:{why}'
  except urllib.error.HTTPError as e:
-  b=e.read().decode('utf-8','replace')[:1000];return False,f'POST:wrapped:GetMatchLive:http={e.code}:{b}'
- except Exception as e:return False,f'POST:wrapped:GetMatchLive:{type(e).__name__}:{str(e)[:160]}'
+  b=e.read().decode('utf-8','replace')[:1000];return False,f'POST:wrapped:{typ}:{param}:{options}:http={e.code}:{b}'
+ except Exception as e:return False,f'POST:wrapped:{typ}:{param}:{options}:{type(e).__name__}:{str(e)[:160]}'
+
+def _fivb_live_request(no):
+ # GetVolleyLive became a normal request and can be included in <Requests>.
+ # Probe the legacy documented volleyball contract first, then the newer GetMatchLive contract.
+ probes=[
+  ('GetVolleyLive','NoMatch',128),
+  ('GetVolleyLive','NoMatch',0),
+  ('GetMatchLive','NoVolleyMatch',128),
+  ('GetMatchLive','NoVolleyMatch',0),
+ ]
+ diagnostics=[]
+ for typ,param,opt in probes:
+  ok,why=_fivb_probe(no,typ,param,opt);diagnostics.append(why)
+  if ok:return True,why
+  # A contract error is enough to reject this probe; do not hammer the match.
+ return False,' | '.join(diagnostics)
 
 def _fivb():
  result=[];d={'status':'ok','listRecords':0,'candidates':0,'liveVerified':0,'liveRejected':0,'errors':[],'verification':{}}
  req='<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc BeginDateTimeUtc TeamNameA TeamNameB Status Gender TournamentName HasLiveData"><Filter ForLiveScore="true" /></Request>'
  try:root=ET.fromstring(_post_xml(req))
  except Exception as e:d['status']='unavailable';d['errors'].append(f'list:{type(e).__name__}:{str(e)[:300]}');return result,d
- records=_fivb_records(root);d['listRecords']=len(records)
- candidates=[]
+ records=_fivb_records(root);d['listRecords']=len(records);candidates=[]
  for el in records:
   no=_field(el,'No','NoMatch','NoVolleyMatch');status=_field(el,'Status','StatusName','MatchStatus')
   if _is_live(status):candidates.append((el,no))
  d['candidates']=len(candidates)
  if not candidates:return result,d
- # One contract smoke test. If it fails, record the exact server response and stop.
  smoke_el,smoke_no=candidates[0];ok,why=_fivb_live_request(smoke_no);d['verification'][str(smoke_no)]=why
  if not ok:
   d['status']='contract-failed';d['errors'].append(why);d['liveRejected']=len(candidates);return result,d
