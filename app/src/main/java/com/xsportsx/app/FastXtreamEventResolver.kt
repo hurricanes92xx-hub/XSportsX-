@@ -20,14 +20,11 @@ class FastXtreamEventResolver(context: Context) {
         val config = store.load()
         if (!config.isConfigured() || config.type != "XTREAM") return@withContext emptyList()
 
-        // Hot path: persisted/in-memory channels only. This must never touch the network.
         val cached = index.getCachedAll(config)
         match(event, cached.map { toStream(config, it) })
             .takeIf { it.isNotEmpty() }
             ?.let { return@withContext it }
 
-        // Cold path: the shared index uses cached categories and parallel category calls.
-        // It is deliberately bounded so the UI never waits on a full Xtream catalogue.
         val discovered = withTimeoutOrNull(COLD_RESOLVE_BUDGET_MS) {
             index.fastResolve(config, event, MAX_CATEGORIES)
         }.orEmpty()
@@ -73,6 +70,9 @@ class FastXtreamEventResolver(context: Context) {
         if (n.contains("sec network")) out += listOf("sec network", "secn", "sec")
         if (n.contains("acc network")) out += listOf("acc network", "accn", "acc")
         if (n.contains("big ten")) out += listOf("big ten network", "btn", "big ten")
+        if (n.contains("paramount")) out += listOf("paramount", "paramount plus", "paramount+")
+        if (n.contains("cbs sports")) out += listOf("cbs sports", "cbs")
+        if (n.contains("ufc") || n.contains("fight night")) out += listOf("ufc", "fight", "paramount", "paramount plus")
         return out.map(::normalize).distinct()
     }
 
