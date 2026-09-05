@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "leagues": {
+    "NFL":{"sport":"football","session":"game","broadcastHints":["NFL Network","ESPN","CBS","FOX","NBC","Prime Video"]},
+    "NCAA FB":{"sport":"football","session":"game","broadcastHints":["ESPN","ESPN2","ESPNU","ABC","CBS","FOX","NBC","conference networks"]},
+    "NBA":{"sport":"basketball","session":"game"},
+    "MLB":{"sport":"baseball","session":"game"},
+    "NHL":{"sport":"hockey","session":"game"},
+    "UFC":{"sport":"mma","session":"early prelims, prelims, main card","broadcastHints":["Paramount+","UFC Fight Pass"]},
+    "WWE":{"sport":"wrestling","session":"weekly show","broadcastHints":["Netflix","USA","Peacock"]},
+    "AEW":{"sport":"wrestling","session":"weekly show, special, PPV"},
+    "FIVB Men":{"sport":"volleyball","session":"match"},
+    "FIVB Women":{"sport":"volleyball","session":"match"},
+    "EPL":{"sport":"soccer","session":"match"},
+    "MLS":{"sport":"soccer","session":"match"},
+    "NCAA BB":{"sport":"basketball","session":"game"},
+    "NCAA WBB":{"sport":"basketball","session":"game"}
+  }
+}
