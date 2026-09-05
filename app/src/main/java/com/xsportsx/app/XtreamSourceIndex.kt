@@ -5,6 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.Deferred
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -52,9 +54,15 @@ class XtreamSourceIndex(context: Context) {
 
     /**
      * Event-first resolution. It searches only relevant Xtream categories and does
-     * the category requests concurrently. It never falls back to get_live_streams.
+     * the category requests concurrently. Once the caller has enough matching
+     * channels, remaining requests are cancelled instead of scanning the provider.
      */
-    suspend fun fastResolve(config: SourceConfig, event: SportsEvent, maxCategories: Int = MAX_EVENT_CATEGORIES): List<Channel> {
+    suspend fun fastResolve(
+        config: SourceConfig,
+        event: SportsEvent,
+        maxCategories: Int = MAX_EVENT_CATEGORIES,
+        stopWhen: ((List<Channel>) -> Boolean)? = null
+    ): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = getCategories(config, force = false)
         val ranked = categories.map { it to categoryScore(it.name, event) }
@@ -71,11 +79,30 @@ class XtreamSourceIndex(context: Context) {
         if (cached.isNotEmpty()) return cached
 
         return coroutineScope {
-            ranked.map { category ->
+            val pending = ranked.map { category ->
                 async(Dispatchers.IO) {
                     runCatching { getCategoryChannelsBlocking(config, category.id, force = false) }.getOrDefault(emptyList())
                 }
-            }.awaitAll().flatten().distinctBy { it.id }
+            }.toMutableList()
+            val found = LinkedHashMap<String, Channel>()
+
+            while (pending.isNotEmpty()) {
+                val completed = select<Pair<Deferred<List<Channel>>, List<Channel>>> {
+                    pending.forEach { deferred ->
+                        deferred.onAwait { deferred to it }
+                    }
+                }
+                pending.remove(completed.first)
+                completed.second.forEach { found[it.id] = it }
+
+                if (stopWhen?.invoke(found.values.toList()) == true) {
+                    pending.forEach { it.cancel() }
+                    break
+                }
+            }
+
+            if (pending.isNotEmpty()) pending.forEach { it.cancel() }
+            found.values.toList()
         }
     }
 
