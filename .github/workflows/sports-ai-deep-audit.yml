@@ -39,6 +39,8 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Validate strict AI operating contract
         run: python3 scripts/test_sports_ai_policy.py
+      - name: Validate Sports Knowledge Brain
+        run: python3 scripts/validate_sports_knowledge.py
       - name: Verify canonical feed
         run: test -s data/schedule_feed.json
       - name: Run strict Observe-Reason-Act-Verify-Learn audit
@@ -52,6 +54,8 @@ jobs:
           python3 scripts/sports_agent_strict_runner.py data/schedule_feed.json --mode full --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
       - name: Apply validated AI schedule repairs
         run: python3 scripts/apply_ai_schedule_repairs.py
+      - name: Learn only from repeated validated observations
+        run: python3 scripts/learn_sports_knowledge.py data/schedule_feed.json
       - name: Validate AI contracts
         run: |
           python3 - <<'PY'
@@ -68,11 +72,13 @@ jobs:
               missing=[key for key in required if not event.get(key)]
               if missing: raise SystemExit(f'event {i} missing required fields: {missing}')
           repair=d.get('aiScheduleRepair') or {}
+          lessons=json.loads(Path('data/sports_knowledge/learned_lessons.json').read_text())
           print(f"Strict AI audit events: {len(d['events'])}")
           print(f"Agent plans: {a.get('plans',0)}")
           print(f"Model decisions: {a.get('modelDecisions',0)}")
           print(f"Fallback decisions: {a.get('fallbackDecisions',0)}")
           print(f"Validated AI repairs applied: {repair.get('applied',0)}")
+          print(f"Validated learned lessons: {lessons.get('stats',{}).get('validated',0)}")
           PY
       - name: Persist strict intelligence
         shell: bash
