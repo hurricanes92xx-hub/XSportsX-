@@ -12,10 +12,35 @@ enum class EventLifecycle {
     STALE_UNKNOWN
 }
 
-/** Sport-aware event lifecycle; provider live flags are preferred but not required. */
+/**
+ * Sport-aware lifecycle resolver. Explicit provider/official state always wins;
+ * timing inference is only a fallback and uses the sport's expected cadence.
+ */
 object EventLifecycleResolver {
     private const val START_GRACE_MS = 5L * 60_000L
-    private const val INFERRED_LIVE_MS = 20L * 60_000L
+
+    private data class SportProfile(
+        val pregameMinutes: Long,
+        val inferredMinutes: Long,
+        val maxLiveMinutes: Long,
+        val startGraceMinutes: Long = 5L
+    )
+
+    private val DEFAULT = SportProfile(30, 30, 180)
+    private val PROFILES = mapOf(
+        "soccer" to SportProfile(45, 30, 180, 10),
+        "football" to SportProfile(60, 60, 300),
+        "baseball" to SportProfile(45, 45, 240),
+        "hockey" to SportProfile(45, 45, 240),
+        "basketball" to SportProfile(30, 35, 180),
+        "volleyball" to SportProfile(30, 45, 210),
+        "tennis" to SportProfile(30, 60, 360),
+        "golf" to SportProfile(90, 90, 600, 20),
+        "racing" to SportProfile(60, 90, 360),
+        "mma" to SportProfile(60, 360, 360),
+        "boxing" to SportProfile(60, 240, 360),
+        "wrestling" to SportProfile(60, 240, 300)
+    )
 
     fun resolve(event: SportsEvent, nowMillis: Long = System.currentTimeMillis()): EventLifecycle {
         if (isTerminal(event)) return EventLifecycle.FINAL
@@ -23,9 +48,19 @@ object EventLifecycleResolver {
         val untilStart = startMillis - nowMillis
         val elapsed = nowMillis - startMillis
         if (untilStart > startGraceMs(event)) return EventLifecycle.SCHEDULED
-        if (hasStrongLiveSignal(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
-        if (hasBrainLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
-        if (hasSoftLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_INFERRED else EventLifecycle.STALE_UNKNOWN
+
+        // Explicit provider/brain evidence is authoritative over inferred timing.
+        if (hasStrongLiveSignal(event)) {
+            return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
+        }
+        if (hasBrainLiveEvidence(event)) {
+            return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
+        }
+        if (hasSoftLiveEvidence(event)) {
+            return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_INFERRED else EventLifecycle.STALE_UNKNOWN
+        }
+
+        // No explicit state: give each sport a realistic bootstrap window.
         if (elapsed in 0..inferredWindowMs(event)) return EventLifecycle.LIVE_INFERRED
         if (untilStart > 0) return EventLifecycle.PREGAME
         return EventLifecycle.STALE_UNKNOWN
@@ -45,8 +80,9 @@ object EventLifecycleResolver {
         val status = event.status.trim().lowercase()
         val state = event.state.trim().lowercase()
         return state == "in" || state == "live" || state == "inprogress" ||
-            status == "live" || status == "in progress" || status == "in-progress" ||
-            status == "inprogress" || status.contains("live") || status.contains("in progress")
+            state == "in_progress" || status == "live" || status == "in progress" ||
+            status == "in-progress" || status == "inprogress" || status == "in_progress" ||
+            status.contains("live") || status.contains("in progress") || status.contains("in-progress")
     }
 
     private fun hasBrainLiveEvidence(event: SportsEvent): Boolean =
@@ -70,6 +106,7 @@ object EventLifecycleResolver {
     }
 
     fun isPregame(event: SportsEvent, nowMillis: Long = System.currentTimeMillis()): Boolean {
+        if (isTerminal(event)) return false
         val start = parseStart(event) ?: return false
         val delta = start - nowMillis
         return delta in 0..pregameWindowMs(event) && resolve(event, nowMillis) == EventLifecycle.PREGAME
@@ -88,65 +125,41 @@ object EventLifecycleResolver {
         return 25
     }
 
-    private fun parseStart(event: SportsEvent): Long? = runCatching { Instant.parse(event.startUtc).toEpochMilli() }.getOrNull()
-    private fun sportKey(event: SportsEvent): String = "${event.sport} ${event.league} ${event.title}".lowercase()
+    private fun parseStart(event: SportsEvent): Long? =
+        runCatching { Instant.parse(event.startUtc).toEpochMilli() }.getOrNull()
 
-    private fun pregameWindowMs(event: SportsEvent): Long {
-        val k = sportKey(event)
-        val minutes = when {
-            k.contains("football") || k.contains("nfl") || k.contains("cfl") -> 60L
-            k.contains("baseball") || k.contains("mlb") -> 45L
-            k.contains("hockey") || k.contains("nhl") -> 45L
-            k.contains("basketball") || k.contains("nba") -> 30L
-            k.contains("soccer") || k.contains("mls") || k.contains("epl") -> 45L
-            k.contains("golf") -> 90L
-            k.contains("tennis") -> 30L
-            k.contains("ufc") || k.contains("boxing") || k.contains("wwe") || k.contains("aew") || k.contains("tna") || k.contains("wrestling") -> 60L
-            else -> 30L
-        }
-        return minutes * 60_000L
-    }
-
-    private fun upcomingWindowMs(event: SportsEvent): Long {
-        val k = sportKey(event)
-        val days = when {
-            k.contains("golf") || k.contains("tennis") -> 7L
-            k.contains("f1") || k.contains("formula") || k.contains("nascar") -> 14L
-            else -> 7L
-        }
-        return days * 24L * 60L * 60L * 1000L
-    }
-
-    private fun startGraceMs(event: SportsEvent): Long = when {
-        sportKey(event).contains("soccer") -> 10L * 60_000L
-        sportKey(event).contains("golf") -> 20L * 60_000L
-        else -> START_GRACE_MS
-    }
-
-    private fun inferredWindowMs(event: SportsEvent): Long = when {
-        sportKey(event).contains("soccer") -> 15L * 60_000L
-        sportKey(event).contains("tennis") -> 30L * 60_000L
-        sportKey(event).contains("baseball") -> 25L * 60_000L
-        sportKey(event).contains("ufc") || sportKey(event).contains("boxing") || sportKey(event).contains("wwe") || sportKey(event).contains("aew") || sportKey(event).contains("tna") -> 60L * 60_000L
-        else -> INFERRED_LIVE_MS
-    }
-
-    private fun maxLiveDurationMs(event: SportsEvent): Long {
+    private fun profile(event: SportsEvent): SportProfile {
         val key = sportKey(event)
-        val minutes = when {
-            key.contains("soccer") -> 165L
-            key.contains("volleyball") -> 180L
-            key.contains("tennis") -> 6L * 60L
-            key.contains("baseball") || key.contains("mlb") -> 6L * 60L
-            key.contains("football") || key.contains("nfl") || key.contains("cfl") -> 4L * 60L
-            key.contains("hockey") -> 4L * 60L
-            key.contains("basketball") -> 3L * 60L
-            key.contains("golf") -> 10L * 60L
-            key.contains("racing") || key.contains("nascar") || key.contains("f1") -> 6L * 60L
-            key.contains("ufc") || key.contains("boxing") -> 6L * 60L
-            key.contains("wwe") || key.contains("aew") || key.contains("tna") || key.contains("wrestling") -> 4L * 60L
-            else -> 3L * 60L
+        return when {
+            containsAny(key, "ufc", "mma") -> PROFILES.getValue("mma")
+            containsAny(key, "boxing") -> PROFILES.getValue("boxing")
+            containsAny(key, "wwe", "aew", "tna", "wrestling", "aaa wrestling") -> PROFILES.getValue("wrestling")
+            containsAny(key, "f1", "formula 1", "nascar", "motogp", "imsa", "wec", "wrc", "racing") -> PROFILES.getValue("racing")
+            containsAny(key, "soccer", "mls", "epl", "uefa", "fifa") -> PROFILES.getValue("soccer")
+            containsAny(key, "nfl", "ncaa football", "college football", "cfl", "football") -> PROFILES.getValue("football")
+            containsAny(key, "mlb", "baseball") -> PROFILES.getValue("baseball")
+            containsAny(key, "nhl", "hockey") -> PROFILES.getValue("hockey")
+            containsAny(key, "nba", "wnba", "ncaa basketball", "basketball") -> PROFILES.getValue("basketball")
+            containsAny(key, "volleyball") -> PROFILES.getValue("volleyball")
+            containsAny(key, "atp", "wta", "tennis") -> PROFILES.getValue("tennis")
+            containsAny(key, "pga", "lpga", "golf") -> PROFILES.getValue("golf")
+            else -> DEFAULT
         }
-        return minutes * 60_000L
+    }
+
+    private fun sportKey(event: SportsEvent): String =
+        "${event.sport} ${event.league} ${event.title}".lowercase()
+
+    private fun containsAny(text: String, vararg values: String): Boolean =
+        values.any { text.contains(it) }
+
+    private fun pregameWindowMs(event: SportsEvent): Long = profile(event).pregameMinutes * 60_000L
+    private fun inferredWindowMs(event: SportsEvent): Long = profile(event).inferredMinutes * 60_000L
+    private fun maxLiveDurationMs(event: SportsEvent): Long = profile(event).maxLiveMinutes * 60_000L
+    private fun startGraceMs(event: SportsEvent): Long = profile(event).startGraceMinutes * 60_000L
+    private fun upcomingWindowMs(event: SportsEvent): Long = when {
+        containsAny(sportKey(event), "golf", "tennis") -> 7L * 24L * 60L * 60L * 1000L
+        containsAny(sportKey(event), "f1", "formula", "nascar", "motogp", "racing") -> 14L * 24L * 60L * 60L * 1000L
+        else -> 7L * 24L * 60L * 60L * 1000L
     }
 }
