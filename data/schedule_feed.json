@@ -83,7 +83,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 985,
+  "identityMergeCount": 992,
   "sourceRecordCounts": {
     "wrestling": 18,
     "espn": 1527,
@@ -63126,10 +63126,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 52,
+    "reachableSources": 54,
     "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T16:08:45Z",
+    "identityMerges": 7,
+    "updatedAt": "2026-09-05T16:22:04Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -63476,7 +63476,7 @@
       {
         "league": "WEC",
         "url": "https://www.fia.com/championship/world-endurance-championship",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
@@ -63488,7 +63488,7 @@
       {
         "league": "WRC",
         "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
