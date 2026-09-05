@@ -7,6 +7,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -18,24 +19,26 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPInputStream
 
 /**
- * Fast Xtream metadata index. Categories are fetched first and then cached locally.
- * Event resolution can use the compact relevant-category path, while startup sync can
- * refresh the complete provider live catalog in the background.
+ * Fast Xtream metadata index. The Room-backed catalog is the first lookup path;
+ * category HTTP requests remain the authoritative refresh/fallback path.
  */
 class XtreamSourceIndex(context: Context) {
     data class Category(val id: String, val name: String)
     data class Channel(val id: String, val name: String, val categoryId: String, val group: String, val icon: String)
 
-    private val prefs = context.applicationContext.getSharedPreferences("xsportsx_xtream_index", Context.MODE_PRIVATE)
+    private val appContext = context.applicationContext
+    private val prefs = appContext.getSharedPreferences("xsportsx_xtream_index", Context.MODE_PRIVATE)
     private val categoryCache = ConcurrentHashMap<String, List<Category>>()
     private val channelCache = ConcurrentHashMap<String, List<Channel>>()
     private val running = ConcurrentHashMap<String, Boolean>()
+    private val catalog = XtreamCatalogRepository.get(appContext)
 
     companion object {
         private const val CATEGORY_TTL = 6 * 60 * 60 * 1000L
         private const val INDEX_TTL = 30 * 60 * 1000L
         private const val CATEGORY_CALL_TIMEOUT_MS = 3_000
         private const val MAX_EVENT_CATEGORIES = 12
+        private const val LOCAL_EVENT_LIMIT = 64
         private const val FULL_SYNC_BATCH = 8
         private val SPORTS_TERMS = setOf(
             "sport", "sports", "espn", "fox", "fs1", "fs2", "cbs sport", "nfl", "mlb", "nba", "nhl",
@@ -54,7 +57,6 @@ class XtreamSourceIndex(context: Context) {
         )
     }
 
-    /** Refresh every live category. This is deliberately separate from fast event resolution. */
     suspend fun refreshAll(config: SourceConfig, force: Boolean = true): Int = coroutineScope {
         if (!config.isConfigured() || config.type != "XTREAM") return@coroutineScope 0
         val categories = getCategoriesBlocking(config, force = force)
@@ -67,14 +69,10 @@ class XtreamSourceIndex(context: Context) {
             }.awaitAll()
             total += counts.sum()
         }
+        runCatching { catalog.prune(sourceKey(config)) }
         total
     }
 
-    /**
-     * Event-first resolution. It searches only relevant Xtream categories and does
-     * the category requests concurrently. Cached category indexes are used immediately,
-     * but insufficient cached matches never prevent a deeper provider search.
-     */
     suspend fun fastResolve(
         config: SourceConfig,
         event: SportsEvent,
@@ -82,16 +80,36 @@ class XtreamSourceIndex(context: Context) {
         stopWhen: ((List<Channel>) -> Boolean)? = null
     ): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
+
+        // STEP 1: query the local persistent catalog. This avoids provider HTTP calls
+        // when startup/periodic sync has already indexed the channel inventory.
+        val localTerms = buildList {
+            addAll(splitLookupTerms(event.title))
+            addAll(splitLookupTerms("${event.home} ${event.away}"))
+            addAll(splitLookupTerms(event.broadcast))
+            addAll(splitLookupTerms(event.league))
+            addAll(splitLookupTerms(event.sport))
+        }.distinct()
+        val local = runCatching { catalog.search(sourceKey(config), localTerms, LOCAL_EVENT_LIMIT) }.getOrDefault(emptyList())
+        if (local.isNotEmpty()) {
+            val unique = LinkedHashMap<String, Channel>()
+            local.forEach { unique[it.id] = it }
+            val localList = unique.values.toList()
+            if (stopWhen?.invoke(localList) == true) return localList
+        }
+
+        // STEP 2: category/index fallback for a catalog that has not caught up yet.
         val categories = getCategories(config, force = false)
         val ranked = categories.map { it to categoryScore(it.name, event) }
             .filter { it.second > 0 }
             .sortedByDescending { it.second }
             .take(maxCategories)
             .map { it.first }
-        if (ranked.isEmpty()) return emptyList()
+        if (ranked.isEmpty()) return local
 
         return coroutineScope {
             val found = LinkedHashMap<String, Channel>()
+            local.forEach { found[it.id] = it }
             val uncached = ArrayList<Pair<Int, Category>>()
 
             ranked.forEachIndexed { index, category ->
@@ -124,7 +142,6 @@ class XtreamSourceIndex(context: Context) {
         }
     }
 
-    /** Cached sports/broadcast channels for startup/UI use. */
     fun getCachedSports(config: SourceConfig): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
@@ -134,7 +151,6 @@ class XtreamSourceIndex(context: Context) {
             .distinctBy { it.id }
     }
 
-    /** All locally indexed channels, including non-sports categories. */
     fun getCachedAll(config: SourceConfig): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
@@ -203,8 +219,17 @@ class XtreamSourceIndex(context: Context) {
         }
         channelCache[key] = result
         persistChannels(key, result)
+        runCatching { catalog.replaceCategory(sourceKey(config), result) }
         return result
     }
+
+    private fun splitLookupTerms(value: String): List<String> = value
+        .lowercase()
+        .replace("+", " plus ")
+        .split(Regex("[^a-z0-9]+"))
+        .map { it.trim() }
+        .filter { it.length >= 3 }
+        .distinct()
 
     private fun categoryScore(name: String, event: SportsEvent?): Int {
         val n = normalize(name)
