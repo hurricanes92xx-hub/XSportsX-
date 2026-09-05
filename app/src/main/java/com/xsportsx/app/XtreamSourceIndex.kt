@@ -4,7 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.channels.Channel as CoroutineChannel
+import kotlinx.coroutines.channels.Channel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -52,8 +52,8 @@ class XtreamSourceIndex(context: Context) {
 
     /**
      * Event-first resolution. It searches only relevant Xtream categories and does
-     * the category requests concurrently. Once the caller has enough matching
-     * channels, remaining requests are cancelled instead of scanning the provider.
+     * the category requests concurrently. Cached categories are used immediately,
+     * but insufficient cached matches never prevent a deeper provider search.
      */
     suspend fun fastResolve(
         config: SourceConfig,
@@ -70,15 +70,27 @@ class XtreamSourceIndex(context: Context) {
             .map { it.first }
         if (ranked.isEmpty()) return emptyList()
 
-        val cached = ranked.flatMap { category ->
-            val key = sourceKey(config) + ":" + category.id
-            channelCache[key] ?: loadPersistedChannels(key).orEmpty()
-        }.distinctBy { it.id }
-        if (cached.isNotEmpty()) return cached
-
         return coroutineScope {
-            val results = CoroutineChannel<Pair<Int, List<Channel>>>(capacity = ranked.size.coerceAtLeast(1))
-            val jobs = ranked.mapIndexed { index, category ->
+            val found = LinkedHashMap<String, Channel>()
+            val uncached = ArrayList<Pair<Int, Category>>()
+
+            ranked.forEachIndexed { index, category ->
+                val key = sourceKey(config) + ":" + category.id
+                val cached = channelCache[key] ?: loadPersistedChannels(key).orEmpty()
+                if (cached.isNotEmpty()) {
+                    cached.forEach { found[it.id] = it }
+                } else {
+                    uncached += index to category
+                }
+            }
+
+            if (stopWhen?.invoke(found.values.toList()) == true) {
+                return@coroutineScope found.values.toList()
+            }
+            if (uncached.isEmpty()) return@coroutineScope found.values.toList()
+
+            val results = Channel<Pair<Int, List<Channel>>>(capacity = uncached.size.coerceAtLeast(1))
+            val jobs = uncached.map { (index, category) ->
                 launch(Dispatchers.IO) {
                     val channels = runCatching {
                         getCategoryChannelsBlocking(config, category.id, force = false)
@@ -87,8 +99,7 @@ class XtreamSourceIndex(context: Context) {
                 }
             }
 
-            val found = LinkedHashMap<String, Channel>()
-            repeat(ranked.size) {
+            repeat(uncached.size) {
                 val (_, channels) = results.receive()
                 channels.forEach { found[it.id] = it }
                 if (stopWhen?.invoke(found.values.toList()) == true) {
@@ -130,8 +141,7 @@ class XtreamSourceIndex(context: Context) {
 
     fun getCachedAll(config: SourceConfig): List<Channel> = getCachedSports(config)
 
-    private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> =
-        getCategoriesBlocking(config, force)
+    private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> = getCategoriesBlocking(config, force)
 
     private fun getCategoriesBlocking(config: SourceConfig, force: Boolean): List<Category> {
         val key = sourceKey(config)
@@ -194,9 +204,6 @@ class XtreamSourceIndex(context: Context) {
             if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
             if (eventTerms.contains("volleyball") && n.contains("volleyball")) score += 30
             if (eventTerms.contains("field hockey") && n.contains("hockey")) score += 30
-
-            // College events often arrive without a broadcaster. Keep the major
-            // U.S. broadcast families eligible without requiring exact event text.
             if (eventTerms.contains("ncaa") || eventTerms.contains("college") || eventTerms.contains("university")) {
                 listOf("espn", "abc", "cbs", "fox", "fs1", "sec network", "secn", "acc network", "accn", "big ten network", "btn")
                     .forEach { if (n.contains(it)) score += 12 }
@@ -208,7 +215,7 @@ class XtreamSourceIndex(context: Context) {
     private fun sourceKey(config: SourceConfig): String = sha1("${config.server}|${config.username}")
     private fun authQuery(config: SourceConfig): String = "username=${enc(config.username)}&password=${enc(config.password)}"
     private fun enc(value: String): String = URLEncoder.encode(value, "UTF-8")
-    private fun normalize(value: String) = value.lowercase().replace("+", " plus ").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
+    private fun normalize(value: String): String = value.lowercase().replace("+", " plus ").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
 
     private fun persistCategories(key: String, values: List<Category>) {
         val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name)) }
