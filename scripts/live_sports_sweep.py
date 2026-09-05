@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from refresh_schedules_legacy import ESPN_LEAGUES
-from providers.ncaa import NCAA_LEAGUES,_fetch_espn_day,_fetch_scoreboard_day,_normalize
+from providers.ncaa import NCAA_LEAGUES,_fetch_espn_day,_fetch_current_day,_normalize
 from providers.fivb import fetch as fetch_fivb
 from providers.free import _espn_cricket,openf1
 from event_identity import event_identity
@@ -14,11 +14,9 @@ ROOT=Path(__file__).resolve().parents[1]
 FEED=ROOT/"data"/"schedule_feed.json"
 HEADERS={"User-Agent":"XSportsX-LiveSweep/1.5","Accept":"application/json, */*","Accept-Language":"en-US,en;q=0.9"}
 
-
 def _get(url):
     req=urllib.request.Request(url,headers=HEADERS)
     with urllib.request.urlopen(req,timeout=8) as response:return response.read()
-
 
 def _fetch_league(meta):
     name,sport,league,icon,_days=meta;today=datetime.now(timezone.utc).strftime("%Y%m%d")
@@ -29,11 +27,10 @@ def _fetch_league(meta):
         except Exception as exc:last=str(exc)
     return name,[],last
 
-
 def _fetch_ncaa(meta):
     name,sport,division,icon=meta;day=datetime.now(timezone.utc).date();records=[];errors=[]
     try:
-        root=_fetch_scoreboard_day(sport,division,day)
+        root=_fetch_current_day(sport,division,day)
         if root:
             for game in __import__('providers.ncaa',fromlist=['_walk_games'])._walk_games(root):
                 event=_normalize(game,name,icon)
@@ -48,7 +45,6 @@ def _fetch_ncaa(meta):
         seen.add(key);out.append(event)
     return name,out,"; ".join(errors) if errors and not out else None
 
-
 def _fetch_dedicated(item):
     name,kind,icon=item
     try:
@@ -61,19 +57,16 @@ def _fetch_dedicated(item):
     except Exception as exc:return name,[],f"{type(exc).__name__}: {exc}"
     return name,[],"unsupported dedicated provider"
 
-
 def _state(status):
     typ=status.get("type") or {};state=str(typ.get("state") or "").lower();text=" ".join(str(v or "") for v in (typ.get("state"),typ.get("name"),typ.get("detail"),typ.get("shortDetail"),status.get("displayClock"),status.get("period"))).strip().lower()
     if state=="post" or re.search(r"\b(final|final/ot|final/so|complete|completed|postponed|cancelled|canceled)\b",text):return "FINAL"
     if state=="in" or re.search(r"\b(in progress|live|halftime|half time|q[1-4]|[1-9][0-9]?th|period [1-9]|set [1-9]|inning|innings)\b",text):return "LIVE"
     return "UPCOMING"
 
-
 def _parse_dt(value):
     if not value:return None
     try:return datetime.fromisoformat(str(value).replace("Z","+00:00")).astimezone(timezone.utc)
     except Exception:return None
-
 
 def _espn_event(name,icon,event):
     start=event.get("date")
@@ -96,7 +89,6 @@ def _espn_event(name,icon,event):
         elif typ.get(key) is not None:e[f"provider_{key}"]=typ[key]
     return e
 
-
 def _normalize_dedicated(name,raw):
     e=dict(raw);e.setdefault("startUtc",e.get("start"));e.setdefault("source",f"{name.lower().replace(' ','-')}-live-provider")
     tag=str(e.get("tag") or e.get("status") or "UPCOMING").upper()
@@ -105,14 +97,11 @@ def _normalize_dedicated(name,raw):
     else:e.update({"status":"UPCOMING","state":"pre"})
     return e
 
-
 def _merge_key(event):
     league=str(event.get("league") or "").strip().lower();title=str(event.get("title") or "").strip().lower();return league,re.sub(r"[^a-z0-9]+"," ",title).strip()
 
-
 def _league_key(value):
     return re.sub(r"[^a-z0-9]+"," ",str(value or "").strip().lower()).strip()
-
 
 def _apply_provider_time_guard(event,now):
     """Never expose a provider LIVE state for an event clearly in the future."""
@@ -124,14 +113,11 @@ def _apply_provider_time_guard(event,now):
         return event,True
     return event,False
 
-
 def _mark_live_evidence(event,checked_at):
     if str(event.get("tag") or "").upper()=="LIVE":
         event["liveEvidence"]={"source":str(event.get("source") or "provider"),"providerEventId":str(event.get("providerEventId") or ""),"providerState":"LIVE","checkedAtUtc":checked_at}
-    else:
-        event.pop("liveEvidence",None)
+    else:event.pop("liveEvidence",None)
     return event
-
 
 def main():
     if not FEED.exists():raise SystemExit("ERROR: schedule_feed.json does not exist")
@@ -139,9 +125,7 @@ def main():
     dedicated=[("FIVB Men","fivb","🏐"),("FIVB Women","fivb","🏐"),("ICC T20","cricket","🏏"),("IPL","cricket","🏏"),("F1","f1","🏎️")]
     results=[]
     with ThreadPoolExecutor(max_workers=min(16,len(ESPN_LEAGUES)+len(NCAA_LEAGUES)+len(dedicated) or 1)) as pool:
-        futures=[pool.submit(_fetch_league,meta) for meta in ESPN_LEAGUES]
-        futures.extend(pool.submit(_fetch_ncaa,meta) for meta in NCAA_LEAGUES)
-        futures.extend(pool.submit(_fetch_dedicated,item) for item in dedicated)
+        futures=[pool.submit(_fetch_league,meta) for meta in ESPN_LEAGUES];futures.extend(pool.submit(_fetch_ncaa,meta) for meta in NCAA_LEAGUES);futures.extend(pool.submit(_fetch_dedicated,item) for item in dedicated)
         for future in as_completed(futures):results.append(future.result())
     by_provider={};live_provider=final_provider=fetched_events=0;failed=[];source_groups={};successful_leagues=set();future_live_rejected=0
     dedicated_names={x[0] for x in dedicated};ncaa_meta={m[0]:m for m in NCAA_LEAGUES};espn_meta={m[0]:m for m in ESPN_LEAGUES}
@@ -150,20 +134,17 @@ def main():
         successful_leagues.add(_league_key(name));source_groups[name]="ncaa" if name in ncaa_meta else "dedicated" if name in dedicated_names else "espn"
         for raw_event in raw:
             if name in ncaa_meta:
-                e=dict(raw_event);e.setdefault("startUtc",e.get("start"));e.setdefault("source","ncaa-live-sweep");e.setdefault("icon",ncaa_meta[name][3]);e.setdefault("sport",str(ncaa_meta[name][1]).lower())
-                tag=str(e.get("tag") or e.get("status") or "UPCOMING").upper();e.update({"status":"LIVE","state":"in"} if tag=="LIVE" else {"status":"FINAL","state":"post"} if tag=="FINAL" else {"status":"UPCOMING","state":"pre"});e["tag"]=tag
-            elif name in dedicated_names:
-                e=_normalize_dedicated(name,raw_event);e.setdefault("sport", "racing" if name=="F1" else "volleyball" if name.startswith("FIVB") else "cricket")
+                e=dict(raw_event);e.setdefault("startUtc",e.get("start"));e.setdefault("source","ncaa-live-sweep");e.setdefault("icon",ncaa_meta[name][3]);e.setdefault("sport",str(ncaa_meta[name][1]).lower());tag=str(e.get("tag") or e.get("status") or "UPCOMING").upper();e.update({"status":"LIVE","state":"in"} if tag=="LIVE" else {"status":"FINAL","state":"post"} if tag=="FINAL" else {"status":"UPCOMING","state":"pre"});e["tag"]=tag
+            elif name in dedicated_names:e=_normalize_dedicated(name,raw_event);e.setdefault("sport", "racing" if name=="F1" else "volleyball" if name.startswith("FIVB") else "cricket")
             else:
                 meta=espn_meta.get(name)
                 if not meta:continue
                 e=_espn_event(name,meta[3],raw_event);e["sport"]=str(meta[1]).lower() if e else "other"
             if not e:continue
-            e,rejected=_apply_provider_time_guard(e,now);future_live_rejected+=1 if rejected else 0
-            fetched_events+=1;pid=str(e.get("providerEventId") or f"{e.get('source')}:{e.get('league')}:{e.get('title')}:{e.get('startUtc')}");by_provider[pid]=e
+            e,rejected=_apply_provider_time_guard(e,now);future_live_rejected+=1 if rejected else 0;fetched_events+=1;pid=str(e.get("providerEventId") or f"{e.get('source')}:{e.get('league')}:{e.get('title')}:{e.get('startUtc')}");by_provider[pid]=e
             if e.get("tag")=="LIVE":live_provider+=1
             elif e.get("tag")=="FINAL":final_provider+=1
-    changed=0;stale_live_demoted=0
+    changed=stale_live_demoted=0
     for event in events:
         pid=str(event.get("providerEventId") or "");fresh=by_provider.get(pid) if pid else None
         if fresh is None:
@@ -175,9 +156,6 @@ def main():
             old=(event.get("tag"),event.get("status"),event.get("state"));event.update({k:v for k,v in fresh.items() if v not in (None,"")});_mark_live_evidence(event,checked_at)
             if old!=(event.get("tag"),event.get("status"),event.get("state")):changed+=1
         elif _league_key(event.get("league")) in successful_leagues and str(event.get("tag") or event.get("status") or "").upper()=="LIVE":
-            # A successful provider query that does not return this event must
-            # not leave stale LIVE state behind. Preserve the scheduled event,
-            # but remove it from the LIVE contract until a provider confirms it.
             event.update({"tag":"UPCOMING","status":"UPCOMING","state":"pre"});event.pop("liveEvidence",None);event["liveStateRejectedReason"]="provider-checked-not-live";stale_live_demoted+=1;changed+=1
     existing_provider={str(e.get("providerEventId") or "") for e in events if e.get("providerEventId")};added=0
     for pid,fresh in by_provider.items():
