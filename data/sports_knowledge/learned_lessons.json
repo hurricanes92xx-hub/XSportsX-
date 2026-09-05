@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "policy": {
+    "minimumConfidence": 0.85,
+    "minimumIndependentEvidence": 2,
+    "requireRepeatedObservation": 3,
+    "canonicalTruthNeverComesFromLessons": true
+  },
+  "lessons": {},
+  "updatedAt": null,
+  "stats": {"lessons": 0, "validated": 0}
+}
