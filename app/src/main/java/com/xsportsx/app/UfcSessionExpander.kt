@@ -32,10 +32,11 @@ object UfcSessionExpander {
         events.filter { it.league.equals("UFC", true) }.forEach { main ->
             val normalized = normalize(main.title)
             if (normalized.isBlank()) return@forEach
-            val matched = specs.filter { normalized.contains(it.key) }
-            matched.forEach { spec ->
-                if (events.any { sameSession(it, main, spec.label) } || result.any { sameSession(it, main, spec.label) }) return@forEach
-                val start = runCatching { Instant.parse(main.startUtc).minus(spec.hoursBeforeMain, ChronoUnit.HOURS).toString() }.getOrNull() ?: return@forEach
+            specs.filter { normalized.contains(it.key) }.forEach { spec ->
+                if (result.any { sameSession(it, main, spec.label) }) return@forEach
+                val start = runCatching {
+                    Instant.parse(main.startUtc).minus(spec.hoursBeforeMain, ChronoUnit.HOURS).toString()
+                }.getOrNull() ?: return@forEach
                 result += main.copy(
                     id = "${EventIdentity.id(main)}:${normalize(spec.label).replace(' ', '-')}",
                     title = "${main.title} — ${spec.label}",
@@ -53,9 +54,10 @@ object UfcSessionExpander {
 
     private fun sameSession(event: SportsEvent, main: SportsEvent, label: String): Boolean {
         if (!event.league.equals("UFC", true)) return false
-        if (!event.title.contains(label, true)) return false
-        return normalize(event.title).contains(normalize(main.title)) ||
-            normalize(main.title).contains(normalize(event.title.substringBefore(" — ")))
+        val suffix = event.title.substringAfterLast(" — ", "")
+        if (!suffix.equals(label, true)) return false
+        val base = event.title.substringBeforeLast(" — ").trim()
+        return normalize(base) == normalize(main.title)
     }
 
     private fun normalize(value: String): String = value.lowercase()
