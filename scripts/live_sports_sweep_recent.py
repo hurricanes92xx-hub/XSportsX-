@@ -18,6 +18,24 @@ SHADOW_METAS = [
 ]
 base.ESPN_LEAGUES = list(base.ESPN_LEAGUES) + SHADOW_METAS
 
+_original_espn_event = base._espn_event
+
+def _espn_event(name, icon, event):
+    if name.startswith("SHADOW "):
+        e = dict(event)
+        e.setdefault("icon", icon)
+        e.setdefault("source", "sportscore-shadow")
+        e.setdefault("startUtc", e.get("start"))
+        tag = str(e.get("tag") or e.get("status") or "UPCOMING").upper()
+        e["tag"] = tag
+        if tag == "LIVE": e.update({"status":"LIVE","state":"in"})
+        elif tag == "FINAL": e.update({"status":"FINAL","state":"post"})
+        else: e.update({"status":"UPCOMING","state":"pre"})
+        return e
+    return _original_espn_event(name, icon, event)
+
+base._espn_event = _espn_event
+
 def _get(url):
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=8) as response:
@@ -37,11 +55,10 @@ def _shadow_events():
 def _fetch_league(meta):
     name, sport, league, icon, _days = meta
     if name.startswith("SHADOW "):
-        return name, [dict(e) for e in _shadow_events() if str(e.get("source") or "").startswith("sportscore-shadow")], _shadow_error
+        return name, [dict(e) for e in _shadow_events()], _shadow_error
     now = datetime.now(timezone.utc)
     dates = [(now + timedelta(days=offset)).strftime('%Y%m%d') for offset in (-1, 0, 1)]
-    events = []
-    last = None
+    events = []; last = None
     for day in dates:
         base_url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={day}&limit=1000"
         root = None
