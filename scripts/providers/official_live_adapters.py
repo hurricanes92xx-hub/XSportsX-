@@ -8,14 +8,13 @@ from __future__ import annotations
 import json
 import urllib.parse
 import urllib.request
-import urllib.error
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 FEED=ROOT/"data"/"schedule_feed.json"
-UA="XSportsX-OfficialLiveAdapters/1.0"
+UA="XSportsX-OfficialLiveAdapters/1.1"
 
 def _get(url,timeout=10):
     req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"application/json, text/plain, */*"})
@@ -35,8 +34,17 @@ def _norm(v):
     return "".join(c.lower() for c in str(v or "") if c.isalnum())
 
 def _live_status(v):
-    s=str(v or "").lower().replace("-","").replace(" ","")
-    return s in {"inset1","inset2","inset3","inset4","inset5","inset6","inset7","live","inprogress","playing","started","running","halftime","ht"} or "live" in s
+    """Return true only for explicit FIVB in-progress states.
+
+    Do not use substring matching: values such as NotLive must never become
+    LIVE. A ForLiveScore result is a discovery/candidate feed, not by itself
+    proof that a match is in progress.
+    """
+    s=str(v or "").strip().lower().replace("-","").replace(" ","")
+    return s in {
+        "inset1","inset2","inset3","inset4","inset5","inset6","inset7",
+        "live","inprogress","playing","started","running","halftime","ht",
+    }
 
 def _field(el,*names):
     wanted={n.lower() for n in names}
@@ -50,8 +58,8 @@ def _identity(row):
     return (_norm(row.get("league")),_norm(row.get("away")),_norm(row.get("home")))
 
 def _fivb():
-    """Use the public ForLiveScore list, then verify each candidate via live data."""
-    result=[]; diagnostics={"status":"ok","listRecords":0,"liveVerified":0,"errors":[]}
+    """Discover candidates with ForLiveScore, then require explicit live evidence."""
+    result=[];diagnostics={"status":"ok","listRecords":0,"candidates":0,"liveVerified":0,"liveRejected":0,"errors":[]}
     requests=[
         '<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc BeginDateTimeUtc TeamNameA TeamNameB Status Gender TournamentName Version"><Filter ForLiveScore="true" /></Request>',
         '<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc DateTimeUtc TeamNameA TeamNameB Status Gender TournamentName"><Filter ForLiveScore="true" /></Request>'
@@ -77,8 +85,14 @@ def _fivb():
         start=_iso(_field(el,"DateTimeUtc","BeginDateTimeUtc","DateUtc"))
         gender=_norm(_field(el,"Gender","TournamentGender"));tournament=_field(el,"TournamentName","Name")
         league="FIVB Women" if gender in {"w","women","female","f"} or "women" in _norm(tournament) or "feminin" in _norm(tournament) else "FIVB Men"
-        # If the list itself says live, retain it; then attempt the documented live request.
+
+        # The list status is usable only when it is itself an explicit
+        # in-progress status. Scheduled/recent/upcoming records are rejected.
         live=_live_status(status)
+        diagnostics["candidates"]+=1
+
+        # Prefer the documented per-match live endpoint as independent
+        # confirmation. If it returns explicit live state, that is authoritative.
         try:
             live_xml=f'<Request Type="GetMatchLive" NoVolleyMatch="{no}" Options="Score Information MatchStatistics SetStatistics" Version="0" />'
             live_raw=_post_xml(live_xml)
@@ -90,9 +104,11 @@ def _fivb():
                     if value:live_values.append(value)
             if any(_live_status(v) for v in live_values):live=True
         except Exception as exc:
-            # The public list remains authoritative when per-match export is unavailable.
             diagnostics["errors"].append(f"match:{no}:{type(exc).__name__}")
-        if not live:continue
+
+        if not live:
+            diagnostics["liveRejected"]+=1
+            continue
         row={"league":league,"title":f"{away} @ {home}","start":start,"startUtc":start,"tag":"LIVE","status":"LIVE","state":"in","home":home,"away":away,"source":"fivb-vis-official","providerEventId":f"fivb:{no}","liveEvidenceSource":"fivb-vis"}
         result.append(row);diagnostics["liveVerified"]+=1
     return result,diagnostics
@@ -111,8 +127,6 @@ def _nascar():
         for x in rows:
             if not isinstance(x,dict):continue
             if str(x.get("series_id") or x.get("seriesId"))!="3":continue
-            run_type=int(x.get("run_type") or x.get("runType") or 0)
-            # Official feed represents on-track activity; race/practice/qualifying are all live programming.
             name=str(x.get("run_name") or x.get("event_name") or "NASCAR Craftsman Truck Series")
             race_id=x.get("race_id") or x.get("raceId")
             start=_iso(x.get("time_of_day_os") or x.get("start_time_utc"))
@@ -143,8 +157,7 @@ def main():
     if not FEED.exists():raise SystemExit("official adapters: missing schedule_feed.json")
     payload=json.loads(FEED.read_text(encoding="utf-8"));events=[e for e in (payload.get("events") or []) if isinstance(e,dict)]
     checked=str((payload.get("liveSweep") or {}).get("checkedAtUtc") or datetime.now(timezone.utc).isoformat().replace("+00:00","Z"))
-    diagnostics={}
-    added=corroborated=0
+    diagnostics={};added=corroborated=0
     for name,fn in (("FIVB",_fivb),("NASCAR Truck",_nascar)):
         rows,diag=fn();diagnostics[name]=diag
         for row in rows:
