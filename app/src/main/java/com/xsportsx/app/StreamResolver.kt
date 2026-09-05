@@ -199,6 +199,7 @@ class StreamResolver(context: Context) {
         val titleTerms = splitTerms(event.title)
         val teamTerms = splitTerms("${event.home} ${event.away}")
         val leagueTerms = splitTerms(event.league)
+        val sportTerms = splitTerms(event.sport)
         val broadcastTerms = broadcastAliases(event.broadcast)
         val eventIsLive = event.isLive
         data class Scored(val score: Int, val stream: ResolvedStream)
@@ -207,13 +208,22 @@ class StreamResolver(context: Context) {
             val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }
             val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }
             val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }
+            val sportHits = sportTerms.count { it.length >= 4 && haystack.contains(it) }
             val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
             val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1
             val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2
             val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0
-            val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
-            val networkOnlyAllowed = broadcastTerms.isNotEmpty() && networkHits > 0
-            val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork) || networkOnlyAllowed)
+            val hasSportOrLeague = sportHits > 0 || leagueHits > 0
+            // Broadcaster/network is the primary channel identity. Team names are
+            // often absent from linear channel names, so network + sport/league is
+            // sufficient evidence even when neither team appears in the channel.
+            val score = networkHits * 100 + leagueHits * 35 + sportHits * 25 + teamHits * 20 + titleHits * 8 + if (eventIsLive && networkHits > 0) 5 else 0
+            val networkFirstAllowed = broadcastTerms.isNotEmpty() && networkHits > 0 && hasSportOrLeague
+            val relevant = if (!strict) {
+                teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0 || sportHits > 0
+            } else {
+                hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork) || networkFirstAllowed
+            }
             if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
@@ -222,9 +232,32 @@ class StreamResolver(context: Context) {
     private fun splitTerms(value: String): List<String> = normalize(value).split(' ').filter { it.length >= 3 && it !in STOP_WORDS }.distinct()
     private val STOP_WORDS = setOf("the", "and", "with", "vs", "versus", "game", "live", "network", "sports")
     private fun broadcastAliases(value: String): List<String> {
-        val n = normalize(value); if (n.isBlank()) return emptyList(); val aliases = linkedSetOf(n)
-        when { n.contains("espn plus") || n == "espn+" -> aliases += listOf("espn+", "espn plus", "espn"); n.contains("espn2") -> aliases += listOf("espn2", "espn 2", "espn"); n.contains("espnu") -> aliases += listOf("espnu", "espn u", "espn"); n.contains("fs1") -> aliases += listOf("fs1", "fox sports 1", "fox sports"); n.contains("fs2") -> aliases += listOf("fs2", "fox sports 2", "fox sports"); n.contains("cbs sports") -> aliases += listOf("cbs sports", "cbs"); n.contains("acc network") -> aliases += listOf("acc network", "acc"); n.contains("sec network") -> aliases += listOf("sec network", "sec"); n.contains("big ten") -> aliases += listOf("big ten network", "btn", "big ten"); n.contains("nfl network") -> aliases += listOf("nfl network", "nfl"); n.contains("netflix") -> aliases += listOf("netflix", "wwe"); n.contains("usa network") || n == "usa" -> aliases += listOf("usa network", "usa", "wwe"); n.contains("wwe network") -> aliases += listOf("wwe network", "wwe"); n.contains("peacock") -> aliases += listOf("peacock", "wwe"); n == "cw" || n.contains("cw network") -> aliases += listOf("cw", "cw network", "wwe") }
-        return aliases.map(::normalize).distinct()
+        val normalized = normalize(value)
+        if (normalized.isBlank()) return emptyList()
+        val aliases = linkedSetOf<String>()
+        normalized.split(' ', '/', '|', ',', ';').filter { it.length >= 2 }.forEach { aliases += it }
+        aliases += normalized
+        val tokens = aliases.toList()
+        tokens.forEach { n ->
+            when {
+                n.contains("espn plus") || n == "espn" -> aliases += listOf("espn plus", "espn")
+                n.contains("espn2") || n == "espn 2" -> aliases += listOf("espn2", "espn 2", "espn")
+                n.contains("espnu") || n == "espn u" -> aliases += listOf("espnu", "espn u", "espn")
+                n.contains("fs1") -> aliases += listOf("fs1", "fox sports 1", "fox sports")
+                n.contains("fs2") -> aliases += listOf("fs2", "fox sports 2", "fox sports")
+                n.contains("cbs sports") || n == "cbs" -> aliases += listOf("cbs sports", "cbs")
+                n.contains("acc network") || n == "acc" -> aliases += listOf("acc network", "acc")
+                n.contains("sec network") || n == "sec" -> aliases += listOf("sec network", "sec")
+                n.contains("big ten") -> aliases += listOf("big ten network", "btn", "big ten")
+                n.contains("nfl network") -> aliases += listOf("nfl network", "nfl")
+                n.contains("netflix") -> aliases += listOf("netflix", "wwe")
+                n.contains("usa network") || n == "usa" -> aliases += listOf("usa network", "usa", "wwe")
+                n.contains("wwe network") -> aliases += listOf("wwe network", "wwe")
+                n.contains("peacock") -> aliases += listOf("peacock", "wwe")
+                n == "cw" || n.contains("cw network") -> aliases += listOf("cw", "cw network", "wwe")
+            }
+        }
+        return aliases.map(::normalize).filter { it.length >= 2 }.distinct()
     }
     private fun normalize(value: String): String = value.lowercase().replace('&', ' ').replace("+", " plus ").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
     private fun cacheKey(config: SourceConfig): String = listOf(config.type, config.server.trim().removeSuffix("/"), config.username, config.m3uUrl, BuildConfig.PAIRING_BASE_URL).joinToString("|")
