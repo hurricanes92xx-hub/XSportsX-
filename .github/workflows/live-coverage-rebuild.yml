@@ -15,17 +15,13 @@ on:
       - '.github/workflows/live-coverage-rebuild.yml'
   schedule:
     - cron: '*/10 * * * *'
-
 permissions:
   contents: write
-
 concurrency:
   group: xsportsx-live-coverage
   cancel-in-progress: true
-
 env:
   PYTHONUNBUFFERED: '1'
-
 jobs:
   rebuild:
     runs-on: ubuntu-24.04
@@ -59,19 +55,17 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p=Path('data/schedule_feed.json')
-          d=json.loads(p.read_text())
+          d=json.loads(Path('data/schedule_feed.json').read_text())
           events=d.get('events') or []
           if not events: raise SystemExit('EMPTY CANONICAL FEED')
           live=[e for e in events if str(e.get('tag','')).upper()=='LIVE' or str(e.get('status','')).upper()=='LIVE' or str(e.get('state','')).lower()=='in']
-          future=[e for e in live if str(e.get('startUtc') or e.get('start') or '') > '']
           sports={str(e.get('sport') or e.get('league')) for e in live}
           print('LIVE EVENTS:',len(live))
           print('LIVE SPORTS:',sorted(sports))
-          for e in live[:100]: print(e.get('league'), '|', e.get('title'), '|', e.get('startUtc'), '|', e.get('status'), '|', e.get('state'), '|', e.get('source'))
+          for e in live[:100]: print(e.get('league'),'|',e.get('title'),'|',e.get('startUtc'),'|',e.get('status'),'|',e.get('state'),'|',e.get('source'))
           if not live: raise SystemExit('NO LIVE EVENTS AFTER SWEEP')
           sweep=d.get('liveSweep') or {}
-          if sweep.get('schema') not in {2,3}: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
+          if sweep.get('schema') != 4: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
           if sweep.get('liveStatePolicy') != 'provider-authoritative-no-timing-inference': raise SystemExit('LIVE SWEEP IS NOT PROVIDER-AUTHORITATIVE')
           PY
       - name: Publish
