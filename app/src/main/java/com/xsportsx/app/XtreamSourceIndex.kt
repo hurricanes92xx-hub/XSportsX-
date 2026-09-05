@@ -177,3 +177,80 @@ class XtreamSourceIndex(context: Context) {
         persistChannels(key, result)
         return result
     }
+
+    private fun categoryScore(name: String, event: SportsEvent?): Int {
+        val n = normalize(name)
+        if (n.isBlank()) return 0
+        var score = 0
+        SPORTS_TERMS.forEach { if (n.contains(normalize(it))) score += 10 }
+        BROADCAST_CATEGORY_TERMS.forEach { if (n.contains(normalize(it))) score += 18 }
+        if (event != null) {
+            listOf(event.sport, event.league, event.broadcast).forEach { term ->
+                val t = normalize(term)
+                if (t.length >= 3 && n.contains(t)) score += 25
+            }
+            val eventTerms = normalize("${event.sport} ${event.league} ${event.broadcast} ${event.title}")
+            if (eventTerms.contains("wwe") && n.contains("wrestling")) score += 25
+            if (eventTerms.contains("ufc") && (n.contains("ufc") || n.contains("fight"))) score += 25
+            if (eventTerms.contains("volleyball") && n.contains("volleyball")) score += 30
+            if (eventTerms.contains("field hockey") && n.contains("hockey")) score += 30
+
+            // College events often arrive without a broadcaster. Keep the major
+            // U.S. broadcast families eligible without requiring exact event text.
+            if (eventTerms.contains("ncaa") || eventTerms.contains("college") || eventTerms.contains("university")) {
+                listOf("espn", "abc", "cbs", "fox", "fs1", "sec network", "secn", "acc network", "accn", "big ten network", "btn")
+                    .forEach { if (n.contains(it)) score += 12 }
+            }
+        }
+        return score
+    }
+
+    private fun sourceKey(config: SourceConfig): String = sha1("${config.server}|${config.username}")
+    private fun authQuery(config: SourceConfig): String = "username=${enc(config.username)}&password=${enc(config.password)}"
+    private fun enc(value: String): String = URLEncoder.encode(value, "UTF-8")
+    private fun normalize(value: String) = value.lowercase().replace("+", " plus ").replace(Regex("[^a-z0-9]+"), " ").trim().replace(Regex("\\s+"), " ")
+
+    private fun persistCategories(key: String, values: List<Category>) {
+        val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name)) }
+        prefs.edit().putString("cat_$key", a.toString()).putLong("cat_time_$key", System.currentTimeMillis()).apply()
+    }
+
+    private fun loadPersistedCategories(key: String): List<Category>? = runCatching {
+        val a = JSONArray(prefs.getString("cat_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Category(o.optString("id"), o.optString("name"))) } }
+    }.getOrNull()?.takeIf { it.isNotEmpty() }
+
+    private fun persistChannels(key: String, values: List<Channel>) {
+        val a = JSONArray(); values.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name).put("categoryId", it.categoryId).put("group", it.group).put("icon", it.icon)) }
+        prefs.edit().putString("streams_$key", a.toString()).putLong("stream_time_$key", System.currentTimeMillis()).apply()
+    }
+
+    private fun loadPersistedChannels(key: String): List<Channel>? = runCatching {
+        val a = JSONArray(prefs.getString("streams_$key", "[]")); buildList { for (i in 0 until a.length()) { val o = a.optJSONObject(i) ?: continue; add(Channel(o.optString("id"), o.optString("name"), o.optString("categoryId"), o.optString("group"), o.optString("icon"))) } }
+    }.getOrNull()?.takeIf { it.isNotEmpty() }
+
+    private fun sha1(value: String): String {
+        val bytes = java.security.MessageDigest.getInstance("SHA-1").digest(value.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
+
+    private fun http(target: String): String {
+        val c = (URL(target).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = 2_000
+            readTimeout = CATEGORY_CALL_TIMEOUT_MS
+            instanceFollowRedirects = true
+            useCaches = true
+            setRequestProperty("User-Agent", "XSportsX/3.0")
+            setRequestProperty("Accept", "application/json")
+            setRequestProperty("Accept-Encoding", "gzip")
+            setRequestProperty("Connection", "keep-alive")
+        }
+        return try {
+            val code = c.responseCode
+            if (code !in 200..299) error("Source returned HTTP $code")
+            val raw: InputStream = BufferedInputStream(c.inputStream)
+            val input = if (c.contentEncoding?.contains("gzip", true) == true) GZIPInputStream(raw) else raw
+            input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        } finally { c.disconnect() }
+    }
+}
