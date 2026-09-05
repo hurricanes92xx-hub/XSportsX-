@@ -1,6 +1,6 @@
 {
   "schema": 8,
-  "generatedAt": "2026-09-05T17:10:54.591719Z",
+  "generatedAt": "2026-09-05T17:19:50.538584Z",
   "refreshHours": 6,
   "eventCounts": {
     "F1": 28,
@@ -17,15 +17,15 @@
     "FIVB Women": 24,
     "Serie A": 30,
     "NCAA Women's Volleyball": 841,
-    "ATP": 6,
     "LaLiga": 39,
     "NASCAR Cup": 25,
     "NCAA Women's Field Hockey": 79,
-    "NCAA Women's Soccer": 378,
+    "NCAA Women's Soccer": 382,
+    "ATP": 5,
     "Ligue 1": 24,
     "NASCAR Xfinity": 15,
     "NCAA FB": 102,
-    "UFC": 17,
+    "UFC": 10,
     "NCAA Men's Soccer": 231,
     "NWSL": 40,
     "MLS": 76,
@@ -47,14 +47,10 @@
     "TNA": 1
   },
   "failedSources": [
-    "NASCAR Trucks",
-    "WRC",
-    "X Games"
+    "NASCAR Trucks"
   ],
   "providerFailures": [
-    "NASCAR Trucks",
-    "WRC",
-    "X Games"
+    "NASCAR Trucks"
   ],
   "noEventLeagues": [
     "AAA Wrestling",
@@ -79,7 +75,8 @@
     "NLL",
     "Rugby World Cup",
     "Six Nations",
-    "WEC"
+    "WEC",
+    "WRC"
   ],
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
@@ -93,7 +90,7 @@
     "jolpica-f1": 23,
     "openf1": 1,
     "fivb-vis": 111,
-    "cache": 75,
+    "cache": 76,
     "mlb-official": 342,
     "espn-shadow": 133,
     "nascar": 93,
@@ -1232,7 +1229,9 @@
       "standbyProviders": [
         "sportradar",
         "sportsdataio"
-      ]
+      ],
+      "promotedFrom": "official",
+      "promotedTo": "cache"
     }
   },
   "providerAttempts": {
@@ -1241,7 +1240,7 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 186.1,
+        "latencyMs": 228.6,
         "error": ""
       },
       {
@@ -1257,7 +1256,7 @@
         "provider": "wrestling",
         "ok": true,
         "events": 4,
-        "latencyMs": 350.1,
+        "latencyMs": 761.3,
         "error": ""
       }
     ],
@@ -1266,14 +1265,14 @@
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 197.2,
+        "latencyMs": 283.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 293.1,
+        "latencyMs": 479.5,
         "error": ""
       }
     ],
@@ -1282,28 +1281,28 @@
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 156.8,
+        "latencyMs": 519.6,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 141.6,
+        "latencyMs": 306.6,
         "error": ""
       },
       {
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 83.2,
+        "latencyMs": 117.1,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 137.6,
+        "latencyMs": 206.8,
         "error": ""
       }
     ],
@@ -1312,67 +1311,7 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1931.7,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 14.7,
-        "error": "cache"
-      }
-    ],
-    "Bundesliga": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 116.2,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 26,
-        "latencyMs": 40.6,
-        "error": ""
-      },
-      {
-        "provider": "openligadb",
-        "ok": true,
-        "events": 306,
-        "latencyMs": 960.5,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 151.9,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 109.1,
-        "error": ""
-      }
-    ],
-    "CFL": [
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 28.6,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 285.0,
+        "latencyMs": 1733.6,
         "error": ""
       },
       {
@@ -1383,33 +1322,93 @@
         "error": "cache"
       }
     ],
-    "EPL": [
+    "Bundesliga": [
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 126.4,
+        "latencyMs": 220.4,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
-        "events": 29,
-        "latencyMs": 55.4,
+        "events": 26,
+        "latencyMs": 302.5,
+        "error": ""
+      },
+      {
+        "provider": "openligadb",
+        "ok": true,
+        "events": 306,
+        "latencyMs": 1509.3,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 119.2,
+        "latencyMs": 116.6,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 100.5,
+        "latencyMs": 226.7,
+        "error": ""
+      }
+    ],
+    "CFL": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 148.4,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 337.6,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 14.7,
+        "error": "cache"
+      }
+    ],
+    "EPL": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 208.9,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 29,
+        "latencyMs": 293.7,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 968.7,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 209.5,
         "error": ""
       }
     ],
@@ -1418,28 +1417,28 @@
         "provider": "jolpica-f1",
         "ok": true,
         "events": 23,
-        "latencyMs": 63.9,
+        "latencyMs": 73.0,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 4,
-        "latencyMs": 24.4,
+        "latencyMs": 219.2,
         "error": ""
       },
       {
         "provider": "openf1",
         "ok": true,
         "events": 1,
-        "latencyMs": 480.8,
+        "latencyMs": 478.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 130.9,
+        "latencyMs": 297.9,
         "error": ""
       }
     ],
@@ -1448,7 +1447,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 87,
-        "latencyMs": 288.4,
+        "latencyMs": 720.0,
         "error": ""
       }
     ],
@@ -1457,7 +1456,7 @@
         "provider": "fivb-get",
         "ok": true,
         "events": 24,
-        "latencyMs": 174.5,
+        "latencyMs": 309.5,
         "error": ""
       }
     ],
@@ -1466,7 +1465,7 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 350.8,
+        "latencyMs": 128.7,
         "error": ""
       },
       {
@@ -1482,28 +1481,28 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 168.0,
+        "latencyMs": 171.8,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 4198.6,
+        "latencyMs": 446.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 200.4,
+        "latencyMs": 259.8,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 103.0,
+        "latencyMs": 186.1,
         "error": ""
       },
       {
@@ -1519,7 +1518,7 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 380.1,
+        "latencyMs": 1044.6,
         "error": ""
       },
       {
@@ -1535,35 +1534,35 @@
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 159.9,
+        "latencyMs": 281.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 134.4,
+        "latencyMs": 183.3,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 141.5,
+        "latencyMs": 263.9,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 99.4,
+        "latencyMs": 198.6,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": true,
         "events": 74,
-        "latencyMs": 14.5,
+        "latencyMs": 13.9,
         "error": "cache"
       }
     ],
@@ -1572,14 +1571,14 @@
         "provider": "espn",
         "ok": true,
         "events": 1,
-        "latencyMs": 25.0,
+        "latencyMs": 150.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 190.2,
+        "latencyMs": 522.1,
         "error": ""
       }
     ],
@@ -1588,14 +1587,159 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 69.4,
+        "latencyMs": 151.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 127.1,
+        "latencyMs": 264.3,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 15.7,
+        "error": "cache"
+      }
+    ],
+    "LPGA": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 3,
+        "latencyMs": 149.3,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 174.2,
+        "error": ""
+      }
+    ],
+    "LaLiga": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 197.5,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 38,
+        "latencyMs": 293.7,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1193.1,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 221.0,
+        "error": ""
+      }
+    ],
+    "Ligue 1": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 203.0,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 24,
+        "latencyMs": 290.1,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 212.0,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1309.6,
+        "error": ""
+      }
+    ],
+    "MLB": [
+      {
+        "provider": "mlb-official",
+        "ok": true,
+        "events": 342,
+        "latencyMs": 409.5,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 198.1,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 326,
+        "latencyMs": 616.2,
+        "error": ""
+      }
+    ],
+    "MLS": [
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 208.2,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 75,
+        "latencyMs": 315.5,
+        "error": ""
+      },
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 75,
+        "latencyMs": 372.3,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 680.0,
+        "error": ""
+      }
+    ],
+    "MONSTER JAM": [
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 119.4,
         "error": ""
       },
       {
@@ -1606,164 +1750,19 @@
         "error": "cache"
       }
     ],
-    "LPGA": [
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 3,
-        "latencyMs": 83.0,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 131.5,
-        "error": ""
-      }
-    ],
-    "LaLiga": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 101.5,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 38,
-        "latencyMs": 47.5,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 105.5,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 98.6,
-        "error": ""
-      }
-    ],
-    "Ligue 1": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 99.2,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 24,
-        "latencyMs": 42.1,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 103.8,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 903.9,
-        "error": ""
-      }
-    ],
-    "MLB": [
-      {
-        "provider": "mlb-official",
-        "ok": true,
-        "events": 342,
-        "latencyMs": 123.5,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 103.7,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 326,
-        "latencyMs": 147.7,
-        "error": ""
-      }
-    ],
-    "MLS": [
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 111.5,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 75,
-        "latencyMs": 248.4,
-        "error": ""
-      },
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 75,
-        "latencyMs": 51.9,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 81.3,
-        "error": ""
-      }
-    ],
-    "MONSTER JAM": [
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 123.4,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.5,
-        "error": "cache"
-      }
-    ],
     "MXGP": [
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 584.7,
+        "latencyMs": 835.0,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.5,
+        "latencyMs": 14.6,
         "error": "cache"
       }
     ],
@@ -1772,14 +1771,14 @@
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 185.4,
+        "latencyMs": 178.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 19.8,
+        "latencyMs": 14.6,
         "error": "cache"
       }
     ],
@@ -1788,7 +1787,7 @@
         "provider": "nascar",
         "ok": true,
         "events": 46,
-        "latencyMs": 130.9,
+        "latencyMs": 335.0,
         "error": ""
       }
     ],
@@ -1797,14 +1796,14 @@
         "provider": "nascar",
         "ok": true,
         "events": 21,
-        "latencyMs": 26.9,
+        "latencyMs": 34.7,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 21.1,
+        "latencyMs": 147.4,
         "error": ""
       }
     ],
@@ -1813,7 +1812,78 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 119.8,
+        "latencyMs": 121.8,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 16.8,
+        "error": "cache"
+      }
+    ],
+    "NASCAR Xfinity": [
+      {
+        "provider": "nascar",
+        "ok": true,
+        "events": 26,
+        "latencyMs": 27.7,
+        "error": ""
+      }
+    ],
+    "NBA": [
+      {
+        "provider": "espn",
+        "ok": true,
+        "events": 7,
+        "latencyMs": 187.3,
+        "error": ""
+      },
+      {
+        "provider": "sportsdb",
+        "ok": true,
+        "events": 1,
+        "latencyMs": 203.5,
+        "error": ""
+      },
+      {
+        "provider": "official",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 309.8,
+        "error": ""
+      },
+      {
+        "provider": "sportscore",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 249.2,
+        "error": ""
+      }
+    ],
+    "NCAA BB": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1909.0,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 16.1,
+        "error": "cache"
+      }
+    ],
+    "NCAA Baseball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1914.3,
         "error": ""
       },
       {
@@ -1824,90 +1894,19 @@
         "error": "cache"
       }
     ],
-    "NASCAR Xfinity": [
-      {
-        "provider": "nascar",
-        "ok": true,
-        "events": 26,
-        "latencyMs": 42.2,
-        "error": ""
-      }
-    ],
-    "NBA": [
-      {
-        "provider": "espn",
-        "ok": true,
-        "events": 7,
-        "latencyMs": 40.9,
-        "error": ""
-      },
-      {
-        "provider": "sportsdb",
-        "ok": true,
-        "events": 1,
-        "latencyMs": 102.1,
-        "error": ""
-      },
-      {
-        "provider": "official",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 56.7,
-        "error": ""
-      },
-      {
-        "provider": "sportscore",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 450.2,
-        "error": ""
-      }
-    ],
-    "NCAA BB": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1779.8,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.2,
-        "error": "cache"
-      }
-    ],
-    "NCAA Baseball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 3896.3,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 16.6,
-        "error": "cache"
-      }
-    ],
     "NCAA Beach Volleyball": [
       {
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1895.9,
+        "latencyMs": 2444.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.3,
+        "latencyMs": 17.9,
         "error": "cache"
       }
     ],
@@ -1916,7 +1915,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 51,
-        "latencyMs": 1954.6,
+        "latencyMs": 1838.6,
         "error": ""
       }
     ],
@@ -1925,7 +1924,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1850.8,
+        "latencyMs": 1923.8,
         "error": ""
       },
       {
@@ -1941,32 +1940,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1847.9,
-        "error": ""
-      },
-      {
-        "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 17.9,
-        "error": "cache"
-      }
-    ],
-    "NCAA Men's Soccer": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 342,
-        "latencyMs": 1811.9,
-        "error": ""
-      }
-    ],
-    "NCAA Men's Volleyball": [
-      {
-        "provider": "ncaa",
-        "ok": true,
-        "events": 0,
-        "latencyMs": 1898.2,
+        "latencyMs": 1905.6,
         "error": ""
       },
       {
@@ -1977,12 +1951,37 @@
         "error": "cache"
       }
     ],
+    "NCAA Men's Soccer": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 342,
+        "latencyMs": 2268.6,
+        "error": ""
+      }
+    ],
+    "NCAA Men's Volleyball": [
+      {
+        "provider": "ncaa",
+        "ok": true,
+        "events": 0,
+        "latencyMs": 1982.4,
+        "error": ""
+      },
+      {
+        "provider": "cache",
+        "ok": false,
+        "events": 0,
+        "latencyMs": 18.2,
+        "error": "cache"
+      }
+    ],
     "NCAA Men's Water Polo": [
       {
         "provider": "ncaa",
         "ok": true,
         "events": 53,
-        "latencyMs": 2206.0,
+        "latencyMs": 2022.8,
         "error": ""
       }
     ],
@@ -1991,7 +1990,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1994.7,
+        "latencyMs": 2365.4,
         "error": ""
       },
       {
@@ -2007,14 +2006,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 2097.2,
+        "latencyMs": 1826.4,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 16.2,
+        "latencyMs": 16.1,
         "error": "cache"
       }
     ],
@@ -2023,7 +2022,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 79,
-        "latencyMs": 1857.2,
+        "latencyMs": 1831.2,
         "error": ""
       }
     ],
@@ -2032,14 +2031,14 @@
         "provider": "espn",
         "ok": true,
         "events": 743,
-        "latencyMs": 110.2,
+        "latencyMs": 502.2,
         "error": ""
       },
       {
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1959.7,
+        "latencyMs": 1956.0,
         "error": ""
       }
     ],
@@ -2048,14 +2047,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1962.7,
+        "latencyMs": 2007.8,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 18.2,
+        "latencyMs": 18.3,
         "error": "cache"
       }
     ],
@@ -2064,7 +2063,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 543,
-        "latencyMs": 2350.2,
+        "latencyMs": 2033.6,
         "error": ""
       }
     ],
@@ -2073,7 +2072,7 @@
         "provider": "ncaa",
         "ok": true,
         "events": 1126,
-        "latencyMs": 2406.9,
+        "latencyMs": 2383.4,
         "error": ""
       }
     ],
@@ -2082,14 +2081,14 @@
         "provider": "ncaa",
         "ok": true,
         "events": 0,
-        "latencyMs": 1620.0,
+        "latencyMs": 2151.4,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 19.1,
+        "latencyMs": 19.0,
         "error": "cache"
       }
     ],
@@ -2098,21 +2097,21 @@
         "provider": "espn",
         "ok": true,
         "events": 17,
-        "latencyMs": 66.5,
+        "latencyMs": 344.7,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 133.4,
+        "latencyMs": 181.1,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 75.2,
+        "latencyMs": 245.6,
         "error": ""
       }
     ],
@@ -2121,21 +2120,21 @@
         "provider": "espn",
         "ok": true,
         "events": 108,
-        "latencyMs": 47.2,
+        "latencyMs": 366.6,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 111.7,
+        "latencyMs": 201.5,
         "error": ""
       },
       {
         "provider": "nhl-official",
         "ok": false,
         "events": 0,
-        "latencyMs": 52.7,
+        "latencyMs": 184.4,
         "error": ""
       }
     ],
@@ -2144,21 +2143,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 33.9,
+        "latencyMs": 147.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 174.6,
+        "latencyMs": 936.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.7,
+        "latencyMs": 14.5,
         "error": "cache"
       }
     ],
@@ -2167,14 +2166,14 @@
         "provider": "espn",
         "ok": true,
         "events": 5,
-        "latencyMs": 63.4,
+        "latencyMs": 257.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 1013.6,
+        "latencyMs": 1324.4,
         "error": ""
       }
     ],
@@ -2183,14 +2182,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 40,
-        "latencyMs": 284.6,
+        "latencyMs": 345.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 232.3,
+        "latencyMs": 311.8,
         "error": ""
       }
     ],
@@ -2199,14 +2198,14 @@
         "provider": "espn",
         "ok": true,
         "events": 3,
-        "latencyMs": 48.5,
+        "latencyMs": 150.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 140.2,
+        "latencyMs": 119.5,
         "error": ""
       }
     ],
@@ -2215,14 +2214,14 @@
         "provider": "espn",
         "ok": true,
         "events": 2,
-        "latencyMs": 22.6,
+        "latencyMs": 149.4,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 157.4,
+        "latencyMs": 303.3,
         "error": ""
       }
     ],
@@ -2231,21 +2230,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 17.9,
+        "latencyMs": 146.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 233.7,
+        "latencyMs": 733.9,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 17.3,
+        "latencyMs": 17.4,
         "error": "cache"
       }
     ],
@@ -2254,21 +2253,21 @@
         "provider": "sportsdb",
         "ok": true,
         "events": 1,
-        "latencyMs": 107.4,
+        "latencyMs": 205.2,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": true,
         "events": 29,
-        "latencyMs": 44.9,
+        "latencyMs": 293.9,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 101.7,
+        "latencyMs": 327.9,
         "error": ""
       }
     ],
@@ -2277,21 +2276,21 @@
         "provider": "espn",
         "ok": true,
         "events": 0,
-        "latencyMs": 47.8,
+        "latencyMs": 150.8,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 141.7,
+        "latencyMs": 268.3,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 16.3,
+        "latencyMs": 16.9,
         "error": "cache"
       }
     ],
@@ -2309,21 +2308,21 @@
         "provider": "espn",
         "ok": true,
         "events": 18,
-        "latencyMs": 33.1,
+        "latencyMs": 259.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 103.4,
+        "latencyMs": 651.3,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 470.9,
+        "latencyMs": 205.1,
         "error": ""
       }
     ],
@@ -2332,14 +2331,14 @@
         "provider": "sportscore",
         "ok": true,
         "events": 18,
-        "latencyMs": 399.8,
+        "latencyMs": 284.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 89.4,
+        "latencyMs": 753.4,
         "error": ""
       }
     ],
@@ -2348,21 +2347,21 @@
         "provider": "espn",
         "ok": true,
         "events": 9,
-        "latencyMs": 56.4,
+        "latencyMs": 255.7,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 115.6,
+        "latencyMs": 167.3,
         "error": ""
       },
       {
         "provider": "sportsdb",
         "ok": false,
         "events": 0,
-        "latencyMs": 96.4,
+        "latencyMs": 176.7,
         "error": ""
       }
     ],
@@ -2371,14 +2370,14 @@
         "provider": "openwec",
         "ok": true,
         "events": 0,
-        "latencyMs": 271.0,
+        "latencyMs": 458.5,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 15.7,
+        "latencyMs": 14.4,
         "error": "cache"
       }
     ],
@@ -2387,37 +2386,37 @@
         "provider": "espn",
         "ok": true,
         "events": 30,
-        "latencyMs": 85.8,
+        "latencyMs": 327.0,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 152.3,
+        "latencyMs": 239.0,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 210.6,
+        "latencyMs": 209.5,
         "error": ""
       }
     ],
     "WRC": [
       {
         "provider": "official",
-        "ok": false,
+        "ok": true,
         "events": 0,
-        "latencyMs": 12388.6,
+        "latencyMs": 4618.7,
         "error": ""
       },
       {
         "provider": "cache",
         "ok": false,
         "events": 0,
-        "latencyMs": 14.5,
+        "latencyMs": 14.4,
         "error": "cache"
       }
     ],
@@ -2426,21 +2425,21 @@
         "provider": "espn",
         "ok": true,
         "events": 19,
-        "latencyMs": 119.0,
+        "latencyMs": 558.9,
         "error": ""
       },
       {
         "provider": "official",
         "ok": true,
         "events": 0,
-        "latencyMs": 131.3,
+        "latencyMs": 133.3,
         "error": ""
       },
       {
         "provider": "sportscore",
         "ok": true,
         "events": 0,
-        "latencyMs": 113.1,
+        "latencyMs": 217.6,
         "error": ""
       }
     ],
@@ -2458,32 +2457,34 @@
         "provider": "official",
         "ok": false,
         "events": 0,
-        "latencyMs": 495.1,
+        "latencyMs": 200.8,
         "error": ""
       },
       {
         "provider": "espn",
         "ok": false,
         "events": 0,
-        "latencyMs": 90.0,
+        "latencyMs": 269.2,
         "error": ""
       },
       {
         "provider": "cache",
-        "ok": false,
-        "events": 0,
-        "latencyMs": 15.8,
+        "ok": true,
+        "events": 1,
+        "latencyMs": 15.9,
         "error": "cache"
       }
     ]
   },
   "providerPromotions": {
     "ICC T20": "cache",
-    "IPL": "cache"
+    "IPL": "cache",
+    "X Games": "cache"
   },
   "cacheRecoveryLeagues": [
     "ICC T20",
-    "IPL"
+    "IPL",
+    "X Games"
   ],
   "events": [
     {
@@ -5619,35 +5620,6 @@
       "sport": "soccer"
     },
     {
-      "league": "ATP",
-      "title": "Jay Clarke @ Juan Pablo Varillas",
-      "start": "2026-09-05T14:10:00Z",
-      "startUtc": "2026-09-05T14:10:00Z",
-      "tag": "LIVE",
-      "status": "LIVE",
-      "state": "in",
-      "home": "Juan Pablo Varillas",
-      "away": "Jay Clarke",
-      "source": "sportscore-shadow",
-      "providerEventId": "sportscore:jayclarke-juanpablovarillas-2026-09-05T14:10:00Z",
-      "liveEvidenceSource": "sportscore",
-      "liveEvidence": {
-        "providerEventId": "sportscore:jayclarke-juanpablovarillas-2026-09-05T14:10:00Z",
-        "provider": "sportscore-shadow",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
-      },
-      "liveStateSource": "free-shadow",
-      "liveEvidenceShadow": [
-        {
-          "providerEventId": "sportscore:jayclarke-juanpablovarillas-2026-09-05T14:10:00Z",
-          "provider": "sportscore-shadow",
-          "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
-        }
-      ],
-      "sport": "tennis",
-      "id": "evt_e867e4c57f200a35330be95c"
-    },
-    {
       "league": "LaLiga",
       "title": "Atlético @ Athletic",
       "start": "2026-09-05T14:15Z",
@@ -5761,7 +5733,7 @@
       "status": "FINAL",
       "state": "post",
       "id": "evt_2915fd607823d6710107b2c3",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -5798,7 +5770,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401896534",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -5917,7 +5889,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401896428",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -5971,7 +5943,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401886024",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6022,14 +5994,14 @@
       "liveEvidence": {
         "providerEventId": "sportscore:ulinzi-stanbicshields-2026-09-05T15:00:00Z",
         "provider": "sportscore-shadow",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       },
       "liveStateSource": "free-shadow",
       "liveEvidenceShadow": [
         {
           "providerEventId": "sportscore:ulinzi-stanbicshields-2026-09-05T15:00:00Z",
           "provider": "sportscore-shadow",
-          "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+          "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
         }
       ],
       "sport": "soccer",
@@ -6051,14 +6023,14 @@
       "liveEvidence": {
         "providerEventId": "sportscore:inakimontesdelatorre-lucapotenza-2026-09-05T15:10:00Z",
         "provider": "sportscore-shadow",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       },
       "liveStateSource": "free-shadow",
       "liveEvidenceShadow": [
         {
           "providerEventId": "sportscore:inakimontesdelatorre-lucapotenza-2026-09-05T15:10:00Z",
           "provider": "sportscore-shadow",
-          "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+          "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
         }
       ],
       "sport": "tennis",
@@ -6122,7 +6094,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401897794",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6144,7 +6116,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401891238",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6196,7 +6168,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401858425",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6218,7 +6190,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401856634",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6240,7 +6212,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401856778",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6262,7 +6234,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401856780",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6284,7 +6256,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401858208",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6306,7 +6278,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401858430",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6328,7 +6300,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401861962",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6350,7 +6322,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401862701",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6372,7 +6344,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401866410",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6394,7 +6366,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401869960",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6416,7 +6388,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401883660",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6438,7 +6410,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890037",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6460,7 +6432,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401901157",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6533,7 +6505,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401901338",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6606,7 +6578,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401897031",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6696,7 +6668,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401884819",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6718,7 +6690,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401887880",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6740,7 +6712,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890484",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6748,22 +6720,16 @@
       "title": "Evansville @ Kansas City",
       "start": "2026-09-05T16:00:00Z",
       "startUtc": "2026-09-05T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Evansville",
       "home": "Kansas City",
       "providerEventId": "espn:401890556",
-      "status": "LIVE",
-      "state": "in",
+      "status": "FINAL",
+      "state": "post",
       "id": "evt_1a7e3f8a35129b988f3c5f8c",
-      "sport": "volleyball-women",
-      "liveEvidence": {
-        "source": "espn-ncaa",
-        "providerEventId": "espn:401890556",
-        "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
-      }
+      "sport": "volleyball-women"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -6784,7 +6750,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890639",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6806,7 +6772,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401891592",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6828,7 +6794,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401896990",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6850,7 +6816,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401897375",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6858,22 +6824,16 @@
       "title": "Merrimack @ SE Missouri",
       "start": "2026-09-05T16:00:00Z",
       "startUtc": "2026-09-05T16:00:00Z",
-      "tag": "LIVE",
+      "tag": "FINAL",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Merrimack",
       "home": "SE Missouri",
       "providerEventId": "espn:401898361",
-      "status": "LIVE",
-      "state": "in",
+      "status": "FINAL",
+      "state": "post",
       "id": "evt_bae854183436558e20a21762",
-      "sport": "volleyball-women",
-      "liveEvidence": {
-        "source": "espn-ncaa",
-        "providerEventId": "espn:401898361",
-        "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
-      }
+      "sport": "volleyball-women"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -6894,7 +6854,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401901281",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6916,7 +6876,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401901593",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6938,7 +6898,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401903021",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -6972,16 +6932,16 @@
       "startUtc": "2026-09-05T16:00Z",
       "status": "LIVE",
       "state": "in",
-      "provider_shortDetail": "49'",
-      "provider_detail": "49'",
-      "provider_displayClock": "49'",
+      "provider_shortDetail": "58'",
+      "provider_detail": "58'",
+      "provider_displayClock": "58'",
       "provider_period": 2,
       "sport": "soccer",
       "liveEvidence": {
         "source": "espn-live-sweep",
         "providerEventId": "espn:401874937",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7017,7 +6977,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401858432",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7039,7 +6999,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401858207",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7058,16 +7018,16 @@
       "startUtc": "2026-09-05T16:30Z",
       "status": "LIVE",
       "state": "in",
-      "provider_shortDetail": "41'",
-      "provider_detail": "41'",
-      "provider_displayClock": "41'",
+      "provider_shortDetail": "HT",
+      "provider_detail": "HT",
+      "provider_displayClock": "45'+3'",
       "provider_period": 1,
       "sport": "soccer",
       "liveEvidence": {
         "source": "espn-live-sweep",
         "providerEventId": "espn:401884801",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7086,16 +7046,16 @@
       "startUtc": "2026-09-05T16:30Z",
       "status": "LIVE",
       "state": "in",
-      "provider_shortDetail": "41'",
-      "provider_detail": "41'",
-      "provider_displayClock": "41'",
+      "provider_shortDetail": "HT",
+      "provider_detail": "HT",
+      "provider_displayClock": "45'+2'",
       "provider_period": 1,
       "sport": "soccer",
       "liveEvidence": {
         "source": "espn-live-sweep",
         "providerEventId": "espn:401878781",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7114,16 +7074,16 @@
       "startUtc": "2026-09-05T16:30Z",
       "status": "LIVE",
       "state": "in",
-      "provider_shortDetail": "41'",
-      "provider_detail": "41'",
-      "provider_displayClock": "41'",
+      "provider_shortDetail": "45'+4'",
+      "provider_detail": "45'+4'",
+      "provider_displayClock": "45'+4'",
       "provider_period": 1,
       "sport": "soccer",
       "liveEvidence": {
         "source": "espn-live-sweep",
         "providerEventId": "espn:401882889",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7145,7 +7105,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401856665",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7167,24 +7127,8 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401856659",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
-    },
-    {
-      "league": "NCAA FB",
-      "title": "SE Missouri @ Iowa State",
-      "start": "2026-09-05T17:00:00Z",
-      "startUtc": "2026-09-05T17:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "🏈",
-      "source": "espn-ncaa",
-      "away": "SE Missouri",
-      "home": "Iowa State",
-      "providerEventId": "espn:401856779",
-      "status": "UPCOMING",
-      "state": "pre",
-      "id": "evt_6103be3a5a4373e2244fe7a0",
-      "sport": "football"
     },
     {
       "league": "NCAA FB",
@@ -7205,8 +7149,24 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401864496",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
+    },
+    {
+      "league": "NCAA FB",
+      "title": "SE Missouri @ Iowa State",
+      "start": "2026-09-05T17:00:00Z",
+      "startUtc": "2026-09-05T17:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "🏈",
+      "source": "espn-ncaa",
+      "away": "SE Missouri",
+      "home": "Iowa State",
+      "providerEventId": "espn:401856779",
+      "status": "UPCOMING",
+      "state": "pre",
+      "id": "evt_6103be3a5a4373e2244fe7a0",
+      "sport": "football"
     },
     {
       "league": "NCAA Men's Soccer",
@@ -7275,7 +7235,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890012",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7297,7 +7257,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401889995",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7319,7 +7279,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890066",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7341,7 +7301,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401902519",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7363,7 +7323,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401891146",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7385,7 +7345,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401887462",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7526,7 +7486,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401896522",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7548,7 +7508,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401903472",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7637,7 +7597,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401885727",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7659,7 +7619,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401887979",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7681,7 +7641,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401888732",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7703,7 +7663,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401888752",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7725,7 +7685,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401890611",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7747,7 +7707,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401897223",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7769,7 +7729,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401898142",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7791,7 +7751,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401899915",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7813,7 +7773,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401900454",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7835,7 +7795,7 @@
         "source": "espn-ncaa",
         "providerEventId": "espn:401902223",
         "providerState": "LIVE",
-        "checkedAtUtc": "2026-09-05T17:10:54.591719Z"
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
       }
     },
     {
@@ -7843,16 +7803,22 @@
       "title": "Lehigh @ NJIT",
       "start": "2026-09-05T17:10:00Z",
       "startUtc": "2026-09-05T17:10:00Z",
-      "tag": "UPCOMING",
+      "tag": "LIVE",
       "icon": "🏐",
       "source": "espn-ncaa",
       "away": "Lehigh",
       "home": "NJIT",
       "providerEventId": "espn:401903187",
-      "status": "UPCOMING",
-      "state": "pre",
+      "status": "LIVE",
+      "state": "in",
       "id": "evt_3431703fd9e2c4f65ba619b4",
-      "sport": "volleyball-women"
+      "sport": "volleyball-women",
+      "liveEvidence": {
+        "source": "espn-ncaa",
+        "providerEventId": "espn:401903187",
+        "providerState": "LIVE",
+        "checkedAtUtc": "2026-09-05T17:19:50.538584Z"
+      }
     },
     {
       "league": "NASCAR Xfinity",
@@ -12484,7 +12450,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_95879ba4e4bd8cdf89c77ba7",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NRL",
@@ -12619,7 +12585,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_3a624a4d2d83506e8de4c76e",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -12635,7 +12601,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_5a759e9b2ff7000b475173ad",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "FIVB Men",
@@ -12944,7 +12910,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_c4b0e787a226dd51b5944d71",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -13012,7 +12978,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_134ac0f58b1a8490ea0bc795",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -13328,7 +13294,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_c8c27d9cb99b140dd5e442be",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13440,7 +13406,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_b35264cf1fd7beffd7a42eda",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -13456,7 +13422,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_dfa108d1cdab950384670a4f",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -13812,7 +13778,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ee71a119466f7f7e5d1db3c4",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13828,7 +13794,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ae47d1958546365888b83f41",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13844,7 +13810,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_97337339d9fe631037fdafca",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13860,7 +13826,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6e385779cc280a94e2f56520",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13908,7 +13874,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_06c12af3a7fd3e9da7b84926",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13924,7 +13890,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_8b23c4d475b5498c92c05308",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13940,7 +13906,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_515d07cc84e86a73204ef988",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -13988,7 +13954,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_f493be5e2cf957dcb68c9963",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14020,7 +13986,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_3c1abc5a996280a44794291b",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14116,7 +14082,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_42cf42d0c570b09331e756b1",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14132,7 +14098,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_37ba30960f29274a566c15d9",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14260,7 +14226,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ae38590a9e261cd278b59437",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14308,7 +14274,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_3525af2a21a634f5985c92d7",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14324,7 +14290,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_9942fe2575c2974cc3b05cb1",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14388,7 +14354,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_f06373a0557f8be0c997344c",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14404,7 +14370,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_0d9f3173484e795b148f69b6",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14420,7 +14386,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6442e694abef47918520d036",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14452,7 +14418,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_858c5858a4822af68efb19bf",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14468,7 +14434,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_0780b00c72b77b749548f107",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -14852,7 +14818,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_30e67f2a3f3e9767b9b19cd5",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -14900,7 +14866,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6f1172a509bb95d1f0a4aa11",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -14932,7 +14898,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_4e8d82316d7d99dbc4127075",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -14996,7 +14962,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_2a5ef16331a8c395d6adc8f8",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -15061,6 +15027,38 @@
       "state": "pre",
       "id": "evt_95e79bc618e8e3390fcdd58d",
       "sport": "volleyball-women"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Dartmouth @ Arizona",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "ncaa-current-api",
+      "start": "2026-09-06T17:00:00Z",
+      "startUtc": "2026-09-06T17:00:00Z",
+      "away": "Dartmouth",
+      "home": "Arizona",
+      "providerEventId": "ncaa:6609860",
+      "status": "UPCOMING",
+      "state": "pre",
+      "sport": "soccer-women",
+      "id": "evt_6f1f83f59fb726a8196a53a5"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Missouri St. @ Iowa",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "ncaa-current-api",
+      "start": "2026-09-06T17:04:00Z",
+      "startUtc": "2026-09-06T17:04:00Z",
+      "away": "Missouri St.",
+      "home": "Iowa",
+      "providerEventId": "ncaa:6607848",
+      "status": "UPCOMING",
+      "state": "pre",
+      "sport": "soccer-women",
+      "id": "evt_828d91e9042e48034cac2d8d"
     },
     {
       "league": "MLB",
@@ -15336,7 +15334,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_d9e37bce7dcec717a1612b29",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15384,7 +15382,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_8ffe74e550d5c79f526b57aa",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15400,7 +15398,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_f0223b2a273795454c5c0aeb",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15448,7 +15446,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_e4ae5ce30bd0d5684ab4c70b",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15464,7 +15462,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_9bdef0216f82414759ffd6b9",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15544,7 +15542,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_242fe13fcaad4c8ddb1f747f",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15656,7 +15654,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_27206295716382f97319ffa1",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15672,7 +15670,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6a464e4111eab0749627c145",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15688,7 +15686,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_dfcccb0a138fd39a4473a813",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15704,7 +15702,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_2e4969d14d414b6c3e157ccf",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15720,7 +15718,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_47d93b22d4fef1f78502cfce",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -15752,7 +15750,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_8f9a356c77d5441feada35a0",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16088,7 +16086,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_8effd5480bcc054f1825e25f",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -16104,7 +16102,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ad07c25d3fcb71fc7bd76d5b",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -16203,6 +16201,22 @@
       "sport": "volleyball-women"
     },
     {
+      "league": "NCAA Women's Soccer",
+      "title": "Indiana St. @ SIUE",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "ncaa-current-api",
+      "start": "2026-09-06T18:00:00Z",
+      "startUtc": "2026-09-06T18:00:00Z",
+      "away": "Indiana St.",
+      "home": "SIUE",
+      "providerEventId": "ncaa:6609566",
+      "status": "UPCOMING",
+      "state": "pre",
+      "sport": "soccer-women",
+      "id": "evt_7660a840c2e96a164bc9e8d1"
+    },
+    {
       "league": "NWSL",
       "title": "Gotham @ Denver",
       "start": "2026-09-06T18:00Z",
@@ -16274,7 +16288,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_37e08e6a15f88286d56eb1a2",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -16454,7 +16468,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_98380019ad63e5a2be712ee7",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16470,7 +16484,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_32c7c9c6cf6028fbf1753f76",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16486,7 +16500,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_2cb57385d3a710690a874a1d",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16502,7 +16516,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_33738d2de63041fd34b3855f",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16518,7 +16532,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_cdb66a5a743f6922d022a020",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16550,7 +16564,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ff580d469f8e22cae8ade7b7",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -16742,7 +16756,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_4910bbdbe7f06a89e37d2367",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -16807,6 +16821,22 @@
       "state": "pre",
       "id": "evt_db3401602b5da3a6e9c4d40f",
       "sport": "volleyball-women"
+    },
+    {
+      "league": "NCAA Women's Soccer",
+      "title": "Alabama St. @ Mercer",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "ncaa-current-api",
+      "start": "2026-09-06T19:00:00Z",
+      "startUtc": "2026-09-06T19:00:00Z",
+      "away": "Alabama St.",
+      "home": "Mercer",
+      "providerEventId": "ncaa:6639276",
+      "status": "UPCOMING",
+      "state": "pre",
+      "sport": "soccer-women",
+      "id": "evt_e9e2256f3b9cfb051ef25d98"
     },
     {
       "league": "LaLiga",
@@ -16962,7 +16992,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_7c1b85f45c1e557fb988be39",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17026,7 +17056,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6c62e8c870ee49fd1188ac1d",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17042,7 +17072,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_e68c3b04c402f0e5d607e034",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17238,7 +17268,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_743a3dfa6923720f0000403a",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17302,7 +17332,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_d3f3499d35f80d64c9e87ff4",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17334,7 +17364,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_fe65d001628ceea6b0b45458",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17430,7 +17460,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_9d23cded4349313f77f074cc",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17446,7 +17476,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_28fca900bb5f7ca0386a8fbf",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17510,7 +17540,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_8f6844e738d38556ae76f294",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17692,7 +17722,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_c98682a8b479103b772a70ca",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17740,7 +17770,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_175fc8c7ad3df3386f690eff",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17772,7 +17802,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_615f94aa6116b307029c2dfd",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17804,7 +17834,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_7844101f54c1f22771dfe771",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -17900,7 +17930,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_c268d3a6b462bc1c1473bdfc",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -17994,7 +18024,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_db4e8e6a5712072ae4b9c33a",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -18010,7 +18040,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_6fb36908330749daebb5f137",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -18137,7 +18167,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_a747c0c176ea17e86b06d6b7",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -18263,7 +18293,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_b0e0988a9c83086a1476ea64",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -18279,7 +18309,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_ef3adecad9baed3eeb88379d",
-      "sport": "other"
+      "sport": "soccer-women"
     },
     {
       "league": "NCAA Women's Soccer",
@@ -18397,7 +18427,7 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_f4476854eb183314050f958c",
-      "sport": "volleyball-women"
+      "sport": "other"
     },
     {
       "league": "NCAA Women's Volleyball",
@@ -27168,6 +27198,22 @@
     },
     {
       "league": "NCAA Women's Soccer",
+      "title": "Grand Canyon @ Idaho",
+      "start": "2026-09-11T02:00:00Z",
+      "startUtc": "2026-09-11T02:00:00Z",
+      "tag": "UPCOMING",
+      "icon": "⚽",
+      "source": "espn-ncaa",
+      "away": "Grand Canyon",
+      "home": "Idaho",
+      "providerEventId": "espn:401890255",
+      "status": "UPCOMING",
+      "state": "pre",
+      "id": "evt_07a49929201905a06ffed52f",
+      "sport": "other"
+    },
+    {
+      "league": "NCAA Women's Soccer",
       "title": "Boise St. @ CSU Bakersfield",
       "tag": "UPCOMING",
       "icon": "⚽",
@@ -27244,22 +27290,6 @@
       "status": "UPCOMING",
       "state": "pre",
       "id": "evt_9fab06dea25c14059ec02d82",
-      "sport": "other"
-    },
-    {
-      "league": "NCAA Women's Soccer",
-      "title": "Grand Canyon @ Idaho",
-      "start": "2026-09-11T02:00:00Z",
-      "startUtc": "2026-09-11T02:00:00Z",
-      "tag": "UPCOMING",
-      "icon": "⚽",
-      "source": "espn-ncaa",
-      "away": "Grand Canyon",
-      "home": "Idaho",
-      "providerEventId": "espn:401890255",
-      "status": "UPCOMING",
-      "state": "pre",
-      "id": "evt_07a49929201905a06ffed52f",
       "sport": "other"
     },
     {
@@ -37628,21 +37658,6 @@
       "sport": "other"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Silva vs Delgado",
-      "startUtc": "2026-09-12T21:00:00Z",
-      "start": "2026-09-12T21:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_977a59acce10ed0a8a7fc53b"
-    },
-    {
       "league": "FIVB Men",
       "title": "Puerto Rico @ Canada",
       "start": "2026-09-12T22:00:00Z",
@@ -40273,7 +40288,7 @@
       "tag": "UPCOMING",
       "status": "UPCOMING",
       "state": "pre",
-      "source": "xgames-official",
+      "source": "cache",
       "providerEventId": "xgames:xgl-winter-draft-2026",
       "officialSourceUrl": "https://www.xgames.com/",
       "id": "evt_37fb36c79bb662b9b46160b2"
@@ -42774,21 +42789,6 @@
       "id": "evt_8979d85a58908253f4c22f9b",
       "startUtc": "2026-09-20T00:45Z",
       "sport": "soccer"
-    },
-    {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Van vs Pantoja 2",
-      "startUtc": "2026-09-20T01:00:00Z",
-      "start": "2026-09-20T01:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_80fdeddcd3832660efe6b042"
     },
     {
       "league": "NHL",
@@ -46679,21 +46679,6 @@
       "sport": "hockey"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Rosas Jr. vs Barcelos",
-      "startUtc": "2026-09-26T22:00:00Z",
-      "start": "2026-09-26T22:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_24ba5a665a06566f0de3c0a1"
-    },
-    {
       "league": "NHL",
       "title": "Lightning @ Panthers",
       "start": "2026-09-26T22:00Z",
@@ -49050,21 +49035,6 @@
       "sport": "soccer"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "TBD vs TBD",
-      "startUtc": "2026-10-04T01:00:00Z",
-      "start": "2026-10-04T01:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_d0cf455910bcc5920b0c1a7e"
-    },
-    {
       "league": "NHL",
       "title": "Blues @ Avalanche",
       "start": "2026-10-04T01:00Z",
@@ -50239,21 +50209,6 @@
       "sport": "other"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "View Event Details",
-      "startUtc": "2026-10-11T00:00:00Z",
-      "start": "2026-10-11T00:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_7fc8219e2ed5dc7f75fdfbd5"
-    },
-    {
       "league": "NCAA Women's Hockey",
       "title": "New Hampshire @ Northeastern",
       "start": "2026-10-11T04:00Z",
@@ -51097,21 +51052,6 @@
       "sport": "other"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Buckley vs Malott",
-      "startUtc": "2026-10-18T00:00:00Z",
-      "start": "2026-10-18T00:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_e599490f15f9e144991cf7b9"
-    },
-    {
       "league": "WWE",
       "title": "Monday Night Raw",
       "start": "2026-10-19T00:00:00Z",
@@ -51599,21 +51539,6 @@
       "id": "evt_15dab1cad5d7c2abcdfb8c4a",
       "startUtc": "2026-10-24T17:00Z",
       "sport": "other"
-    },
-    {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Volkanovski vs Evloev",
-      "startUtc": "2026-10-24T18:00:00Z",
-      "start": "2026-10-24T18:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T17:17:37Z",
-      "tag": "UPCOMING",
-      "id": "evt_105cb020133a585cf05cb9b4"
     },
     {
       "league": "NCAA Women's Hockey",
@@ -65199,7 +65124,7 @@
     }
   ],
   "officialRecovery": {
-    "updatedAt": "2026-09-05T17:10:53Z",
+    "updatedAt": "2026-09-05T17:19:49Z",
     "recoveredRecords": 4,
     "wrestlingChecked": true,
     "ufcChecked": true,
@@ -65207,15 +65132,15 @@
   },
   "liveSweep": {
     "schema": 5,
-    "checkedAtUtc": "2026-09-05T17:10:54.591719Z",
+    "checkedAtUtc": "2026-09-05T17:19:50.538584Z",
     "leaguesChecked": 56,
-    "providerEventsFetched": 1056,
-    "providerLive": 59,
-    "providerFinal": 320,
-    "stateChanges": 201,
-    "eventsAdded": 114,
+    "providerEventsFetched": 1138,
+    "providerLive": 62,
+    "providerFinal": 323,
+    "stateChanges": 200,
+    "eventsAdded": 160,
     "boundedTimingPromotions": 0,
-    "staleLiveDemoted": 23,
+    "staleLiveDemoted": 22,
     "futureLiveRejected": 37,
     "failedLeagues": [
       "FIVB Men",
@@ -65224,57 +65149,57 @@
       "IPL",
       "X Games"
     ],
-    "liveCountAfterSweep": 59,
+    "liveCountAfterSweep": 62,
     "providerGroups": {
-      "NCAA Women's Hockey": "ncaa",
-      "NFL": "espn",
-      "UFC": "espn",
       "CFL": "espn",
-      "NHL": "espn",
       "NBA": "espn",
-      "MLS": "espn",
-      "EPL": "espn",
-      "Bundesliga": "espn",
-      "UCL": "espn",
-      "F1": "dedicated",
-      "Ligue 1": "espn",
-      "Serie A": "espn",
-      "MLB": "espn",
-      "LaLiga": "espn",
+      "NHL": "espn",
       "WNBA": "espn",
-      "PLL": "espn",
-      "Six Nations": "espn",
+      "NFL": "espn",
+      "NCAA Women's Hockey": "ncaa",
+      "UCL": "espn",
+      "UFC": "espn",
+      "Ligue 1": "espn",
+      "F1": "dedicated",
+      "Bundesliga": "espn",
+      "LaLiga": "espn",
+      "MLS": "espn",
+      "Serie A": "espn",
+      "EPL": "espn",
       "IndyCar": "espn",
-      "LIV Golf": "espn",
-      "Rugby World Cup": "espn",
-      "NLL": "espn",
-      "AFL": "espn",
       "NASCAR Truck": "espn",
-      "LPGA": "espn",
+      "MLB": "espn",
+      "LIV Golf": "espn",
       "PGA": "espn",
+      "LPGA": "espn",
+      "NLL": "espn",
+      "Rugby World Cup": "espn",
+      "Six Nations": "espn",
+      "PLL": "espn",
       "NRL": "espn",
-      "ATP": "espn",
+      "AFL": "espn",
       "NCAA BB": "ncaa",
       "NCAA Men's Soccer": "ncaa",
-      "WTA": "espn",
-      "NCAA Women's Soccer": "ncaa",
-      "NCAA WBB": "ncaa",
-      "FIVB Men": "dedicated",
-      "FIVB Women": "dedicated",
-      "NCAA Men's Water Polo": "ncaa",
-      "IPL": "dedicated",
-      "ICC T20": "dedicated",
       "NCAA FB": "ncaa",
-      "NCAA Baseball": "ncaa",
-      "NCAA Men's Lacrosse": "ncaa",
-      "NCAA Beach Volleyball": "ncaa",
-      "NCAA Men's Hockey": "ncaa",
-      "NCAA Softball": "ncaa",
+      "NCAA Women's Lacrosse": "ncaa",
       "NCAA Men's Volleyball": "ncaa",
-      "NCAA Women's Volleyball": "ncaa",
+      "NCAA WBB": "ncaa",
+      "ATP": "espn",
+      "WTA": "espn",
+      "ICC T20": "dedicated",
+      "NCAA Men's Water Polo": "ncaa",
       "NCAA Women's Field Hockey": "ncaa",
+      "NCAA Women's Volleyball": "ncaa",
+      "IPL": "dedicated",
+      "FIVB Men": "dedicated",
+      "NCAA Men's Hockey": "ncaa",
+      "FIVB Women": "dedicated",
+      "NCAA Softball": "ncaa",
+      "NCAA Baseball": "ncaa",
+      "NCAA Women's Soccer": "ncaa",
       "NCAA Women's Water Polo": "ncaa",
-      "NCAA Women's Lacrosse": "ncaa"
+      "NCAA Beach Volleyball": "ncaa",
+      "NCAA Men's Lacrosse": "ncaa"
     },
     "liveStatePolicy": "provider-authoritative-strict-reconciliation",
     "endpoints": {
@@ -65297,7 +65222,7 @@
       "failures": [
         "nascar-truck:HTTPError"
       ],
-      "liveAdded": 3,
+      "liveAdded": 2,
       "liveCorroborated": 0
     },
     "officialAdapters": {
@@ -65308,10 +65233,10 @@
         "liveVerified": 0,
         "liveRejected": 36,
         "errors": [
-          "POST:wrapped:GetMatchLive:response:BadParameter:"
+          "POST:wrapped:GetVolleyLive:NoMatch:128:response:ParameterMissing::No | POST:wrapped:GetVolleyLive:NoMatch:0:response:ParameterMissing::No | POST:wrapped:GetMatchLive:NoVolleyMatch:128:response:BadParameter:1002:Type | POST:wrapped:GetMatchLive:NoVolleyMatch:0:response:BadParameter:1002:Type"
         ],
         "verification": {
-          "11680": "POST:wrapped:GetMatchLive:response:BadParameter:"
+          "11680": "POST:wrapped:GetVolleyLive:NoMatch:128:response:ParameterMissing::No | POST:wrapped:GetVolleyLive:NoMatch:0:response:ParameterMissing::No | POST:wrapped:GetMatchLive:NoVolleyMatch:128:response:BadParameter:1002:Type | POST:wrapped:GetMatchLive:NoVolleyMatch:0:response:BadParameter:1002:Type"
         }
       },
       "NASCAR Truck": {
@@ -65326,7 +65251,7 @@
     }
   },
   "officialLiveAdapters": {
-    "checkedAtUtc": "2026-09-05T17:10:54.591719Z",
+    "checkedAtUtc": "2026-09-05T17:19:50.538584Z",
     "diagnostics": {
       "FIVB": {
         "status": "contract-failed",
@@ -65335,10 +65260,10 @@
         "liveVerified": 0,
         "liveRejected": 36,
         "errors": [
-          "POST:wrapped:GetMatchLive:response:BadParameter:"
+          "POST:wrapped:GetVolleyLive:NoMatch:128:response:ParameterMissing::No | POST:wrapped:GetVolleyLive:NoMatch:0:response:ParameterMissing::No | POST:wrapped:GetMatchLive:NoVolleyMatch:128:response:BadParameter:1002:Type | POST:wrapped:GetMatchLive:NoVolleyMatch:0:response:BadParameter:1002:Type"
         ],
         "verification": {
-          "11680": "POST:wrapped:GetMatchLive:response:BadParameter:"
+          "11680": "POST:wrapped:GetVolleyLive:NoMatch:128:response:ParameterMissing::No | POST:wrapped:GetVolleyLive:NoMatch:0:response:ParameterMissing::No | POST:wrapped:GetMatchLive:NoVolleyMatch:128:response:BadParameter:1002:Type | POST:wrapped:GetMatchLive:NoVolleyMatch:0:response:BadParameter:1002:Type"
         }
       },
       "NASCAR Truck": {
@@ -65355,7 +65280,7 @@
     "liveCorroborated": 0
   },
   "supplementalLiveAdapters": {
-    "checkedAtUtc": "2026-09-05T17:10:54.591719Z",
+    "checkedAtUtc": "2026-09-05T17:19:50.538584Z",
     "diagnostics": {
       "F1": {
         "status": "ok",
@@ -65407,418 +65332,27 @@
     "liveApplied": 0
   },
   "xgamesOfficialAdapter": {
-    "checkedAtUtc": "2026-09-05T17:11:15.474124Z",
+    "checkedAtUtc": "2026-09-05T17:20:16.727046Z",
     "diagnostics": {
       "status": "ok",
       "pages": 5,
       "events": 1,
       "errors": []
     },
-    "eventsAdded": 1
+    "eventsAdded": 0
   },
   "providerHealthGate": {
     "schema": 3,
-    "checkedAtUtc": "2026-09-05T17:11:15.719932Z",
-    "eventCount": 3886,
+    "checkedAtUtc": "2026-09-05T17:20:16.969872Z",
+    "eventCount": 3889,
     "futureLiveCorrected": 0,
     "missingStartLiveCorrected": 0,
     "missingStartLiveWarnings": 0,
     "staleLiveEvidenceCorrected": 0,
     "providerFailures": [
-      "NASCAR Trucks",
-      "WRC",
-      "X Games"
+      "NASCAR Trucks"
     ],
     "failedLiveStates": [],
     "liveWarnings": []
-  },
-  "officialScheduleAudit": {
-    "enabled": true,
-    "mode": "all-official-sources",
-    "sourcesChecked": 63,
-    "reachableSources": 52,
-    "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T17:17:49Z",
-    "sources": [
-      {
-        "league": "AAA Wrestling",
-        "url": "https://www.wwe.com/shows/aaa",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "AEW",
-        "url": "https://www.allelitewrestling.com/aew-events",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "AFL",
-        "url": "https://www.afl.com.au/fixture",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "ATP",
-        "url": "https://www.atptour.com/en/scores/current",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "Boxing",
-        "url": "https://wbcboxing.com/calendar/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "Bundesliga",
-        "url": "https://www.bundesliga.com/en/bundesliga/fixtures",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "CFL",
-        "url": "https://www.cfl.ca/schedule/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "EPL",
-        "url": "https://www.premierleague.com/en/fixtures",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "F1",
-        "url": "https://www.formula1.com/en/racing/2026",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FIVB Men",
-        "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FIVB Women",
-        "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "FORMULA E",
-        "url": "https://www.fiaformulae.com/en/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "ICC T20",
-        "url": "https://www.icc-cricket.com/fixtures-results",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "IMSA",
-        "url": "https://www.imsa.com/events/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "IPL",
-        "url": "https://www.iplt20.com/matches/schedule",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "IndyCar",
-        "url": "https://www.indycar.com/Schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LIV Golf",
-        "url": "https://www.livgolf.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LPGA",
-        "url": "https://www.lpga.com/tournaments",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "LaLiga",
-        "url": "https://www.laliga.com/en-GB/laliga-easports/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "Ligue 1",
-        "url": "https://ligue1.com/en/calendar/ligue1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MLB",
-        "url": "https://www.mlb.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MLS",
-        "url": "https://www.mlssoccer.com/schedule/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MONSTER JAM",
-        "url": "https://www.monsterjam.com/en-us/events/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MXGP",
-        "url": "https://www.mxgp.com/calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "MotoGP",
-        "url": "https://www.motogp.com/en/Calendar",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Cup",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Trucks",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NASCAR Xfinity",
-        "url": "https://www.nascar.com/schedule/",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NBA",
-        "url": "https://www.nba.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA BB",
-        "url": "https://www.ncaa.com/sports/basketball-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Baseball",
-        "url": "https://www.ncaa.com/sports/baseball/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Beach Volleyball",
-        "url": "https://www.ncaa.com/sports/beach-volleyball",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA FB",
-        "url": "https://www.ncaa.com/sports/football/fbs",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Lacrosse",
-        "url": "https://www.ncaa.com/sports/lacrosse-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Soccer",
-        "url": "https://www.ncaa.com/sports/soccer-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Volleyball",
-        "url": "https://www.ncaa.com/sports/volleyball-men/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Men's Water Polo",
-        "url": "https://www.ncaa.com/sports/water-polo-men/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Softball",
-        "url": "https://www.ncaa.com/sports/softball/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA WBB",
-        "url": "https://www.ncaa.com/sports/basketball-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Field Hockey",
-        "url": "https://www.ncaa.com/sports/field-hockey/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Lacrosse",
-        "url": "https://www.ncaa.com/sports/lacrosse-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Soccer",
-        "url": "https://www.ncaa.com/sports/soccer-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Volleyball",
-        "url": "https://www.ncaa.com/sports/volleyball-women/d1",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NCAA Women's Water Polo",
-        "url": "https://www.ncaa.com/sports/water-polo-women/d1",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "NFL",
-        "url": "https://www.nfl.com/schedules",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NHL",
-        "url": "https://www.nhl.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NLL",
-        "url": "https://www.nll.com/schedule/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NRL",
-        "url": "https://www.nrl.com/draw/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "NWSL",
-        "url": "https://www.nwslsoccer.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "PGA",
-        "url": "https://www.pgatour.com/schedule/2026",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "PLL",
-        "url": "https://premierlacrosseleague.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "Rugby World Cup",
-        "url": "https://www.rugbyworldcup.com/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "Six Nations",
-        "url": "https://www.sixnationsrugby.com/en/m6n/fixtures",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "TNA",
-        "url": "https://tnawrestling.com/events/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "UCL",
-        "url": "https://www.uefa.com/uefachampionsleague/fixtures-results/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "UEL",
-        "url": "https://www.uefa.com/uefaeuropaleague/fixtures-results/",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "UFC",
-        "url": "https://www.ufc.com/events",
-        "reachable": true,
-        "parsed": 8
-      },
-      {
-        "league": "WEC",
-        "url": "https://www.fia.com/championship/world-endurance-championship",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "WNBA",
-        "url": "https://www.wnba.com/schedule",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "WRC",
-        "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": false,
-        "parsed": 0
-      },
-      {
-        "league": "WTA",
-        "url": "https://www.wtatennis.com/tournaments",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "WWE",
-        "url": "https://www.wwe.com/article/wwe-upcoming-events",
-        "reachable": true,
-        "parsed": 0
-      },
-      {
-        "league": "X Games",
-        "url": "https://www.xgames.com/events/",
-        "reachable": false,
-        "parsed": 0
-      }
-    ]
   }
 }
