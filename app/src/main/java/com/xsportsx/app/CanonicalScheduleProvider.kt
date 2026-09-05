@@ -31,7 +31,6 @@ object CanonicalScheduleProvider {
             val canonical = league?.let { SportsScheduleService.canonicalLeagueFor(it) }
             val now = Instant.now()
             val cutoff = now.plus(daysAhead.toLong(), ChronoUnit.DAYS)
-
             val allEvents = ArrayList<JSONObject>()
             val feedEvents = root.optJSONArray("events") ?: JSONArray()
             for (i in 0 until feedEvents.length()) feedEvents.optJSONObject(i)?.let(allEvents::add)
@@ -56,16 +55,20 @@ object CanonicalScheduleProvider {
                 val rawLeague = e.optString("league").trim()
                 if (rawLeague.isBlank()) continue
                 val canonicalLeague = canonicalFeedLeague(rawLeague)
-
-                val start = parseInstant(e.optString("start")) ?: continue
                 val title = e.optString("title").trim()
-                val removeKey = "${rawLeague.uppercase()}|${title.lowercase()}|${start.toString()}"
-                if (removeKey in removed) continue
-
-                if (canonical != null && SportsScheduleService.canonicalLeagueFor(canonicalLeague) != canonical) continue
-
                 val tag = e.optString("tag").uppercase()
                 val isLive = tag == "LIVE"
+
+                // Provider-authoritative LIVE events are allowed to omit a
+                // scheduled start. Use the feed generation/check time as a
+                // display anchor rather than silently deleting a game that the
+                // server has explicitly confirmed is in progress.
+                val parsedStart = parseInstant(e.optString("start"))
+                val start = parsedStart ?: if (isLive) parseInstant(root.optString("generatedAt")) ?: now else continue
+                val removeKey = "${rawLeague.uppercase()}|${title.lowercase()}|${start}"
+                if (removeKey in removed) continue
+                if (canonical != null && SportsScheduleService.canonicalLeagueFor(canonicalLeague) != canonical) continue
+
                 if (!isLive && tag == "UPCOMING") {
                     if (start.isBefore(now.minus(26, ChronoUnit.HOURS)) || !start.isBefore(cutoff)) continue
                 } else if (!isLive) {
@@ -168,33 +171,15 @@ object CanonicalScheduleProvider {
 
     private fun http(target: String): String {
         val c = URL(target).openConnection() as HttpURLConnection
-        c.connectTimeout = CONNECT_TIMEOUT_MS
-        c.readTimeout = READ_TIMEOUT_MS
-        c.requestMethod = "GET"
-        c.instanceFollowRedirects = true
-        c.useCaches = false
-        c.setRequestProperty("Accept", "application/json")
-        c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
-        c.setRequestProperty("Pragma", "no-cache")
-        c.setRequestProperty("User-Agent", "XSportsX/2.0 Android")
-        return try {
-            if (c.responseCode !in 200..299) error("Schedule feed HTTP ${c.responseCode}")
-            c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-        } finally { c.disconnect() }
+        c.connectTimeout = CONNECT_TIMEOUT_MS; c.readTimeout = READ_TIMEOUT_MS; c.requestMethod = "GET"; c.instanceFollowRedirects = true; c.useCaches = false
+        c.setRequestProperty("Accept", "application/json"); c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0"); c.setRequestProperty("Pragma", "no-cache"); c.setRequestProperty("User-Agent", "XSportsX/2.0 Android")
+        return try { if (c.responseCode !in 200..299) error("Schedule feed HTTP ${c.responseCode}"); c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { c.disconnect() }
     }
 
     private fun httpOverride(target: String): String {
         val c = URL(target).openConnection() as HttpURLConnection
-        c.connectTimeout = 800
-        c.readTimeout = OVERRIDE_READ_TIMEOUT_MS
-        c.requestMethod = "GET"
-        c.instanceFollowRedirects = true
-        c.useCaches = false
-        c.setRequestProperty("Accept", "application/json")
-        c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
-        return try {
-            if (c.responseCode !in 200..299) error("Schedule override HTTP ${c.responseCode}")
-            c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-        } finally { c.disconnect() }
+        c.connectTimeout = 800; c.readTimeout = OVERRIDE_READ_TIMEOUT_MS; c.requestMethod = "GET"; c.instanceFollowRedirects = true; c.useCaches = false
+        c.setRequestProperty("Accept", "application/json"); c.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
+        return try { if (c.responseCode !in 200..299) error("Schedule override HTTP ${c.responseCode}"); c.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() } } finally { c.disconnect() }
     }
 }
