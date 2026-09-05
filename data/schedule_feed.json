@@ -82,7 +82,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 478,
+  "identityMergeCount": 486,
   "sourceRecordCounts": {
     "wrestling": 19,
     "espn": 1523,
@@ -52524,10 +52524,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 54,
+    "reachableSources": 51,
     "eventsRecovered": 8,
     "identityMerges": 8,
-    "updatedAt": "2026-09-05T01:43:46Z",
+    "updatedAt": "2026-09-05T01:44:22Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -52586,13 +52586,13 @@
       {
         "league": "FIVB Men",
         "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
         "league": "FIVB Women",
         "url": "https://www.fivb.com/competitions/",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
@@ -52610,7 +52610,7 @@
       {
         "league": "IMSA",
         "url": "https://www.imsa.com/events/",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
