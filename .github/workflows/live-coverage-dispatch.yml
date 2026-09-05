@@ -1,0 +1,93 @@
+name: Live Coverage Dispatch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-live-coverage
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout android-app
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+
+      - name: Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Rebuild canonical schedule
+        run: python3 scripts/refresh_provider_matrix_v3.py
+
+      - name: Validate canonical rebuild
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/schedule_feed.json')
+          if not p.exists() or p.stat().st_size < 100: raise SystemExit('CANONICAL FEED MISSING OR EMPTY')
+          d=json.loads(p.read_text()); events=d.get('events')
+          if not isinstance(events,list) or not events: raise SystemExit('CANONICAL REBUILD PRODUCED NO EVENTS')
+          print(f'Canonical events: {len(events)}')
+          PY
+
+      - name: Official event recovery
+        run: python3 scripts/official_event_recovery.py
+
+      - name: Cross-sport live sweep
+        run: python3 scripts/live_sports_sweep.py
+
+      - name: Normalize canonical feed
+        run: python3 scripts/normalize_schedule_feed.py
+
+      - name: Provider health gate
+        run: python3 scripts/provider_health_gate.py
+
+      - name: NCAA verification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('data/schedule_feed.json').read_text())
+          events=d.get('events') or []
+          ncaa=[e for e in events if str(e.get('league','')).startswith('NCAA ')]
+          live=[e for e in ncaa if str(e.get('tag','')).upper()=='LIVE']
+          missing=[e for e in ncaa if not (e.get('startUtc') or e.get('start'))]
+          print(f'NCAA events: {len(ncaa)}')
+          print(f'NCAA LIVE: {len(live)}')
+          print(f'NCAA missing start: {len(missing)}')
+          for e in missing[:20]: print('MISSING START:', e.get('league'), '|', e.get('title'))
+          if missing: raise SystemExit('NCAA EVENTS WITHOUT TRUSTWORTHY START')
+          PY
+
+      - name: Publish
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Live Coverage Bot'
+          git config user.email 'xsportsx-live-coverage-bot@users.noreply.github.com'
+          git add data/schedule_feed.json data/provider_health_gate.json
+          if git diff --cached --quiet; then echo 'No feed changes.'; exit 0; fi
+          git commit -m 'chore: publish live coverage dispatch sweep'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            git rebase --autostash origin/android-app
+            if git push origin HEAD:android-app; then exit 0; fi
+            git rebase --abort || true
+            sleep $((attempt * 2))
+          done
+          exit 1
