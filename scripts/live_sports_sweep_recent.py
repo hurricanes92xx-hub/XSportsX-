@@ -1,101 +1,86 @@
 #!/usr/bin/env python3
-"""Production live sweep with UTC-boundary coverage and free shadow providers."""
+"""Production live sweep: UTC-boundary ESPN coverage plus free shadow corroboration."""
 from __future__ import annotations
-from datetime import datetime, timezone, timedelta
 import json
-import urllib.request
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
 import live_sports_sweep as base
 from providers import shadow
+from event_identity import identity_match
 
-HEADERS = base.HEADERS
-_shadow_cache = None
-_shadow_error = None
-SHADOW_METAS = [
-    ("SHADOW Football", "shadow", "football", "⚽", 1),
-    ("SHADOW Basketball", "shadow", "basketball", "🏀", 1),
-    ("SHADOW Cricket", "shadow", "cricket", "🏏", 1),
-    ("SHADOW Tennis", "shadow", "tennis", "🎾", 1),
-]
-base.ESPN_LEAGUES = list(base.ESPN_LEAGUES) + SHADOW_METAS
+FEED=Path(__file__).resolve().parents[1]/"data"/"schedule_feed.json"
 
-_original_espn_event = base._espn_event
+def _merge_shadow():
+    if not FEED.exists(): return
+    payload=json.loads(FEED.read_text(encoding="utf-8")); events=[e for e in (payload.get("events") or []) if isinstance(e,dict)]
+    checked=str((payload.get("liveSweep") or {}).get("checkedAtUtc") or datetime.now(timezone.utc).isoformat().replace("+00:00","Z"))
+    try: rows,failures,counts=shadow.fetch_all()
+    except Exception as exc:
+        print(f"SHADOW provider layer failed: {type(exc).__name__}: {exc}"); return
+    added=0; corroborated=0
+    for row in rows:
+        if str(row.get("tag") or "").upper()!="LIVE": continue
+        match=next((e for e in events if identity_match(e,row)),None)
+        evidence={"providerEventId":row.get("providerEventId"),"provider":row.get("source"),"checkedAtUtc":checked}
+        if match:
+            # Shadow evidence corroborates a canonical event; never downgrade it.
+            match.setdefault("liveEvidenceShadow",[]).append(evidence)
+            corroborated+=1
+            continue
+        row=dict(row); row["liveEvidence"]={"providerEventId":row.get("providerEventId"),"provider":row.get("source"),"checkedAtUtc":checked}
+        row["liveStateSource"]="free-shadow"
+        row["liveEvidenceShadow"]=[evidence]
+        events.append(row); added+=1
+    payload["events"]=events
+    sweep=payload.setdefault("liveSweep",{})
+    sweep["shadowProviders"]={"enabled":True,"recordCounts":counts,"failures":failures,"liveAdded":added,"liveCorroborated":corroborated}
+    payload["shadowProviderRecordCounts"]=counts
+    FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"SHADOW LIVE: added={added} corroborated={corroborated} failures={len(failures)}")
 
-def _espn_event(name, icon, event):
-    if name.startswith("SHADOW "):
-        e = dict(event)
-        e.setdefault("icon", icon)
-        e.setdefault("source", "sportscore-shadow")
-        e.setdefault("startUtc", e.get("start"))
-        tag = str(e.get("tag") or e.get("status") or "UPCOMING").upper()
-        e["tag"] = tag
-        if tag == "LIVE": e.update({"status":"LIVE","state":"in"})
-        elif tag == "FINAL": e.update({"status":"FINAL","state":"post"})
-        else: e.update({"status":"UPCOMING","state":"pre"})
-        return e
-    return _original_espn_event(name, icon, event)
-
-base._espn_event = _espn_event
-
-def _get(url):
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=8) as response:
-        return response.read()
-
-def _shadow_events():
-    global _shadow_cache, _shadow_error
-    if _shadow_cache is None:
-        try:
-            _shadow_cache, failures, _counts = shadow.fetch_all()
-            _shadow_error = "; ".join(failures) if failures else None
-        except Exception as exc:
-            _shadow_cache = []
-            _shadow_error = f"{type(exc).__name__}: {exc}"
-    return _shadow_cache or []
-
-def _fetch_league(meta):
-    name, sport, league, icon, _days = meta
-    if name.startswith("SHADOW "):
-        return name, [dict(e) for e in _shadow_events()], _shadow_error
-    now = datetime.now(timezone.utc)
-    dates = [(now + timedelta(days=offset)).strftime('%Y%m%d') for offset in (-1, 0, 1)]
-    events = []; last = None
-    for day in dates:
-        base_url = f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={day}&limit=1000"
-        root = None
-        for url in (base_url.replace('https://site.api.espn.com', 'https://site.web.api.espn.com'), base_url):
+def main():
+    # The base sweep is deliberately executed after monkeypatching the ESPN and
+    # NCAA day fetchers so events crossing UTC midnight are not missed.
+    now=datetime.now(timezone.utc)
+    original_league=base._fetch_league
+    original_ncaa=base._fetch_ncaa
+    def fetch_league(meta):
+        name,sport,league,icon,_days=meta
+        dates=[(now+timedelta(days=o)).strftime('%Y%m%d') for o in (-1,0,1)]
+        events=[];last=None
+        for day in dates:
+            for host in ('https://site.web.api.espn.com','https://site.api.espn.com'):
+                url=f'{host}/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={day}&limit=1000'
+                try:
+                    root=base._get_json(url); raw=root.get('events') if isinstance(root,dict) else []
+                    if isinstance(raw,list): events.extend(raw)
+                    break
+                except Exception as exc:last=exc
+        seen=set(); unique=[]
+        for event in events:
+            key=str(event.get('id') or event.get('uid') or json.dumps(event,sort_keys=True))
+            if key not in seen:seen.add(key);unique.append(event)
+        return name,unique,None if unique or not last else str(last)
+    def fetch_ncaa(meta):
+        name,sport,division,icon=meta; days=[now.date()+timedelta(days=o) for o in (-1,0,1)]; records=[];errors=[]
+        for day in days:
             try:
-                root = json.loads(_get(url)); break
-            except Exception as exc: last = str(exc)
-        if root:
-            raw = root.get('events')
-            if isinstance(raw, list): events.extend(raw)
-    seen = set(); unique = []
-    for event in events:
-        key = str(event.get('id') or event.get('uid') or json.dumps(event, sort_keys=True))
-        if key not in seen: seen.add(key); unique.append(event)
-    return name, unique, None if unique or not last else last
+                root=base._fetch_scoreboard_day(sport,division,day)
+                if root:
+                    for game in __import__('providers.ncaa',fromlist=['_walk_games'])._walk_games(root):
+                        event=base._normalize(game,name,icon)
+                        if event:records.append(event)
+            except Exception as exc:errors.append(f'primary:{exc}')
+            try:records.extend(base._fetch_espn_day(name,day))
+            except Exception as exc:errors.append(f'espn:{exc}')
+        seen=set();out=[]
+        for event in records:
+            key=(str(event.get('away') or '').lower(),str(event.get('home') or '').lower(),str(event.get('start') or event.get('startUtc') or ''),str(event.get('providerEventId') or ''))
+            if key not in seen:seen.add(key);out.append(event)
+        return name,out,None if out or not errors else '; '.join(errors)
+    base._fetch_league=fetch_league
+    base._fetch_ncaa=fetch_ncaa
+    base.main()
+    _merge_shadow()
 
-def _fetch_ncaa(meta):
-    name, sport, division, icon = meta
-    now = datetime.now(timezone.utc); days = [now.date() + timedelta(days=offset) for offset in (-1, 0, 1)]
-    records = []; errors = []
-    for day in days:
-        try:
-            root = base._fetch_scoreboard_day(sport, division, day)
-            if root:
-                for game in __import__('providers.ncaa', fromlist=['_walk_games'])._walk_games(root):
-                    event = base._normalize(game, name, icon)
-                    if event: records.append(event)
-        except Exception as exc: errors.append(f'primary:{exc}')
-        try: records.extend(base._fetch_espn_day(name, day))
-        except Exception as exc: errors.append(f'espn:{exc}')
-    seen = set(); out = []
-    for event in records:
-        key = (str(event.get('away') or '').lower(), str(event.get('home') or '').lower(), str(event.get('start') or event.get('startUtc') or ''), str(event.get('providerEventId') or ''))
-        if key in seen: continue
-        seen.add(key); out.append(event)
-    return name, out, None if out or not errors else '; '.join(errors)
-
-base._fetch_league = _fetch_league
-base._fetch_ncaa = _fetch_ncaa
-base.main()
+if __name__=='__main__':main()
