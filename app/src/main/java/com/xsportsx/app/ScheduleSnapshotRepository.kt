@@ -36,9 +36,7 @@ object ScheduleSnapshotRepository {
                 when {
                     canonical == null -> true
                     canonical.equals("WRESTLING", true) -> {
-                        event.league.equals("WWE", true) || event.league.equals("AEW", true) ||
-                            event.league.equals("TNA", true) || event.league.equals("AAA Wrestling", true) ||
-                            event.league.equals("WRESTLING", true)
+                        event.league.equals("WWE", true) || event.league.equals("AEW", true) || event.league.equals("TNA", true) || event.league.equals("AAA Wrestling", true) || event.league.equals("WRESTLING", true)
                     }
                     else -> SportsScheduleService.canonicalLeagueFor(event.league) == canonical
                 }
@@ -69,9 +67,13 @@ object ScheduleSnapshotRepository {
     fun clear() { snapshotCache = null; liveCache = null }
     private fun age(cache: CachedEvents) = System.currentTimeMillis() - cache.loadedAtMs
 
-    private fun serverMarkedLive(event: SportsEvent): Boolean =
-        (event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true)) &&
-            event.startUtc.isNotBlank() && runCatching { Instant.parse(event.startUtc) }.getOrNull()?.let { it <= Instant.now().plus(2, ChronoUnit.MINUTES) } == true
+    /** Provider LIVE is authoritative; start time is only a sanity check when supplied. */
+    private fun serverMarkedLive(event: SportsEvent): Boolean {
+        if (!(event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true))) return false
+        if (event.startUtc.isBlank()) return true
+        val start = runCatching { Instant.parse(event.startUtc) }.getOrNull() ?: return true
+        return start <= Instant.now().plus(2, ChronoUnit.MINUTES)
+    }
 
     private fun normalize(events: List<SportsEvent>): List<SportsEvent> {
         val seen = LinkedHashSet<String>()
