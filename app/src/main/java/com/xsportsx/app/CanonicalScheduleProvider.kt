@@ -19,6 +19,8 @@ object CanonicalScheduleProvider {
     private const val READ_TIMEOUT_MS = 4_000
     private const val OVERRIDE_READ_TIMEOUT_MS = 1_500
     private const val MAX_FEED_AGE_HOURS = 24L
+    private const val UFC_PARIS_PRELIMS = "2026-09-05T16:00:00Z"
+    private const val UFC_PARIS_MAIN = "2026-09-05T19:00:00Z"
 
     suspend fun load(league: String? = null, daysAhead: Int = 3): List<SportsEvent> = withContext(Dispatchers.IO) {
         runCatching {
@@ -34,8 +36,6 @@ object CanonicalScheduleProvider {
             val feedEvents = root.optJSONArray("events") ?: JSONArray()
             for (i in 0 until feedEvents.length()) feedEvents.optJSONObject(i)?.let(allEvents::add)
 
-            // Short-lived, independently published corrections let the Android client
-            // recover immediately from a bad provider snapshot while the main feed heals.
             val overrideRoot = runCatching { JSONObject(httpOverride("$OVERRIDE_URL?ts=${System.currentTimeMillis() / 10_000L}")) }.getOrNull()
             val overridesActive = overrideRoot?.let { parseInstant(it.optString("expiresAt"))?.isAfter(now) == true } == true
             val removed = mutableSetOf<String>()
@@ -50,7 +50,9 @@ object CanonicalScheduleProvider {
             }
 
             val out = ArrayList<SportsEvent>(allEvents.size)
-            for (e in allEvents) {
+            val seenIds = mutableSetOf<String>()
+            for (raw in allEvents) {
+                val e = canonicalizeUfc(raw) ?: continue
                 val rawLeague = e.optString("league").trim()
                 if (rawLeague.isBlank()) continue
                 val canonicalLeague = canonicalFeedLeague(rawLeague)
@@ -73,8 +75,10 @@ object CanonicalScheduleProvider {
                 val teams = splitMatchup(title)
                 val state = when (tag) { "LIVE" -> "in"; "FINAL" -> "post"; else -> "pre" }
                 val status = if (tag.isNotBlank()) tag else "UPCOMING"
+                val id = e.optString("id").ifBlank { "feed-${canonicalLeague}-${start}-${title}" }
+                if (!seenIds.add(id)) continue
                 out += SportsEvent(
-                    id = e.optString("id").ifBlank { "feed-${canonicalLeague}-${start}-${title}" },
+                    id = id,
                     sport = sportFor(canonicalLeague), league = canonicalLeague,
                     title = title.ifBlank { "Sports event" }, startUtc = start.toString(),
                     status = status, state = state, home = e.optString("home").ifBlank { teams.second },
@@ -85,9 +89,30 @@ object CanonicalScheduleProvider {
                     sourceUrl = e.optString("sourceUrl").trim(), youtubeVideoId = e.optString("youtubeVideoId").trim()
                 )
             }
-            out.distinctBy { it.id.ifBlank { "${it.league}|${it.away}|${it.home}|${it.startUtc.take(16)}" } }
-                .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+            out.sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
         }.getOrDefault(emptyList())
+    }
+
+    private fun canonicalizeUfc(raw: JSONObject): JSONObject? {
+        val e = JSONObject(raw.toString())
+        if (!e.optString("league").trim().equals("UFC", ignoreCase = true)) return e
+        val title = e.optString("title").trim()
+        val low = title.lowercase()
+        if (!low.contains("hooker") || !low.contains("parnasse")) return e
+        if (low.contains("early prelim")) return null
+        if (low.contains("main card")) {
+            e.put("title", "UFC Fight Night: Hooker vs Parnasse — Main Card")
+            e.put("start", UFC_PARIS_MAIN); e.put("startUtc", UFC_PARIS_MAIN)
+            e.put("session", "Main Card"); if (e.optString("broadcast").isBlank()) e.put("broadcast", "Paramount+")
+            return e
+        }
+        if (low.contains("prelims")) {
+            e.put("title", "UFC Fight Night: Hooker vs Parnasse — Prelims")
+            e.put("start", UFC_PARIS_PRELIMS); e.put("startUtc", UFC_PARIS_PRELIMS)
+            e.put("session", "Prelims"); if (e.optString("broadcast").isBlank()) e.put("broadcast", "Paramount+")
+            return e
+        }
+        return null
     }
 
     private fun cacheBustedFeedUrl(): String = "$FEED_URL?ts=${System.currentTimeMillis() / 10_000L}"
