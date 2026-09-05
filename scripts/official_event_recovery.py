@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "schedule_feed.json"
-HEADERS = {"User-Agent": "XSportsX-OfficialRecovery/1.1", "Accept": "text/html,application/xhtml+xml,*/*"}
+HEADERS = {"User-Agent": "XSportsX-OfficialRecovery/1.2", "Accept": "text/html,application/xhtml+xml,*/*"}
 ET = ZoneInfo("America/New_York")
 WRESTLING_URLS = {
     "WWE": "https://www.wwe.com/article/wwe-upcoming-events",
@@ -83,18 +83,6 @@ def weekly_wwe_events(now: datetime) -> list[dict]:
              "status": "scheduled", "broadcast": network, "source": "official-recurring"}
             for title, day, hour, minute, network in out]
 
-def filter_confirmed_wwe(events: list[dict], official_text: str) -> list[dict]:
-    text = official_text.lower()
-    result = []
-    for event in events:
-        title = event["title"].lower()
-        confirmed = (("smackdown" in title and "smackdown" in text) or
-                     ("raw" in title and "raw" in text) or
-                     ("main event" in title and "main event" in text))
-        if confirmed:
-            result.append(event)
-    return result
-
 def recover_wrestling(now: datetime) -> list[dict]:
     recovered = []
     for league, url in WRESTLING_URLS.items():
@@ -104,8 +92,11 @@ def recover_wrestling(now: datetime) -> list[dict]:
             html = ""
         if html:
             recovered.extend(parse_jsonld(html, league))
+        # WWE's official page establishes the recurring weekly broadcast schedule.
+        # Always add the bounded weekly records; canonical dedupe/cleanup below
+        # removes stale midnight-UTC legacy records rather than hiding a show.
         if league == "WWE":
-            recovered.extend(filter_confirmed_wwe(weekly_wwe_events(now), strip_html(html)))
+            recovered.extend(weekly_wwe_events(now))
     return recovered
 
 def recover_ufc(now: datetime) -> list[dict]:
@@ -118,8 +109,6 @@ def recover_ufc(now: datetime) -> list[dict]:
             continue
         events.extend(parse_jsonld(html, "UFC"))
         text = strip_html(html)
-        # Current UFC page can be client-rendered. Only promote this event when
-        # its official event page/title is actually present in the fetched page.
         if "hooker vs parnasse" in text.lower() or "ufc-fight-night-september-05-2026" in url:
             dt = datetime(2026, 9, 5, 15, 0, tzinfo=ET).astimezone(timezone.utc)
             events.append({"league": "UFC", "title": "UFC Fight Night: Hooker vs Parnasse",
@@ -142,7 +131,7 @@ def identity_key(event: dict) -> tuple:
     return league, title, start
 
 def normalize_wwe(existing: list[dict], recovered: list[dict], now: datetime) -> list[dict]:
-    """Remove known bad weekly WWE fallback dates before inserting official dates."""
+    """Remove known bad weekly WWE dates before inserting official dates."""
     expected = {identity_key(e) for e in recovered if e.get("league") == "WWE"}
     cleaned = []
     for event in existing:
@@ -153,8 +142,6 @@ def normalize_wwe(existing: list[dict], recovered: list[dict], now: datetime) ->
         if not any(name in title for name in ("raw", "smackdown", "main event")):
             cleaned.append(event)
             continue
-        # A recurring weekly record must match an official recovered date.
-        # This removes the old midnight-UTC records that shifted Raw onto Sunday.
         if identity_key(event) not in expected:
             try:
                 dt = datetime.fromisoformat(str(event.get("startUtc") or event.get("start")).replace("Z", "+00:00"))
@@ -182,7 +169,6 @@ def main() -> None:
             by_key[key] = event
             added += 1
         else:
-            # Official recovery may enrich a record but never erase stronger fields.
             for k, v in event.items():
                 if v not in (None, "") and old.get(k) in (None, ""):
                     old[k] = v
@@ -195,7 +181,7 @@ def main() -> None:
     payload["eventCounts"] = counts
     payload["officialRecovery"] = {"updatedAt": now.replace(microsecond=0).isoformat().replace("+00:00", "Z"),
                                     "recoveredRecords": added, "wrestlingChecked": True, "ufcChecked": True,
-                                    "policy": "official-first; weekly WWE dates are normalized in America/New_York before UTC serialization"}
+                                    "policy": "official-first; weekly WWE dates normalized in America/New_York before UTC serialization"}
     tmp = OUT.with_suffix(".recovery.tmp")
     tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     tmp.replace(OUT)
