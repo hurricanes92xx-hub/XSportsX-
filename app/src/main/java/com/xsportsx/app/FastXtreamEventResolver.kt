@@ -9,6 +9,9 @@ import kotlinx.coroutines.withTimeoutOrNull
  * Cached-first Xtream resolver. Matching is broadcast-aware: a game does not need
  * to contain the team names in the provider channel name when the channel is a
  * plausible broadcaster for that sport/league.
+ *
+ * Xtream/authorized results are intentionally resolved before any public-source
+ * resolver. Once five good authorized matches exist, discovery stops immediately.
  */
 class FastXtreamEventResolver(context: Context) {
     private val store = SourceStore(context.applicationContext)
@@ -18,21 +21,29 @@ class FastXtreamEventResolver(context: Context) {
         private const val MAX_CATEGORIES = 12
         private const val COLD_RESOLVE_BUDGET_MS = 3200L
         private const val MAX_MATCHES = 12
+        private const val EARLY_MATCHES = 5
     }
 
     suspend fun resolve(event: SportsEvent): List<ResolvedStream> = withContext(Dispatchers.IO) {
         val config = store.load()
         if (!config.isConfigured() || config.type != "XTREAM") return@withContext emptyList()
 
+        // Authorized Xtream cache is always first. Do not wait on public discovery
+        // when the provider already has usable channels.
         val cached = index.getCachedAll(config)
         match(event, cached.map { toStream(config, it) })
             .takeIf { it.isNotEmpty() }
-            ?.let { return@withContext it }
+            ?.let { return@withContext it.take(MAX_MATCHES) }
 
         val discovered = withTimeoutOrNull(COLD_RESOLVE_BUDGET_MS) {
-            index.fastResolve(config, event, MAX_CATEGORIES)
+            index.fastResolve(config, event, MAX_CATEGORIES) { channels ->
+                match(event, channels.map { toStream(config, it) }).size >= EARLY_MATCHES
+            }
         }.orEmpty()
 
+        // Return immediately from the authorized source. Public/legal discovery,
+        // if present elsewhere in the app, should only run after this resolver
+        // returns no usable authorized result.
         match(event, discovered.map { toStream(config, it) }).take(MAX_MATCHES)
     }
 
