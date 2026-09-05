@@ -76,8 +76,6 @@ def _parse_time(game):
     date = str(game.get("startDate") or game.get("gameDate") or "").strip()
     if not date: return None
     raw = str(game.get("startTime") or "").strip().upper().replace(" ET", "")
-    # Do not turn an unknown clock into midnight UTC. A fabricated start can
-    # make a real live NCAA game look stale/future and fail the live gate.
     if not raw: return None
     for fmt in ("%Y-%m-%d %I:%M%p", "%Y-%m-%d %H:%M", "%Y-%m-%dT%I:%M%p", "%Y-%m-%dT%H:%M"):
         try:
@@ -90,8 +88,8 @@ def _normalize(game, league, icon):
     away, home = _team_name(game.get("away")), _team_name(game.get("home")); teams = game.get("teams") or []
     if not away and isinstance(teams, list) and teams: away = _team_name(teams[0])
     if not home and isinstance(teams, list) and len(teams) > 1: home = _team_name(teams[1])
-    title = f"{away} @ {home}" if away and home else str(game.get("title") or game.get("contestName") or league); start = _parse_time(game)
-    if not start: return None
+    title = f"{away} @ {home}" if away and home else str(game.get("title") or game.get("contestName") or league)
+    start = _parse_time(game)
     state = str(game.get("gameState") or game.get("status") or "").lower()
     if isinstance(game.get("status"), dict):
         status_obj = game["status"]
@@ -101,10 +99,17 @@ def _normalize(game, league, icon):
     final_state = bool(re.search(r"final|complete|completed|closed", status_text + " " + state))
     tag = "FINAL" if final_state else "LIVE" if live_clock else "UPCOMING"
     provider_id = game.get("contestId") or game.get("gameID") or game.get("gameId") or ""
-    event = {"league": league, "title": title, "start": start, "tag": tag, "icon": icon, "source": "ncaa"}
+    # Keep a provider-confirmed LIVE event even when NCAA omits the scheduled
+    # start time. The live provider state is authoritative; fabricating a
+    # timestamp would be worse than leaving it absent.
+    event = {"league": league, "title": title, "tag": tag, "icon": icon, "source": "ncaa"}
+    if start: event["start"] = start; event["startUtc"] = start
     if away: event["away"] = away
     if home: event["home"] = home
     if provider_id: event["providerEventId"] = f"ncaa:{provider_id}"
+    if tag == "LIVE": event.update({"status":"LIVE","state":"in"})
+    elif tag == "FINAL": event.update({"status":"FINAL","state":"post"})
+    else: event.update({"status":"UPCOMING","state":"pre"})
     return event
 
 def _normalize_espn(game, league, icon):
@@ -115,10 +120,13 @@ def _normalize_espn(game, league, icon):
     away = next((x.get("team", {}).get("shortDisplayName") or x.get("team", {}).get("displayName") for x in competitors if x.get("homeAway") == "away"), "")
     title = f"{away} @ {home}" if away and home else str(game.get("name") or game.get("shortName") or league)
     state = str(((comp.get("status") or {}).get("type") or {}).get("state") or "").lower(); tag = "LIVE" if state == "in" else "FINAL" if state == "post" else "UPCOMING"
-    event = {"league": league, "title": title, "start": dt.isoformat().replace("+00:00", "Z"), "tag": tag, "icon": icon, "source": "espn-ncaa"}
+    event = {"league": league, "title": title, "start": dt.isoformat().replace("+00:00", "Z"), "startUtc": dt.isoformat().replace("+00:00", "Z"), "tag": tag, "icon": icon, "source": "espn-ncaa"}
     if away: event["away"] = away
     if home: event["home"] = home
     if game.get("id"): event["providerEventId"] = f"espn:{game['id']}"
+    if tag == "LIVE": event.update({"status":"LIVE","state":"in"})
+    elif tag == "FINAL": event.update({"status":"FINAL","state":"post"})
+    else: event.update({"status":"UPCOMING","state":"pre"})
     return event
 
 def _fetch_scoreboard_day(sport, division, day):
@@ -166,7 +174,7 @@ def fetch_league(league, sport, division, icon, horizon_days=30):
         if root:
             for game in _walk_games(root):
                 event = _normalize(game, league, icon)
-                if event and _in_window(event, now, cutoff): primary.append(event)
+                if event and (event.get("tag") == "LIVE" or _in_window(event, now, cutoff)): primary.append(event)
     secondary = [e for e in _fetch_espn_days(league, days) if _in_window(e, now, cutoff)]
     out, seen = [], set()
     for event in primary + secondary:
