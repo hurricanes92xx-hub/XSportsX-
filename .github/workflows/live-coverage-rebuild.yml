@@ -14,6 +14,7 @@ on:
       - 'scripts/providers/shadow_special.py'
       - 'scripts/providers/official_live_adapters.py'
       - 'scripts/providers/supplemental_live_adapters.py'
+      - 'scripts/providers/xgames_official_adapter.py'
       - 'scripts/normalize_schedule_feed.py'
       - 'scripts/refresh_provider_matrix_v3.py'
       - 'scripts/provider_health_gate.py'
@@ -81,6 +82,9 @@ jobs:
       - name: Supplemental sport adapters
         run: python3 scripts/providers/supplemental_live_adapters.py
 
+      - name: Official X Games schedule adapter
+        run: python3 scripts/providers/xgames_official_adapter.py
+
       - name: Normalize canonical feed
         run: python3 scripts/normalize_schedule_feed.py
 
@@ -101,6 +105,7 @@ jobs:
           print('EVENTS:',len(events)); print('LEAGUES:',len(d.get('eventCounts') or {})); print('LIVE EVENTS:',len(live))
           print('LIVE SPORTS:',sorted({str(e.get('sport') or e.get('league')) for e in live}))
           print('OFFICIAL ADAPTERS:',json.dumps(d.get('officialLiveAdapters') or {},indent=2))
+          print('X GAMES ADAPTER:',json.dumps(d.get('xgamesOfficialAdapter') or {},indent=2))
           print('SUPPLEMENTAL ADAPTERS:',json.dumps(d.get('supplementalLiveAdapters') or {},indent=2))
           sweep=d.get('liveSweep') or {}
           if sweep.get('schema') != 5: raise SystemExit(f"UNEXPECTED LIVE SWEEP SCHEMA: {sweep.get('schema')}")
