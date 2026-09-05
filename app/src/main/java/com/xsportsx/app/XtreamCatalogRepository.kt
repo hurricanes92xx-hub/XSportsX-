@@ -2,6 +2,7 @@ package com.xsportsx.app
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class XtreamCatalogRepository private constructor(context: Context) {
@@ -17,6 +18,16 @@ class XtreamCatalogRepository private constructor(context: Context) {
         val now = System.currentTimeMillis()
         dao.upsertAll(channels.map { it.toEntity(providerKey, now) })
     }
+
+    fun replaceCategoryBlocking(providerKey: String, channels: List<XtreamSourceIndex.Channel>) =
+        runBlocking(Dispatchers.IO) { replaceCategory(providerKey, channels) }
+
+    suspend fun prune(providerKey: String, maxAgeMs: Long = 7 * 24 * 60 * 60 * 1000L) = withContext(Dispatchers.IO) {
+        dao.deleteStale(providerKey, System.currentTimeMillis() - maxAgeMs)
+    }
+
+    fun pruneBlocking(providerKey: String) =
+        runBlocking(Dispatchers.IO) { prune(providerKey) }
 
     suspend fun search(providerKey: String, terms: List<String>, limit: Int = 12): List<XtreamSourceIndex.Channel> = withContext(Dispatchers.IO) {
         val normalized = terms.map(::normalize).filter { it.length >= 2 }.distinct()
