@@ -59,18 +59,23 @@ object ScheduleEngine {
 
     private fun publish(base: List<SportsEvent>, live: List<SportsEvent>) {
         val merged = mergeLive(base, live).map { it.copy(id = EventIdentity.id(it)) }.distinctBy(EventIdentity::key)
-        val canonicalLive = merged.filter { it.isLive }
+        // Server/provider LIVE is authoritative. Lifecycle inference remains useful
+        // elsewhere, but must never hide a provider-confirmed live event from the UI.
+        val canonicalLive = merged.filter { serverMarkedLive(it) || it.isLive }
         eventIndex.rebuild(merged)
         val current = mutableState.value
         mutableState.value = current.copy(events = merged, liveEvents = canonicalLive, loading = false, refreshing = false, lastUpdatedMs = System.currentTimeMillis(), error = null)
         appContext?.let { StreamPrewarmCoordinator.onSchedulePublished(it, merged) }
     }
 
+    private fun serverMarkedLive(event: SportsEvent): Boolean =
+        event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true)
+
     private fun mergeLive(base: List<SportsEvent>, live: List<SportsEvent>): List<SportsEvent> {
         val merged = LinkedHashMap<String, SportsEvent>()
         base.forEach { event -> val key = EventIdentity.key(event); val current = merged[key]; if (current == null || prefer(event, current)) merged[key] = event }
         live.forEach { event -> val key = EventIdentity.key(event); val current = merged[key]; if (current == null || prefer(event, current)) merged[key] = event }
-        return merged.values.sortedWith(compareByDescending<SportsEvent> { it.isLive }.thenBy { it.startUtc })
+        return merged.values.sortedWith(compareByDescending<SportsEvent> { serverMarkedLive(it) || it.isLive }.thenBy { it.startUtc })
     }
 
     private fun prefer(candidate: SportsEvent, current: SportsEvent): Boolean {
