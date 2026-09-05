@@ -76,8 +76,11 @@ object ScheduleSnapshotRepository {
     }
 
     private fun normalize(events: List<SportsEvent>): List<SportsEvent> {
+        val expanded = UfcSessionExpander.expand(
+            events.map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
+        )
         val seen = LinkedHashSet<String>()
-        return events.map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
+        return expanded
             .filter { seen.add(eventKey(it)) }
             .sortedWith(compareBy<SportsEvent> { !serverMarkedLive(it) }.thenBy { it.startUtc })
     }
