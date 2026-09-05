@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 """Dedicated official live adapters for FIVB and NASCAR."""
 from __future__ import annotations
-import json, urllib.parse, urllib.request, urllib.error
+import json, urllib.request, urllib.error
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.5'; FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'
+ROOT=Path(__file__).resolve().parents[2]; FEED=ROOT/'data'/'schedule_feed.json'; UA='XSportsX-OfficialLiveAdapters/1.6'; FIVB_URL='https://www.fivb.org/Vis2009/XmlRequest.asmx'
 def _get(url,timeout=10,headers=None):
  req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/json,text/plain,*/*',**(headers or {})})
  with urllib.request.urlopen(req,timeout=timeout) as r:return json.loads(r.read().decode('utf-8','ignore'))
-def _post_xml(xml,timeout=12):
- body=urllib.parse.urlencode({'Request':xml}).encode();req=urllib.request.Request(FIVB_URL,data=body,headers={'User-Agent':UA,'Accept':'application/xml,text/xml,*/*','Content-Type':'application/x-www-form-urlencoded; charset=utf-8'},method='POST')
+def _post_xml(xml,timeout=12,accept='application/xml,text/xml,*/*'):
+ # VIS XmlRequest.asmx accepts the XML request in the HTTP payload. Sending it
+ # as an x-www-form-urlencoded Request field causes HTTP 400 on GetVolleyLive.
+ req=urllib.request.Request(FIVB_URL,data=xml.encode('utf-8'),headers={'User-Agent':UA,'Accept':accept,'Content-Type':'text/xml; charset=utf-8'},method='POST')
  with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
 def _iso(v):
  if not v:return ''
  try:return datetime.fromisoformat(str(v).replace('Z','+00:00')).astimezone(timezone.utc).isoformat().replace('+00:00','Z')
  except:return ''
 def _norm(v):return ''.join(c.lower() for c in str(v or '') if c.isalnum())
-# VIS documents statuses as numeric 5,8,11,14,17,20,23 = InSet1..InSet7.
 LIVE_STATUS_NUM={5,8,11,14,17,20,23};LIVE_STATUS_NAMES={f'inset{i}' for i in range(1,8)}
 def _is_live(v):
  s=_norm(v)
@@ -44,18 +45,24 @@ def _desc_field(el,*names):
 def _fivb_records(root):
  return [el for el in root.iter() if el.tag.split('}')[-1].lower() in {'volleyballmatch','volleymatch','match'} and _desc_field(el,'No','NoMatch','NoVolleyMatch').isdigit()]
 def _fivb_live_request(no):
- try:
-  raw=_post_xml(f'<Request Type="GetVolleyLive" No="{int(no)}" Options="128" Version="0" />');root=ET.fromstring(raw);tags={n.tag.split('}')[-1].lower() for n in root.iter()}
-  if 'volleylive' in tags:return True,'volleylive'
-  if 'nochanges' in tags:return True,'nochanges'
-  return False,','.join(sorted(tags)) or 'empty'
- except urllib.error.HTTPError as exc:return False,f'http:{exc.code}'
- except Exception as exc:return False,type(exc).__name__
+ attempts=[
+  f'<Request Type="GetVolleyLive" No="{int(no)}" Options="128" Version="0" />',
+  f'<Request Type="GetVolleyLive" No="{int(no)}" Options="128" />',
+ ]
+ reasons=[]
+ for request in attempts:
+  try:
+   raw=_post_xml(request);root=ET.fromstring(raw);tags={n.tag.split('}')[-1].lower() for n in root.iter()}
+   if 'volleylive' in tags:return True,'volleylive'
+   if 'nochanges' in tags:return True,'nochanges'
+   reasons.append(','.join(sorted(tags)) or 'empty')
+  except urllib.error.HTTPError as exc:
+   reasons.append(f'http:{exc.code}')
+   if exc.code not in {400,404}:break
+  except Exception as exc:reasons.append(type(exc).__name__)
+ return False,'|'.join(reasons)
 def _fivb():
  result=[];d={'status':'ok','listRecords':0,'candidates':0,'liveVerified':0,'liveRejected':0,'errors':[],'verification':{}}
- # Do not constrain the list by Status: VIS returns the full match set, and the
- # documented status values are numeric. Filter locally so both numeric and name
- # representations work and GetVolleyLive verifies only genuine in-set matches.
  request='<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc BeginDateTimeUtc TeamNameA TeamNameB Status Gender TournamentName HasLiveData"><Filter ForLiveScore="true" /></Request>'
  try:root=ET.fromstring(_post_xml(request))
  except Exception as exc:d['status']='unavailable';d['errors'].append(f'list:{type(exc).__name__}');return result,d
