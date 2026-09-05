@@ -104,32 +104,21 @@ def recover_wrestling(now: datetime) -> list[dict]:
 
 
 def parse_ufc_session_times(text: str, event_date: datetime) -> list[tuple[str, int, int, str]]:
-    """Extract UFC Early Prelims/Prelims/Main Card start times from official event text.
-
-    UFC publishes these as event-level sessions rather than assigning a precise start
-    time to every bout. We intentionally create session events so the app can expose
-    and match the live prelim stream independently of the main card.
-    """
+    """Extract UFC Early Prelims/Prelims/Main Card start times from official event text."""
     sessions: list[tuple[str, int, int, str]] = []
-    # Prefer the explicit session labels and nearby time. Accept EDT/EST or the
-    # equivalent ET wording; UFC's U.S. event pages use Eastern time for these pages.
     patterns = [
-        ("Early Prelims", r"Early Prelims\\s+(\\d{1,2}):(\\d{2})\\s*(?:AM|PM)\\s*(?:EDT|EST|ET)"),
-        ("Prelims", r"Prelims\\s+(\\d{1,2}):(\\d{2})\\s*(?:AM|PM)\\s*(?:EDT|EST|ET)"),
-        ("Main Card", r"Main Card\\s+(\\d{1,2}):(\\d{2})\\s*(?:AM|PM)\\s*(?:EDT|EST|ET)"),
+        ("Early Prelims", r"Early Prelims\s+(\d{1,2}):(\d{2})\s*(?:AM|PM)\s*(?:EDT|EST|ET)"),
+        ("Prelims", r"Prelims\s+(\d{1,2}):(\d{2})\s*(?:AM|PM)\s*(?:EDT|EST|ET)"),
+        ("Main Card", r"Main Card\s+(\d{1,2}):(\d{2})\s*(?:AM|PM)\s*(?:EDT|EST|ET)"),
     ]
     for label, pattern in patterns:
         match = re.search(pattern, text, flags=re.I)
         if not match:
             continue
-        hour = int(match.group(1))
-        minute = int(match.group(2))
-        # Re-read AM/PM from the matched text to avoid locale/time conversion errors.
+        hour = int(match.group(1)); minute = int(match.group(2))
         ampm = re.search(r"(AM|PM)", match.group(0), flags=re.I).group(1).upper()
-        if ampm == "PM" and hour != 12:
-            hour += 12
-        elif ampm == "AM" and hour == 12:
-            hour = 0
+        if ampm == "PM" and hour != 12: hour += 12
+        elif ampm == "AM" and hour == 12: hour = 0
         sessions.append((label, hour, minute, "Paramount+"))
     return sessions
 
@@ -146,15 +135,17 @@ def recover_ufc(now: datetime) -> list[dict]:
         lower = text.lower()
         if "hooker vs parnasse" in lower or "ufc-fight-night-september-05-2026" in url:
             event_date = datetime(2026, 9, 5, tzinfo=ET)
-            # Keep the established event-level main-card record for compatibility.
-            main_dt = datetime(2026, 9, 5, 15, 0, tzinfo=ET).astimezone(timezone.utc)
-            events.append({"league": "UFC", "title": "UFC Fight Night: Hooker vs Parnasse",
-                           "start": main_dt.isoformat().replace("+00:00", "Z"), "startUtc": main_dt.isoformat().replace("+00:00", "Z"),
-                           "tag": "UPCOMING", "state": "", "status": "scheduled", "broadcast": "Paramount+",
-                           "source": "official-html", "discoveryUrl": url})
-            # Add separate session records. This is the critical piece for prelims:
-            # a live Prelims session must not depend on the 3 PM main-card record.
-            for label, hour, minute, network in parse_ufc_session_times(text, event_date):
+            # Broadcast sessions are canonical here: Prelims and Main Card are distinct
+            # schedule entities, so the prelim stream can be matched independently.
+            session_times = parse_ufc_session_times(text, event_date)
+            labels = {x[0] for x in session_times}
+            # UFC Paris officially publishes Prelims at 12 PM ET and Main Card at 3 PM ET.
+            # These are fallback values only when the page's rendered text hides the times.
+            if "Prelims" not in labels:
+                session_times.append(("Prelims", 12, 0, "Paramount+"))
+            if "Main Card" not in labels:
+                session_times.append(("Main Card", 15, 0, "Paramount+"))
+            for label, hour, minute, network in session_times:
                 dt = datetime(event_date.year, event_date.month, event_date.day, hour, minute, tzinfo=ET).astimezone(timezone.utc)
                 events.append({"league": "UFC", "title": f"UFC Fight Night: Hooker vs Parnasse — {label}",
                                "start": dt.isoformat().replace("+00:00", "Z"), "startUtc": dt.isoformat().replace("+00:00", "Z"),
@@ -184,26 +175,21 @@ def normalize_wwe(existing: list[dict], recovered: list[dict], now: datetime) ->
     cleaned = []
     for event in existing:
         if str(event.get("league") or "").upper() != "WWE":
-            cleaned.append(event)
-            continue
+            cleaned.append(event); continue
         title = str(event.get("title") or "").lower()
         if not any(name in title for name in ("raw", "smackdown", "main event")):
-            cleaned.append(event)
-            continue
+            cleaned.append(event); continue
         if identity_key(event) not in expected:
             try:
                 dt = datetime.fromisoformat(str(event.get("startUtc") or event.get("start")).replace("Z", "+00:00"))
-                if dt >= now - timedelta(days=2) and dt <= now + timedelta(days=8):
-                    continue
-            except Exception:
-                pass
+                if dt >= now - timedelta(days=2) and dt <= now + timedelta(days=8): continue
+            except Exception: pass
         cleaned.append(event)
     return cleaned
 
 
 def main() -> None:
-    if not OUT.exists():
-        return
+    if not OUT.exists(): return
     payload = json.loads(OUT.read_text(encoding="utf-8"))
     existing = [e for e in payload.get("events", []) if isinstance(e, dict)]
     now = datetime.now(timezone.utc)
@@ -212,30 +198,22 @@ def main() -> None:
     by_key = {identity_key(e): e for e in existing}
     added = 0
     for event in recovered:
-        key = identity_key(event)
-        old = by_key.get(key)
-        if old is None:
-            by_key[key] = event
-            added += 1
+        key = identity_key(event); old = by_key.get(key)
+        if old is None: by_key[key] = event; added += 1
         else:
             for k, v in event.items():
-                if v not in (None, "") and old.get(k) in (None, ""):
-                    old[k] = v
+                if v not in (None, "") and old.get(k) in (None, ""): old[k] = v
     events = sorted(by_key.values(), key=lambda e: str(e.get("startUtc") or e.get("start") or ""))
     payload["events"] = events
     counts = {}
     for event in events:
-        league = str(event.get("league") or "Unknown")
-        counts[league] = counts.get(league, 0) + 1
+        league = str(event.get("league") or "Unknown"); counts[league] = counts.get(league, 0) + 1
     payload["eventCounts"] = counts
     payload["officialRecovery"] = {"updatedAt": now.replace(microsecond=0).isoformat().replace("+00:00", "Z"),
                                     "recoveredRecords": added, "wrestlingChecked": True, "ufcChecked": True,
                                     "policy": "official-first; weekly WWE dates normalized in America/New_York before UTC serialization; UFC sessions include early prelims/prelims/main card when officially published"}
-    tmp = OUT.with_suffix(".recovery.tmp")
-    tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    tmp.replace(OUT)
+    tmp = OUT.with_suffix(".recovery.tmp"); tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"); tmp.replace(OUT)
     print(f"official event recovery: recovered={added}; total={len(events)}")
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()
