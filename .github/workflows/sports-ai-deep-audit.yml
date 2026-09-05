@@ -22,7 +22,7 @@ env:
 jobs:
   audit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - name: Checkout canonical engine
         uses: actions/checkout@v5
@@ -39,11 +39,13 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Validate strict AI operating contract
         run: python3 scripts/test_sports_ai_policy.py
+      - name: Validate autonomous intelligence loop
+        run: python3 scripts/test_sports_intelligence_loop.py
       - name: Validate Sports Knowledge Brain
         run: python3 scripts/validate_sports_knowledge.py
       - name: Verify canonical feed
         run: test -s data/schedule_feed.json
-      - name: Run strict Observe-Reason-Act-Verify-Learn audit
+      - name: Run autonomous Observe-Research-Correlate-Reason-Repair-Verify-Learn audit
         env:
           PYTHONUNBUFFERED: '1'
           SPORTS_AGENT_MODEL_API_KEY: ${{ secrets.SPORTS_AGENT_MODEL_API_KEY }}
@@ -51,6 +53,7 @@ jobs:
           GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
           GOOGLE_CSE_ID: ${{ vars.GOOGLE_CSE_ID }}
         run: |
+          python3 scripts/sports_intelligence_loop.py data/schedule_feed.json
           python3 scripts/sports_agent_strict_runner.py data/schedule_feed.json --mode full --memory data/sports_brain_memory.json --graph data/sports_knowledge_graph.json
       - name: Apply validated AI schedule repairs
         run: python3 scripts/apply_ai_schedule_repairs.py
@@ -63,7 +66,10 @@ jobs:
           from pathlib import Path
           d=json.loads(Path('data/schedule_feed.json').read_text())
           a=d.get('sportsAgent') or {}
+          ia=d.get('intelligenceAudit') or {}
           if a.get('schema') != 4: raise SystemExit('Sports Agent schema is not 4')
+          if ia.get('schema') != 1: raise SystemExit('Autonomous intelligence audit schema is not 1')
+          if int(ia.get('leaguesAudited',0)) < 1: raise SystemExit('Autonomous audit did not inspect configured leagues')
           if not isinstance(d.get('events'),list) or not d['events']: raise SystemExit('Canonical feed unexpectedly empty')
           ids=[str(e.get('id','')) for e in d['events'] if isinstance(e,dict)]
           if len(ids)!=len(set(ids)): raise SystemExit('AI repair produced duplicate canonical event IDs')
@@ -73,6 +79,7 @@ jobs:
               if missing: raise SystemExit(f'event {i} missing required fields: {missing}')
           repair=d.get('aiScheduleRepair') or {}
           lessons=json.loads(Path('data/sports_knowledge/learned_lessons.json').read_text())
+          print(f"Intelligence audit: leagues={ia.get('leaguesAudited')} probes={ia.get('providerProbes')} suspicious={ia.get('suspiciousCases')} promoted={ia.get('repairsPromoted')} rejected={ia.get('candidatesRejected')} research={ia.get('research',{})}")
           print(f"Strict AI audit events: {len(d['events'])}")
           print(f"Agent plans: {a.get('plans',0)}")
           print(f"Model decisions: {a.get('modelDecisions',0)}")
