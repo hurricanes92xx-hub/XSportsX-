@@ -1,0 +1,78 @@
+name: Live Sports State Sweep
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xsportsx-schedule-refresh
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  live-sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout canonical engine
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: android-app
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install provider dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run cross-sport provider live sweep
+        run: python3 scripts/live_sports_sweep.py
+      - name: Normalize live-sweep output
+        run: python3 scripts/normalize_schedule_feed.py
+      - name: Validate live-state contract
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/schedule_feed.json')
+          if not p.exists(): raise SystemExit('ERROR: schedule_feed.json missing')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          events=data.get('events')
+          if not isinstance(events,list) or not events: raise SystemExit('ERROR: canonical feed missing events')
+          ids=[str(e.get('id','')) for e in events]
+          if len(ids)!=len(set(ids)): raise SystemExit('ERROR: duplicate canonical event IDs')
+          for i,e in enumerate(events):
+              for key in ('id','sport','league','title','startUtc'):
+                  if not e.get(key): raise SystemExit(f'ERROR: event {i} missing {key}')
+          sweep=data.get('liveSweep') or {}
+          if sweep.get('schema') != 1: raise SystemExit('ERROR: live sweep contract missing')
+          if int(sweep.get('leaguesChecked',0)) < 1: raise SystemExit('ERROR: no ESPN leagues checked')
+          print(f"Live sweep: leagues={sweep.get('leaguesChecked')} fetched={sweep.get('providerEventsFetched')} providerLive={sweep.get('providerLive')} stateChanges={sweep.get('stateChanges')} added={sweep.get('eventsAdded')} inferred={sweep.get('boundedTimingPromotions')} liveAfter={sweep.get('liveCountAfterSweep')}")
+      - name: Publish live-state checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'XSportsX Live State Bot'
+          git config user.email 'xsportsx-live-state-bot@users.noreply.github.com'
+          git add data/schedule_feed.json
+          if git diff --cached --quiet; then echo 'No live-state changes.'; exit 0; fi
+          git commit -m 'chore: publish cross-sport live state'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin android-app
+            if git rebase --autostash origin/android-app; then
+              if git push origin HEAD:android-app; then echo "Live-state publish succeeded on attempt ${attempt}."; exit 0; fi
+            else
+              git rebase --abort || true
+              git reset --mixed origin/android-app
+              git add data/schedule_feed.json
+              if ! git diff --cached --quiet; then git commit -m 'chore: republish cross-sport live state'; fi
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
