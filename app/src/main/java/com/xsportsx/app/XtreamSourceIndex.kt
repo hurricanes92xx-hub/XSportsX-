@@ -2,11 +2,10 @@ package com.xsportsx.app
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.selects.select
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -79,29 +78,26 @@ class XtreamSourceIndex(context: Context) {
         if (cached.isNotEmpty()) return cached
 
         return coroutineScope {
-            val pending = ranked.map { category ->
-                async(Dispatchers.IO) {
-                    runCatching { getCategoryChannelsBlocking(config, category.id, force = false) }.getOrDefault(emptyList())
-                }
-            }.toMutableList()
-            val found = LinkedHashMap<String, Channel>()
-
-            while (pending.isNotEmpty()) {
-                val completed = select<Pair<Deferred<List<Channel>>, List<Channel>>> {
-                    pending.forEach { deferred ->
-                        deferred.onAwait { deferred to it }
-                    }
-                }
-                pending.remove(completed.first)
-                completed.second.forEach { found[it.id] = it }
-
-                if (stopWhen?.invoke(found.values.toList()) == true) {
-                    pending.forEach { it.cancel() }
-                    break
+            val results = Channel<Pair<Int, List<Channel>>>(Channel.UNLIMITED)
+            val jobs = ranked.mapIndexed { index, category ->
+                launch(Dispatchers.IO) {
+                    val channels = runCatching {
+                        getCategoryChannelsBlocking(config, category.id, force = false)
+                    }.getOrDefault(emptyList())
+                    results.send(index to channels)
                 }
             }
 
-            if (pending.isNotEmpty()) pending.forEach { it.cancel() }
+            val found = LinkedHashMap<String, Channel>()
+            repeat(ranked.size) {
+                val (_, channels) = results.receive()
+                channels.forEach { found[it.id] = it }
+                if (stopWhen?.invoke(found.values.toList()) == true) {
+                    jobs.forEach { it.cancel() }
+                    return@coroutineScope found.values.toList()
+                }
+            }
+            jobs.awaitAll()
             found.values.toList()
         }
     }
