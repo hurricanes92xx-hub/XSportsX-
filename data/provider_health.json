@@ -317,7 +317,7 @@
       "lastSuccessAt": "2026-09-03T19:20:49.871828Z"
     }
   },
-  "updatedAt": "2026-09-05T00:14:22.280258Z",
+  "updatedAt": "2026-09-05T00:52:23.296222Z",
   "lastLiveReconciliation": {
     "statusUpdates": 10,
     "eventsAdded": 3,
@@ -333,1430 +333,1430 @@
   "leagues": {
     "AAA Wrestling": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:51.126475Z",
+        "lastChecked": "2026-09-05T00:51:12.902552Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 99.7,
+        "lastLatencyMs": 69.2,
         "lastError": "",
-        "score": 79.8
+        "score": 79.86
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:12:51.141909Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:12.922859Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.7,
+        "lastLatencyMs": 17.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "AEW": {
       "wrestling": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:51.780857Z",
+        "lastChecked": "2026-09-05T00:51:13.498057Z",
         "lastEventCount": 4,
-        "lastLatencyMs": 636.9,
+        "lastLatencyMs": 572.4,
         "lastError": "",
-        "score": 98.73
+        "score": 98.86
       }
     },
     "AFL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:53.042231Z",
+        "lastChecked": "2026-09-05T00:51:14.674279Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 926.6,
+        "lastLatencyMs": 851.2,
         "lastError": "",
-        "score": 78.15
+        "score": 78.3
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:52.113939Z",
+        "lastChecked": "2026-09-05T00:51:13.820586Z",
         "lastEventCount": 2,
-        "lastLatencyMs": 331.1,
+        "lastLatencyMs": 319.8,
         "lastError": "",
-        "score": 99.34
+        "score": 99.36
       }
     },
     "ATP": {
       "sportscore": {
-        "attempts": 7,
-        "successes": 6,
-        "consecutiveFailures": 1,
-        "lastChecked": "2026-09-05T00:12:54.084451Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 277.6,
-        "lastError": "HTTPError: HTTP Error 503: Service Unavailable",
-        "score": 54.44
-      },
-      "espn": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 7,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:53.805214Z",
-        "lastEventCount": 5,
-        "lastLatencyMs": 760.9,
+        "lastChecked": "2026-09-05T00:51:15.270905Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 262.5,
         "lastError": "",
-        "score": 98.48
+        "score": 70.72
+      },
+      "espn": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:15.005926Z",
+        "lastEventCount": 5,
+        "lastLatencyMs": 328.9,
+        "lastError": "",
+        "score": 99.34
       },
       "sportsdb": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:12:54.465404Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:15.603857Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 267.2,
+        "lastLatencyMs": 207.7,
         "lastError": "",
         "score": 0.0
       },
       "official": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:12:54.196499Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:51:15.393730Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 110.2,
+        "lastLatencyMs": 120.3,
         "lastError": "",
         "score": 0.0
       }
     },
     "Bundesliga": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:56.578602Z",
+        "lastChecked": "2026-09-05T00:51:19.242777Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 127.6,
+        "lastLatencyMs": 149.5,
         "lastError": "",
-        "score": 79.74
+        "score": 79.7
       },
       "sportscore": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:56.813720Z",
+        "consecutiveFailures": 1,
+        "lastChecked": "2026-09-05T00:51:19.358764Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 233.4,
-        "lastError": "",
-        "score": 79.53
+        "lastLatencyMs": 113.4,
+        "lastError": "HTTPError: HTTP Error 503: Service Unavailable",
+        "score": 56.02
       },
       "openligadb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:56.449333Z",
+        "lastChecked": "2026-09-05T00:51:19.090907Z",
         "lastEventCount": 306,
-        "lastLatencyMs": 1261.2,
+        "lastLatencyMs": 1020.8,
         "lastError": "",
-        "score": 97.48
+        "score": 97.96
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:55.186502Z",
+        "lastChecked": "2026-09-05T00:51:18.067772Z",
         "lastEventCount": 26,
-        "lastLatencyMs": 324.6,
+        "lastLatencyMs": 167.2,
         "lastError": "",
-        "score": 99.35
+        "score": 99.67
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:54.860305Z",
+        "lastChecked": "2026-09-05T00:51:17.898187Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 208.8,
+        "lastLatencyMs": 115.7,
         "lastError": "",
-        "score": 99.58
+        "score": 99.77
       }
     },
     "CFL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:57.423203Z",
+        "lastChecked": "2026-09-05T00:51:19.675240Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 433.5,
+        "lastLatencyMs": 175.6,
         "lastError": "",
-        "score": 79.13
+        "score": 79.65
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:56.988008Z",
+        "lastChecked": "2026-09-05T00:51:19.497025Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 172.3,
+        "lastLatencyMs": 135.3,
         "lastError": "",
-        "score": 79.66
+        "score": 79.73
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:12:57.436216Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:19.692656Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.4,
+        "lastLatencyMs": 15.0,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "EPL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:00.032266Z",
+        "lastChecked": "2026-09-05T00:51:20.456596Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1843.3,
+        "lastLatencyMs": 419.9,
         "lastError": "",
-        "score": 76.31
+        "score": 79.16
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 6,
-        "consecutiveFailures": 1,
-        "lastChecked": "2026-09-05T00:12:58.187270Z",
+        "attempts": 8,
+        "successes": 7,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:20.824739Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 206.0,
-        "lastError": "HTTPError: HTTP Error 503: Service Unavailable",
-        "score": 54.59
+        "lastLatencyMs": 365.6,
+        "lastError": "",
+        "score": 70.52
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:57.979649Z",
+        "lastChecked": "2026-09-05T00:51:20.034359Z",
         "lastEventCount": 29,
-        "lastLatencyMs": 330.0,
+        "lastLatencyMs": 220.1,
         "lastError": "",
-        "score": 99.34
+        "score": 99.56
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:12:57.648027Z",
+        "lastChecked": "2026-09-05T00:51:19.811799Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 209.9,
+        "lastLatencyMs": 116.4,
         "lastError": "",
-        "score": 99.58
+        "score": 99.77
       }
     },
     "F1": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:02.027242Z",
+        "lastChecked": "2026-09-05T00:51:21.841574Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 496.9,
+        "lastLatencyMs": 127.0,
         "lastError": "",
-        "score": 79.01
+        "score": 79.75
       },
       "jolpica-f1": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:00.691271Z",
+        "lastChecked": "2026-09-05T00:51:21.712039Z",
         "lastEventCount": 23,
-        "lastLatencyMs": 656.9,
+        "lastLatencyMs": 349.8,
         "lastError": "",
-        "score": 98.69
+        "score": 99.3
       },
       "openf1": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:01.528484Z",
+        "lastChecked": "2026-09-05T00:51:21.359701Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 626.6,
+        "lastLatencyMs": 386.6,
         "lastError": "",
-        "score": 98.75
+        "score": 99.23
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:00.900130Z",
+        "lastChecked": "2026-09-05T00:51:20.970524Z",
         "lastEventCount": 4,
-        "lastLatencyMs": 207.1,
+        "lastLatencyMs": 142.9,
         "lastError": "",
-        "score": 99.59
+        "score": 99.71
       }
     },
     "FIVB Men": {
       "fivb-get": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:02.453992Z",
+        "lastChecked": "2026-09-05T00:51:22.087957Z",
         "lastEventCount": 90,
-        "lastLatencyMs": 424.5,
+        "lastLatencyMs": 243.6,
         "lastError": "",
-        "score": 99.15
+        "score": 99.51
       }
     },
     "FIVB Women": {
       "fivb-get": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:02.800943Z",
+        "lastChecked": "2026-09-05T00:51:22.287130Z",
         "lastEventCount": 29,
-        "lastLatencyMs": 344.9,
+        "lastLatencyMs": 196.4,
         "lastError": "",
-        "score": 99.31
+        "score": 99.61
       }
     },
     "FORMULA E": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:03.833960Z",
+        "lastChecked": "2026-09-05T00:51:22.497904Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1030.9,
+        "lastLatencyMs": 207.9,
         "lastError": "",
-        "score": 77.94
+        "score": 79.58
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:03.848526Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:22.517194Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 12.8,
+        "lastLatencyMs": 16.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "ICC T20": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:04.165299Z",
+        "lastChecked": "2026-09-05T00:51:22.693957Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 314.7,
+        "lastLatencyMs": 174.1,
         "lastError": "",
-        "score": 79.37
+        "score": 79.65
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:04.731198Z",
+        "lastChecked": "2026-09-05T00:51:23.237149Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 564.1,
+        "lastLatencyMs": 540.5,
         "lastError": "",
-        "score": 78.87
+        "score": 78.92
       },
       "espn": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:05.194503Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:23.434685Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 461.4,
+        "lastLatencyMs": 194.6,
         "lastError": "",
         "score": 0.0
       },
       "sportsdb": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:05.417570Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:23.549526Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 220.4,
+        "lastLatencyMs": 112.0,
         "lastError": "",
         "score": 0.0
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:05.431991Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:23.568778Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 12.8,
+        "lastLatencyMs": 16.7,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "IMSA": {
       "openwec": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:06.346156Z",
+        "lastChecked": "2026-09-05T00:51:23.963437Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 912.2,
+        "lastLatencyMs": 391.9,
         "lastError": "",
-        "score": 78.18
+        "score": 79.22
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:06.359472Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:23.981145Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.5,
+        "lastLatencyMs": 15.1,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "IPL": {
       "official": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:07.214993Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:24.458409Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 447.8,
+        "lastLatencyMs": 197.6,
         "lastError": "",
         "score": 0.0
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:06.765336Z",
+        "lastChecked": "2026-09-05T00:51:24.257936Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 403.9,
+        "lastLatencyMs": 274.0,
         "lastError": "",
-        "score": 79.19
+        "score": 79.45
       },
       "espn": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:07.608431Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:24.635647Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 391.6,
+        "lastLatencyMs": 174.6,
         "lastError": "",
         "score": 0.0
       },
       "sportsdb": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:07.813901Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:24.750917Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 203.7,
+        "lastLatencyMs": 112.6,
         "lastError": "",
         "score": 0.0
       },
       "cache": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:07.826970Z",
+        "lastChecked": "2026-09-05T00:51:24.768432Z",
         "lastEventCount": 74,
-        "lastLatencyMs": 11.4,
+        "lastLatencyMs": 15.0,
         "lastError": "cache",
-        "score": 99.98
+        "score": 99.97
       }
     },
     "IndyCar": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:08.496177Z",
+        "lastChecked": "2026-09-05T00:51:25.001832Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 488.8,
+        "lastLatencyMs": 152.0,
         "lastError": "",
-        "score": 79.02
+        "score": 79.7
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:08.005713Z",
+        "lastChecked": "2026-09-05T00:51:24.847268Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 176.8,
+        "lastLatencyMs": 76.2,
         "lastError": "",
-        "score": 99.65
+        "score": 99.85
       }
     },
     "LIV Golf": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:08.934710Z",
+        "lastChecked": "2026-09-05T00:51:25.255317Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 252.9,
+        "lastLatencyMs": 159.1,
         "lastError": "",
-        "score": 79.49
+        "score": 79.68
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:08.680146Z",
+        "lastChecked": "2026-09-05T00:51:25.093633Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 182.0,
+        "lastLatencyMs": 88.8,
         "lastError": "",
-        "score": 79.64
+        "score": 79.82
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:08.949254Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:25.274601Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 12.9,
+        "lastLatencyMs": 16.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "LPGA": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:10.952189Z",
+        "lastChecked": "2026-09-05T00:51:25.475940Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1850.0,
+        "lastLatencyMs": 103.0,
         "lastError": "",
-        "score": 76.3
+        "score": 79.79
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:09.100238Z",
+        "lastChecked": "2026-09-05T00:51:25.370113Z",
         "lastEventCount": 3,
-        "lastLatencyMs": 149.0,
+        "lastLatencyMs": 92.8,
         "lastError": "",
-        "score": 99.7
+        "score": 99.81
       }
     },
     "LaLiga": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:12.834376Z",
+        "lastChecked": "2026-09-05T00:51:26.031429Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1310.2,
+        "lastLatencyMs": 231.3,
         "lastError": "",
-        "score": 77.38
+        "score": 79.54
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 6,
+        "attempts": 8,
+        "successes": 7,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:13.818371Z",
+        "lastChecked": "2026-09-05T00:51:26.731035Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 982.2,
+        "lastLatencyMs": 697.0,
         "lastError": "",
-        "score": 68.04
+        "score": 69.86
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:11.522407Z",
+        "lastChecked": "2026-09-05T00:51:25.797645Z",
         "lastEventCount": 38,
-        "lastLatencyMs": 337.8,
+        "lastLatencyMs": 200.9,
         "lastError": "",
-        "score": 99.32
+        "score": 99.6
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:11.182828Z",
+        "lastChecked": "2026-09-05T00:51:25.594242Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 228.4,
+        "lastLatencyMs": 115.3,
         "lastError": "",
-        "score": 99.54
+        "score": 99.77
       }
     },
     "Ligue 1": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:16.653318Z",
+        "lastChecked": "2026-09-05T00:51:28.425057Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1488.9,
+        "lastLatencyMs": 1161.3,
         "lastError": "",
-        "score": 77.02
+        "score": 77.68
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:15.162523Z",
+        "lastChecked": "2026-09-05T00:51:27.261084Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 826.0,
+        "lastLatencyMs": 199.6,
         "lastError": "",
-        "score": 78.35
+        "score": 79.6
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:14.334853Z",
+        "lastChecked": "2026-09-05T00:51:27.059089Z",
         "lastEventCount": 24,
-        "lastLatencyMs": 305.9,
+        "lastLatencyMs": 200.5,
         "lastError": "",
-        "score": 99.39
+        "score": 99.6
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:14.027245Z",
+        "lastChecked": "2026-09-05T00:51:26.855957Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 206.8,
+        "lastLatencyMs": 121.8,
         "lastError": "",
-        "score": 99.59
+        "score": 99.76
       }
     },
     "MLB": {
       "mlb-official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:17.445498Z",
+        "lastChecked": "2026-09-05T00:51:28.862159Z",
         "lastEventCount": 342,
-        "lastLatencyMs": 576.2,
+        "lastLatencyMs": 312.3,
         "lastError": "",
-        "score": 98.85
+        "score": 99.38
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:18.059138Z",
+        "lastChecked": "2026-09-05T00:51:29.243363Z",
         "lastEventCount": 326,
-        "lastLatencyMs": 611.9,
+        "lastLatencyMs": 378.9,
         "lastError": "",
-        "score": 98.78
+        "score": 99.24
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:16.867490Z",
+        "lastChecked": "2026-09-05T00:51:28.547329Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 211.9,
+        "lastLatencyMs": 119.1,
         "lastError": "",
-        "score": 99.58
+        "score": 99.76
       }
     },
     "MLS": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:19.380459Z",
+        "lastChecked": "2026-09-05T00:51:30.172700Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 201.3,
+        "lastLatencyMs": 245.8,
         "lastError": "",
-        "score": 79.6
+        "score": 79.51
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:18.755776Z",
+        "lastChecked": "2026-09-05T00:51:29.924415Z",
         "lastEventCount": 75,
-        "lastLatencyMs": 484.9,
+        "lastLatencyMs": 291.8,
         "lastError": "",
-        "score": 99.03
+        "score": 99.42
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:19.177491Z",
+        "lastChecked": "2026-09-05T00:51:29.630262Z",
         "lastEventCount": 75,
-        "lastLatencyMs": 420.1,
+        "lastLatencyMs": 266.6,
         "lastError": "",
-        "score": 99.16
+        "score": 99.47
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:18.269241Z",
+        "lastChecked": "2026-09-05T00:51:29.360555Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 208.1,
+        "lastLatencyMs": 114.4,
         "lastError": "",
-        "score": 99.58
+        "score": 99.77
       }
     },
     "MONSTER JAM": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:19.532025Z",
+        "lastChecked": "2026-09-05T00:51:30.331802Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 149.5,
+        "lastLatencyMs": 156.1,
         "lastError": "",
-        "score": 79.7
+        "score": 79.69
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:19.546736Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:30.351340Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.1,
+        "lastLatencyMs": 17.0,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "MXGP": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:20.358708Z",
+        "lastChecked": "2026-09-05T00:51:33.029710Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 810.0,
+        "lastLatencyMs": 2675.6,
         "lastError": "",
-        "score": 78.38
+        "score": 74.65
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:20.371909Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:33.046865Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.5,
+        "lastLatencyMs": 14.6,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "MotoGP": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:21.226868Z",
+        "lastChecked": "2026-09-05T00:51:33.315182Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 852.9,
+        "lastLatencyMs": 265.5,
         "lastError": "",
-        "score": 78.29
+        "score": 79.47
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:21.240435Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 11.7,
-        "lastError": "cache",
-        "score": 0.0
-      }
-    },
-    "NASCAR Cup": {
-      "nascar": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:21.601466Z",
-        "lastEventCount": 49,
-        "lastLatencyMs": 359.0,
-        "lastError": "",
-        "score": 99.28
-      }
-    },
-    "NASCAR Truck": {
-      "nascar": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:21.639670Z",
-        "lastEventCount": 21,
-        "lastLatencyMs": 36.2,
-        "lastError": "",
-        "score": 99.93
-      }
-    },
-    "NASCAR Xfinity": {
-      "nascar": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:21.807534Z",
-        "lastEventCount": 30,
-        "lastLatencyMs": 57.8,
-        "lastError": "",
-        "score": 99.88
-      }
-    },
-    "NBA": {
-      "official": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:22.915388Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 293.8,
-        "lastError": "",
-        "score": 79.41
-      },
-      "sportscore": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:22.619911Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 383.0,
-        "lastError": "",
-        "score": 79.23
-      },
-      "espn": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:22.003731Z",
-        "lastEventCount": 7,
-        "lastLatencyMs": 194.3,
-        "lastError": "",
-        "score": 99.61
-      },
-      "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:22.235159Z",
-        "lastEventCount": 1,
-        "lastLatencyMs": 229.8,
-        "lastError": "",
-        "score": 99.54
-      }
-    },
-    "NCAA BB": {
-      "ncaa": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:25.083791Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 2166.3,
-        "lastError": "",
-        "score": 75.67
-      },
-      "cache": {
-        "attempts": 7,
-        "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:25.098735Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 13.0,
-        "lastError": "cache",
-        "score": 0.0
-      }
-    },
-    "NCAA Baseball": {
-      "ncaa": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:27.156543Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 2055.7,
-        "lastError": "",
-        "score": 75.89
-      },
-      "cache": {
-        "attempts": 7,
-        "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:27.172029Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 13.5,
-        "lastError": "cache",
-        "score": 0.0
-      }
-    },
-    "NCAA Beach Volleyball": {
-      "ncaa": {
-        "attempts": 7,
-        "successes": 7,
-        "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:29.383269Z",
-        "lastEventCount": 0,
-        "lastLatencyMs": 2209.0,
-        "lastError": "",
-        "score": 75.58
-      },
-      "cache": {
-        "attempts": 7,
-        "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:29.400033Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:33.332500Z",
         "lastEventCount": 0,
         "lastLatencyMs": 14.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
+    "NASCAR Cup": {
+      "nascar": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:33.566301Z",
+        "lastEventCount": 49,
+        "lastLatencyMs": 231.1,
+        "lastError": "",
+        "score": 99.54
+      }
+    },
+    "NASCAR Truck": {
+      "nascar": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:33.635135Z",
+        "lastEventCount": 21,
+        "lastLatencyMs": 66.0,
+        "lastError": "",
+        "score": 99.87
+      }
+    },
+    "NASCAR Xfinity": {
+      "nascar": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:33.828306Z",
+        "lastEventCount": 30,
+        "lastLatencyMs": 101.1,
+        "lastError": "",
+        "score": 99.8
+      }
+    },
+    "NBA": {
+      "official": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:34.775032Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 638.7,
+        "lastError": "",
+        "score": 78.72
+      },
+      "sportscore": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:35.631507Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 853.8,
+        "lastError": "",
+        "score": 78.29
+      },
+      "espn": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:34.007629Z",
+        "lastEventCount": 7,
+        "lastLatencyMs": 176.6,
+        "lastError": "",
+        "score": 99.65
+      },
+      "sportsdb": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:34.133694Z",
+        "lastEventCount": 1,
+        "lastLatencyMs": 123.5,
+        "lastError": "",
+        "score": 99.75
+      }
+    },
+    "NCAA BB": {
+      "ncaa": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:37.632855Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 1998.3,
+        "lastError": "",
+        "score": 76.0
+      },
+      "cache": {
+        "attempts": 8,
+        "successes": 0,
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:37.651729Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 16.2,
+        "lastError": "cache",
+        "score": 0.0
+      }
+    },
+    "NCAA Baseball": {
+      "ncaa": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:39.457355Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 1802.9,
+        "lastError": "",
+        "score": 76.39
+      },
+      "cache": {
+        "attempts": 8,
+        "successes": 0,
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:39.476654Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 16.6,
+        "lastError": "cache",
+        "score": 0.0
+      }
+    },
+    "NCAA Beach Volleyball": {
+      "ncaa": {
+        "attempts": 8,
+        "successes": 8,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:41.341802Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 1862.4,
+        "lastError": "",
+        "score": 76.28
+      },
+      "cache": {
+        "attempts": 8,
+        "successes": 0,
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:41.362613Z",
+        "lastEventCount": 0,
+        "lastLatencyMs": 18.2,
+        "lastError": "cache",
+        "score": 0.0
+      }
+    },
     "NCAA FB": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:31.335691Z",
+        "lastChecked": "2026-09-05T00:51:43.304701Z",
         "lastEventCount": 35,
-        "lastLatencyMs": 1933.5,
+        "lastLatencyMs": 1939.2,
         "lastError": "",
-        "score": 96.13
+        "score": 96.12
       }
     },
     "NCAA Men's Hockey": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:33.419257Z",
+        "lastChecked": "2026-09-05T00:51:45.220192Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2081.4,
+        "lastLatencyMs": 1912.6,
         "lastError": "",
-        "score": 75.84
+        "score": 76.17
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:33.436500Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:45.241554Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 15.3,
+        "lastLatencyMs": 18.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Men's Lacrosse": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:35.542216Z",
+        "lastChecked": "2026-09-05T00:51:47.172642Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2103.6,
+        "lastLatencyMs": 1928.3,
         "lastError": "",
-        "score": 75.79
+        "score": 76.14
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:35.559390Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:47.194492Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 15.1,
+        "lastLatencyMs": 19.3,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Men's Soccer": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:37.688491Z",
+        "lastChecked": "2026-09-05T00:51:49.250402Z",
         "lastEventCount": 158,
-        "lastLatencyMs": 2126.9,
+        "lastLatencyMs": 2053.2,
         "lastError": "",
-        "score": 95.75
+        "score": 95.89
       }
     },
     "NCAA Men's Volleyball": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:39.779843Z",
+        "lastChecked": "2026-09-05T00:51:51.145820Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2089.1,
+        "lastLatencyMs": 1892.6,
         "lastError": "",
-        "score": 75.82
+        "score": 76.21
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:39.796915Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:51.167733Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 15.1,
+        "lastLatencyMs": 19.3,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Men's Water Polo": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:41.934521Z",
+        "lastChecked": "2026-09-05T00:51:53.331021Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2135.5,
+        "lastLatencyMs": 2160.5,
         "lastError": "",
-        "score": 75.73
+        "score": 75.68
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:41.952501Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:53.353399Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 16.1,
+        "lastLatencyMs": 19.8,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Softball": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:44.002478Z",
+        "lastChecked": "2026-09-05T00:51:55.248370Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2047.3,
+        "lastLatencyMs": 1891.4,
         "lastError": "",
-        "score": 75.91
+        "score": 76.22
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:44.017837Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:55.268459Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.4,
+        "lastLatencyMs": 17.5,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA WBB": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:46.040353Z",
+        "lastChecked": "2026-09-05T00:51:58.021546Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2020.4,
+        "lastLatencyMs": 2750.4,
         "lastError": "",
-        "score": 75.96
+        "score": 74.5
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:46.055515Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:51:58.041466Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.2,
+        "lastLatencyMs": 17.2,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Women's Field Hockey": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:48.011239Z",
+        "lastChecked": "2026-09-05T00:51:59.817241Z",
         "lastEventCount": 78,
-        "lastLatencyMs": 1953.6,
+        "lastLatencyMs": 1773.0,
         "lastError": "",
-        "score": 96.09
+        "score": 96.45
       }
     },
     "NCAA Women's Hockey": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:50.708507Z",
+        "lastChecked": "2026-09-05T00:52:02.078483Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2106.7,
+        "lastLatencyMs": 1916.2,
         "lastError": "",
-        "score": 75.79
+        "score": 76.17
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:48.600024Z",
+        "lastChecked": "2026-09-05T00:52:00.159862Z",
         "lastEventCount": 743,
-        "lastLatencyMs": 586.6,
+        "lastLatencyMs": 339.7,
         "lastError": "",
-        "score": 98.83
+        "score": 99.32
       }
     },
     "NCAA Women's Lacrosse": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:54.621756Z",
+        "lastChecked": "2026-09-05T00:52:04.058258Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 3910.7,
+        "lastLatencyMs": 1976.4,
         "lastError": "",
-        "score": 72.18
+        "score": 76.05
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:13:54.638890Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:04.079875Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 15.2,
+        "lastLatencyMs": 19.0,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NCAA Women's Soccer": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:56.793452Z",
+        "lastChecked": "2026-09-05T00:52:06.059414Z",
         "lastEventCount": 262,
-        "lastLatencyMs": 2152.4,
+        "lastLatencyMs": 1976.8,
         "lastError": "",
-        "score": 95.7
+        "score": 96.05
       }
     },
     "NCAA Women's Volleyball": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:13:59.295940Z",
-        "lastEventCount": 497,
-        "lastLatencyMs": 2500.4,
+        "lastChecked": "2026-09-05T00:52:08.293771Z",
+        "lastEventCount": 500,
+        "lastLatencyMs": 2231.6,
         "lastError": "",
-        "score": 95.0
+        "score": 95.54
       }
     },
     "NCAA Women's Water Polo": {
       "ncaa": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:01.319523Z",
+        "lastChecked": "2026-09-05T00:52:10.156174Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 2021.4,
+        "lastLatencyMs": 1859.5,
         "lastError": "",
-        "score": 75.96
+        "score": 76.28
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:01.337885Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:10.178485Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 16.4,
+        "lastLatencyMs": 19.7,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NFL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:02.167742Z",
+        "lastChecked": "2026-09-05T00:52:10.653298Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 284.8,
+        "lastLatencyMs": 154.9,
         "lastError": "",
-        "score": 79.43
+        "score": 79.69
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:01.881272Z",
+        "lastChecked": "2026-09-05T00:52:10.495936Z",
         "lastEventCount": 17,
-        "lastLatencyMs": 322.9,
+        "lastLatencyMs": 197.5,
         "lastError": "",
-        "score": 99.35
+        "score": 99.61
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:01.556641Z",
+        "lastChecked": "2026-09-05T00:52:10.295878Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 216.6,
+        "lastLatencyMs": 114.6,
         "lastError": "",
-        "score": 99.57
+        "score": 99.77
       }
     },
     "NHL": {
       "nhl-official": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:02.925679Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:11.011298Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 188.5,
+        "lastLatencyMs": 44.5,
         "lastError": "",
         "score": 0.0
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:02.735491Z",
+        "lastChecked": "2026-09-05T00:52:10.964372Z",
         "lastEventCount": 108,
-        "lastLatencyMs": 364.8,
+        "lastLatencyMs": 192.6,
         "lastError": "",
-        "score": 99.27
+        "score": 99.61
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:02.369008Z",
+        "lastChecked": "2026-09-05T00:52:10.769156Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 199.2,
+        "lastLatencyMs": 112.9,
         "lastError": "",
-        "score": 99.6
+        "score": 99.77
       }
     },
     "NLL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:08.788361Z",
+        "lastChecked": "2026-09-05T00:52:11.286306Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 5680.6,
+        "lastLatencyMs": 190.6,
         "lastError": "",
-        "score": 70.0
+        "score": 79.62
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:03.106045Z",
+        "lastChecked": "2026-09-05T00:52:11.093028Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 178.4,
+        "lastLatencyMs": 78.9,
         "lastError": "",
-        "score": 79.64
+        "score": 79.84
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:08.801823Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:11.304131Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.5,
+        "lastLatencyMs": 15.2,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NRL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:10.867787Z",
+        "lastChecked": "2026-09-05T00:52:13.060764Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1877.9,
+        "lastLatencyMs": 1663.1,
         "lastError": "",
-        "score": 76.24
+        "score": 76.67
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:08.988042Z",
+        "lastChecked": "2026-09-05T00:52:11.394966Z",
         "lastEventCount": 5,
-        "lastLatencyMs": 184.2,
+        "lastLatencyMs": 88.1,
         "lastError": "",
-        "score": 99.63
+        "score": 99.82
       }
     },
     "NWSL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:11.452602Z",
+        "lastChecked": "2026-09-05T00:52:13.654925Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 227.0,
+        "lastLatencyMs": 139.1,
         "lastError": "",
-        "score": 79.55
+        "score": 79.72
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:11.223892Z",
+        "lastChecked": "2026-09-05T00:52:13.513303Z",
         "lastEventCount": 40,
-        "lastLatencyMs": 354.0,
+        "lastLatencyMs": 449.5,
         "lastError": "",
-        "score": 99.29
+        "score": 99.1
       }
     },
     "PGA": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:11.978693Z",
+        "lastChecked": "2026-09-05T00:52:13.917556Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 370.8,
+        "lastLatencyMs": 172.1,
         "lastError": "",
-        "score": 79.26
+        "score": 79.66
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:11.606218Z",
+        "lastChecked": "2026-09-05T00:52:13.742917Z",
         "lastEventCount": 3,
-        "lastLatencyMs": 151.6,
+        "lastLatencyMs": 85.0,
         "lastError": "",
-        "score": 99.7
+        "score": 99.83
       }
     },
     "PLL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:12.481131Z",
+        "lastChecked": "2026-09-05T00:52:14.205958Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 350.5,
+        "lastLatencyMs": 141.1,
         "lastError": "",
-        "score": 79.3
+        "score": 79.72
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:12.128999Z",
+        "lastChecked": "2026-09-05T00:52:14.062294Z",
         "lastEventCount": 2,
-        "lastLatencyMs": 148.3,
+        "lastLatencyMs": 141.8,
         "lastError": "",
-        "score": 99.7
+        "score": 99.72
       }
     },
     "Rugby World Cup": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:14.168006Z",
+        "lastChecked": "2026-09-05T00:52:14.381340Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1497.0,
+        "lastLatencyMs": 93.0,
         "lastError": "",
-        "score": 77.01
+        "score": 79.81
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:12.669263Z",
+        "lastChecked": "2026-09-05T00:52:14.285692Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 186.2,
+        "lastLatencyMs": 76.8,
         "lastError": "",
-        "score": 79.63
+        "score": 79.85
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:14.183965Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:14.402089Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 14.1,
+        "lastLatencyMs": 18.2,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "Serie A": {
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:14.945684Z",
+        "lastChecked": "2026-09-05T00:52:14.946979Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 209.1,
+        "lastLatencyMs": 266.0,
         "lastError": "",
-        "score": 79.58
+        "score": 79.47
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:14.734909Z",
+        "lastChecked": "2026-09-05T00:52:14.678576Z",
         "lastEventCount": 29,
-        "lastLatencyMs": 331.1,
+        "lastLatencyMs": 152.5,
         "lastError": "",
-        "score": 99.34
+        "score": 99.69
       },
       "sportsdb": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:14.402124Z",
+        "lastChecked": "2026-09-05T00:52:14.523431Z",
         "lastEventCount": 1,
-        "lastLatencyMs": 216.2,
+        "lastLatencyMs": 118.5,
         "lastError": "",
-        "score": 99.57
+        "score": 99.76
       }
     },
     "Six Nations": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:15.338165Z",
+        "lastChecked": "2026-09-05T00:52:15.186905Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 200.9,
+        "lastLatencyMs": 152.5,
         "lastError": "",
-        "score": 79.6
+        "score": 79.69
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:15.135693Z",
+        "lastChecked": "2026-09-05T00:52:15.031769Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 188.0,
+        "lastLatencyMs": 81.8,
         "lastError": "",
-        "score": 79.62
+        "score": 79.84
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:15.353030Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:15.206475Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.3,
+        "lastLatencyMs": 17.0,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "TNA": {
       "wrestling": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:15.354916Z",
+        "lastChecked": "2026-09-05T00:52:15.209023Z",
         "lastEventCount": 1,
         "lastLatencyMs": 0.0,
         "lastError": "",
@@ -1765,204 +1765,204 @@
     },
     "UCL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:15.993360Z",
+        "lastChecked": "2026-09-05T00:52:16.928555Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 371.4,
+        "lastLatencyMs": 303.1,
         "lastError": "",
-        "score": 79.26
+        "score": 79.39
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:16.201052Z",
+        "lastChecked": "2026-09-05T00:52:16.622743Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 206.0,
+        "lastLatencyMs": 1228.1,
         "lastError": "",
-        "score": 79.59
+        "score": 77.54
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:15.620363Z",
+        "lastChecked": "2026-09-05T00:52:15.392162Z",
         "lastEventCount": 18,
-        "lastLatencyMs": 263.6,
+        "lastLatencyMs": 180.5,
         "lastError": "",
-        "score": 99.47
+        "score": 99.64
       }
     },
     "UEL": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:16.788994Z",
+        "lastChecked": "2026-09-05T00:52:18.352691Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 274.4,
+        "lastLatencyMs": 126.8,
         "lastError": "",
-        "score": 79.45
+        "score": 79.75
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:16.512927Z",
+        "lastChecked": "2026-09-05T00:52:18.223393Z",
         "lastEventCount": 18,
-        "lastLatencyMs": 310.0,
+        "lastLatencyMs": 1291.8,
         "lastError": "",
-        "score": 99.38
+        "score": 97.42
       }
     },
     "UFC": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:17.244117Z",
+        "lastChecked": "2026-09-05T00:52:18.657613Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 146.6,
+        "lastLatencyMs": 165.3,
         "lastError": "",
-        "score": 79.71
+        "score": 79.67
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:17.095856Z",
+        "lastChecked": "2026-09-05T00:52:18.489862Z",
         "lastEventCount": 9,
-        "lastLatencyMs": 304.9,
+        "lastLatencyMs": 134.2,
         "lastError": "",
-        "score": 99.39
+        "score": 99.73
       },
       "sportsdb": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:17.451232Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:18.773381Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 205.5,
+        "lastLatencyMs": 113.0,
         "lastError": "",
         "score": 0.0
       }
     },
     "WEC": {
       "openwec": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:17.860872Z",
+        "lastChecked": "2026-09-05T00:52:19.138677Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 407.6,
+        "lastLatencyMs": 362.2,
         "lastError": "",
-        "score": 79.18
+        "score": 79.28
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:17.874108Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:19.156523Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.6,
+        "lastLatencyMs": 15.2,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "WNBA": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:18.559640Z",
+        "lastChecked": "2026-09-05T00:52:19.495510Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 123.3,
+        "lastLatencyMs": 162.8,
         "lastError": "",
-        "score": 79.75
+        "score": 79.67
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:18.434588Z",
+        "lastChecked": "2026-09-05T00:52:19.921785Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 206.5,
+        "lastLatencyMs": 423.6,
         "lastError": "",
-        "score": 79.59
+        "score": 79.15
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:18.226420Z",
+        "lastChecked": "2026-09-05T00:52:19.330151Z",
         "lastEventCount": 30,
-        "lastLatencyMs": 350.4,
+        "lastLatencyMs": 170.9,
         "lastError": "",
-        "score": 99.3
+        "score": 99.66
       }
     },
     "WRC": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:20.228990Z",
+        "lastChecked": "2026-09-05T00:52:21.811442Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 1667.3,
+        "lastLatencyMs": 1886.4,
         "lastError": "",
-        "score": 76.67
+        "score": 76.23
       },
       "cache": {
-        "attempts": 7,
+        "attempts": 8,
         "successes": 0,
-        "consecutiveFailures": 7,
-        "lastChecked": "2026-09-05T00:14:20.242318Z",
+        "consecutiveFailures": 8,
+        "lastChecked": "2026-09-05T00:52:21.829127Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.4,
+        "lastLatencyMs": 15.1,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "WTA": {
       "official": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:21.545126Z",
+        "lastChecked": "2026-09-05T00:52:22.821892Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 484.1,
+        "lastLatencyMs": 230.1,
         "lastError": "",
-        "score": 79.03
+        "score": 79.54
       },
       "sportscore": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:21.758268Z",
+        "lastChecked": "2026-09-05T00:52:22.589227Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 211.5,
+        "lastLatencyMs": 369.8,
         "lastError": "",
-        "score": 79.58
+        "score": 79.26
       },
       "espn": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:21.059270Z",
+        "lastChecked": "2026-09-05T00:52:22.217017Z",
         "lastEventCount": 19,
-        "lastLatencyMs": 814.9,
+        "lastLatencyMs": 385.2,
         "lastError": "",
-        "score": 98.37
+        "score": 99.23
       }
     },
     "WWE": {
       "wrestling": {
-        "attempts": 7,
-        "successes": 7,
+        "attempts": 8,
+        "successes": 8,
         "consecutiveFailures": 0,
-        "lastChecked": "2026-09-05T00:14:21.760153Z",
+        "lastChecked": "2026-09-05T00:52:22.824757Z",
         "lastEventCount": 14,
         "lastLatencyMs": 0.0,
         "lastError": "",
@@ -1971,66 +1971,66 @@
     },
     "Boxing": {
       "official": {
-        "attempts": 5,
-        "successes": 4,
-        "consecutiveFailures": 1,
-        "lastChecked": "2026-09-05T00:12:54.636404Z",
+        "attempts": 6,
+        "successes": 5,
+        "consecutiveFailures": 0,
+        "lastChecked": "2026-09-05T00:51:17.761900Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 169.0,
+        "lastLatencyMs": 2155.2,
         "lastError": "",
-        "score": 50.66
+        "score": 64.02
       },
       "cache": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:12:54.649575Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:51:17.779709Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 11.5,
+        "lastLatencyMs": 15.4,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "NASCAR Trucks": {
       "official": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:13:21.732912Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:51:33.703917Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 91.2,
+        "lastLatencyMs": 65.7,
         "lastError": "",
         "score": 0.0
       },
       "cache": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:13:21.747849Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:51:33.724540Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.3,
+        "lastLatencyMs": 16.9,
         "lastError": "cache",
         "score": 0.0
       }
     },
     "X Games": {
       "official": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:14:22.265510Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:52:23.276848Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 503.4,
+        "lastLatencyMs": 449.4,
         "lastError": "",
         "score": 0.0
       },
       "cache": {
-        "attempts": 5,
+        "attempts": 6,
         "successes": 0,
-        "consecutiveFailures": 5,
-        "lastChecked": "2026-09-05T00:14:22.280244Z",
+        "consecutiveFailures": 6,
+        "lastChecked": "2026-09-05T00:52:23.296202Z",
         "lastEventCount": 0,
-        "lastLatencyMs": 13.0,
+        "lastLatencyMs": 16.8,
         "lastError": "cache",
         "score": 0.0
       }
