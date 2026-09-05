@@ -12,51 +12,20 @@ enum class EventLifecycle {
     STALE_UNKNOWN
 }
 
-/**
- * Self-sufficient event intelligence.
- *
- * It combines explicit provider state, clock position, event metadata and sport-aware
- * timing instead of treating "start time has passed" as proof of LIVE. Server-side
- * Sports Brain evidence is an additional signal only; it cannot override terminal state
- * or extend an event beyond its sport-aware maximum duration.
- */
+/** Sport-aware event lifecycle; provider live flags are preferred but not required. */
 object EventLifecycleResolver {
     private const val START_GRACE_MS = 5L * 60_000L
     private const val INFERRED_LIVE_MS = 20L * 60_000L
 
     fun resolve(event: SportsEvent, nowMillis: Long = System.currentTimeMillis()): EventLifecycle {
         if (isTerminal(event)) return EventLifecycle.FINAL
-
         val startMillis = parseStart(event) ?: return EventLifecycle.STALE_UNKNOWN
         val untilStart = startMillis - nowMillis
         val elapsed = nowMillis - startMillis
-
         if (untilStart > startGraceMs(event)) return EventLifecycle.SCHEDULED
-        if (hasStrongLiveSignal(event)) {
-            return if (elapsed <= maxLiveDurationMs(event)) {
-                EventLifecycle.LIVE_CONFIRMED
-            } else {
-                EventLifecycle.STALE_UNKNOWN
-            }
-        }
-
-        // Server-side Brain evidence is deliberately advisory. It is useful when a
-        // provider's live flag is delayed, but still obeys the same duration guard.
-        if (hasBrainLiveEvidence(event)) {
-            return if (elapsed <= maxLiveDurationMs(event)) {
-                EventLifecycle.LIVE_CONFIRMED
-            } else EventLifecycle.STALE_UNKNOWN
-        }
-
-        // Some feeds omit state while still exposing score/period/clock metadata.
-        if (hasSoftLiveEvidence(event)) {
-            return if (elapsed <= maxLiveDurationMs(event)) {
-                EventLifecycle.LIVE_INFERRED
-            } else EventLifecycle.STALE_UNKNOWN
-        }
-
-        // Small, sport-aware bootstrap window for feeds that publish the schedule before
-        // their live-state endpoint. This is never allowed to keep an event live forever.
+        if (hasStrongLiveSignal(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
+        if (hasBrainLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_CONFIRMED else EventLifecycle.STALE_UNKNOWN
+        if (hasSoftLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) EventLifecycle.LIVE_INFERRED else EventLifecycle.STALE_UNKNOWN
         if (elapsed in 0..inferredWindowMs(event)) return EventLifecycle.LIVE_INFERRED
         if (untilStart > 0) return EventLifecycle.PREGAME
         return EventLifecycle.STALE_UNKNOWN
@@ -67,13 +36,11 @@ object EventLifecycleResolver {
 
     fun isTerminal(event: SportsEvent): Boolean {
         val status = "${event.status} ${event.state}".lowercase()
-        return status.contains("final") || status.contains("finished") ||
-            status.contains("complete") || status.contains("cancel") ||
-            status.contains("postpon") || status.contains("abandon") ||
+        return status.contains("final") || status.contains("finished") || status.contains("complete") ||
+            status.contains("cancel") || status.contains("postpon") || status.contains("abandon") ||
             event.state.equals("post", true) || event.state.equals("final", true)
     }
 
-    /** True only for provider states that are explicit enough to call LIVE confidently. */
     private fun hasStrongLiveSignal(event: SportsEvent): Boolean {
         val status = event.status.trim().lowercase()
         val state = event.state.trim().lowercase()
@@ -82,25 +49,18 @@ object EventLifecycleResolver {
             status == "inprogress" || status.contains("live") || status.contains("in progress")
     }
 
-    /** High-confidence server-side evidence from the deterministic Sports Brain. */
     private fun hasBrainLiveEvidence(event: SportsEvent): Boolean =
         event.intelligencePhase.equals("LIVE", true) && event.intelligenceConfidence >= 0.90
 
-    /**
-     * Soft evidence catches feeds where the status field is stale/blank but the event has
-     * live-only metadata. It deliberately does not use a broadcast name alone as evidence.
-     */
     private fun hasSoftLiveEvidence(event: SportsEvent): Boolean {
         val text = "${event.status} ${event.state}".lowercase()
         val clockLike = Regex("\\b\\d{1,2}[:.]\\d{2}\\b").containsMatchIn(text)
-        val periodLike = text.contains("period") || text.contains("quarter") ||
-            text.contains("inning") || text.contains("set") || text.contains("round") ||
-            text.contains("half") || text.contains("overtime")
+        val periodLike = text.contains("period") || text.contains("quarter") || text.contains("inning") ||
+            text.contains("set") || text.contains("round") || text.contains("half") || text.contains("overtime")
         val scoreLike = Regex("\\b\\d+\\s*[-:]\\s*\\d+\\b").containsMatchIn(text)
         return clockLike || periodLike || scoreLike
     }
 
-    /** Upcoming is intentionally broader than the old fixed 3-day UI horizon. */
     fun isUpcoming(event: SportsEvent, nowMillis: Long = System.currentTimeMillis()): Boolean {
         if (isTerminal(event)) return false
         val start = parseStart(event) ?: return false
@@ -109,7 +69,6 @@ object EventLifecycleResolver {
             resolve(event, nowMillis) in setOf(EventLifecycle.SCHEDULED, EventLifecycle.PREGAME)
     }
 
-    /** How soon an event should enter the PREGAME state. */
     fun isPregame(event: SportsEvent, nowMillis: Long = System.currentTimeMillis()): Boolean {
         val start = parseStart(event) ?: return false
         val delta = start - nowMillis
@@ -121,9 +80,7 @@ object EventLifecycleResolver {
         val elapsed = nowMillis - start
         if (isTerminal(event)) return 100
         if (hasStrongLiveSignal(event)) return if (elapsed <= maxLiveDurationMs(event)) 98 else 10
-        if (hasBrainLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) {
-            (event.intelligenceConfidence * 100.0).toInt().coerceIn(1, 99)
-        } else 12
+        if (hasBrainLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) (event.intelligenceConfidence * 100.0).toInt().coerceIn(1, 99) else 12
         if (hasSoftLiveEvidence(event)) return if (elapsed <= maxLiveDurationMs(event)) 82 else 12
         if (elapsed in 0..inferredWindowMs(event)) return 62
         if (start > nowMillis && start - nowMillis <= pregameWindowMs(event)) return 92
@@ -131,11 +88,8 @@ object EventLifecycleResolver {
         return 25
     }
 
-    private fun parseStart(event: SportsEvent): Long? =
-        runCatching { Instant.parse(event.startUtc).toEpochMilli() }.getOrNull()
-
-    private fun sportKey(event: SportsEvent): String =
-        "${event.sport} ${event.league} ${event.title}".lowercase()
+    private fun parseStart(event: SportsEvent): Long? = runCatching { Instant.parse(event.startUtc).toEpochMilli() }.getOrNull()
+    private fun sportKey(event: SportsEvent): String = "${event.sport} ${event.league} ${event.title}".lowercase()
 
     private fun pregameWindowMs(event: SportsEvent): Long {
         val k = sportKey(event)
@@ -147,6 +101,7 @@ object EventLifecycleResolver {
             k.contains("soccer") || k.contains("mls") || k.contains("epl") -> 45L
             k.contains("golf") -> 90L
             k.contains("tennis") -> 30L
+            k.contains("ufc") || k.contains("boxing") || k.contains("wwe") || k.contains("aew") || k.contains("tna") || k.contains("wrestling") -> 60L
             else -> 30L
         }
         return minutes * 60_000L
@@ -157,7 +112,6 @@ object EventLifecycleResolver {
         val days = when {
             k.contains("golf") || k.contains("tennis") -> 7L
             k.contains("f1") || k.contains("formula") || k.contains("nascar") -> 14L
-            k.contains("football") || k.contains("basketball") || k.contains("hockey") || k.contains("baseball") -> 7L
             else -> 7L
         }
         return days * 24L * 60L * 60L * 1000L
@@ -173,6 +127,7 @@ object EventLifecycleResolver {
         sportKey(event).contains("soccer") -> 15L * 60_000L
         sportKey(event).contains("tennis") -> 30L * 60_000L
         sportKey(event).contains("baseball") -> 25L * 60_000L
+        sportKey(event).contains("ufc") || sportKey(event).contains("boxing") || sportKey(event).contains("wwe") || sportKey(event).contains("aew") || sportKey(event).contains("tna") -> 60L * 60_000L
         else -> INFERRED_LIVE_MS
     }
 
@@ -188,6 +143,8 @@ object EventLifecycleResolver {
             key.contains("basketball") -> 3L * 60L
             key.contains("golf") -> 10L * 60L
             key.contains("racing") || key.contains("nascar") || key.contains("f1") -> 6L * 60L
+            key.contains("ufc") || key.contains("boxing") -> 6L * 60L
+            key.contains("wwe") || key.contains("aew") || key.contains("tna") || key.contains("wrestling") -> 4L * 60L
             else -> 3L * 60L
         }
         return minutes * 60_000L
