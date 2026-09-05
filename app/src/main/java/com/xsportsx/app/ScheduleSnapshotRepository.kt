@@ -36,8 +36,6 @@ object ScheduleSnapshotRepository {
                 when {
                     canonical == null -> true
                     canonical.equals("WRESTLING", true) -> {
-                        // The UI's WRESTLING category is an umbrella for the
-                        // separately sourced WWE/AEW/TNA/AAA schedules.
                         event.league.equals("WWE", true) || event.league.equals("AEW", true) ||
                             event.league.equals("TNA", true) || event.league.equals("AAA Wrestling", true) ||
                             event.league.equals("WRESTLING", true)
@@ -61,7 +59,10 @@ object ScheduleSnapshotRepository {
             val again = liveCache
             if (!force && again != null && age(again) < LIVE_TTL_MS) return@withLock again.events
             val fresh = runCatching { CanonicalScheduleProvider.load(null, 1) }.getOrDefault(emptyList())
-            val normalized = normalize(fresh).filter { it.isLive }
+            // The server sweep is authoritative for live state. Do not discard a
+            // provider-confirmed LIVE event merely because the Android lifecycle
+            // inference disagrees (this was hiding NCAA/soccer/tennis events).
+            val normalized = normalize(fresh).filter { serverMarkedLive(it) || it.isLive }
             if (normalized.isNotEmpty() || fresh.isNotEmpty()) { liveCache = CachedEvents(normalized, System.currentTimeMillis()); normalized } else again?.events.orEmpty()
         }
     }
@@ -69,14 +70,16 @@ object ScheduleSnapshotRepository {
     fun clear() { snapshotCache = null; liveCache = null }
     private fun age(cache: CachedEvents) = System.currentTimeMillis() - cache.loadedAtMs
 
+    private fun serverMarkedLive(event: SportsEvent): Boolean =
+        event.status.equals("LIVE", ignoreCase = true) || event.state.equals("in", ignoreCase = true)
+
     private fun normalize(events: List<SportsEvent>): List<SportsEvent> {
         val seen = LinkedHashSet<String>()
         return events.map { it.copy(league = SportsScheduleService.canonicalLeagueFor(it.league)) }
             .filter { seen.add(eventKey(it)) }
-            .sortedWith(compareBy<SportsEvent> { !(it.isLive || it.isPregame()) }.thenBy { it.startUtc })
+            .sortedWith(compareBy<SportsEvent> { !(serverMarkedLive(it) || it.isLive || it.isPregame()) }.thenBy { it.startUtc })
     }
 
-    /** Collapse common MLB feed aliases before constructing the stable matchup key. */
     private fun eventKey(event: SportsEvent): String {
         val league = clean(event.league)
         val teams = listOf(canonicalTeam(event.away, league), canonicalTeam(event.home, league)).sorted()
