@@ -24,7 +24,7 @@
     "Ligue 1": 24,
     "NCAA FB": 35,
     "NCAA Women's Field Hockey": 78,
-    "UFC": 20,
+    "UFC": 17,
     "NCAA Men's Soccer": 159,
     "NWSL": 40,
     "MLS": 76,
@@ -82,7 +82,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 462,
+  "identityMergeCount": 470,
   "sourceRecordCounts": {
     "wrestling": 19,
     "espn": 1523,
@@ -6187,18 +6187,6 @@
       "sport": "soccer"
     },
     {
-      "league": "UFC",
-      "title": "UFC Fight Night: Hooker vs. Parnasse",
-      "start": "2026-09-05T16:00Z",
-      "tag": "UPCOMING",
-      "icon": "🥊",
-      "source": "espn",
-      "providerEventId": "espn:600059993",
-      "id": "evt_27eef5e143ba479116f74240",
-      "startUtc": "2026-09-05T16:00Z",
-      "sport": "mma"
-    },
-    {
       "league": "Bundesliga",
       "title": "FC Bayern München @ FC Schalke 04",
       "start": "2026-09-05T16:30:00Z",
@@ -7552,21 +7540,6 @@
       "sport": "mma"
     },
     {
-      "sport": "mma",
-      "league": "UFC",
-      "title": "Hooker vs Parnasse",
-      "startUtc": "2026-09-05T19:00:00Z",
-      "start": "2026-09-05T19:00:00Z",
-      "status": "scheduled",
-      "state": "",
-      "source": "official",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "officialScheduleUrl": "https://www.ufc.com/events",
-      "officialVerifiedAt": "2026-09-05T01:46:10Z",
-      "tag": "UPCOMING",
-      "id": "evt_64c8682c541b7586a74a340c"
-    },
-    {
       "league": "LaLiga",
       "title": "Deportivo @ Villarreal",
       "start": "2026-09-05T19:00Z",
@@ -8285,21 +8258,6 @@
       "id": "evt_4a727e936e45d6f7d081a330",
       "startUtc": "2026-09-05T21:00:00Z",
       "sport": "other"
-    },
-    {
-      "league": "UFC",
-      "title": "UFC Fight Night: Hooker vs Parnasse — Early Prelims",
-      "start": "2026-09-05T21:00:00Z",
-      "startUtc": "2026-09-05T21:00:00Z",
-      "tag": "UPCOMING",
-      "state": "",
-      "status": "scheduled",
-      "broadcast": "Paramount+",
-      "source": "official-session",
-      "discoveryUrl": "https://www.ufc.com/events",
-      "session": "Early Prelims",
-      "id": "evt_ef8d7102d30b8a7d1c494137",
-      "sport": "mma"
     },
     {
       "league": "NASCAR Cup",
@@ -52555,10 +52513,10 @@
     "enabled": true,
     "mode": "all-official-sources",
     "sourcesChecked": 63,
-    "reachableSources": 51,
+    "reachableSources": 54,
     "eventsRecovered": 8,
     "identityMerges": 8,
-    "updatedAt": "2026-09-05T01:49:40Z",
+    "updatedAt": "2026-09-05T02:00:15Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -52587,7 +52545,7 @@
       {
         "league": "Boxing",
         "url": "https://wbcboxing.com/calendar/",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
@@ -52905,7 +52863,7 @@
       {
         "league": "WEC",
         "url": "https://www.fia.com/championship/world-endurance-championship",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
@@ -52917,7 +52875,7 @@
       {
         "league": "WRC",
         "url": "https://www.fia.com/championship/world-rally-championship",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
