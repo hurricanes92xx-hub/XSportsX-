@@ -14,10 +14,11 @@ on:
 permissions:
   contents: write
 
+# Live state must never sit behind the slower 6-hour schedule refresh.
 concurrency:
-  group: xsportsx-schedule-refresh
-  queue: max
-  cancel-in-progress: false
+  group: xsportsx-live-sweep
+  queue: 1
+  cancel-in-progress: true
 
 env:
   PYTHONUNBUFFERED: '1'
@@ -62,8 +63,8 @@ jobs:
               for key in ('id','sport','league','title','startUtc'):
                   if not e.get(key): raise SystemExit(f'ERROR: event {i} missing {key}')
           sweep=data.get('liveSweep') or {}
-          if sweep.get('schema') != 1: raise SystemExit('ERROR: live sweep contract missing')
-          if int(sweep.get('leaguesChecked',0)) < 1: raise SystemExit('ERROR: no ESPN leagues checked')
+          if int(sweep.get('schema',0)) not in (1,2): raise SystemExit('ERROR: live sweep contract missing')
+          if int(sweep.get('leaguesChecked',0)) < 1: raise SystemExit('ERROR: no live leagues checked')
           print(f"Live sweep: leagues={sweep.get('leaguesChecked')} fetched={sweep.get('providerEventsFetched')} providerLive={sweep.get('providerLive')} stateChanges={sweep.get('stateChanges')} added={sweep.get('eventsAdded')} inferred={sweep.get('boundedTimingPromotions')} liveAfter={sweep.get('liveCountAfterSweep')}")
           ufc=[e for e in events if str(e.get('league','')).upper()=='UFC' and 'hooker' in str(e.get('title','')).lower() and 'parnasse' in str(e.get('title','')).lower()]
           bad=[e for e in ufc if 'early prelim' in str(e.get('title','')).lower() or ('main card' not in str(e.get('title','')).lower() and 'prelims' not in str(e.get('title','')).lower())]
