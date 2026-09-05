@@ -25,6 +25,7 @@ class UserSourceSyncEngine(private val context: Context) {
     private val appContext = context.applicationContext
     private val store = SourceStore(appContext)
     private val xtreamIndex = XtreamSourceIndex(appContext)
+    private val catalog = XtreamCatalogRepository.get(appContext)
     private val m3uIndex = M3uSourceIndex(appContext)
 
     suspend fun syncNow(force: Boolean = true): SyncResult = withContext(Dispatchers.IO) {
@@ -32,7 +33,12 @@ class UserSourceSyncEngine(private val context: Context) {
         if (!config.isConfigured()) return@withContext SyncResult("NONE", 0, false, "No authorized source configured")
         runCatching {
             when (config.type) {
-                "XTREAM" -> SyncResult("XTREAM", xtreamIndex.refreshAll(config, force), true, "")
+                "XTREAM" -> {
+                    val count = xtreamIndex.refreshAll(config, force)
+                    val cached = xtreamIndex.getCachedAll(config)
+                    catalog.replaceAll(catalog.providerKey(config), cached)
+                    SyncResult("XTREAM", count, true, "")
+                }
                 "M3U" -> {
                     val streams = downloadM3u(config.m3uUrl)
                     m3uIndex.put(config.m3uUrl, streams)
