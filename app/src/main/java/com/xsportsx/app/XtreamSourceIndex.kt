@@ -2,9 +2,11 @@ package com.xsportsx.app
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -16,8 +18,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPInputStream
 
 /**
- * Fast Xtream metadata index. Categories are fetched first; event resolution never
- * downloads the provider's full live catalog. Cached category indexes are preferred.
+ * Fast Xtream metadata index. Categories are fetched first and then cached locally.
+ * Event resolution can use the compact relevant-category path, while startup sync can
+ * refresh the complete provider live catalog in the background.
  */
 class XtreamSourceIndex(context: Context) {
     data class Category(val id: String, val name: String)
@@ -33,6 +36,7 @@ class XtreamSourceIndex(context: Context) {
         private const val INDEX_TTL = 30 * 60 * 1000L
         private const val CATEGORY_CALL_TIMEOUT_MS = 3_000
         private const val MAX_EVENT_CATEGORIES = 12
+        private const val FULL_SYNC_BATCH = 8
         private val SPORTS_TERMS = setOf(
             "sport", "sports", "espn", "fox", "fs1", "fs2", "cbs sport", "nfl", "mlb", "nba", "nhl",
             "ncaa", "college", "sec", "acc", "big ten", "btn", "tnt", "tbs", "trutv", "usa sport",
@@ -50,9 +54,25 @@ class XtreamSourceIndex(context: Context) {
         )
     }
 
+    /** Refresh every live category. This is deliberately separate from fast event resolution. */
+    suspend fun refreshAll(config: SourceConfig, force: Boolean = true): Int = coroutineScope {
+        if (!config.isConfigured() || config.type != "XTREAM") return@coroutineScope 0
+        val categories = getCategoriesBlocking(config, force = force)
+        var total = 0
+        for (batch in categories.chunked(FULL_SYNC_BATCH)) {
+            val counts = batch.map { category ->
+                async(Dispatchers.IO) {
+                    runCatching { getCategoryChannelsBlocking(config, category.id, force = force).size }.getOrDefault(0)
+                }
+            }.awaitAll()
+            total += counts.sum()
+        }
+        total
+    }
+
     /**
      * Event-first resolution. It searches only relevant Xtream categories and does
-     * the category requests concurrently. Cached categories are used immediately,
+     * the category requests concurrently. Cached category indexes are used immediately,
      * but insufficient cached matches never prevent a deeper provider search.
      */
     suspend fun fastResolve(
@@ -77,24 +97,17 @@ class XtreamSourceIndex(context: Context) {
             ranked.forEachIndexed { index, category ->
                 val key = sourceKey(config) + ":" + category.id
                 val cached = channelCache[key] ?: loadPersistedChannels(key).orEmpty()
-                if (cached.isNotEmpty()) {
-                    cached.forEach { found[it.id] = it }
-                } else {
-                    uncached += index to category
-                }
+                if (cached.isNotEmpty()) cached.forEach { found[it.id] = it }
+                else uncached += index to category
             }
 
-            if (stopWhen?.invoke(found.values.toList()) == true) {
-                return@coroutineScope found.values.toList()
-            }
+            if (stopWhen?.invoke(found.values.toList()) == true) return@coroutineScope found.values.toList()
             if (uncached.isEmpty()) return@coroutineScope found.values.toList()
 
             val results = Channel<Pair<Int, List<Channel>>>(capacity = uncached.size.coerceAtLeast(1))
             val jobs = uncached.map { (index, category) ->
                 launch(Dispatchers.IO) {
-                    val channels = runCatching {
-                        getCategoryChannelsBlocking(config, category.id, force = false)
-                    }.getOrDefault(emptyList())
+                    val channels = runCatching { getCategoryChannelsBlocking(config, category.id, force = false) }.getOrDefault(emptyList())
                     results.send(index to channels)
                 }
             }
@@ -111,13 +124,22 @@ class XtreamSourceIndex(context: Context) {
         }
     }
 
-    /** Cached sports/broadcast categories and channels for startup; no network work. */
+    /** Cached sports/broadcast channels for startup/UI use. */
     fun getCachedSports(config: SourceConfig): List<Channel> {
         if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
         val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
         val key = sourceKey(config)
         return categories.filter { categoryScore(it.name, null) > 0 }
             .flatMap { channelCache["$key:${it.id}"] ?: loadPersistedChannels("$key:${it.id}").orEmpty() }
+            .distinctBy { it.id }
+    }
+
+    /** All locally indexed channels, including non-sports categories. */
+    fun getCachedAll(config: SourceConfig): List<Channel> {
+        if (!config.isConfigured() || config.type != "XTREAM") return emptyList()
+        val categories = categoryCache[sourceKey(config)] ?: loadPersistedCategories(sourceKey(config)).orEmpty()
+        val key = sourceKey(config)
+        return categories.flatMap { channelCache["$key:${it.id}"] ?: loadPersistedChannels("$key:${it.id}").orEmpty() }
             .distinctBy { it.id }
     }
 
@@ -133,13 +155,9 @@ class XtreamSourceIndex(context: Context) {
                     .take(32)
                     .forEach { getCategoryChannelsBlocking(config, it.id, false) }
             } catch (_: Throwable) {
-            } finally {
-                running.remove("all:$key")
-            }
+            } finally { running.remove("all:$key") }
         }.start()
     }
-
-    fun getCachedAll(config: SourceConfig): List<Channel> = getCachedSports(config)
 
     private suspend fun getCategories(config: SourceConfig, force: Boolean): List<Category> = getCategoriesBlocking(config, force)
 
@@ -247,7 +265,7 @@ class XtreamSourceIndex(context: Context) {
             readTimeout = CATEGORY_CALL_TIMEOUT_MS
             instanceFollowRedirects = true
             useCaches = true
-            setRequestProperty("User-Agent", "XSportsX/3.0")
+            setRequestProperty("User-Agent", "XSportsX/3.1")
             setRequestProperty("Accept", "application/json")
             setRequestProperty("Accept-Encoding", "gzip")
             setRequestProperty("Connection", "keep-alive")
