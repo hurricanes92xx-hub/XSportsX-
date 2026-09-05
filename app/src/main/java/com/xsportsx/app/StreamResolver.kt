@@ -29,13 +29,21 @@ class StreamResolver(context: Context) {
     private val m3uIndex = M3uSourceIndex(appContext)
     private val eventInFlight = ConcurrentHashMap<String, Deferred<List<ResolvedStream>>>()
     private val refreshScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     companion object {
         private const val CACHE_TTL_MS = 10 * 60 * 1000L
         private const val EVENT_CACHE_TTL_MS = 2 * 60 * 1000L
+        private const val AUTHORIZED_RESULT_TARGET = 5
         private val cache = LruCache<String, StreamCacheEntry>(2)
         private val eventCache = LruCache<String, EventStreamCacheEntry>(32)
-        private val cacheMutex = Mutex(); private val eventCacheMutex = Mutex()
-        private val HTTP = OkHttpClient.Builder().connectTimeout(2, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS).callTimeout(8, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
+        private val cacheMutex = Mutex()
+        private val eventCacheMutex = Mutex()
+        private val HTTP = OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(8, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .build()
         fun invalidateCache() { cache.evictAll(); eventCache.evictAll() }
     }
 
@@ -78,35 +86,71 @@ class StreamResolver(context: Context) {
     }
 
     suspend fun loadMatchingEventStreams(event: SportsEvent, force: Boolean = false): List<ResolvedStream> = withContext(Dispatchers.IO) {
-        val config = store.load(); val eventKey = eventCacheKey(config, event); val canonicalEventId = EventIdentity.id(event); val now = System.currentTimeMillis()
-        if (!force) {
-            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached -> val valid = matchEventAgainstStreams(event, cached.streams, strict = true); if (valid.isNotEmpty()) return@withContext valid; eventCache.remove(eventKey) }
-            preResolvedCache.get(canonicalEventId, allowStale = true, nowMs = now)?.let { cached -> val valid = matchEventAgainstStreams(event, cached.candidates.map { it.stream }, strict = true); if (valid.isNotEmpty() && now - cached.savedAtMs < PreResolvedStreamCache.FRESH_TTL_MS) return@withContext valid; if (valid.isNotEmpty()) { refreshScope.launch { loadMatchingEventStreams(event, true) }; return@withContext valid } }
+        val config = store.load()
+        val eventKey = eventCacheKey(config, event)
+        val canonicalEventId = EventIdentity.id(event)
+        val now = System.currentTimeMillis()
+        val hasAuthorizedSource = config.isConfigured() && (config.type == "XTREAM" || config.type == "M3U")
+
+        // Never let a previously merged public result bypass the user's configured
+        // source. Authorized Xtream/M3U resolution must get first refusal every time.
+        if (!hasAuthorizedSource && !force) {
+            eventCache.get(eventKey)?.takeIf { now - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
+                val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
+                if (valid.isNotEmpty()) return@withContext valid
+                eventCache.remove(eventKey)
+            }
+            preResolvedCache.get(canonicalEventId, allowStale = true, nowMs = now)?.let { cached ->
+                val valid = matchEventAgainstStreams(event, cached.candidates.map { it.stream }, strict = true)
+                if (valid.isNotEmpty() && now - cached.savedAtMs < PreResolvedStreamCache.FRESH_TTL_MS) return@withContext valid
+            }
         }
-        val existing = eventInFlight[eventKey]; if (existing != null) return@withContext existing.await()
-        coroutineScope { val work = async(Dispatchers.IO) { resolveEventStreams(config, eventKey, event, force) }; val winner = eventInFlight.putIfAbsent(eventKey, work) ?: work; try { return@coroutineScope winner.await() } finally { if (winner === work) eventInFlight.remove(eventKey, work) } }
+
+        val existing = eventInFlight[eventKey]
+        if (existing != null) return@withContext existing.await()
+        coroutineScope {
+            val work = async(Dispatchers.IO) { resolveEventStreams(config, eventKey, event, force) }
+            val winner = eventInFlight.putIfAbsent(eventKey, work) ?: work
+            try { return@coroutineScope winner.await() }
+            finally { if (winner === work) eventInFlight.remove(eventKey, work) }
+        }
     }
 
     private suspend fun resolveEventStreams(config: SourceConfig, eventKey: String, event: SportsEvent, force: Boolean): List<ResolvedStream> {
-        if (!force) eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached -> val valid = matchEventAgainstStreams(event, cached.streams, strict = true); if (valid.isNotEmpty()) return valid }
-        val (privateMatches, indexed) = coroutineScope {
-            val privateDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) {
-                val candidates: List<ResolvedStream> = when {
-                    !config.isConfigured() -> emptyList()
-                    config.type == "XTREAM" -> xtreamIndex.fastResolve(config, event, 12).map { c -> ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon) }
-                    else -> m3uIndex.get(config.m3uUrl, allowStale = true)
-                }
-                val local: List<ResolvedStream> = if (candidates.isEmpty()) channelIndex.find("${event.broadcast} ${event.home} ${event.away}", 32) else emptyList()
-                matchEventAgainstStreams(event, candidates + local, strict = true)
+        val hasAuthorizedSource = config.isConfigured() && (config.type == "XTREAM" || config.type == "M3U")
+        if (!hasAuthorizedSource && !force) {
+            eventCache.get(eventKey)?.takeIf { System.currentTimeMillis() - it.loadedAt < EVENT_CACHE_TTL_MS }?.let { cached ->
+                val valid = matchEventAgainstStreams(event, cached.streams, strict = true)
+                if (valid.isNotEmpty()) return valid
             }
-            val publicIndexDeferred: Deferred<List<ResolvedStream>> = async(Dispatchers.IO) { publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16).map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) } }
-            privateDeferred.await() to publicIndexDeferred.await()
         }
-        if (config.type == "M3U" && m3uIndex.get(config.m3uUrl, allowStale = true).isEmpty()) refreshScope.launch { runCatching { loadM3u(config.m3uUrl).also { m3uIndex.put(config.m3uUrl, it); channelIndex.rebuild(it) } } }
+
+        // STEP 1: user's authorized source only. Do not start public discovery yet.
+        val privateMatches = resolveAuthorizedEventStreams(config, event)
+        if (privateMatches.size >= AUTHORIZED_RESULT_TARGET) {
+            val result = privateMatches.take(12)
+            eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(result, System.currentTimeMillis())) }
+            preResolvedCache.put(EventIdentity.id(event), result)
+            return result
+        }
+
+        // STEP 2: only if authorized source produced fewer than five usable results,
+        // allow public/indexed discovery as fallback.
+        val indexed = publicHealthIndex.rankResolved(event.id, event.sport, event.league, event.broadcast, 16)
+            .map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }
         if (config.type == "XTREAM") xtreamIndex.warm(config)
-        val discovered = if (force || indexed.size < 2) runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList()) else emptyList()
+
+        val discovered = if (force || indexed.size < 2) {
+            runCatching { publicEventMatcher.find(event, force) }.getOrDefault(emptyList())
+        } else emptyList()
         discovered.forEach { publicHealthIndex.record(it, event.sport, event.league, event.id, event.broadcast, true) }
-        val publicMatches = matchEventAgainstStreams(event, indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) }, strict = true)
+
+        val publicMatches = matchEventAgainstStreams(
+            event,
+            indexed + discovered.map { ResolvedStream("${it.name} • ${it.sourceName}", it.group, it.url, it.iconUrl) },
+            strict = true
+        )
+
         val targetedFallback = if (publicMatches.isEmpty() && privateMatches.isEmpty()) {
             val authorized = when {
                 config.type == "XTREAM" && config.isConfigured() -> listOf(AuthorizedSource("user-xtream", AuthorizedSource.Type.XTREAM, config.server, config.username, config.password))
@@ -119,22 +163,62 @@ class StreamResolver(context: Context) {
         val officialVideo = event.youtubeVideoId.trim().takeIf { it.matches(Regex("[A-Za-z0-9_-]{11}")) }?.let { ResolvedStream("${event.title.ifBlank { "Official event" }} • YouTube", "OFFICIAL VIDEO", "https://www.youtube.com/watch?v=$it") }
         val resolved = dedupe(listOfNotNull(officialVideo) + privateMatches + publicMatches + targetedStreams)
         eventCacheMutex.withLock { eventCache.put(eventKey, EventStreamCacheEntry(resolved, System.currentTimeMillis())) }
-        preResolvedCache.put(EventIdentity.id(event), resolved); return resolved
+        preResolvedCache.put(EventIdentity.id(event), resolved)
+        return resolved
+    }
+
+    private suspend fun resolveAuthorizedEventStreams(config: SourceConfig, event: SportsEvent): List<ResolvedStream> {
+        if (!config.isConfigured()) return emptyList()
+        return when (config.type) {
+            "XTREAM" -> {
+                val channels = withTimeoutOrNull(3200L) {
+                    xtreamIndex.fastResolve(config, event, 12) { channels ->
+                        matchEventAgainstStreams(event, channels.map { c ->
+                            ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon)
+                        }, strict = true).size >= AUTHORIZED_RESULT_TARGET
+                    }
+                }.orEmpty()
+                val streams = channels.map { c ->
+                    ResolvedStream(c.name, c.group, "${config.server.trim().removeSuffix("/")}/live/${enc(config.username)}/${enc(config.password)}/${c.id}.m3u8", c.icon)
+                }
+                matchEventAgainstStreams(event, streams, strict = true)
+            }
+            "M3U" -> {
+                var streams = m3uIndex.get(config.m3uUrl, allowStale = true)
+                if (streams.isEmpty()) {
+                    streams = runCatching { loadM3u(config.m3uUrl).also { m3uIndex.put(config.m3uUrl, it) } }.getOrDefault(emptyList())
+                }
+                matchEventAgainstStreams(event, streams, strict = true)
+            }
+            else -> emptyList()
+        }
     }
 
     private fun matchEventAgainstStreams(event: SportsEvent, streams: List<ResolvedStream>, strict: Boolean = false): List<ResolvedStream> {
         if (streams.isEmpty()) return emptyList()
-        val titleTerms = splitTerms(event.title); val teamTerms = splitTerms("${event.home} ${event.away}"); val leagueTerms = splitTerms(event.league); val broadcastTerms = broadcastAliases(event.broadcast); val eventIsLive = event.isLive
+        val titleTerms = splitTerms(event.title)
+        val teamTerms = splitTerms("${event.home} ${event.away}")
+        val leagueTerms = splitTerms(event.league)
+        val broadcastTerms = broadcastAliases(event.broadcast)
+        val eventIsLive = event.isLive
         data class Scored(val score: Int, val stream: ResolvedStream)
         val scored = streams.mapNotNull { stream ->
-            val haystack = normalize("${stream.name} ${stream.group} ${stream.url}"); val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }; val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }; val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }; val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
-            val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1; val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2; val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0; val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
+            val haystack = normalize("${stream.name} ${stream.group} ${stream.url}")
+            val teamHits = teamTerms.count { it.length >= 4 && haystack.contains(it) }
+            val titleHits = titleTerms.count { it.length >= 4 && haystack.contains(it) }
+            val leagueHits = leagueTerms.count { it.length >= 3 && haystack.contains(it) }
+            val networkHits = broadcastTerms.count { it.length >= 3 && haystack.contains(it) }
+            val hasTeamEvidence = teamTerms.isNotEmpty() && teamHits >= 1
+            val hasStrongTeamPair = teamTerms.size >= 2 && teamHits >= 2
+            val hasLeagueOrNetwork = leagueHits > 0 || networkHits > 0
+            val score = teamHits * 40 + titleHits * 8 + leagueHits * 4 + networkHits * 10 + if (eventIsLive && networkHits > 0) 5 else 0
             val networkOnlyAllowed = broadcastTerms.isNotEmpty() && networkHits > 0
             val relevant = if (!strict) (teamHits > 0 || titleHits > 0 || networkHits > 0 || leagueHits > 0) else (hasStrongTeamPair || (hasTeamEvidence && hasLeagueOrNetwork) || networkOnlyAllowed)
             if (relevant) Scored(score, stream) else null
         }
         return scored.sortedWith(compareByDescending<Scored> { it.score }.thenBy { it.stream.name.lowercase() }).map { it.stream }.take(12)
     }
+
     private fun splitTerms(value: String): List<String> = normalize(value).split(' ').filter { it.length >= 3 && it !in STOP_WORDS }.distinct()
     private val STOP_WORDS = setOf("the", "and", "with", "vs", "versus", "game", "live", "network", "sports")
     private fun broadcastAliases(value: String): List<String> {
