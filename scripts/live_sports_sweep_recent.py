@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Production live sweep: UTC-boundary ESPN coverage plus free shadow corroboration."""
 from __future__ import annotations
-import json
+import json, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import live_sports_sweep as base
@@ -9,6 +9,11 @@ from providers import shadow
 from event_identity import identity_match
 
 FEED=Path(__file__).resolve().parents[1]/"data"/"schedule_feed.json"
+HEADERS={"User-Agent":"XSportsX-LiveSweep/1.0","Accept":"application/json"}
+
+def _get_json(url):
+    req=urllib.request.Request(url,headers=HEADERS)
+    with urllib.request.urlopen(req,timeout=8) as r:return json.loads(r.read().decode("utf-8","ignore"))
 
 def _merge_shadow():
     if not FEED.exists(): return
@@ -23,40 +28,26 @@ def _merge_shadow():
         match=next((e for e in events if identity_match(e,row)),None)
         evidence={"providerEventId":row.get("providerEventId"),"provider":row.get("source"),"checkedAtUtc":checked}
         if match:
-            # Shadow evidence corroborates a canonical event; never downgrade it.
-            match.setdefault("liveEvidenceShadow",[]).append(evidence)
-            corroborated+=1
-            continue
-        row=dict(row); row["liveEvidence"]={"providerEventId":row.get("providerEventId"),"provider":row.get("source"),"checkedAtUtc":checked}
-        row["liveStateSource"]="free-shadow"
-        row["liveEvidenceShadow"]=[evidence]
+            match.setdefault("liveEvidenceShadow",[]).append(evidence); corroborated+=1; continue
+        row=dict(row); row["liveEvidence"]={"providerEventId":row.get("providerEventId"),"provider":row.get("source"),"checkedAtUtc":checked}; row["liveStateSource"]="free-shadow"; row["liveEvidenceShadow"]=[evidence]
         events.append(row); added+=1
-    payload["events"]=events
-    sweep=payload.setdefault("liveSweep",{})
-    sweep["shadowProviders"]={"enabled":True,"recordCounts":counts,"failures":failures,"liveAdded":added,"liveCorroborated":corroborated}
-    payload["shadowProviderRecordCounts"]=counts
+    payload["events"]=events; sweep=payload.setdefault("liveSweep",{}); sweep["shadowProviders"]={"enabled":True,"recordCounts":counts,"failures":failures,"liveAdded":added,"liveCorroborated":corroborated}; payload["shadowProviderRecordCounts"]=counts
     FEED.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"SHADOW LIVE: added={added} corroborated={corroborated} failures={len(failures)}")
 
 def main():
-    # The base sweep is deliberately executed after monkeypatching the ESPN and
-    # NCAA day fetchers so events crossing UTC midnight are not missed.
     now=datetime.now(timezone.utc)
-    original_league=base._fetch_league
-    original_ncaa=base._fetch_ncaa
     def fetch_league(meta):
-        name,sport,league,icon,_days=meta
-        dates=[(now+timedelta(days=o)).strftime('%Y%m%d') for o in (-1,0,1)]
-        events=[];last=None
+        name,sport,league,icon,_days=meta; dates=[(now+timedelta(days=o)).strftime('%Y%m%d') for o in (-1,0,1)]; events=[];last=None
         for day in dates:
             for host in ('https://site.web.api.espn.com','https://site.api.espn.com'):
                 url=f'{host}/apis/site/v2/sports/{sport}/{league}/scoreboard?dates={day}&limit=1000'
                 try:
-                    root=base._get_json(url); raw=root.get('events') if isinstance(root,dict) else []
-                    if isinstance(raw,list): events.extend(raw)
+                    root=_get_json(url); raw=root.get('events') if isinstance(root,dict) else []
+                    if isinstance(raw,list):events.extend(raw)
                     break
                 except Exception as exc:last=exc
-        seen=set(); unique=[]
+        seen=set();unique=[]
         for event in events:
             key=str(event.get('id') or event.get('uid') or json.dumps(event,sort_keys=True))
             if key not in seen:seen.add(key);unique.append(event)
@@ -78,9 +69,6 @@ def main():
             key=(str(event.get('away') or '').lower(),str(event.get('home') or '').lower(),str(event.get('start') or event.get('startUtc') or ''),str(event.get('providerEventId') or ''))
             if key not in seen:seen.add(key);out.append(event)
         return name,out,None if out or not errors else '; '.join(errors)
-    base._fetch_league=fetch_league
-    base._fetch_ncaa=fetch_ncaa
-    base.main()
-    _merge_shadow()
+    base._fetch_league=fetch_league; base._fetch_ncaa=fetch_ncaa; base.main(); _merge_shadow()
 
 if __name__=='__main__':main()
