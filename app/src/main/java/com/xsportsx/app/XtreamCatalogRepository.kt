@@ -7,6 +7,12 @@ import kotlinx.coroutines.withContext
 class XtreamCatalogRepository private constructor(context: Context) {
     private val dao = XtreamCatalogDatabase.get(context).channels()
 
+    suspend fun replaceAll(providerKey: String, channels: List<XtreamSourceIndex.Channel>) = withContext(Dispatchers.IO) {
+        val now = System.currentTimeMillis()
+        channels.chunked(500).forEach { chunk -> dao.upsertAll(chunk.map { it.toEntity(providerKey, now) }) }
+        dao.deleteStale(providerKey, now - 7 * 24 * 60 * 60 * 1000L)
+    }
+
     suspend fun replaceCategory(providerKey: String, channels: List<XtreamSourceIndex.Channel>) = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         dao.upsertAll(channels.map { it.toEntity(providerKey, now) })
@@ -22,9 +28,7 @@ class XtreamCatalogRepository private constructor(context: Context) {
 
     suspend fun count(providerKey: String): Int = withContext(Dispatchers.IO) { dao.count(providerKey) }
 
-    suspend fun prune(providerKey: String, maxAgeMs: Long = 7 * 24 * 60 * 60 * 1000L) = withContext(Dispatchers.IO) {
-        dao.deleteStale(providerKey, System.currentTimeMillis() - maxAgeMs)
-    }
+    fun providerKey(config: SourceConfig): String = sha1("${config.server}|${config.username}")
 
     private fun XtreamSourceIndex.Channel.toEntity(providerKey: String, now: Long) = XtreamCatalogEntity(
         key = "$providerKey:$id",
@@ -52,6 +56,11 @@ class XtreamCatalogRepository private constructor(context: Context) {
         .replace(Regex("[^a-z0-9]+"), " ")
         .trim()
         .replace(Regex("\\s+"), " ")
+
+    private fun sha1(value: String): String {
+        val bytes = java.security.MessageDigest.getInstance("SHA-1").digest(value.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
 
     companion object {
         @Volatile private var INSTANCE: XtreamCatalogRepository? = null
