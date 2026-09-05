@@ -56,7 +56,7 @@ def main():
         name,sport,division,icon=meta; days=[now.date()+timedelta(days=o) for o in (-1,0,1)]; records=[];errors=[]
         for day in days:
             try:
-                root=base._fetch_scoreboard_day(sport,division,day)
+                root=base._fetch_current_day(sport,division,day)
                 if root:
                     for game in __import__('providers.ncaa',fromlist=['_walk_games'])._walk_games(root):
                         event=base._normalize(game,name,icon)
