@@ -9,6 +9,7 @@ on:
       - 'scripts/normalize_schedule_feed.py'
       - 'scripts/refresh_provider_matrix_v3.py'
       - 'scripts/providers/ncaa.py'
+      - 'scripts/provider_health_gate.py'
       - '.github/workflows/live-coverage-rebuild.yml'
   schedule:
     - cron: '*/10 * * * *'
@@ -49,6 +50,8 @@ jobs:
         run: python3 scripts/live_sports_sweep.py
       - name: Normalize canonical feed
         run: python3 scripts/normalize_schedule_feed.py
+      - name: Provider health gate
+        run: python3 scripts/provider_health_gate.py
       - name: Verify live coverage
         run: |
           python3 - <<'PY'
@@ -70,12 +73,12 @@ jobs:
           set -euo pipefail
           git config user.name 'XSportsX Live Coverage Bot'
           git config user.email 'xsportsx-live-coverage-bot@users.noreply.github.com'
-          git add data/schedule_feed.json
+          git add data/schedule_feed.json data/provider_health_gate.json
           if git diff --cached --quiet; then echo 'No feed changes.'; exit 0; fi
           git commit -m 'chore: publish guaranteed cross-sport live coverage'
           for attempt in 1 2 3 4 5; do
             git fetch origin android-app
-            git rebase --autostash origin/android-app || { git rebase --abort || true; git reset --mixed origin/android-app; git add data/schedule_feed.json; git commit -m 'chore: republish live coverage' || true; }
+            git rebase --autostash origin/android-app || { git rebase --abort || true; git reset --mixed origin/android-app; git add data/schedule_feed.json data/provider_health_gate.json; git commit -m 'chore: republish live coverage' || true; }
             if git push origin HEAD:android-app; then exit 0; fi
             sleep $((attempt * 2))
           done
