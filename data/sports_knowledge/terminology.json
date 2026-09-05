@@ -1,0 +1,17 @@
+{
+  "schema":1,
+  "terms":{
+    "LIVE":"provider-confirmed active play is strongest evidence; timing alone is inference",
+    "PREGAME":"event is within its sport-specific pregame window",
+    "FINAL":"event is complete; retain only if evidence does not contradict completion",
+    "POSTPONED":"scheduled event moved or delayed; seek authoritative replacement time",
+    "HALFTIME":"football/basketball/similar mid-game interval; event remains active",
+    "OVERTIME":"extra playing period; extends the live window",
+    "EARLY PRELIMS":"early combat-sports broadcast session",
+    "PRELIMS":"preliminary combat-sports broadcast session",
+    "MAIN CARD":"primary combat-sports broadcast session",
+    "QUALIFYING":"racing session used to determine starting order",
+    "PRACTICE":"racing preparation session; not the race itself",
+    "SHOOTOUT":"hockey tiebreaking phase following overtime when applicable"
+  }
+}
