@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "terms": {
+    "live":["live","in progress","playing","on air","ongoing"],
+    "scheduled":["scheduled","upcoming","starts"],
+    "final":["final","finished","ended","complete"],
+    "postponed":["postponed","delayed"],
+    "prelims":["prelims","preliminary bouts","preliminary card"],
+    "early_prelims":["early prelims","early preliminary bouts"],
+    "main_card":["main card","main event card"],
+    "halftime":["halftime","half time","ht"],
+    "overtime":["overtime","ot","extra time","et"],
+    "shootout":["shootout","penalty shootout","so"],
+    "qualifying":["qualifying","qualification","qualifying session"],
+    "practice":["practice","free practice","fp1","fp2","fp3"],
+    "round":["round 1","round 2","round 3","round 4","final round"]
+  },
+  "normalization": {
+    "snme":"Sunday Night's Main Event",
+    "smackdown":"Friday Night SmackDown",
+    "raw":"Monday Night Raw",
+    "mma":"MMA",
+    "ufc":"UFC"
+  }
+}
