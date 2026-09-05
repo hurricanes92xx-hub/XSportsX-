@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "sports": {
+    "soccer": {"name":"Soccer","lifecycle":"clocked","score":"goals"},
+    "baseball": {"name":"Baseball","lifecycle":"innings","score":"runs"},
+    "basketball": {"name":"Basketball","lifecycle":"quarters","score":"points"},
+    "football": {"name":"Football","lifecycle":"quarters","score":"points"},
+    "hockey": {"name":"Hockey","lifecycle":"periods","score":"goals"},
+    "volleyball": {"name":"Volleyball","lifecycle":"sets","score":"sets"},
+    "tennis": {"name":"Tennis","lifecycle":"sets","score":"sets"},
+    "golf": {"name":"Golf","lifecycle":"rounds","score":"strokes"},
+    "racing": {"name":"Racing","lifecycle":"sessions","score":"position"},
+    "mma": {"name":"MMA","lifecycle":"rounds","score":"round_time"},
+    "boxing": {"name":"Boxing","lifecycle":"rounds","score":"round_time"},
+    "wrestling": {"name":"Wrestling","lifecycle":"segments","score":"match_state"}
+  }
+}
