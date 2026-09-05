@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "lessons": [],
+  "policy": {
+    "minimumConfidence": 0.85,
+    "minimumIndependentEvidence": 2,
+    "neverLearnSecrets": true,
+    "neverLearnUnverifiedEventFacts": true,
+    "learnOnlyFromCorrections": true
+  }
+}
