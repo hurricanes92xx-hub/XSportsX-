@@ -82,7 +82,7 @@
   "sportsDbFallbackSources": [],
   "officialSourceFailures": [],
   "officialSourceCounts": {},
-  "identityMergeCount": 445,
+  "identityMergeCount": 452,
   "sourceRecordCounts": {
     "wrestling": 19,
     "espn": 1523,
@@ -54806,8 +54806,8 @@
     "sourcesChecked": 63,
     "reachableSources": 53,
     "eventsRecovered": 8,
-    "identityMerges": 0,
-    "updatedAt": "2026-09-05T04:35:07Z",
+    "identityMerges": 7,
+    "updatedAt": "2026-09-05T04:35:28Z",
     "sources": [
       {
         "league": "AAA Wrestling",
@@ -54836,7 +54836,7 @@
       {
         "league": "Boxing",
         "url": "https://wbcboxing.com/calendar/",
-        "reachable": true,
+        "reachable": false,
         "parsed": 0
       },
       {
@@ -55136,7 +55136,7 @@
       {
         "league": "UCL",
         "url": "https://www.uefa.com/uefachampionsleague/fixtures-results/",
-        "reachable": false,
+        "reachable": true,
         "parsed": 0
       },
       {
